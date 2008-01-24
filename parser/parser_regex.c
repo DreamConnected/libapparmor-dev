@@ -108,10 +108,10 @@ static void filter_slashes(char *path)
 	}
 	*dptr = 0;
 
-	if (regex_type != AARE_DFA) {
+	if (dir_type == AA_DIR_AS_FILE) {
 		/* eliminate trailing slashes for versions of apparmor that
-		 * do not use the dfa engine.
-		 * Versions of apparmor which use the dfa engine use the
+		 * do not use dir matching.
+		 * Versions of apparmor which use dir matching use the
 		 * trailing / to differentiate between file and directory
 		 * matches
 		 */
@@ -407,6 +407,7 @@ static int process_pcre_entry(struct cod_entry *entry)
 {
 	char tbuf[PATH_MAX + 3];	/* +3 for ^, $ and \0 */
 	int ret = TRUE;
+	int tperm = 0;
 	pattern_t ptype;
 
 	if (!entry) 		/* shouldn't happen */
@@ -417,6 +418,20 @@ static int process_pcre_entry(struct cod_entry *entry)
 		return FALSE;
 
 	entry->pattern_type = ptype;
+
+	/* Map permission #'s */
+	tperm = entry->mode & 0x1f;  /* xwral are in position */
+	if (entry->mode & AA_EXEC_MMAP)
+		tperm |= 1 << 8;
+	if (entry->mode & AA_EXEC_UNSAFE)
+		tperm |= 1 << 9;
+	if (entry->mode & AA_EXEC_INHERIT)
+		tperm |= 1 << 5;
+	if (entry->mode & AA_EXEC_UNCONFINED)
+		tperm |= 1 << 6;
+	if (entry->mode & AA_EXEC_PROFILE)
+		tperm |= 1 << 7;
+	entry->mode = tperm;
 
 	/*
 	 * Only use buffer (tbuf) that we built above, if we
@@ -513,7 +528,7 @@ int post_process_entries(struct codomain *cod)
 
 	list_for_each(cod->entries, entry) {
 		filter_slashes(entry->name);
-		if (regex_type == AARE_DFA)
+		if (regex_type == AA_RE_DFA)
 			rc = process_dfa_entry(cod->dfarules, entry);
 		else
 			rc = process_pcre_entry(entry);
@@ -530,7 +545,7 @@ int process_regex(struct codomain *cod)
 {
 	int error = -1;
 
-	if (regex_type == AARE_DFA) {
+	if (regex_type == AA_RE_DFA) {
 		cod->dfarules = aare_new_ruleset(0);
 		if (!cod->dfarules)
 			goto out;
@@ -538,7 +553,7 @@ int process_regex(struct codomain *cod)
 	if (!post_process_entries(cod))
 		goto out;
 
-	if (regex_type == AARE_DFA && cod->dfarule_count > 0) {
+	if (regex_type == AA_RE_DFA && cod->dfarule_count > 0) {
 		cod->dfa = aare_create_dfa(cod->dfarules, 0, &cod->dfa_size);
 		if (!cod->dfa)
 			goto out;
@@ -659,7 +674,12 @@ static int test_filter_slashes(void)
 	return rc;
 }
 
-int regex_type = AARE_PCRE;
+int regex_type = AA_RE_PCRE;
+int aa_valid_file_perms = AA_VALID_2_0_PERMS;
+int dir_type = AA_DIR_AS_FILE;
+int network_type = AA_NET_NONE;
+int sysctl_type = AA_SYSCTL_CAP;
+int hat_type = AA_EMBED_HATS;
 
 int main(void)
 {

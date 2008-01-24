@@ -138,9 +138,25 @@ struct var_string {
 #define OPTION_REPLACE  3
 #define OPTION_STDOUT	4
 
-#define AARE_NONE 0
-#define AARE_PCRE 1
-#define AARE_DFA 2
+#define AA_RE_NONE 0
+#define AA_RE_PCRE 1
+#define AA_RE_DFA 2
+
+#define AA_DIR_AS_NONE 0
+#define AA_DIR_AS_FILE 1
+#define AA_DIR_AS_DIR  2
+
+#define AA_NET_NONE 0
+#define AA_NET_SIMPLE 1
+
+#define AA_SYSCTL_CAP 0
+#define AA_SYSCTL_FILE 1
+
+#define AA_EMBED_HATS 0
+#define AA_FLATTEN_HATS 1
+
+#define AA_CHANGE_PROFILE_NO 0
+#define AA_CHANGE_PROFILE_YES 1
 
 #ifdef DEBUG
 #define PDEBUG(fmt, args...) printf("parser: " fmt, ## args)
@@ -180,6 +196,14 @@ extern char *profilename;
 /* from parser_main */
 extern int force_complain;
 extern int regex_type;
+extern int aa_valid_file_perms;
+extern int aa_dropped_file_perms;
+extern int dir_type;
+extern int network_type;
+extern int sysctl_type;
+extern int hat_type;
+extern int change_profile_type;
+
 extern void pwarn(char *fmt, ...) __attribute__((__format__(__printf__, 1, 2)));
 
 extern int yyparse(void);

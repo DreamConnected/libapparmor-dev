@@ -224,6 +224,40 @@ int process_hat_variables(struct codomain *cod)
 	return 0;
 }
 
+#define CHANGEHAT_PATH "/proc/[0-9]*/attr/current"
+
+/* add file rules to access /proc files to call change_hat() */
+static void __add_hat_rules(const void *nodep, const VISIT value,
+			    const int __unused depth)
+{
+	struct codomain **t = (struct codomain **) nodep;
+	struct cod_entry *entry;
+
+	if (value == preorder || value == endorder)
+		return;
+
+	/* don't add hat rules if a parent profile with no hats */
+	if (!(*t)->hat_table && !(*t)->parent)
+		return;
+
+	entry = new_entry(strdup(CHANGEHAT_PATH), AA_MAY_WRITE);
+	if (!entry) {
+		PERROR(_("ERROR adding hat access rule for profile %s\n"),
+		       (*t)->name);
+		exit(1);
+	}
+	add_entry_to_policy(*t, entry);
+
+	twalk((*t)->hat_table, __add_hat_rules);
+}
+
+
+static int add_hat_rules(void)
+{
+	twalk(policy_list, __add_hat_rules);
+	return 0;
+}
+
 /* Yuck, is their no other way to pass arguments to a twalk action */
 static int __load_option;
 
@@ -428,9 +462,21 @@ int post_process_policy(void)
 {
 	int retval = 0;
 
+
+	if (regex_type == AA_RE_DFA &&
+	    hat_type == AA_FLATTEN_HATS &&
+	    aa_valid_file_perms == AA_VALID_2_0_PERMS) {
+		retval = add_hat_rules();
+		if (retval != 0) {
+			PERROR(_("%s: Errors found during postprocessing.  Aborting.\n"),
+			       progname);
+			return retval;
+		}
+	}
+
 	retval = post_process_variables();
 	if (retval != 0) {
-		PERROR(_("%s: Errors found during regex postprocess.  Aborting.\n"),
+		PERROR(_("%s: Errors found during variable postprocess.  Aborting.\n"),
 		       progname);
 		return retval;
 	}
@@ -444,7 +490,7 @@ int post_process_policy(void)
 
 	retval = post_process_regex();
 	if (retval != 0) {
-		PERROR(_("%s: Errors found during regex postprocess.  Aborting.\n"),
+		PERROR(_("%s: Errors found during regex postprocessing.  Aborting.\n"),
 		       progname);
 		return retval;
 	}

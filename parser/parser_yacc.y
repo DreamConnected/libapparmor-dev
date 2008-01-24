@@ -458,6 +458,8 @@ rules:	rules change_profile
 	{
 		PDEBUG("matched: rules change_profile\n");
 		PDEBUG("rules change_profile: (%s)\n", $2->name);
+		if (change_profile_type == AA_CHANGE_PROFILE_NO)
+			yyerror(_("change_profile not supported by current AppArmor.\n"));
 		if (!$2)
 			yyerror(_("Assert: `change_profile' returned NULL."));
 		add_entry_to_policy($1, $2);

@@ -42,6 +42,12 @@
 					 AA_EXEC_UNCONFINED | \
 					 AA_EXEC_PROFILE)
 
+#define AA_VALID_2_0_PERMS		(AA_MAY_EXEC | AA_MAY_WRITE | \
+					 AA_MAY_READ | AA_MAY_LINK | \
+					 AA_EXEC_MMAP)
+
+#define AA_VALID_2_1_PERMS		(AA_VALID_2_0_PERMS | AA_MAY_APPEND | \
+					 AA_MAY_LOCK | AA_CHANGE_PROFILE)
 
 /* Network subdomain extensions.  */
 #define AA_TCP_CONNECT			(1 << 16)

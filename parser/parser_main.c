@@ -47,8 +47,10 @@
 #define DEFAULT_APPARMORFS "/sys/kernel/security/" MODULE_NAME
 #define MATCH_STRING "/sys/kernel/security/" MODULE_NAME "/matching"
 #define MOUNTED_FS "/proc/mounts"
-#define PCRE "pattern=pcre"
-#define AADFA "pattern=aadfa"
+#define AA_MATCH_PCRE "pattern=pcre"
+#define AA_MATCH_DFA "pattern=aadfa"
+#define AA_MATCH_2_0_PERMS "perms=rwxml"
+#define AA_MATCH_2_1_PERMS "perms=rwxamlz"
 
 #define UNPRIVILEGED_OPS (debug || preprocess_only || option == OPTION_STDOUT || names_only || \
 			  dump_vars || dump_expanded_vars)
@@ -66,7 +68,16 @@ int conf_quiet = 0;
 char *subdomainbase = NULL;
 char *profilename;
 char *match_string = NULL;
-int regex_type = AARE_DFA;
+/* default when no match string specified */
+int regex_type = AA_RE_PCRE;
+int aa_valid_file_perms = AA_VALID_2_0_PERMS;
+int dir_type = AA_DIR_AS_FILE;
+int network_type = AA_NET_NONE;
+int sysctl_type = AA_SYSCTL_CAP;
+int hat_type = AA_EMBED_HATS;
+int change_profile_type = AA_CHANGE_PROFILE_NO;
+
+int aa_dropped_file_perms = 0;
 
 extern int current_lineno;
 
@@ -363,11 +374,32 @@ static void get_match_string(void) {
 
 out:
 	if (match_string) {
-		if (strstr(match_string, PCRE))
-			regex_type = AARE_PCRE;
+		if (strstr(match_string, AA_MATCH_PCRE)) {
+			regex_type = AA_RE_PCRE;
+			aa_valid_file_perms = AA_VALID_2_0_PERMS;
+			dir_type = AA_DIR_AS_FILE;
+			network_type = AA_NET_NONE;
+			sysctl_type = AA_SYSCTL_CAP;
+			hat_type = AA_EMBED_HATS;
+			change_profile_type = AA_CHANGE_PROFILE_NO;
+		} else if (strstr(match_string, AA_MATCH_DFA)) {
+			regex_type = AA_RE_DFA;
+			change_profile_type = AA_CHANGE_PROFILE_YES;
 
-		if (strstr(match_string, AADFA))
-			regex_type = AARE_DFA;
+			if (strstr(match_string, AA_MATCH_2_1_PERMS)) {
+				aa_valid_file_perms = AA_VALID_2_1_PERMS;
+				dir_type = AA_DIR_AS_DIR;
+				network_type = AA_NET_SIMPLE;
+				sysctl_type = AA_SYSCTL_FILE;
+				hat_type = AA_FLATTEN_HATS;
+			} else if (strstr(match_string, AA_MATCH_2_0_PERMS)) {
+				aa_valid_file_perms = AA_VALID_2_0_PERMS;
+				dir_type = AA_DIR_AS_FILE;
+				network_type = AA_NET_NONE;
+				sysctl_type = AA_SYSCTL_CAP;
+				hat_type = AA_FLATTEN_HATS;
+			}
+		}
 	}
 
 	if (ms)
@@ -383,7 +415,7 @@ static int regex_support(void) {
 	if (!match_string)
 		return 1;
 
-	if (regex_type != AARE_NONE)
+	if (regex_type != AA_RE_NONE)
 		return 1;
 
 	return 0;
@@ -393,6 +425,9 @@ int process_profile(int option, char *profilename)
 {
 	int retval = 0;
 
+	/* Get the match string to determine type of regex support needed */
+	get_match_string();
+
 	retval = do_include_preprocessing(profilename);
 	if (preprocess_only || retval != 0)
 		return retval;
@@ -400,9 +435,6 @@ int process_profile(int option, char *profilename)
 	retval = yyparse();
 	if (retval != 0)
 		goto out;
-
-	/* Get the match string to determine type of regex support needed */
-	get_match_string();
 
 	retval = post_process_policy();
   	if (retval != 0) {
@@ -473,6 +505,7 @@ int main(int argc, char *argv[])
 	}
 
 	parse_default_paths();
+
 	retval = process_profile(option, profilename);
 	if (retval != 0)
 		return retval;

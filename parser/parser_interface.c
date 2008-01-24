@@ -600,7 +600,7 @@ int sd_serialize_profile(sd_serialize *p, struct codomain *profile,
 	if (!sd_write32(p, profile->capabilities))
 		return 0;
 
-	if (profile->network_allowed) {
+	if (profile->network_allowed && network_type == AA_NET_SIMPLE) {
 		int i;
 		if (!sd_write_array(p, "net_allowed_af", AF_MAX))
 			return 0;
@@ -610,13 +610,19 @@ int sd_serialize_profile(sd_serialize *p, struct codomain *profile,
 		}
 		if (!sd_write_arrayend(p))
 			return 0;
+	} else if (profile->network_allowed && network_type == AA_NET_NONE) {
+		PERROR(_("Warning: Ignoring network rules not supported by current AppArmor.\n"));
 	}
 
 	/* either have a single dfa or lists of different entry types */
-	if (regex_type == AARE_DFA) {
+	if (regex_type == AA_RE_DFA) {
+		if (aa_dropped_file_perms)
+			PERROR(_("Warning: Ignoring filepermissions not supported by current AppArmor.\n"));
 		if (!sd_serialize_dfa(p, profile->dfa, profile->dfa_size))
 			return 0;
 	} else {
+		if (aa_dropped_file_perms)
+			PERROR(_("Warning: Ignoring filepermissions not supported by current AppArmor.\n"));
 		/* pcre globbing entries */
 		if (count_pcre_ents(profile->entries)) {
 			if (!sd_write_list(p, "pgent"))
@@ -660,7 +666,7 @@ int sd_serialize_profile(sd_serialize *p, struct codomain *profile,
 		}
 	}
 
-	if (profile->net_entries && (regex_type != AARE_DFA)) {
+	if (profile->net_entries && (regex_type != AA_RE_DFA)) {
 		if (!sd_write_list(p, "net"))
 			return 0;
 		list_for_each(profile->net_entries, net_entry) {
@@ -672,7 +678,7 @@ int sd_serialize_profile(sd_serialize *p, struct codomain *profile,
 
 	}
 
-	if (profile->hat_table && regex_type != AARE_DFA) {
+	if (profile->hat_table && hat_type == AA_EMBED_HATS) {
 		if (!sd_write_list(p, "hats"))
 			return 0;
 		if (load_hats(p, profile) != 0)
@@ -691,7 +697,7 @@ int sd_serialize_top_profile(sd_serialize *p, struct codomain *profile)
 {
 	int version;
 
-	if (regex_type == AARE_DFA)
+	if (regex_type == AA_RE_DFA)
 		version = SUBDOMAIN_INTERFACE_DFA_VERSION;
 	else
 		version = SUBDOMAIN_INTERFACE_VERSION;
@@ -796,7 +802,7 @@ int sd_serialize_codomain(int option, struct codomain *cod)
 
 	close(fd);
 
-	if (cod->hat_table && regex_type == AARE_DFA) {
+	if (cod->hat_table && hat_type == AA_FLATTEN_HATS) {
 		if (load_flattened_hats(cod) != 0)
 			return 0;
 	}

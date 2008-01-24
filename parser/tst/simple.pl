@@ -67,7 +67,7 @@ sub test_profile {
   my $istodo = 0;
   my $isdisabled = 0;
 
-  open(PARSER, "| $config{'parser'} -S -I $config{'includedir'} > /dev/null 2>&1") or die "Bail out! couldn't open parser";
+  open(PARSER, "| $config{'parser'} -S -I $config{'includedir'} -m \"pattern=aadfa perms=rwxamlz\" > /dev/null 2>&1") or die "Bail out! couldn't open parser";
 
   open(PROFILE, $profile) or die "Bail out! couldn't open profile $profile";
   while (<PROFILE>) {

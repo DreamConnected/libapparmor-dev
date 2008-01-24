@@ -458,11 +458,17 @@ reeval:
 			PDEBUG("Parsing mode: found WRITE\n");
 			if ((mode & AA_MAY_APPEND) && !(mode & AA_MAY_WRITE))
 				yyerror(_("Conflict 'a' and 'w' perms are mutually exclusive."));
-			mode |= AA_MAY_WRITE | AA_MAY_APPEND;
+			if (AA_MAY_APPEND & aa_valid_file_perms)
+				mode |= AA_MAY_WRITE | AA_MAY_APPEND;
+			else
+				mode |= AA_MAY_WRITE;
 			break;
 
 		case COD_APPEND_CHAR:
 			PDEBUG("Parsing mode: found APPEND\n");
+			if (!(AA_MAY_APPEND & aa_valid_file_perms))
+				yyerror(_("Append perm not valid for current AppArmor."));
+
 			if (mode & AA_MAY_WRITE)
 				yyerror(_("Conflict 'a' and 'w' perms are mutually exclusive."));
 			mode |= AA_MAY_APPEND;
@@ -474,6 +480,8 @@ reeval:
 			break;
 
 		case COD_LOCK_CHAR:
+			if (!(AA_MAY_LOCK & aa_valid_file_perms))
+				yyerror(_("Lock perm not valid for current AppArmor."));
 			PDEBUG("Parsing mode: found LOCK\n");
 			mode |= AA_MAY_LOCK;
 			break;

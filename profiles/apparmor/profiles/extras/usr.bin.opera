@@ -1,69 +1,15 @@
-# $Id$
-# ------------------------------------------------------------------
-#
-#    Copyright (C) 2002-2005 Novell/SUSE
-#
-#    This program is free software; you can redistribute it and/or
-#    modify it under the terms of version 2 of the GNU General Public
-#    License published by the Free Software Foundation.
-#
-# ------------------------------------------------------------------
-# vim:syntax=apparmor
-# Last Modified: Thu Aug 25 14:49:56 2005
-
+# Last Modified: Tue Sep 11 20:27:42 2007
 #include <tunables/global>
-
 /usr/bin/opera {
   #include <abstractions/base>
   #include <abstractions/bash>
   #include <abstractions/consoles>
-  #include <abstractions/kde>
-  #include <abstractions/nameservice>
-  #include <abstractions/user-write>
-  #include <abstractions/user-download>
-  #include <abstractions/X>
 
-  capability dac_override,
-
-  / r,
-  /bin/bash mix,
-  /bin/sed mixr,
-  /bin/true mixr,
-  /etc/SuSE-release r,
-  /etc/X11/.qt_plugins_3.3rc.lock rw,
-  /etc/X11/.qtrc.lock rw,
-  /etc/cups/client.conf r,
-  /etc/cups/lpoptions r,
-  /etc/opera6rc	rw,
-  /etc/opera6rc.fixed rw,
-  /opt r,
-  @{PROC}/[0-9]*/stat r,
-  @{PROC}/net/if_inet6 r,
-  @{PROC}/sys/vm/heap-stack-gap r,
-
-  @{HOME}/.fonts.cache-* r,
-  @{HOME}/.fonts r,
-  @{HOME}/.fonts/** r,
-  @{HOME} r,
-  @{HOME}/.kde/share/** r,
-  @{HOME}/OperaDownloads/* rw,
-  @{HOME}/.opera/** lrw,
-  @{HOME}/.opera r,
-
-  /usr/share/** r,
-  /usr r,
-  /opt/kde3/lib/kde3/plugins/integration/*.so mr,
-  /usr/bin/acroread rPx,
-  /usr/bin/opera r,
-  /usr/lib r,
-  /usr/lib/RealPlayer10/realplay rPx,
-  /usr/lib/RealPlayer10/realplay.bin rPx,
-  /usr/lib/browser-plugins r,
-  /usr/lib/browser-plugins/* mr,
-  /usr/lib/jvm/** mr,
-  /usr/lib/opera/** mixr,
-  /usr/local r,
-  /usr/share/opera/** r,
-  /var/run/.resmgr_socket w,
-  /var/spool/cups/tmp/* lrw,
+  /bin/bash ixr,
+  /bin/sed ixr,
+  /usr/bin/opera mr,
+  /usr/lib/jvm/java-1.5.0-sun-1.5.0_update12/jre/lib/i386/*.so mr,
+  /usr/lib/jvm/java-1.5.0-sun-1.5.0_update12/jre/lib/i386/client/*.so mr,
+#  /usr/lib/opera/9.23-20070809.6/opera px,
+  /usr/lib/opera/9.23-20070809.6/works ixr,
 }

@@ -41,7 +41,8 @@ ID		[^ \t\n\(\)="'!]
 path		"/"{ID}*
 hexstring	({hex}{hex})+
 period		"\."
-modes           [RrWwXxIiLlUuPpMm]
+mode_chars      ([RrWwLalMmkXx])|([Pp][Xx])|([Uu][Xx])|([Ii][Xx])
+modes		{mode_chars}+
 
 /* New message types */
 
@@ -263,7 +264,7 @@ char *string_buf_ptr = string_buf; /* assignment to quiet gcc warning */
 {old_link}		{ return(TOK_OLD_LINK); }
 {old_fork}		{ return(TOK_OLD_FORK); }
 {old_child}		{ return(TOK_OLD_CHILD); }
-{modes}+		{ yylval->t_str = strdup(yytext); return(TOK_MODE); }
+{modes}			{ yylval->t_str = strdup(yytext); return(TOK_MODE); }
 
 {key_type}		{ BEGIN(audit_types); return(TOK_KEY_TYPE); }
 {key_msg}		{ return(TOK_KEY_MSG); }

@@ -30,6 +30,9 @@ security-removexattr.diff
 unambiguous-__d_path.diff
 mount-consistent-__d_path.diff
 d_namespace_path.diff
+fgetattr.diff
+fsetattr.diff
+fsetattr-reintro-ATTR_FILE.diff
 file-handle-ops.diff
 security-xattr-file.diff
 sysctl-pathname.diff

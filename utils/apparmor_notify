@@ -30,8 +30,7 @@ require POSIX;
 require Time::Local;
 require File::Basename;
 
-use vars qw($opt_p $opt_s $opt_l $opt_h $opt_v $opt_d $opt_w);
-use Getopt::Std;
+use Getopt::Long;
 
 my %prefs;
 my $conf = "/etc/apparmor/notify.conf";
@@ -67,7 +66,6 @@ $ENV{PATH} = "/bin:/usr/bin";
 $ENV{SHELL} = "/bin/sh";
 defined($ENV{IFS}) and $ENV{IFS} = ' \t\n';
 
-print $0 . "\n";
 my $prog = File::Basename::basename($0);
 
 if ($prog !~ /^[a-zA-Z0-9_\-]+$/) {
@@ -75,32 +73,66 @@ if ($prog !~ /^[a-zA-Z0-9_\-]+$/) {
     exitscript(1);
 }
 
-my $logfile = "/var/log/kern.log";
--e "/var/run/auditd.pid" and $logfile = "/var/log/audit/audit.log";
-
 $> == $< or die "Cannot be suid\n";
 $) == $( or die "Cannot be sgid\n";
 
 my $login;
+our $orig_euid = $>;
 
-getopts('dhlpvs:w:');
+my $opt_d = '';
+my $opt_h = '';
+my $opt_l = '';
+my $opt_p = '';
+my $opt_v = '';
+my $opt_f = '';
+my $opt_s = 0;
+my $opt_u = '';
+my $opt_w = 0;
+GetOptions(
+    'debug|d'        => \$opt_d,
+    'help|h'         => \$opt_h,
+    'since-last|l'   => \$opt_l,
+    'poll|p'         => \$opt_p,
+    'verbose|v'      => \$opt_v,
+    'file|f=s'       => \$opt_f,
+    'since-days|s=n' => \$opt_s,
+    'user|u=s'       => \$opt_u,
+    'wait|w=n'       => \$opt_w,
+);
 if ($opt_h) {
     usage;
     exitscript(0);
 }
 
+# monitor file specified with -f, else use audit.log if auditd is running,
+# otherwise kern.log
+our $logfile = "/var/log/kern.log";
+if ($opt_f) {
+    -f $opt_f or die "'$opt_f' does not exist. Aborting\n";
+    $logfile = $opt_f;
+} else {
+    -e "/var/run/auditd.pid" and $logfile = "/var/log/audit/audit.log";
+}
+
+-r $logfile or die "Cannot read '$logfile'\n";
+our $logfile_inode = get_logfile_inode($logfile);
+our $logfile_size = get_logfile_size($logfile);
 open (LOGFILE, "<$logfile") or die "Could not open '$logfile'\n";
 # Drop priviliges, if running as root
 if ($< == 0) {
     $login = "root";
     if (defined($ENV{SUDO_UID}) and defined($ENV{SUDO_GID})) {
         POSIX::setgid($ENV{SUDO_GID}) or _error("Could not change gid");
-        POSIX::setuid($ENV{SUDO_UID}) or _error("Could not change uid");
+        $> = $ENV{SUDO_UID} or _error("Could not change euid");
         defined($ENV{SUDO_USER}) and $login = $ENV{SUDO_USER};
     } else {
+        my $drop_to = $nobody_user;
+        if ($opt_u) {
+            $drop_to = $opt_u;
+        }
         # nobody/nogroup
-        POSIX::setgid(scalar(getpwnam($nobody_group))) or _error("Could not change gid to '$nobody_group'");
-        POSIX::setuid(scalar(getpwnam($nobody_user))) or _error("Could not change uid to '$nobody_user'");
+        POSIX::setgid(scalar(getgrnam($nobody_group))) or _error("Could not change gid to '$nobody_group'");
+        $> = scalar(getpwnam($drop_to)) or _error("Could not change euid to '$drop_to'");
     }
 } else {
     $login = getlogin();
@@ -111,7 +143,7 @@ if (-s $conf) {
     readconf($conf);
     if (defined($prefs{use_group})) {
         my ($name, $passwd, $gid, $members) = getgrnam($prefs{use_group});
-        if (not defined($members) or not defined($login) or not grep { $_ eq $login } split(/ /, $members)) {
+        if (not defined($members) or not defined($login) or (not grep { $_ eq $login } split(/ /, $members) and $login ne "root")) {
             _error("'$login' must be in '$prefs{use_group}' group. Aborting");
         }
     }
@@ -220,7 +252,6 @@ sub format_message {
     defined($name) and $formatted .= "Name: $name\n";
     defined($denied) and $formatted .= "Denied: $denied\n";
     defined($family) and defined ($sock_type) and $formatted .= "Family: $family\nSocket type: $sock_type\n";
-    #defined($date) and $since > 0 and $formatted .= "Date: ". scalar(localtime($date)) ."\n";
     $formatted .= "Logfile: $logfile\n";
 
     return $formatted;
@@ -259,6 +290,26 @@ sub kill_running_daemons {
     close(PS);
 }
 
+sub send_message {
+    my $msg = $_[0];
+
+    my $pid = fork();
+    if ($pid == 0) { 	# child
+        # notify-send needs $< to be the unprivileged user
+        $< = $>;
+
+        # 'system' uses execvp() so no shell metacharacters here.
+        # $notify_exe is an absolute path so execvp won't search PATH.
+        system "$notify_exe", "-i", "gtk-dialog-warning", "-u", "critical", "--", "AppArmor Message", "$msg";
+        my $exit_code = $? >> 8;
+        exit($exit_code);
+    }
+
+    # parent
+    waitpid($pid, 0);
+    return $?;
+}
+
 sub do_notify {
     my %seen;
     my $seconds = 5;
@@ -273,7 +324,7 @@ sub do_notify {
         umask 0;
         open STDIN, '/dev/null' or die "Can't read /dev/null: $!";
         open STDOUT, '>/dev/null' or die "Can't write to /dev/null: $!";
-        open STDERR, '>/dev/null' or die "Can't write to /dev/null: $!";
+        #open STDERR, '>/dev/null' or die "Can't write to /dev/null: $!";
         my $pid = fork();
         exit if $pid;
         die "Couldn't fork: $!" unless defined($pid);
@@ -293,12 +344,24 @@ sub do_notify {
     my $count = 0;
     my $footer = "For more information, please see:\n$url";
     my $first_run = 1;
-    my $since = $now - (int($opt_s) * 60 * 60 * 24);
+    my $since = $now;
+    if ($opt_s and int($opt_s) > 0) {
+       $since = $since - (int($opt_s) * 60 * 60 * 24);
+    }
     for (my $i=0; $time_to_die == 0; $i++) {
+        if ($logfile_inode != get_logfile_inode($logfile)) {
+            _warn("$logfile changed inodes, reopening");
+            reopen_logfile();
+        } elsif (get_logfile_size($logfile) < $logfile_size) {
+            _warn("$logfile is smaller, reopening");
+            reopen_logfile();
+        }
         while(my $msg = <LOGFILE>) {
             my @attrib;
-            if ($first_run == 1 and $opt_s) {
-                @attrib = parse_message($msg, $since);
+            if ($first_run == 1) {
+                if ($since != $now) {
+                    @attrib = parse_message($msg, $since);
+                }
             } else {
                 @attrib = parse_message($msg);
             }
@@ -340,12 +403,9 @@ sub do_notify {
 
             $m .= $footer;
 
-	    # 'system' uses execvp() so no shell metacharacters here.
-            # $notify_exe is an absolute path so execvp won't search PATH.
-            system "$notify_exe", "-i", "gtk-dialog-warning", "-u", "critical", "--", "AppArmor Message", "$m";
-            my $exit_code = $? >> 8;
-            if ($exit_code != 0) {
-                _warn("'$notify_exe' exited with '$exit_code'");
+            my $rc = send_message($m);
+            if ($rc != 0) {
+                _warn("'$notify_exe' exited with error '$rc'");
                 $time_to_die = 1;
                 last;
             }
@@ -356,7 +416,7 @@ sub do_notify {
 
         if ($first_run) {
             if ($count > 0) {
-                my $m = "$logfile contains $count existing denied message";
+                my $m = "$logfile contains $count denied message";
                 $count > 1 and $m .= "s";
                 if ($opt_s) {
                     $m .= " in the last ";
@@ -368,7 +428,7 @@ sub do_notify {
                 }
                 $m .= ". ";
                 $m .= $footer;
-                system "$notify_exe", "-i", "gtk-dialog-warning", "-u", "critical", "--", "AppArmor Message", "$m";
+                send_message($m);
             }
             $first_run = 0;
         }
@@ -390,6 +450,9 @@ sub do_notify {
 }
 
 sub show_since {
+    my %msg_hash;
+    my %last_date;
+    my @msg_list;
     my $count = 0;
     while(my $msg = <LOGFILE>) {
         my @attrib = parse_message($msg, $_[0]);
@@ -397,9 +460,30 @@ sub show_since {
 
         my $m = format_message(@attrib);
         $m ne "" or next;
-
-        $opt_v and print "$m\n";
+        my $date = $attrib[6];
+        if ($opt_v) {
+            if (exists($msg_hash{$m})) {
+                $msg_hash{$m}++;
+                defined($date) and $last_date{$m} = scalar(localtime($date));
+            } else {
+                $msg_hash{$m} = 1;
+                push(@msg_list, $m);
+            }
+        }
         $count++;
+    }
+    if ($opt_v) {
+        foreach my $m (@msg_list) {
+            print "$m";
+            if ($msg_hash{$m} gt 1) {
+                print "($msg_hash{$m} found";
+                if (exists($last_date{$m})) {
+                    print ", most recent from '$last_date{$m}'";
+                }
+                print ")\n";
+            }
+            print "\n";
+        }
     }
     return $count;
 }
@@ -452,17 +536,61 @@ sub exitscript {
 sub usage {
     my $s = <<'EOF';
 USAGE: apparmor_notify [OPTIONS]
+
 Display AppArmor notifications or messages for DENIED entries.
 
 OPTIONS:
-  -p		poll AppArmor logs and display notifications
-  -l		display stats since last login
-  -s NUM	show stats for last NUM days (can be used alone or with -p)
-  -v		show messages with stats
-  -h		display this help
-  -w NUM	wait NUM seconds before displaying notifications (with -p)
+  -p, --poll			poll AppArmor logs and display notifications
+  -f FILE, --file=FILE		search FILE for AppArmor messages
+  -l, --since-last		display stats since last login
+  -s NUM, --since-days=NUM	show stats for last NUM days (can be used alone
+				or with -p)
+  -v, --verbose			show messages with stats
+  -h, --help			display this help
+  -u USER, --user=USER		user to drop privileges to when not using sudo
+  -w NUM, --wait=NUM		wait NUM seconds before displaying
+				notifications (with -p)
 EOF
     print $s;
+}
+
+sub reopen_logfile {
+    # reopen the logfile, temporarily switching back to starting euid for
+    # file permissions.
+    close(LOGFILE);
+
+    my $old_euid = $>;
+    my $change_euid = 0;
+    if ($> != $<) {
+        _debug("raising privileges to '$orig_euid' in reopen_logfile()");
+        $change_euid = 1;
+        $> = $orig_euid;
+        $> == $orig_euid or die "Could not raise privileges\n";
+    }
+
+    $logfile_inode = get_logfile_inode($logfile);
+    $logfile_size = get_logfile_size($logfile);
+    open (LOGFILE, "<$logfile") or die "Could not open '$logfile'\n";
+
+    if ($change_euid) {
+        _debug("dropping privileges to '$old_euid' in reopen_logfile()");
+        $> = $old_euid;
+        $> == $old_euid or die "Could not drop privileges\n";
+    }
+}
+
+sub get_logfile_size {
+    my $fn = $_[0];
+    my $size;
+    defined(($size = (stat($fn))[7])) or (sleep(10) and defined(($size = (stat($fn))[7])) or die "'$fn' disappeared. Aborting\n");
+    return $size;
+}
+
+sub get_logfile_inode {
+    my $fn = $_[0];
+    my $inode;
+    defined(($inode = (stat($fn))[1])) or (sleep(10) and defined(($inode = (stat($fn))[1])) or die "'$fn' disappeared. Aborting\n");
+    return $inode;
 }
 
 #

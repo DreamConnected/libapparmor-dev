@@ -85,8 +85,6 @@ int perms_create = 0;		/* perms contain create flag */
 char *profile_namespace = NULL;
 int flag_changehat_version = FLAG_CHANGEHAT_1_5;
 
-extern int current_lineno;
-
 /* per-profile settings */
 int force_complain = 0;
 char *profilename = NULL;
@@ -224,8 +222,10 @@ void pwarn(char *fmt, ...)
 	if (conf_quiet || names_only || option == OPTION_REMOVE)
 		return;
 
-	rc = asprintf(&newfmt, _("Warning (%s line %d): %s"),
+	rc = asprintf(&newfmt, _("Warning from %s (%s%sline %d): %s"),
 		      profilename ? profilename : "stdin",
+		      current_filename ? current_filename : "",
+		      current_filename ? " " : "",
 		      current_lineno,
 		      fmt);
 	if (!newfmt)
@@ -695,12 +695,13 @@ int process_binary(int option, char *profilename)
 	return retval;
 }
 
-void reset_parser(void)
+void reset_parser(char *filename)
 {
 	free_aliases();
 	free_symtabs();
 	free_policies();
 	reset_regex();
+	reset_include_stack(filename);
 }
 
 int process_profile(int option, char *profilename)
@@ -796,7 +797,7 @@ int process_profile(int option, char *profilename)
 
 	if (yyin)
 		yyrestart(yyin);
-	reset_parser();
+	reset_parser(profilename);
 
 	retval = yyparse();
 	if (retval != 0)

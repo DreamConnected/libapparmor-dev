@@ -231,6 +231,7 @@ LT_EQUAL	<=
 }
 
 <<EOF>> {
+	fclose(yyin);
 	pop_include_stack();
 	yypop_buffer_state();
 	if ( !YY_CURRENT_BUFFER ) yyterminate();

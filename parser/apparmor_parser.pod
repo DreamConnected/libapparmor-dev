@@ -149,6 +149,11 @@ Report on the profiles as they are loaded, and show warnings.
 
 Print the version number and exit.
 
+=item -p, --preprocess
+
+Dump the input profile to stdout out applying preprocessing flattening
+includes into the output profile.
+
 =item -d, --debug
 
 Given once, only checks the profiles to ensure syntactic correctness.

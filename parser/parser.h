@@ -178,7 +178,7 @@ struct var_string {
 extern int flag_changehat_version;
 extern int read_implies_exec;
 extern dfaflags_t dfaflags;
-
+extern int preprocess_only;
 
 #define PATH_CHROOT_REL 0x1
 #define PATH_NS_REL 0x2

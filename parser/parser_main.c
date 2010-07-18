@@ -76,6 +76,7 @@ int read_implies_exec = 1;
 #else
 int read_implies_exec = 0;
 #endif
+int preprocess_only = 0;
 
 char *subdomainbase = NULL;
 char *match_string = NULL;
@@ -119,6 +120,7 @@ struct option long_options[] = {
 	{"Dump",		1, 0, 'D'},
 	{"optimize",		1, 0, 'O'},
 	{"Optimize",		1, 0, 'O'},
+	{"preprocess",		0, 0, 'p'},
 	{NULL, 0, 0, 0},
 };
 
@@ -158,9 +160,10 @@ static void display_usage(char *command)
 	       "-Q, --skip-kernel-load	Do everything except loading into kernel\n"
 	       "-V, --version		Display version info and exit\n"
 	       "-d, --debug 		Debug apparmor definitions\n"
+	       "-p, --preprocess	Dump preprocessed profile\n"
 	       "-D [n], --dump		Dump internal info for debugging\n"
 	       "-O [n], --Optimize	Control dfa optimizations\n"
-	       "-h [command], --help	Display this text or info about command\n"
+	       "-h [cmd], --help[=cmd]  Display this text or info about cmd\n"
 	       ,command);
 }
 
@@ -244,7 +247,7 @@ static int process_args(int argc, char *argv[])
 	int count = 0;
 	option = OPTION_ADD;
 
-	while ((c = getopt_long(argc, argv, "adf:h::rRVvI:b:BCD:NSm:qQn:XKTWkO:", long_options, &o)) != -1)
+	while ((c = getopt_long(argc, argv, "adf:h::rRVvI:b:BCD:NSm:qQn:XKTWkO:p", long_options, &o)) != -1)
 	{
 		switch (c) {
 		case 0:
@@ -434,6 +437,12 @@ static int process_args(int argc, char *argv[])
 			break;
 		case 'Q':
 			kernel_load = 0;
+			break;
+		case 'p':
+			count++;
+			kernel_load = 0;
+			skip_cache = 1;
+			preprocess_only = 1;
 			break;
 		default:
 			display_usage(progname);
@@ -801,6 +810,9 @@ int process_profile(int option, char *profilename)
 
 	retval = yyparse();
 	if (retval != 0)
+		goto out;
+
+	if (preprocess_only)
 		goto out;
 
 	if (names_only) {

@@ -5,7 +5,7 @@
 %define _unpackaged_files_terminate_build 0
 
 Name:		libapparmor1
-Version:	2.5
+Version:	2.5.1~rc1
 Release:	3.20070916
 License:	LGPL
 Group:		Development/Libraries/C and C++

@@ -34,5 +34,5 @@
   /var/log/samba/cores/smbd/** rw,
   /var/spool/samba/** rw,
 
-  @{HOMEDIRS}/** lrw,
+  @{HOMEDIRS}/** lrwk,
 }

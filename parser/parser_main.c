@@ -52,7 +52,7 @@
 #define PCRE "pattern=pcre"
 #define AADFA "pattern=aadfa"
 
-#define PRIVILEGED_OPS (write_cache || kernel_load)
+#define PRIVILEGED_OPS (kernel_load)
 #define UNPRIVILEGED_OPS (!(PRIVILEGED_OPS))
 
 const char *parser_title	= "Novell/SUSE AppArmor parser";

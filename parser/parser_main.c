@@ -79,6 +79,7 @@ int read_implies_exec = 1;
 int read_implies_exec = 0;
 #endif
 int preprocess_only = 0;
+struct timespec mru_tstamp;
 
 char *subdomainbase = NULL;
 char *match_string = NULL;
@@ -716,6 +717,7 @@ int process_binary(int option, char *profilename)
 
 void reset_parser(char *filename)
 {
+	memset(&mru_tstamp, 0, sizeof(mru_tstamp));
 	free_aliases();
 	free_symtabs();
 	free_policies();
@@ -723,13 +725,27 @@ void reset_parser(char *filename)
 	reset_include_stack(filename);
 }
 
+/* returns true if time is more recent than mru_tstamp */
+#define mru_t_cmp(a) \
+(((a).tv_sec == (mru_tstamp).tv_sec) ? \
+  (a).tv_nsec > (mru_tstamp).tv_nsec : (a).tv_sec > (mru_tstamp).tv_sec)
+
+void update_mru_tstamp(FILE *file)
+{
+	struct stat stat_file;
+	if (fstat(fileno(file), &stat_file))
+		return;
+	if (mru_t_cmp(stat_file.st_ctim))
+		mru_tstamp = stat_file.st_ctim;
+}
+
 int process_profile(int option, char *profilename)
 {
-	struct stat stat_text;
 	struct stat stat_bin;
 	int retval = 0;
 	char * cachename = NULL;
 	char * cachetemp = NULL;
+	char *basename = NULL;
 
 	/* per-profile states */
 	force_complain = opt_force_complain;
@@ -748,7 +764,7 @@ int process_profile(int option, char *profilename)
 	if (profilename && option != OPTION_REMOVE) {
 		/* make decisions about disabled or complain-mode profiles */
 		char *target = NULL;
-		char *basename = strrchr(profilename, '/');
+		basename = strrchr(profilename, '/');
 		if (basename)
 			basename++;
 		else
@@ -779,48 +795,59 @@ int process_profile(int option, char *profilename)
 		}
 		free(target);
 
-		if (!force_complain && !skip_cache) {
-			fstat(fileno(yyin), &stat_text);
-			if (asprintf(&cachename, "%s/%s/%s", basedir, "cache", basename)<0) {
+		/* TODO: add primary cache check.
+		 * If .file for cached binary exists get the list of profile
+		 * names and check their time stamps.
+		 */
+		/* TODO: primary cache miss/hit messages */
+	}
+
+	reset_parser(profilename);
+	if (yyin) {
+		yyrestart(yyin);
+		update_mru_tstamp(yyin);
+	}
+
+	retval = yyparse();
+	if (retval != 0)
+		goto out;
+
+	/* Do secondary test to see if cached binary profile is good,
+	 * instead of checking against a presupplied list of files
+	 * use the timestamps from the files that were parsed.
+	 * Parsing the profile is slower that doing primary cache check
+	 * its still faster than doing full compilation
+	 */
+	if ((profilename && option != OPTION_REMOVE) && !force_complain &&
+	    !skip_cache) {
+		if (asprintf(&cachename, "%s/%s/%s", basedir, "cache", basename)<0) {
+			perror("asprintf");
+			exit(1);
+		}
+		/* Load a binary cache if it exists and is newest */
+		if (!skip_read_cache &&
+		    stat(cachename, &stat_bin) == 0 &&
+		    stat_bin.st_size > 0 && (mru_t_cmp(stat_bin.st_mtim))) {
+			if (show_cache)
+				PERROR("Cache hit: %s\n", cachename);
+			retval = process_binary(option, cachename);
+			goto out;
+		}
+		if (write_cache) {
+			/* Otherwise, set up to save a cached copy */
+			if (asprintf(&cachetemp, "%s/%s/%s-XXXXXX", basedir, "cache", basename)<0) {
 				perror("asprintf");
 				exit(1);
 			}
-			/* Load a binary cache if it exists and is newest */
-			if (!skip_read_cache &&
-                            stat(cachename, &stat_bin) == 0 &&
-                            stat_bin.st_size > 0 &&
-                            (stat_bin.st_mtim.tv_sec > stat_text.st_ctim.tv_sec ||
-                             (stat_bin.st_mtim.tv_sec == stat_text.st_ctim.tv_sec &&
-                              stat_bin.st_mtim.tv_nsec >= stat_text.st_ctim.tv_nsec))) {
-				if (show_cache)
-					PERROR("Cache hit: %s\n", cachename);
-				retval = process_binary(option, cachename);
-				goto out;
-			}
-			if (write_cache) {
-				/* Otherwise, set up to save a cached copy */
-				if (asprintf(&cachetemp, "%s/%s/%s-XXXXXX", basedir, "cache", basename)<0) {
-					perror("asprintf");
-					exit(1);
-				}
-				if ( (cache_fd = mkstemp(cachetemp)) < 0) {
-					perror("mkstemp");
-					exit(1);
-				}
+			if ( (cache_fd = mkstemp(cachetemp)) < 0) {
+				perror("mkstemp");
+				exit(1);
 			}
 		}
 	}
 
 	if (show_cache)
 		PERROR("Cache miss: %s\n", profilename ? profilename : "stdin");
-
-	if (yyin)
-		yyrestart(yyin);
-	reset_parser(profilename);
-
-	retval = yyparse();
-	if (retval != 0)
-		goto out;
 
 	if (preprocess_only)
 		goto out;

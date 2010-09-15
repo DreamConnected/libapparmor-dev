@@ -844,7 +844,7 @@ int sd_serialize_codomain(int option, struct codomain *cod)
 		break;
 	}
 
-	if (kernel_load && fd < 0) {
+	if (fd < 0 && (kernel_load || option == OPTION_STDOUT)) {
 		PERROR(_("Unable to open %s - %s\n"), filename,
 		       strerror(errno));
 		error = -errno;

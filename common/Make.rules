@@ -48,7 +48,7 @@ BUILDDIR=$(shell if [ -d "${TESTBUILDDIR}" ] ; then \
 		    echo "/tmp/${NAME}"  ; \
 		  fi ;)
 endif
-RPMHOSTVENDOR=$(shell rpm --eval "%{_host_vendor}")
+RPMHOSTVENDOR=$(shell which rpm && rpm --eval "%{_host_vendor}")
 ifndef DISTRO
 DISTRO=$(shell if [ -f /etc/slackware-version ] ; then \
 		  echo slackware ; \

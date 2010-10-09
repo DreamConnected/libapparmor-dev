@@ -45,11 +45,14 @@ WARNINGS += $(shell for warning in ${EXTRA_WARNINGS} ; do \
 				echo "$${warning}"; \
 			fi ; \
 		done)
-CFLAGS	= -O2 -pipe
+ifndef CFLAGS
+CFLAGS	= -g -O2 -pipe
 
 ifdef DEBUG
 CFLAGS = -g
 endif
+endif #CFLAGS
+
 EXTRA_CFLAGS = ${CFLAGS} ${WARNINGS} -D_GNU_SOURCE
 
 #LEXLIB	:= -lfl
@@ -235,7 +238,7 @@ check: tests
 .SILENT: $(AAREOBJECTS)
 .PHONY: $(AAREOBJECTS)
 $(AAREOBJECTS):
-	make -C $(AAREDIR)
+	make -C $(AAREDIR) CFLAGS="$(CFLAGS)"
 
 .SILENT: $(PCREOBJECTS)
 .PHONY: $(PCREOBJECTS)

@@ -720,17 +720,19 @@ Node *simplify_tree_base(Node *t, int dir, bool &mod)
 		Node *i = t->child[!dir];
 		for (;dynamic_cast<AltNode *>(i); p = i, i = i->child[!dir]) {
 			if (t->child[dir]->eq(i->child[dir])) {
+				Node *old = t;
 				t->child[!dir]->dup();
-				t->release();
 				t = t->child[!dir];
+				old->release();
 				continue;
 			}
 		}
 		// last altnode of chain check other dir as well
 		if (t->child[dir]->eq(p->child[!dir])) {
+			Node *old = t;
 			t->child[!dir]->dup();
-			t->release();
 			t = t->child[!dir];
+			old->release();
 			continue;
 		}
 

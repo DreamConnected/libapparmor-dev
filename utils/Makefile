@@ -41,7 +41,8 @@ all: ${MANPAGES} ${HTMLMANPAGES}
 DESTDIR=/
 BINDIR=${DESTDIR}/usr/sbin
 CONFDIR=${DESTDIR}/etc/apparmor
-PERLDIR=${DESTDIR}/usr/lib/perl5/vendor_perl/Immunix
+VENDOR_PERL?=/usr/lib/perl5/vendor_perl
+PERLDIR=${DESTDIR}${VENDOR_PERL}/Immunix
 
 po/${NAME}.pot: ${TOOLS}
 	make -C po ${NAME}.pot NAME=${NAME} SOURCES="${TOOLS} SubDomain.pm Repository.pm Config.pm Reports.pm"

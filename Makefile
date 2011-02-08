@@ -22,6 +22,7 @@ REPO_URL=lp:apparmor/2.5
 
 RELEASE_DIR=apparmor-${VERSION}
 SNAPSHOT_DIR=apparmor-${VERSION}-${REPO_VERSION}
+__SETUP_DIR?=.
 
 .PHONY: tarball
 tarball: clean

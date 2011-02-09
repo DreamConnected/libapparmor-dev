@@ -13,10 +13,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../genprof:55
-msgid "SubDomain does not appear to be started.  Please enable SubDomain and try again."
-msgstr "Program SubDomain nie jest uruchomiony. Proszę go włączyć i spróbować ponownie."
-
 #: ../genprof:69
 msgid "Please enter the program to profile: "
 msgstr "Proszę podać program do profilowania:"
@@ -762,11 +758,6 @@ msgstr "Błąd krytyczny. nie znaleziono katalogu %s. Zakończono."
 #, perl-format
 msgid "Fatal Error.  Couldn't open %s.  Exiting"
 msgstr "Błąd krytyczny. Nie można otworzyć %s. Zakończono."
-
-#: ../Reports.pm:970 ../Reports.pm:983 ../Reports.pm:991
-#, perl-format
-msgid "DBI Execution failed: %s"
-msgstr "Wykonanie DBI zakończone niepowodzeniem: %s"
 
 #: ../Reports.pm:1592
 #, perl-format

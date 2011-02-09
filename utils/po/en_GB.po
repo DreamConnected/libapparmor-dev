@@ -17,10 +17,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8-bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: ag_genprof:46 genprof:55
-msgid "SubDomain does not appear to be started.  Please enable SubDomain and try again."
-msgstr ""
-
 #: ag_genprof:53
 msgid "Can't find subdomain profiles in"
 msgstr ""

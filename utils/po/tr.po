@@ -19,10 +19,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../genprof:55
-msgid "SubDomain does not appear to be started.  Please enable SubDomain and try again."
-msgstr "SubDomain başlatılmış gözükmüyor. Lütfen SubDomain'i başlatın ve yeniden deneyin."
-
 #: ../genprof:69
 msgid "Please enter the program to profile: "
 msgstr "Profil oluşturulacak programı girin:"
@@ -740,12 +736,6 @@ msgstr "Fatal Error.  No directory, %s, found.  Exiting."
 #, fuzzy, perl-format
 msgid "Fatal Error.  Couldn't open %s.  Exiting"
 msgstr "Dosyaya yazılamıyor."
-
-# clients/online_update_start.ycp:171
-#: ../Reports.pm:970 ../Reports.pm:983 ../Reports.pm:991
-#, fuzzy, perl-format
-msgid "DBI Execution failed: %s"
-msgstr "İşlem başarısız oldu:"
 
 #: ../Reports.pm:1592
 #, perl-format

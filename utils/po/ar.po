@@ -13,10 +13,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../genprof:55
-msgid "SubDomain does not appear to be started.  Please enable SubDomain and try again."
-msgstr "يبدو أنه لم يتم بدء تشغيل المجال الفرعي.  الرجاء تمكين المجال الفرعي، ثم إعادة المحاولة."
-
 #: ../genprof:69
 msgid "Please enter the program to profile: "
 msgstr "الرجاء إدخال برنامج ليتم إنشاء ملف تعريف له:"
@@ -636,11 +632,6 @@ msgstr "خطأ فادح.  لم يتم العثور على أي دليل %s.  ي�
 #, perl-format
 msgid "Fatal Error.  Couldn't open %s.  Exiting"
 msgstr "خطأ فادح.  تعذر فتح %s.  يتم الآن الإنهاء"
-
-#: ../Reports.pm:970 ../Reports.pm:983 ../Reports.pm:991
-#, perl-format
-msgid "DBI Execution failed: %s"
-msgstr "فشل تنفيذ DBI: %s"
 
 #: ../Reports.pm:1592
 #, perl-format

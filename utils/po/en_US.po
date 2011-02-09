@@ -11,10 +11,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ag_genprof:46 genprof:55
-msgid "SubDomain does not appear to be started.  Please enable SubDomain and try again."
-msgstr "SubDomain does not appear to be started.  Enable SubDomain and try again."
-
 #: ag_genprof:53
 #, fuzzy
 msgid "Can't find subdomain profiles in"
@@ -636,9 +632,6 @@ msgstr "Invalid relation"
 
 #~ msgid "Fatal Error.  Couldn't open %s.  Exiting"
 #~ msgstr "Fatal Error.  Couldn't open %s.  Exiting"
-
-#~ msgid "DBI Execution failed: %s"
-#~ msgstr "DBI Execution failed: %s"
 
 #~ msgid "Fatal Error.  getArchReport() couldn't open %s"
 #~ msgstr "Fatal Error.  getArchReport() couldn't open %s"

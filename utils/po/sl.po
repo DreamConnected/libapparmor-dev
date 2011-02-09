@@ -16,10 +16,6 @@ msgstr ""
 "X-Generator: KBabel 1.3.1\n"
 "Plural-Forms:  nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);\n"
 
-#: ../genprof:55
-msgid "SubDomain does not appear to be started.  Please enable SubDomain and try again."
-msgstr ""
-
 #: ../genprof:69
 #, fuzzy
 msgid "Please enter the program to profile: "
@@ -746,12 +742,6 @@ msgstr "Fatal Error.  No directory, %s, found.  Exiting."
 #, fuzzy, perl-format
 msgid "Fatal Error.  Couldn't open %s.  Exiting"
 msgstr "Datoteke ni mogoče odpreti za pisanje."
-
-# %s is either BOOTP or DHCP
-#: ../Reports.pm:970 ../Reports.pm:983 ../Reports.pm:991
-#, fuzzy, perl-format
-msgid "DBI Execution failed: %s"
-msgstr "Prilagoditev %s ni bila uspešna."
 
 #: ../Reports.pm:1592
 #, perl-format

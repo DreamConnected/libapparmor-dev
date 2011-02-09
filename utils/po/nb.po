@@ -22,10 +22,6 @@ msgstr ""
 "X-Generator: KBabel 1.11.4\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../genprof:55
-msgid "SubDomain does not appear to be started.  Please enable SubDomain and try again."
-msgstr "SubDomain ser ikke ut til å kjøre.  Aktiver SubDomain og forsøk igjen."
-
 #: ../genprof:69
 msgid "Please enter the program to profile: "
 msgstr "Angi programmet som skal tilordnes en profil: "
@@ -767,11 +763,6 @@ msgstr "Fatal feil.  Katalogen %s ikke funnet.  Avslutter."
 #, perl-format
 msgid "Fatal Error.  Couldn't open %s.  Exiting"
 msgstr "Fatal feil.  Kunne ikke åpne %s.  Avslutter"
-
-#: ../Reports.pm:970 ../Reports.pm:983 ../Reports.pm:991
-#, perl-format
-msgid "DBI Execution failed: %s"
-msgstr "DBI-kjøring mislyktes: %s"
 
 #: ../Reports.pm:1592
 #, perl-format

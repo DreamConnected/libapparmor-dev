@@ -967,7 +967,7 @@ sub getEssStats {
         };
 
         if ($@) {
-            ycp::y2error(sprintf(gettext("DBI Execution failed: %s"), $DBI::errstr));
+            ycp::y2error(sprintf(gettext("DBI Execution failed: %s."), $DBI::errstr));
             return;
         }
 
@@ -980,7 +980,7 @@ sub getEssStats {
         };
 
         if ($@) {
-            ycp::y2error(sprintf(gettext("DBI Execution failed: %s"), $DBI::errstr));
+            ycp::y2error(sprintf(gettext("DBI Execution failed: %s."), $DBI::errstr));
             return;
         }
 
@@ -988,7 +988,7 @@ sub getEssStats {
         eval { $ret = $dbh->selectall_arrayref("$query"); };
 
         if ($@) {
-            ycp::y2error(sprintf(gettext("DBI Execution failed: %s"), $DBI::errstr));
+            ycp::y2error(sprintf(gettext("DBI Execution failed: %s."), $DBI::errstr));
             return;
         }
 

@@ -20,10 +20,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.11.4\n"
 
-#: ../genprof:55
-msgid "SubDomain does not appear to be started.  Please enable SubDomain and try again."
-msgstr "Το SubDomain δεν φαίνεται να ξεκινά. Παρακαλώ ενεργοποιήστε το SubDomain και ξαναπροσπαθήστε."
-
 #: ../genprof:69
 msgid "Please enter the program to profile: "
 msgstr "Παρακαλώ εισάγετε το πρόγραμμα προς προφίλ: "
@@ -781,12 +777,6 @@ msgstr "Κρίσιμο Σφάλμα.  Δεν βρηκε ο κατάλογος %s
 #, perl-format
 msgid "Fatal Error.  Couldn't open %s.  Exiting"
 msgstr "Κρίσιμο Σφάλμα.  Αδυναμία ανοίγματος %s.  Έξοδος"
-
-# %s is either BOOTP or DHCP
-#: ../Reports.pm:970 ../Reports.pm:983 ../Reports.pm:991
-#, perl-format
-msgid "DBI Execution failed: %s"
-msgstr "Η εκτέλεση DBI απέτυχε: %s"
 
 #: ../Reports.pm:1592
 #, perl-format

@@ -13,10 +13,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../genprof:55
-msgid "SubDomain does not appear to be started.  Please enable SubDomain and try again."
-msgstr "Underdomänen verkar inte ha startats.  Aktivera underdomänen och försök igen."
-
 #: ../genprof:69
 msgid "Please enter the program to profile: "
 msgstr "Ange det program som ska ha en profil:"
@@ -636,11 +632,6 @@ msgstr "Allvarligt fel. Det gick inte att hitta katalogen %s. Avslutar."
 #, perl-format
 msgid "Fatal Error.  Couldn't open %s.  Exiting"
 msgstr "Allvarligt fel. Det gick inte att öppna %s. Avslutar."
-
-#: ../Reports.pm:970 ../Reports.pm:983 ../Reports.pm:991
-#, perl-format
-msgid "DBI Execution failed: %s"
-msgstr "DBI-körningen misslyckades: %s"
 
 #: ../Reports.pm:1592
 #, perl-format

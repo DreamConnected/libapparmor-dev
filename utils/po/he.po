@@ -15,10 +15,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: ../genprof:55
-msgid "SubDomain does not appear to be started.  Please enable SubDomain and try again."
-msgstr ""
-
 #: ../genprof:69
 msgid "Please enter the program to profile: "
 msgstr ""
@@ -712,11 +708,6 @@ msgstr "Fatal Error.  No directory, %s, found.  Exiting."
 #, perl-format
 msgid "Fatal Error.  Couldn't open %s.  Exiting"
 msgstr "Fatal Error.  Couldn't open %s.  Exiting"
-
-#: ../Reports.pm:970 ../Reports.pm:983 ../Reports.pm:991
-#, perl-format
-msgid "DBI Execution failed: %s"
-msgstr "DBI Execution failed: %s"
 
 #: ../Reports.pm:1592
 #, perl-format

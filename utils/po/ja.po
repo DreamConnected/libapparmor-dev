@@ -13,10 +13,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../genprof:55
-msgid "SubDomain does not appear to be started.  Please enable SubDomain and try again."
-msgstr "サブドメインが開始されていないようです。サブドメインを有効にして、もう一度実行してください。."
-
 #: ../genprof:69
 msgid "Please enter the program to profile: "
 msgstr "サポートキーを記入してください"
@@ -636,11 +632,6 @@ msgstr "致命的なエラー。ディレクトリ %s が見つかりません�
 #, perl-format
 msgid "Fatal Error.  Couldn't open %s.  Exiting"
 msgstr "致命的なエラー。%s を開けませんでした。終了しています。"
-
-#: ../Reports.pm:970 ../Reports.pm:983 ../Reports.pm:991
-#, perl-format
-msgid "DBI Execution failed: %s"
-msgstr "DBI実行に失敗しました: %s"
 
 #: ../Reports.pm:1592
 #, perl-format

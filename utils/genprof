@@ -52,7 +52,7 @@ GetOptions(
 
 my $sd_mountpoint = check_for_subdomain();
 unless ($sd_mountpoint) {
-    fatal_error(gettext("SubDomain does not appear to be started.  Please enable SubDomain and try again."));
+    fatal_error(gettext("SubDomain does not appear to be started. Please enable SubDomain and try again."));
 }
 
 # let's convert it to full path...

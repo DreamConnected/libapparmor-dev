@@ -17,10 +17,6 @@ msgstr ""
 "Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: KBabel 1.11.4\n"
 
-#: ../genprof:55
-msgid "SubDomain does not appear to be started.  Please enable SubDomain and try again."
-msgstr "Здається, SubDomain не запущено.  Будь ласка, увімкніть SubDomain і спробуйте знов."
-
 #: ../genprof:69
 msgid "Please enter the program to profile: "
 msgstr "Будь ласка, введіть програму для профілю: "
@@ -771,11 +767,6 @@ msgstr "Критична помилка. Не знайдено каталогу 
 #, perl-format
 msgid "Fatal Error.  Couldn't open %s.  Exiting"
 msgstr "Критична помилка.  Не вдалось відкрити %s.  Вихід."
-
-#: ../Reports.pm:970 ../Reports.pm:983 ../Reports.pm:991
-#, perl-format
-msgid "DBI Execution failed: %s"
-msgstr "Виконання DBI зазнало невдачі: %s"
 
 #: ../Reports.pm:1592
 #, perl-format

@@ -13,10 +13,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../genprof:55
-msgid "SubDomain does not appear to be started.  Please enable SubDomain and try again."
-msgstr "서브도메인이 시작되지 않았습니다. 서브도메인을 사용하도록 설정한 다음 다시 시도하십시오."
-
 #: ../genprof:69
 msgid "Please enter the program to profile: "
 msgstr "프로파일링할 프로그램을 입력하십시오."
@@ -636,11 +632,6 @@ msgstr "오류가 발생했습니다. %s 디렉토리가 없습니다. 종료합
 #, perl-format
 msgid "Fatal Error.  Couldn't open %s.  Exiting"
 msgstr "오류가 발생했습니다. %s을(를) 열 수 없습니다. 종료합니다."
-
-#: ../Reports.pm:970 ../Reports.pm:983 ../Reports.pm:991
-#, perl-format
-msgid "DBI Execution failed: %s"
-msgstr "DBI 실행 실패: %s"
 
 #: ../Reports.pm:1592
 #, perl-format

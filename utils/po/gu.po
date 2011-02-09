@@ -11,10 +11,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.10.2\n"
 
-#: ../genprof:55
-msgid "SubDomain does not appear to be started.  Please enable SubDomain and try again."
-msgstr " સબડોમેઈન શરૂ થયેલું જણાતું નથી. મહેરબાની કરીને સબડોમેઈન એનેબલ કરો અને ફરીથી પ્રયત્ન કરો."
-
 #: ../genprof:69
 msgid "Please enter the program to profile: "
 msgstr "પ્રોફાઈલ કરવા માટે પ્રોગ્રામનું નામ દાખલ કરો: "
@@ -759,11 +755,6 @@ msgstr "Fatal Error.  No directory, %s, found.  Exiting."
 #, perl-format
 msgid "Fatal Error.  Couldn't open %s.  Exiting"
 msgstr "Fatal Error.  Couldn't open %s.  Exiting"
-
-#: ../Reports.pm:970 ../Reports.pm:983 ../Reports.pm:991
-#, perl-format
-msgid "DBI Execution failed: %s"
-msgstr "DBI Execution failed: %s"
 
 #: ../Reports.pm:1592
 #, perl-format

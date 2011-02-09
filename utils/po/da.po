@@ -18,10 +18,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.11.4\n"
 
-#: ../genprof:55
-msgid "SubDomain does not appear to be started.  Please enable SubDomain and try again."
-msgstr "Subdomæne ser ikke ud til at være startet.  Aktivér venligst subdomænet og prøv igen."
-
 #: ../genprof:69
 msgid "Please enter the program to profile: "
 msgstr "Angiv venligst programmet der skal profileres: "
@@ -772,11 +768,6 @@ msgstr "Alvorlig fejl.  Ingen mappe, %s, fundet.  Lukker."
 #, perl-format
 msgid "Fatal Error.  Couldn't open %s.  Exiting"
 msgstr "Alvorlig fejl.  Kunne ikke åbne %s.  Lukker"
-
-#: ../Reports.pm:970 ../Reports.pm:983 ../Reports.pm:991
-#, perl-format
-msgid "DBI Execution failed: %s"
-msgstr "Afvikling af DBI fejlede: %s"
 
 #: ../Reports.pm:1592
 #, perl-format

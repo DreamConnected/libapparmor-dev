@@ -15,10 +15,6 @@ msgstr ""
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 "X-Generator: KBabel 1.11.4\n"
 
-#: ../genprof:55
-msgid "SubDomain does not appear to be started.  Please enable SubDomain and try again."
-msgstr "O SubDomínio não parece estar iniciado. Por favor active o SubDomínio e tente novamente."
-
 #: ../genprof:69
 msgid "Please enter the program to profile: "
 msgstr "Por favor introduza o programa a perfilar: "
@@ -770,11 +766,6 @@ msgstr "Erro fatal. Não foi encontrado o directório %s. A sair."
 #, perl-format
 msgid "Fatal Error.  Couldn't open %s.  Exiting"
 msgstr "Erro fatal. Não foi possível abrir %s. A sair"
-
-#: ../Reports.pm:970 ../Reports.pm:983 ../Reports.pm:991
-#, perl-format
-msgid "DBI Execution failed: %s"
-msgstr "Falhou a Execução DBI: %s"
 
 #: ../Reports.pm:1592
 #, perl-format

@@ -32,9 +32,9 @@
   /opt/kde3/share/applications/ r,
   /opt/kde3/share/applications/mimeinfo.cache r,
 
-  owner @{proc}/*/mounts r,
-  @{proc}/meminfo r,
-  @{proc}/sys/kernel/ngroups_max r,
+  owner @{PROC}/*/mounts r,
+  @{PROC}/meminfo r,
+  @{PROC}/sys/kernel/ngroups_max r,
 
   /usr/lib/**.so mr,
 

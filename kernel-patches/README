@@ -1,6 +1,9 @@
-Rather than keep around a set of kernel patches that continually go
-stale, this release of AppArmor contains the user space elements only.
-Links to current patch sets will be posted to the AppArmor wiki at:
+While we've tried to avoid keeping around a set of kernel patches
+that continually go stale, this release of AppArmor does contain the
+AppArmor backwards compatibility patches to maintain full compatibility
+with prior versions of the kernel portion of AppArmor.
+
+Links to current patch sets will also be posted to the AppArmor wiki at:
 
   https://apparmor.wiki.kernel.org/
 

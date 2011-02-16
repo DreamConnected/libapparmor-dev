@@ -46,7 +46,7 @@ export_dir:
 	echo "$(REPO_URL) $(REPO_VERSION)" > $(__EXPORT_DIR)/.stamp_rev
 
 clean:
-	-rm -rf ./${RELEASE_DIR} ./${RELEASE_DIR}~*
+	-rm -rf ./${RELEASE_DIR} ./apparmor-${VERSION}~*
 
 setup:
 	cd $(__SETUP_DIR)/libraries/libapparmor && ./autogen.sh

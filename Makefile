@@ -21,7 +21,7 @@ REPO_URL?=lp:apparmor/2.5
 #REPO_URL="bzr+ssh://bazaar.launchpad.net/~sbeattie/apparmor/apparmor-2.5.1-nominations/"
 
 RELEASE_DIR=apparmor-${VERSION}
-SNAPSHOT_DIR=apparmor-${VERSION}-${REPO_VERSION}
+SNAPSHOT_DIR=apparmor-${VERSION}~${REPO_VERSION}
 __SETUP_DIR?=.
 
 .PHONY: tarball
@@ -46,7 +46,11 @@ export_dir:
 	echo "$(REPO_URL) $(REPO_VERSION)" > $(__EXPORT_DIR)/.stamp_rev
 
 clean:
-	-rm -rf ${RELEASE_DIR}
+	-rm -rf ./${RELEASE_DIR} ./${RELEASE_DIR}~*
 
 setup:
 	cd $(__SETUP_DIR)/libraries/libapparmor && ./autogen.sh
+
+.PHONY: tag
+tag:
+	bzr tag apparmor_${VERSION}

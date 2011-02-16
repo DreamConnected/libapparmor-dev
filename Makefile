@@ -17,7 +17,7 @@ DIRS=parser \
      common \
      tests
 
-REPO_URL=lp:apparmor/2.5
+REPO_URL?=lp:apparmor/2.5
 #REPO_URL="bzr+ssh://bazaar.launchpad.net/~sbeattie/apparmor/apparmor-2.5.1-nominations/"
 
 RELEASE_DIR=apparmor-${VERSION}

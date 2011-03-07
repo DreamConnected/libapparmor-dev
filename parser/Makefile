@@ -309,6 +309,7 @@ clean: _clean
 	-rm -rf techdoc.{aux,log,pdf,toc,txt} techdoc/
 	make -s -C $(PCREDIR) clean
 	make -s -C $(AAREDIR) clean
+	make -s -C tst clean
 	make -s -C po clean
 
 .SILENT: dist_clean

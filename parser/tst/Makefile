@@ -39,4 +39,4 @@ $(PARSER):
 	make -C $(PARSER_DIR) $(PARSER_BIN)
 
 clean:
-	rm -f simple_tests/generated_x/*
+	rm -f simple_tests/generated_x/*.sd

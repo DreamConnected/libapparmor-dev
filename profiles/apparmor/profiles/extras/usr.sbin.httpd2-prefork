@@ -132,7 +132,7 @@
   ^HANDLING_UNTRUSTED_INPUT {
     #include <abstractions/apache2-common>
     /var/log/apache2/*     w,
-    /.htaccess             r, # WARNING: .htaccess directly in / will be disallowed in future versions 
+    audit /.htaccess       r, # WARNING: .htaccess directly in / will be disallowed in future versions 
                               # (.htaccess in subdirectories is and will stay allowed by abstractions/apache2-common)
   }
 

@@ -12,7 +12,7 @@ DIRS=parser \
      changehat/pam_apparmor \
      tests
 
-REPO_URL?=lp:apparmor
+REPO_URL?=lp:apparmor/2.7
 # alternate possibilities to export from
 #REPO_URL=.
 #REPO_URL="bzr+ssh://bazaar.launchpad.net/~sbeattie/+junk/apparmor-dev/"

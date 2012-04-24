@@ -4797,13 +4797,9 @@ sub sub_mode_to_str($) {
     $str .= "a" if ($mode & $AA_MAY_APPEND);
     $str .= "l" if ($mode & $AA_MAY_LINK);
     $str .= "k" if ($mode & $AA_MAY_LOCK);
-    if ($mode & $AA_EXEC_UNCONFINED) {
-	if ($mode & $AA_EXEC_UNSAFE) {
-	    $str .= "u";
-	} else {
-	    $str .= "U";
-	}
-    }
+
+    # modes P and C *must* come before I and U; otherwise syntactically
+    # invalid profiles result
     if ($mode & ($AA_EXEC_PROFILE | $AA_EXEC_NT)) {
 	if ($mode & $AA_EXEC_UNSAFE) {
 	    $str .= "p";
@@ -4818,7 +4814,18 @@ sub sub_mode_to_str($) {
 	    $str .= "C";
 	}
     }
+
+    # modes P and C *must* come before I and U; otherwise syntactically
+    # invalid profiles result
+    if ($mode & $AA_EXEC_UNCONFINED) {
+	if ($mode & $AA_EXEC_UNSAFE) {
+	    $str .= "u";
+	} else {
+	    $str .= "U";
+	}
+    }
     $str .= "i" if ($mode & $AA_EXEC_INHERIT);
+
     $str .= "x" if ($mode & $AA_MAY_EXEC);
 
     return $str;

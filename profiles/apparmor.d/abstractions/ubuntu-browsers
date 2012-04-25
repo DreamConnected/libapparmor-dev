@@ -28,6 +28,10 @@
   # and abrowser)
   /usr/lib/firefox-*/firefox.sh PUx,
 
+  # Iceweasel
+  /usr/bin/iceweasel PUx,
+  /usr/lib/iceweasel/iceweasel PUx,
+
   # some unpackaged, but popular browsers
   /usr/lib/icecat-*/icecat PUx,
   /usr/bin/opera PUx,

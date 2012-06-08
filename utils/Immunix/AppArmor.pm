@@ -4939,7 +4939,8 @@ sub isSkippableDir($) {
 
     return ($path eq "disable"
             || $path eq "cache"
-            || $path eq "force-complain");
+            || $path eq "force-complain"
+	    || $path eq "lxc");
 }
 
 sub checkIncludeSyntax($) {

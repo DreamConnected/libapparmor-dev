@@ -27,6 +27,11 @@
 DISTRIBUTION=AppArmor
 VERSION=$(shell cat common/Version)
 
+AWK:=$(shell which awk)
+ifndef AWK
+$(error awk utility required for build but not available)
+endif
+
 # OVERRIDABLE variables
 # Set these variables before including Make.rules to change its behavior
 #   SPECFILE - for packages that have a non-standard specfile name

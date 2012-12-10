@@ -57,6 +57,8 @@ extern "C" void aare_delete_ruleset(aare_ruleset_t *rules)
 		if (rules->root)
 			rules->root->release();
 		free(rules);
+
+		aare_reset_matchflags();
 	}
 }
 

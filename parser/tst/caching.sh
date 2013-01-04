@@ -22,15 +22,17 @@ cp caching.profile $basedir/$profile
 
 # Detect and slow down cache test when filesystem can't represent nanosecond delays.
 timeout=0.1
-touch $basedir/test1
-sleep $timeout
-touch $basedir/test2
-TIMES=$(stat $basedir/test1 $basedir/test2 -c %z | cut -d" " -f2 | cut -d. -f2 | sort -u | wc -l)
-if [ $TIMES -ne 2 ]; then
+_count=10
+for ((i = 0; i < ${_count} ; i++)) ; do
+	touch $basedir/test${i}
+	sleep $timeout
+done
+TIMES=$(stat $basedir/test* -c %z | cut -d" " -f2 | cut -d: -f3 | sort -u | wc -l)
+if [ $TIMES -ne ${_count} ]; then
     echo "WARNING: $basedir lacks nanosecond timestamp resolution, falling back to slower test"
     timeout=1
 fi
-rm -f $basedir/test1 $basedir/test2
+rm -f $basedir/test*
 
 echo -n "Profiles are not cached by default: "
 ../apparmor_parser $ARGS -q -r $basedir/$profile
@@ -122,7 +124,7 @@ echo -n "monkey" > $basedir/cache/.features
 echo -n "monkey" > $basedir/cache/$profile
 echo -n "monkey" > $basedir/cache/monkey
 echo -n "Cache purge remove profiles unconditionally: "
-../apparmor_parser $ARGS -v --purge-cache -r $basedir/$profile || { echo "Cache clear setup FAIL"; exit 1; }
+../apparmor_parser $ARGS -v --purge-cache -r $basedir/$profile || { echo "Cache purge setup FAIL"; exit 1; }
 [ -f $basedir/cache/.features ] && { echo "FAIL"; exit 1; }
 [ -f $basedir/cache/$profile ] && { echo "FAIL"; exit 1; }
 [ -f $basedir/cache/monkey ] && { echo "FAIL"; exit 1; }

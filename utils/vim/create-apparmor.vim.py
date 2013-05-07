@@ -10,7 +10,6 @@
 #    Christian Boltz <apparmor@cboltz.de>
 
 from __future__ import with_statement
-import os
 import re
 import subprocess
 import sys
@@ -30,9 +29,9 @@ def cmd(command, input = None, stderr = subprocess.STDOUT, stdout = subprocess.P
     return a textual error if it failed.'''
 
     try:
-        sp = subprocess.Popen(command, stdin=stdin, stdout=stdout, stderr=stderr, close_fds=True)
-    except OSError, e:
-        return [127, str(e)]
+        sp = subprocess.Popen(command, stdin=stdin, stdout=stdout, stderr=stderr, close_fds=True, universal_newlines=True)
+    except OSError as ex:
+        return [127, str(ex)]
 
     out, outerr = sp.communicate(input)
 
@@ -47,7 +46,7 @@ def cmd(command, input = None, stderr = subprocess.STDOUT, stdout = subprocess.P
 # get capabilities list
 (rc, output) = cmd(['make', '-s', '--no-print-directory', 'list_capabilities'])
 if rc != 0:
-    print >>sys.stderr, ("make list_capabilities failed: " + output)
+    sys.stderr.write("make list_capabilities failed: " + output)
     exit(rc)
 
 capabilities = re.sub('CAP_', '', output.strip()).lower().split(" ")
@@ -59,7 +58,7 @@ for cap in capabilities:
 # get network protos list
 (rc, output) = cmd(['make', '-s', '--no-print-directory', 'list_af_names'])
 if rc != 0:
-    print >>sys.stderr, ("make list_af_names failed: " + output)
+    sys.stderr.write("make list_af_names failed: " + output)
     exit(rc)
 
 af_names = []
@@ -105,7 +104,7 @@ aa_regex_map = {
 }
 
 def my_repl(matchobj):
-    #print matchobj.group(1)
+    matchobj.group(1)
     if matchobj.group(1) in aa_regex_map:
         return aa_regex_map[matchobj.group(1)]
 
@@ -113,7 +112,7 @@ def my_repl(matchobj):
 
 regex = "@@(" + "|".join(aa_regex_map) + ")@@"
 
-with file("apparmor.vim.in") as template:
+with open("apparmor.vim.in") as template:
     for line in template:
         line = re.sub(regex, my_repl, line.rstrip())
-        print line
+        sys.stdout.write('%s\n' % line)

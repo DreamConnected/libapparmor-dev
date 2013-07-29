@@ -1087,8 +1087,7 @@ int process_profile(int option, char *profilename)
 	if ((profilename && option != OPTION_REMOVE) && !force_complain &&
 	    !skip_cache) {
 		if (cacheloc) {
-			cachename = strdup(cacheloc);
-			if (!cachename) {
+			if (asprintf(&cachename, "%s/%s", cacheloc, basename)<0) {
 				PERROR(_("Memory allocation error."));
 				exit(1);
 			}
@@ -1107,7 +1106,7 @@ int process_profile(int option, char *profilename)
 		}
 		if (write_cache) {
 			/* Otherwise, set up to save a cached copy */
-			if (asprintf(&cachetemp, "%s/%s/%s-XXXXXX", basedir, "cache", basename)<0) {
+			if (asprintf(&cachetemp, "%s-XXXXXX", cachename)<0) {
 				perror("asprintf");
 				exit(1);
 			}
@@ -1165,8 +1164,11 @@ out:
 		}
 
 		if (useable_cache) {
-			rename(cachetemp, cachename);
-			if (show_cache)
+			if (rename(cachetemp, cachename) < 0) {
+				pwarn("Warning failed to write cache: %s\n", cachename);
+				unlink(cachetemp);
+			}
+			else if (show_cache)
 				PERROR("Wrote cache: %s\n", cachename);
 		}
 		else {

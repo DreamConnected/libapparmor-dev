@@ -12,7 +12,8 @@ fi
 
 # fake base directory
 basedir=$(mktemp -d -t aa-cache-XXXXXX)
-trap "rm -rf $basedir" EXIT
+altcachedir=$(mktemp -d -t aa-alt-cache-XXXXXXXX)
+trap "rm -rf $basedir $altcachedir" EXIT
 mkdir -p $basedir/cache
 
 ARGS="--base $basedir --skip-kernel-load"
@@ -158,3 +159,13 @@ echo "ok"
 echo -n "Cache reading is skipped when parser in \$PATH is newer: "
 (PATH=$basedir/parser/ /bin/sh -c "apparmor_parser $ARGS -v -r $basedir/$profile") | grep -q 'Replacement succeeded for' || { echo "FAIL"; exit 1; }
 echo "ok"
+
+echo -n "Profiles are cached in alternate location when requested: "
+../apparmor_parser $ARGS -q --write-cache --cache-loc $altcachedir -r $basedir/$profile
+[ ! -f $altcachedir/$profile ] && echo "FAIL ($altcachedir/$profile does not exist)" && exit 1
+echo "ok"
+
+echo -n "Cache is loaded from alt location when it exists and features match: "
+../apparmor_parser $ARGS -v -r $basedir/$profile --cache-loc $altcachedir | grep -q 'Cached reload succeeded' || { echo "FAIL"; exit 1; }
+echo "ok"
+

@@ -19,7 +19,7 @@ INCLUDES = $(all_includes)
 #    - set AA_LIB_AGE to 0.
 #
 AA_LIB_CURRENT = 1
-AA_LIB_REVISION = 3
+AA_LIB_REVISION = 4
 AA_LIB_AGE = 0
 
 SUFFIXES = .pc.in .pc

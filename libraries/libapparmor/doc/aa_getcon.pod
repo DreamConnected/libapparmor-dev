@@ -103,7 +103,7 @@ The confinement data is to large to fit in the supplied buffer.
 =head1 BUGS
 
 None known. If you find any, please report them at
-L<http://https://bugs.launchpad.net/apparmor/+filebug>.
+L<https://bugs.launchpad.net/apparmor/+filebug>.
 
 =head1 SEE ALSO
 

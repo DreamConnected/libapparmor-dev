@@ -1086,12 +1086,7 @@ int process_profile(int option, char *profilename)
 	 */
 	if ((profilename && option != OPTION_REMOVE) && !force_complain &&
 	    !skip_cache) {
-		if (cacheloc) {
-			if (asprintf(&cachename, "%s/%s", cacheloc, basename)<0) {
-				PERROR(_("Memory allocation error."));
-				exit(1);
-			}
-		} else if (asprintf(&cachename, "%s/%s/%s", basedir, "cache", basename)<0) {
+		if (asprintf(&cachename, "%s/%s", cacheloc, basename)<0) {
 			PERROR(_("Memory allocation error."));
 			exit(1);
 		}
@@ -1260,18 +1255,8 @@ static int clear_cache_cb(const char *path, __unused struct dirent *dirent,
 
 static int clear_cache_files(const char *path)
 {
-	char *cache;
 	int error;
-
-	if (asprintf(&cache, "%s/cache", path) == -1) {
-		perror("asprintf");
-		exit(1);
-	}
-
-	error = dir_for_each(cache, clear_cache_cb);
-
-	free(cache);
-
+	error = dir_for_each(path, clear_cache_cb);
 	return error;
 }
 
@@ -1300,7 +1285,6 @@ static void setup_flags(void)
 {
 	char *cache_features_path = NULL;
 	char *cache_flags = NULL;
-	int rc;
 
 	/* Get the match string to determine type of regex support needed */
 	get_match_string();
@@ -1327,12 +1311,8 @@ static void setup_flags(void)
          *  - If cache/.features exists, and does not match flags_string,
          *    force cache reading/writing off.
          */
-	if (cacheloc)
-		rc = asprintf(&cache_features_path, "%s/.features", cacheloc);
-	else
-		rc = asprintf(&cache_features_path, "%s/cache/.features", basedir);
-	if (rc == -1) {
-		perror("asprintf");
+	if (asprintf(&cache_features_path, "%s/.features", cacheloc) == -1) {
+		PERROR(_("Memory allocation error."));
 		exit(1);
 	}
 
@@ -1340,7 +1320,7 @@ static void setup_flags(void)
 	if (cache_flags) {
 		if (strcmp(flags_string, cache_flags) != 0) {
 			if (write_cache && cond_clear_cache) {
-				if (clear_cache_files(basedir) ||
+				if (clear_cache_files(cacheloc) ||
 				    create_cache(cache_features_path,
 						 flags_string)) {
 					skip_read_cache = 1;
@@ -1385,8 +1365,16 @@ int main(int argc, char *argv[])
 		return retval;
 	}
 
+	/* create the cacheloc once and use it everywhere */
+	if (!cacheloc) {
+		if (asprintf(&cacheloc, "%s/cache", basedir) == -1) {
+			PERROR(_("Memory allocation error."));
+			exit(1);
+		}
+	}
+
 	if (force_clear_cache) {
-		clear_cache_files(basedir);
+		clear_cache_files(cacheloc);
 		exit(0);
 	}
 

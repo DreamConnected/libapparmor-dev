@@ -1260,20 +1260,39 @@ static int clear_cache_files(const char *path)
 	return error;
 }
 
-static int create_cache(const char *path, const char *features)
+static int create_cache(const char *cachedir, const char *path,
+			const char *features)
 {
+	struct stat stat_file;
 	FILE * f = NULL;
+
+	if (cond_clear_cache && clear_cache_files(cacheloc) != 0)
+		goto error;
 
 	f = fopen(path, "w");
 	if (f) {
 		if (fwrite(features, strlen(features), 1, f) != 1 )
-			goto fail;
+			goto error;
 
 		fclose(f);
+
+
+		return 0;
 	}
 
-	return 0;
-fail:
+error:
+	/* does the dir exist? */
+	if (stat(cachedir, &stat_file) == -1) {
+		if (show_cache)
+			PERROR(_("Can't create cache directory: %s\n"), cachedir);
+	} else if (!S_ISDIR(stat_file.st_mode)) {
+		if (show_cache)
+			PERROR(_("File in cache directory location: %s\n"), cachedir);
+	} else {
+		if (show_cache)
+			PERROR(_("Can't update cache directory: %s\n"), cachedir);
+	}
+
 	if (show_cache)
 		PERROR("Cache write disabled: cannot create %s\n", path);
 	write_cache = 0;
@@ -1319,12 +1338,10 @@ static void setup_flags(void)
 	get_flags_string(&cache_flags, cache_features_path);
 	if (cache_flags) {
 		if (strcmp(flags_string, cache_flags) != 0) {
-			if (write_cache && cond_clear_cache) {
-				if (clear_cache_files(cacheloc) ||
-				    create_cache(cache_features_path,
-						 flags_string)) {
+			if (write_cache) {
+				if (create_cache(cacheloc, cache_features_path,
+						 flags_string))
 					skip_read_cache = 1;
-				}
 			} else {
 				if (show_cache)
 					PERROR("Cache read/write disabled: %s does not match %s\n", FLAGS_FILE, cache_features_path);
@@ -1335,7 +1352,7 @@ static void setup_flags(void)
 		free(cache_flags);
 		cache_flags = NULL;
 	} else if (write_cache) {
-		create_cache(cache_features_path, flags_string);
+		create_cache(cacheloc, cache_features_path, flags_string);
 	}
 
 	free(cache_features_path);

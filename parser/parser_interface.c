@@ -361,7 +361,7 @@ inline int sd_write_blob(sd_serialize *p, void *b, int buf_size, char *name)
 	return 1;
 }
 
-#define align64(X) (((size_t) (X) + (size_t) 7) & ~((size_t) 7))
+#define align64(X) (((X) + (typeof(X)) 7) & ~((typeof(X)) 7))
 inline int sd_write_aligned_blob(sd_serialize *p, void *b, int buf_size,
 				 char *name)
 {
@@ -369,6 +369,7 @@ inline int sd_write_aligned_blob(sd_serialize *p, void *b, int buf_size,
 	u32 tmp;
 	if (!sd_write_name(p, name))
 		return 0;
+
 	pad = align64((p->pos + 5) - p->buffer) - ((p->pos + 5) - p->buffer);
 	if (!sd_prepare_write(p, SD_BLOB, 4 + buf_size + pad))
 		return 0;

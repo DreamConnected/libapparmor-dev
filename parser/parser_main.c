@@ -160,7 +160,7 @@ static void display_usage(char *command)
 	       "-W, --write-cache	Save cached profile (force with -T)\n"
 	       "    --skip-bad-cache	Don't clear cache if out of sync\n"
 	       "    --purge-cache	Clear cache regardless of its state\n"
-	       "    --create-cache-dire	Create the cache dir if missing\n"
+	       "    --create-cache-dir	Create the cache dir if missing\n"
 	       "-L, --cache-loc n	Set the location of the profile cache\n"
 	       "-q, --quiet		Don't emit warnings\n"
 	       "-v, --verbose		Show profile names as they load\n"

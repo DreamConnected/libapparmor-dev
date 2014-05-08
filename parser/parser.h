@@ -265,6 +265,7 @@ extern int regex_type;
 extern int perms_create;
 extern int net_af_max_override;
 extern int kernel_load;
+extern int kernel_supports_setload;
 extern int kernel_supports_network;
 extern int kernel_supports_mount;
 extern int flag_changehat_version;

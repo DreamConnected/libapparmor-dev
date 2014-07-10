@@ -161,14 +161,6 @@ immunix_enter_hat (request_rec *r)
 	}
     }
 
-    ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "calling change_hat [uri] %s", r->uri);
-    sd_ret = aa_change_hat(r->uri, magic_token);
-    if (sd_ret < 0) {
-    	aa_change_hat(NULL, magic_token);
-    } else {
-	    return OK;
-    }
-
     if (scfg) {
     	ap_log_rerror(APLOG_MARK, APLOG_TRACE1, 0, r, "Dumping scfg info: "
     	          "scfg='0x%lx' scfg->hat_name='%s'",
@@ -184,6 +176,14 @@ immunix_enter_hat (request_rec *r)
 	} else {
 	    return OK;
 	}
+    }
+
+    ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "calling change_hat [uri] %s", r->uri);
+    sd_ret = aa_change_hat(r->uri, magic_token);
+    if (sd_ret < 0) {
+    	aa_change_hat(NULL, magic_token);
+    } else {
+	    return OK;
     }
 
     ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "calling change_hat DEFAULT_URI");

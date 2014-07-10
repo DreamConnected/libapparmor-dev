@@ -72,11 +72,10 @@ behavior described above.
 
 AADefaultHatName allows you to specify a default hat to be used for
 virtual hosts and other Apache server directives, so that you can have
-different defaults for different virtual hosts. This can be overridden by
-the AAHatName directive and is checked for only if there isn't a matching
-AAHatName or hat named by the URI. If the AADefaultHatName hat does not
-exist, it falls back to the DEFAULT_URI hat if it exists (as described
-above).
+different defaults for different virtual hosts. This can be overridden
+by the AAHatName directive and is checked for only if there isn't
+a matching AAHatName. If the AADefaultHatName hat does not exist,
+then it falls back to the behavior described above.
 
 =back
 
@@ -96,10 +95,10 @@ will:
 1. try to aa_change_hat(2) into a matching AAHatName hat if it exists and
 applies, otherwise it will
 
-2. try to aa_change_hat(2) into the URI itself, otherwise it will
-
-3. try to aa_change_hat(2) into an AADefaultHatName hat if it has been defined
+2. try to aa_change_hat(2) into an AADefaultHatName hat if it has been defined
 for the server/vhost, otherwise it will
+
+3. try to aa_change_hat(2) into the URI itself, otherwise it will
 
 4. try to aa_change_hat(2) into the DEFAULT_URI hat, if it exists, otherwise it
 will

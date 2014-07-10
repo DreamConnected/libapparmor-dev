@@ -355,7 +355,15 @@ register_hooks (apr_pool_t *p)
 {
     ap_hook_post_config (immunix_init, NULL, NULL, APR_HOOK_MIDDLE);
     ap_hook_child_init (immunix_child_init, NULL, NULL, APR_HOOK_MIDDLE);
+
+#if AP_SERVER_MAJORVERSION_NUMBER == 2 && AP_SERVER_MINORVERSION_NUMBER < 3
+    /* Compatibility with apache 2.2 */
     ap_hook_access_checker(immunix_enter_hat, NULL, NULL, APR_HOOK_FIRST);
+#else
+    /* apache 2.4 mod_authz hook */
+    ap_hook_check_access_ex(immunix_enter_hat, NULL, NULL, APR_HOOK_FIRST, AP_AUTH_INTERNAL_PER_CONF);
+#endif
+
     /* ap_hook_post_read_request(immunix_enter_hat, NULL, NULL, APR_HOOK_FIRST); */
     ap_hook_log_transaction(immunix_exit_hat, NULL, NULL, APR_HOOK_LAST);
 }

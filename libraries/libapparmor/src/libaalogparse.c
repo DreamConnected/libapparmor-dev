@@ -77,6 +77,10 @@ void free_record(aa_log_record *record)
 			free(record->net_protocol);
 		if (record->net_sock_type != NULL)
 			free(record->net_sock_type);
+		if (record->net_local_addr != NULL)
+			free(record->net_local_addr);
+		if (record->net_foreign_addr != NULL)
+			free(record->net_foreign_addr);
 
 		free(record);
 	}

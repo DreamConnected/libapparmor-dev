@@ -888,7 +888,7 @@ static char *next_profile_buffer(char *buffer, int size)
 	return NULL;
 }
 
-static int write_buffer(int fd, char *buffer, int size, bool set)
+static int write_buffer(int fd, char *buffer, int size, int set)
 {
 	const char *err_str = set ? "profile set" : "profile";
 	int wsize = write(fd, buffer, size);
@@ -934,7 +934,7 @@ int sd_load_buffer(int option, char *buffer, int size)
 	}
 
 	if (kernel_supports_setload) {
-		error = write_buffer(fd, buffer, size, true);
+		error = write_buffer(fd, buffer, size, TRUE);
 	} else {
 		char *b, *next;
 
@@ -946,7 +946,7 @@ int sd_load_buffer(int option, char *buffer, int size)
 				bsize = next - b;
 			else
 				bsize = size;
-			error = write_buffer(fd, b, bsize, false);
+			error = write_buffer(fd, b, bsize, FALSE);
 			if (error)
 				break;
 		}

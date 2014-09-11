@@ -21,6 +21,11 @@
   /etc/passwd             r,
   /etc/protocols          r,
 
+  # When using libnss-extrausers, the passwd and group files are merged from
+  # an alternate path
+  /var/lib/extrausers/group  r,
+  /var/lib/extrausers/passwd r,
+
   /etc/resolv.conf        r,
   # on systems using resolvconf, /etc/resolv.conf is a symlink to
   # /{,var/}run/resolvconf/resolv.conf and a file sometimes referenced in

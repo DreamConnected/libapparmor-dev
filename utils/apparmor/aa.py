@@ -2904,7 +2904,7 @@ def parse_profile_data(data, file, do_include):
 
             path = strip_quotes(matches[4].strip())
             mode = matches[5]
-            nt_name = matches[6]
+            nt_name = matches[7]
             if nt_name:
                 nt_name = nt_name.strip()
 
@@ -4174,7 +4174,7 @@ def serialize_profile_from_old_profile(profile_data, name, options):
 
                 path = strip_quotes(matches[4].strip())
                 mode = matches[5]
-                nt_name = matches[6]
+                nt_name = matches[7]
                 if nt_name:
                     nt_name = nt_name.strip()
 

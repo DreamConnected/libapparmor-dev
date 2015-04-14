@@ -1,6 +1,6 @@
 # ----------------------------------------------------------------------
 #    Copyright (C) 2013 Kshitij Gupta <kgupta8592@gmail.com>
-#    Copyright (C) 2014 Christian Boltz <apparmor@cboltz.de>
+#    Copyright (C) 2014-2015 Christian Boltz <apparmor@cboltz.de>
 #
 #    This program is free software; you can redistribute it and/or
 #    modify it under the terms of version 2 of the GNU General Public
@@ -31,7 +31,7 @@ import apparmor.severity
 
 from copy import deepcopy
 
-from apparmor.common import (AppArmorException, open_file_read, valid_path, hasher,
+from apparmor.common import (AppArmorException, AppArmorBug, open_file_read, valid_path, hasher,
                              open_file_write, convert_regexp, DebugLogger)
 
 import apparmor.ui as aaui
@@ -639,49 +639,52 @@ def change_profile_flags(filename, program, flag, set_flag):
 
 def set_profile_flags(prof_filename, program, newflags):
     """Reads the old profile file and updates the flags accordingly"""
-    regex_bin_flag = re.compile('^(\s*)("?(/.+?)"??|(profile\s+"?(.+?)"??))\s+((flags=)?\((.*)\)\s+)?\{\s*(#.*)?$')
-    # TODO: use RE_PROFILE_START (only difference: doesn't have a match group for the leading space)
-    # TODO: also use the global regex for matching the hat
     # TODO: count the number of matching lines (separated by profile and hat?) and return it
     #       so that code calling this function can make sure to only report success if there was a match
-    regex_hat_flag = re.compile('^([a-z]*)\s+([A-Z]*)\s*(#.*)?$')
-    if os.path.isfile(prof_filename):
-        with open_file_read(prof_filename) as f_in:
-            temp_file = tempfile.NamedTemporaryFile('w', prefix=prof_filename, suffix='~', delete=False, dir=profile_dir)
-            shutil.copymode(prof_filename, temp_file.name)
-            with open_file_write(temp_file.name) as f_out:
-                for line in f_in:
-                    comment = ''
-                    if '#' in line:
-                        comment = '#' + line.split('#', 1)[1].rstrip()
-                    match = regex_bin_flag.search(line)
-                    if not line.strip() or line.strip().startswith('#'):
-                        pass
-                    elif match:
-                        matches = match.groups()
-                        space = matches[0]
-                        profile = matches[1]  # profile name including quotes and "profile" keyword
-                        if matches[2]:
-                            binary = matches[2]
-                        else:
-                            binary = matches[4]
-                        flag = matches[6] or 'flags='
-                        flags = matches[7]
-                        if binary == program or program is None:
-                            if newflags:
-                                line = '%s%s %s(%s) {%s\n' % (space, profile, flag, newflags, comment)
-                            else:
-                                line = '%s%s {%s\n' % (space, profile, comment)
-                    else:
-                        match = regex_hat_flag.search(line)
-                        if match:
-                            hat, flags = match.groups()[:2]
-                            if newflags:
-                                line = '%s flags=(%s) {%s\n' % (hat, newflags, comment)
-                            else:
-                                line = '%s {%s\n' % (hat, comment)
-                    f_out.write(line)
-        os.rename(temp_file.name, prof_filename)
+    # TODO: use RE_PROFILE_HAT_DEF for matching the hat (regex_hat_flag is totally broken!)
+    #regex_hat_flag = re.compile('^([a-z]*)\s+([A-Z]*)\s*(#.*)?$')
+
+    found = False
+
+    if newflags and newflags.strip() == '':
+        raise AppArmorBug('New flags for %s contain only whitespace' % prof_filename)
+
+    with open_file_read(prof_filename) as f_in:
+        temp_file = tempfile.NamedTemporaryFile('w', prefix=prof_filename, suffix='~', delete=False, dir=profile_dir)
+        shutil.copymode(prof_filename, temp_file.name)
+        with open_file_write(temp_file.name) as f_out:
+            for line in f_in:
+                if RE_PROFILE_START.search(line):
+                    matches = parse_profile_start_line(line, prof_filename)
+                    space = matches['leadingspace'] or ''
+                    profile = matches['profile']
+
+                    if profile == program or program is None:
+                        found = True
+                        header_data = {
+                            'attachment': matches['attachment'] or '',
+                            'flags': newflags,
+                            'profile_keyword': matches['profile_keyword'],
+                            'header_comment': matches['comment'] or '',
+                        }
+                        line = write_header(header_data, len(space)/2, profile, False, True)
+                        line = '%s\n' % line[0]
+                #else:
+                #    match = regex_hat_flag.search(line)
+                #    if match:
+                #        hat, flags = match.groups()[:2]
+                #        if newflags:
+                #            line = '%s flags=(%s) {%s\n' % (hat, newflags, comment)
+                #        else:
+                #            line = '%s {%s\n' % (hat, comment)
+                f_out.write(line)
+    os.rename(temp_file.name, prof_filename)
+
+    if not found:
+        if program is None:
+            raise AppArmorBug("%(file)s doesn't contain a valid profile (syntax error?)" % {'file': prof_filename})
+        else:
+            raise AppArmorBug("%(file)s doesn't contain a valid profile for %(profile)s (syntax error?)" % {'file': prof_filename, 'profile': program})
 
 def profile_exists(program):
     """Returns True if profile exists, False otherwise"""
@@ -2688,6 +2691,8 @@ def parse_profile_data(data, file, do_include):
         # Starting line of a profile
         if RE_PROFILE_START.search(line):
             (profile, hat, attachment, flags, in_contained_hat, pps_set_profile, pps_set_hat_external) = parse_profile_start(line, file, lineno, profile, hat)
+            if attachment:
+                profile_data[profile][hat]['attachment'] = attachment
             if pps_set_profile:
                 profile_data[profile][hat]['profile'] = True
             if pps_set_hat_external:

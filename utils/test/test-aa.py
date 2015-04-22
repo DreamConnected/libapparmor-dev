@@ -10,7 +10,7 @@
 # ------------------------------------------------------------------
 
 import unittest
-from common_test import AATest, setup_all_tests
+from common_test import AATest, setup_all_loops
 import os
 import shutil
 import tempfile
@@ -535,6 +535,6 @@ class AaTestInvalid_serialize_parse_profile_start(AATest):
             # 'correct' is always True in the code that uses serialize_parse_profile_start() (set some lines above the function call)
             serialize_parse_profile_start(line, 'somefile', 1, profile, hat, prof_data_profile, prof_data_external, True)
 
+setup_all_loops(__name__)
 if __name__ == '__main__':
-    setup_all_tests()
     unittest.main(verbosity=2)

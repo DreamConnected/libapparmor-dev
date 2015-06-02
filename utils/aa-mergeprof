@@ -310,7 +310,7 @@ class Merge(object):
 
             #Add the capabilities
             for allow in ['allow', 'deny']:
-                if other.aa[profile][hat].get(allow, False):
+                if not other.aa[profile][hat].get(allow, False):
                     continue
                 for capability in sorted(other.aa[profile][hat][allow]['capability'].keys()):
                     severity = sev_db.rank('CAP_%s' % capability)
@@ -367,7 +367,7 @@ class Merge(object):
 
                             apparmor.aa.changed[profile] = True
 
-                            aaui.UI_Info(_('Adding capability %s to profile.'), capability)
+                            aaui.UI_Info(_('Adding capability %s to profile.') % capability)
                             done = True
 
                         elif ans == 'CMD_DENY':

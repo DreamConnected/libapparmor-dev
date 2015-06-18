@@ -38,6 +38,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/apparmor.h>
+#include <sys/time.h>
+#include <utime.h>
 
 #include "lib.h"
 #include "parser.h"
@@ -873,17 +875,18 @@ static bool valid_cached_file_version(const char *cachename)
 	return true;
 }
 
-/* returns true if time is more recent than mru_tstamp */
-#define mru_t_cmp(a) \
-(((a).tv_sec == (mru_tstamp).tv_sec) ? \
-  (a).tv_nsec > (mru_tstamp).tv_nsec : (a).tv_sec > (mru_tstamp).tv_sec)
+#define tstamp_cmp(a, b)					\
+  (((a).tv_sec == (b).tv_sec) ?					\
+   ((a).tv_nsec - (b).tv_nsec) :				\
+   ((a).tv_sec - (b).tv_sec))
+#define tstamp_is_null(a) ((a).tv_sec == 0 && (a).tv_nsec == 0)
 
 void update_mru_tstamp(FILE *file)
 {
 	struct stat stat_file;
 	if (fstat(fileno(file), &stat_file))
 		return;
-	if (mru_t_cmp(stat_file.st_mtim))
+	if (tstamp_cmp(stat_file.st_mtim, mru_tstamp) > 0)
 		mru_tstamp = stat_file.st_mtim;
 }
 
@@ -969,7 +972,8 @@ int process_profile(int option, const char *profilename)
 		/* Load a binary cache if it exists and is newest */
 		if (!skip_read_cache &&
 		    stat(cachename, &stat_bin) == 0 &&
-		    stat_bin.st_size > 0 && (mru_t_cmp(stat_bin.st_mtim)) &&
+		    stat_bin.st_size > 0 &&
+		    (tstamp_cmp(mru_tstamp, stat_bin.st_mtim) < 0) &&
 		    valid_cached_file_version(cachename)) {
 			if (show_cache)
 				PERROR("Cache hit: %s\n", cachename);
@@ -1037,6 +1041,12 @@ out:
 		}
 
 		if (useable_cache) {
+			struct timeval t;
+			/* set the mtime of the cache file to the most newest
+			 * mtime of policy files used to generate it
+			 */
+			TIMESPEC_TO_TIMEVAL(&t, &mru_tstamp);
+			utimes(cachetemp, &t);
 			if (rename(cachetemp, cachename) < 0) {
 				pwarn("Warning failed to write cache: %s\n", cachename);
 				unlink(cachetemp);

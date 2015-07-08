@@ -4366,6 +4366,11 @@ def profile_known_capability(profile, capname):
         return 1
 
     for incname in profile['include'].keys():
+        if not include.get(incname):
+            # incname was not read before, might be a directory.
+            # just avoid a crash (2.10 even checks all files inside the directory).
+            # See https://bugs.launchpad.net/apparmor/+bug/1471425 for details.
+            continue
         if include[incname][incname]['deny']['capability'][capname].get('set', False):
             return -1
         if include[incname][incname]['allow']['capability'][capname].get('set', False):
@@ -4380,6 +4385,11 @@ def profile_known_network(profile, family, sock_type):
         return 1
 
     for incname in profile['include'].keys():
+        if not include.get(incname):
+            # incname was not read before, might be a directory.
+            # just avoid a crash (2.10 even checks all files inside the directory).
+            # See https://bugs.launchpad.net/apparmor/+bug/1471425 for details.
+            continue
         if netrules_access_check(include[incname][incname]['deny']['netdomain'], family, sock_type):
             return -1
         if netrules_access_check(include[incname][incname]['allow']['netdomain'], family, sock_type):

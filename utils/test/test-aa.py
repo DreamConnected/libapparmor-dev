@@ -393,20 +393,29 @@ class AaTest_separate_vars(AATest):
         (''                             , set()                      ),
         ('       '                      , set()                      ),
         ('  foo bar'                    , {'foo', 'bar'             }),
-        ('foo "  '                      , {'foo'                    }), # XXX " is ignored
-        (' " foo '                      , {' "', 'foo'              }), # XXX really?
+        ('foo "  '                      , AppArmorException          ),
+        (' " foo '                      , AppArmorException          ), # half-quoted
         ('  foo bar   '                 , {'foo', 'bar'             }),
-        ('  foo bar   # comment'        , {'foo', 'bar', 'comment'  }), # XXX should comments be stripped?
+        ('  foo bar   # comment'        , {'foo', 'bar', '#', 'comment'}), # XXX should comments be stripped?
         ('foo'                          , {'foo'                    }),
         ('"foo" "bar baz"'              , {'foo', 'bar baz'         }),
         ('foo "bar baz" xy'             , {'foo', 'bar baz', 'xy'   }),
-        ('foo "bar baz '                , {'foo', 'bar', 'baz'      }), # half-quoted
+        ('foo "bar baz '                , AppArmorException          ), # half-quoted
         ('  " foo" bar'                 , {' foo', 'bar'            }),
+        ('  " foo" bar x'               , {' foo', 'bar', 'x'       }),
+        ('""'                           , {''                       }), # empty value
+        ('"" foo'                       , {'', 'foo'                }), # empty value + 'foo'
+        ('"" foo "bar"'                 , {'', 'foo', 'bar'         }), # empty value + 'foo' + 'bar' (bar has superfluous quotes)
+        ('"bar"'                        , {'bar'                    }), # 'bar' with superfluous quotes
     ]
 
     def _run_test(self, params, expected):
-        result = separate_vars(params)
-        self.assertEqual(result, expected)
+        if expected == AppArmorException:
+            with self.assertRaises(expected):
+                separate_vars(params)
+        else:
+            result = separate_vars(params)
+            self.assertEqual(result, expected)
 
 
 class AaTest_store_list_var(AATest):
@@ -487,6 +496,17 @@ class AaTest_write_header(AATest):
 
         result = write_header(prof_data, depth, name, embedded_hat, write_flags)
         self.assertEqual(result, [expected])
+
+class AaTest_var_transform(AATest):
+    tests = [
+        (['foo', ''],           'foo ""'        ),
+        (['foo', 'bar'],        'foo bar'       ),
+        ([''],                  '""'            ),
+        (['bar baz', 'foo'],    '"bar baz" foo' ),
+    ]
+
+    def _run_test(self, params, expected):
+        self.assertEqual(var_transform(params), expected)
 
 class AaTest_serialize_parse_profile_start(AATest):
     def _parse(self, line, profile, hat, prof_data_profile, prof_data_external):

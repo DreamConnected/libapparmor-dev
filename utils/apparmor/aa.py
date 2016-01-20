@@ -1146,6 +1146,7 @@ def handle_children(profile, hat, root):
                 detail = detail.replace('*', '\*')
                 detail = detail.replace('{', '\{')
                 detail = detail.replace('}', '\}')
+                detail = detail.replace('!', '\!')
 
                 # Give Execute dialog if x access requested for something that's not a directory
                 # For directories force an 'ix' Path dialog

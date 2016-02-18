@@ -125,6 +125,7 @@ exception_not_raised = [
     'profile/flags/flags_bad_debug_3.sd',
     'profile/flags/flags_bad_debug_4.sd',
     'profile/simple_bad_no_close_brace4.sd',
+    'profile/profile_ns_bad8.sd',  # 'profile :ns/t' without terminating ':'
     'ptrace/bad_01.sd',
     'ptrace/bad_02.sd',
     'ptrace/bad_03.sd',

@@ -178,6 +178,7 @@ TESTS=access \
       mount \
       mult_mount \
       named_pipe \
+      namespaces \
       net_raw \
       open \
       openat \

@@ -16,7 +16,7 @@ import shutil
 import tempfile
 from common_test import read_file, write_file
 
-from apparmor.aa import check_for_apparmor, get_profile_flags, set_profile_flags, is_skippable_file, is_skippable_dir, parse_profile_start, separate_vars, store_list_var, write_header, serialize_parse_profile_start
+from apparmor.aa import check_for_apparmor, get_profile_flags, set_profile_flags, is_skippable_file, is_skippable_dir, parse_profile_start, separate_vars, store_list_var, write_header, serialize_parse_profile_start, var_transform
 from apparmor.common import AppArmorException, AppArmorBug
 
 class AaTestWithTempdir(AATest):

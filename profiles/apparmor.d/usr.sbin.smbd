@@ -17,6 +17,7 @@
   capability net_bind_service,
   capability setgid,
   capability setuid,
+  capability sys_admin,  # needed to store ACLS in the security.NTACL namespace
   capability sys_resource,
   capability sys_tty_config,
 

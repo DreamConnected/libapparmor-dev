@@ -26,12 +26,14 @@
   /etc/locale/**                 r,
   /etc/locale.alias              r,
   /etc/localtime                 r,
+  /usr/share/locale-bundle/**    r,
   /usr/share/locale-langpack/**  r,
   /usr/share/locale/**           r,
   /usr/share/**/locale/**        r,
   /usr/share/zoneinfo/           r,
   /usr/share/zoneinfo/**         r,
   /usr/share/X11/locale/**       r,
+  /{,var/}run/systemd/journal/dev-log w,
 
   /usr/lib{,32,64}/locale/**             mr,
   /usr/lib{,32,64}/gconv/*.so            mr,
@@ -102,6 +104,9 @@
 
   # glibc malloc (man 5 proc)
   @{PROC}/sys/vm/overcommit_memory r,
+
+  # Allow determining the highest valid capability of the running kernel
+  @{PROC}/sys/kernel/cap_last_cap r,
 
   # Workaround https://launchpad.net/bugs/359338 until upstream handles stacked
   # filesystems generally. This does not appreciably decrease security with

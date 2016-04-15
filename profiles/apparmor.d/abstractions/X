@@ -19,6 +19,8 @@
   @{HOME}/.Xauthority           r,
   owner /{,var/}run/gdm{,3}/*/database r,
   owner /{,var/}run/lightdm/authority/[0-9]* r,
+  owner /{,var/}run/lightdm/*/xauthority r,
+  owner /{,var/}run/user/*/gdm/Xauthority r,
 
   # the unix socket to use to connect to the display
   /tmp/.X11-unix/*           w,
@@ -32,9 +34,13 @@
   /usr/share/X11/**               r,
   /usr/X11R6/**.so*               mr,
 
+  # EGL
+  /usr/lib/@{multiarch}/egl/*.so* mr,
+
   # DRI
   /usr/lib{,32,64}/dri/**         mr,
   /usr/lib/@{multiarch}/dri/**    mr,
+  /usr/lib/fglrx/dri/**           mr,
   /dev/dri/**                     rw,
   /etc/drirc                      r,
   owner @{HOME}/.drirc            r,

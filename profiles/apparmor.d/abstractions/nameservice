@@ -26,12 +26,21 @@
   /var/lib/extrausers/group  r,
   /var/lib/extrausers/passwd r,
 
+  # When using sssd, the passwd and group files are stored in an alternate path
+  # and the nss plugin also needs to talk to a pipe
+  /var/lib/sss/mc/group   r,
+  /var/lib/sss/mc/passwd  r,
+  /var/lib/sss/pipes/nss  rw,
+
   /etc/resolv.conf        r,
   # on systems using resolvconf, /etc/resolv.conf is a symlink to
   # /{,var/}run/resolvconf/resolv.conf and a file sometimes referenced in
   # /etc/resolvconf/run/resolv.conf
   /{,var/}run/resolvconf/resolv.conf r,
   /etc/resolvconf/run/resolv.conf r,
+  # on systems using systemd's networkd, /etc/resolv.conf is a symlink to
+  # /run/systemd/resolve/resolv.conf
+  /{,var/}run/systemd/resolve/resolv.conf r,
 
   /etc/samba/lmhosts      r,
   /etc/services           r,

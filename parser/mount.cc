@@ -605,7 +605,6 @@ int mnt_rule::gen_policy_remount(Profile &prof, int &count)
 	std::string optsbuf;
 	char class_mount_hdr[64];
 	const char *vec[5];
-	unsigned int tmpflags, tmpinv_flags;
 	int tmpallow;
 
 	sprintf(class_mount_hdr, "\\x%02x", AA_CLASS_MOUNT);
@@ -628,13 +627,8 @@ int mnt_rule::gen_policy_remount(Profile &prof, int &count)
 	/* skip type */
 	vec[2] = default_match_pattern;
 
-	tmpflags = flags;
-	tmpinv_flags = inv_flags;
-	if (tmpflags != MS_ALL_FLAGS)
-		tmpflags &= MS_REMOUNT_FLAGS;
-	if (tmpinv_flags != MS_ALL_FLAGS)
-		tmpflags &= MS_REMOUNT_FLAGS;
-	if (!build_mnt_flags(flagsbuf, PATH_MAX, tmpflags, tmpinv_flags))
+	if (!build_mnt_flags(flagsbuf, PATH_MAX, flags & MS_REMOUNT_FLAGS,
+			     inv_flags & MS_REMOUNT_FLAGS))
 		goto fail;
 
 	vec[3] = flagsbuf;
@@ -679,7 +673,6 @@ int mnt_rule::gen_policy_bind_mount(Profile &prof, int &count)
 	std::string optsbuf;
 	char class_mount_hdr[64];
 	const char *vec[5];
-	unsigned int tmpflags, tmpinv_flags;
 
 	sprintf(class_mount_hdr, "\\x%02x", AA_CLASS_MOUNT);
 
@@ -695,13 +688,8 @@ int mnt_rule::gen_policy_bind_mount(Profile &prof, int &count)
 	/* skip type */
 	vec[2] = default_match_pattern;
 
-	tmpflags = flags;
-	tmpinv_flags = inv_flags;
-	if (tmpflags != MS_ALL_FLAGS)
-		tmpflags &= MS_BIND_FLAGS;
-	if (tmpinv_flags != MS_ALL_FLAGS)
-		tmpflags &= MS_BIND_FLAGS;
-	if (!build_mnt_flags(flagsbuf, PATH_MAX, tmpflags, tmpinv_flags))
+	if (!build_mnt_flags(flagsbuf, PATH_MAX, flags & MS_BIND_FLAGS,
+			     inv_flags & MS_BIND_FLAGS))
 		goto fail;
 	vec[3] = flagsbuf;
 	if (!prof.policy.rules->add_rule_vec(deny, allow, audit, 4, vec,
@@ -724,7 +712,6 @@ int mnt_rule::gen_policy_change_mount_type(Profile &prof, int &count)
 	std::string optsbuf;
 	char class_mount_hdr[64];
 	const char *vec[5];
-	unsigned int tmpflags, tmpinv_flags;
 
 	sprintf(class_mount_hdr, "\\x%02x", AA_CLASS_MOUNT);
 
@@ -740,13 +727,8 @@ int mnt_rule::gen_policy_change_mount_type(Profile &prof, int &count)
 	vec[1] = default_match_pattern;
 	vec[2] = default_match_pattern;
 
-	tmpflags = flags;
-	tmpinv_flags = inv_flags;
-	if (tmpflags != MS_ALL_FLAGS)
-		tmpflags &= MS_MAKE_FLAGS;
-	if (tmpinv_flags != MS_ALL_FLAGS)
-		tmpflags &= MS_MAKE_FLAGS;
-	if (!build_mnt_flags(flagsbuf, PATH_MAX, tmpflags, tmpinv_flags))
+	if (!build_mnt_flags(flagsbuf, PATH_MAX, flags & MS_MAKE_FLAGS,
+			     inv_flags & MS_MAKE_FLAGS))
 		goto fail;
 	vec[3] = flagsbuf;
 	if (!prof.policy.rules->add_rule_vec(deny, allow, audit, 4, vec,
@@ -769,7 +751,6 @@ int mnt_rule::gen_policy_move_mount(Profile &prof, int &count)
 	std::string optsbuf;
 	char class_mount_hdr[64];
 	const char *vec[5];
-	unsigned int tmpflags, tmpinv_flags;
 
 	sprintf(class_mount_hdr, "\\x%02x", AA_CLASS_MOUNT);
 
@@ -787,13 +768,8 @@ int mnt_rule::gen_policy_move_mount(Profile &prof, int &count)
 	/* skip type */
 	vec[2] = default_match_pattern;
 
-	tmpflags = flags;
-	tmpinv_flags = inv_flags;
-	if (tmpflags != MS_ALL_FLAGS)
-		tmpflags &= MS_MOVE_FLAGS;
-	if (tmpinv_flags != MS_ALL_FLAGS)
-		tmpflags &= MS_MOVE_FLAGS;
-	if (!build_mnt_flags(flagsbuf, PATH_MAX, tmpflags, tmpinv_flags))
+	if (!build_mnt_flags(flagsbuf, PATH_MAX, flags & MS_MOVE_FLAGS,
+			     inv_flags & MS_MOVE_FLAGS))
 		goto fail;
 	vec[3] = flagsbuf;
 	if (!prof.policy.rules->add_rule_vec(deny, allow, audit, 4, vec,
@@ -816,7 +792,6 @@ int mnt_rule::gen_policy_new_mount(Profile &prof, int &count)
 	std::string optsbuf;
 	char class_mount_hdr[64];
 	const char *vec[5];
-	unsigned int tmpflags, tmpinv_flags;
 	int tmpallow;
 
 	sprintf(class_mount_hdr, "\\x%02x", AA_CLASS_MOUNT);
@@ -834,13 +809,8 @@ int mnt_rule::gen_policy_new_mount(Profile &prof, int &count)
 		goto fail;
 	vec[2] = typebuf.c_str();
 
-	tmpflags = flags;
-	tmpinv_flags = inv_flags;
-	if (tmpflags != MS_ALL_FLAGS)
-		tmpflags &= ~MS_CMDS;
-	if (tmpinv_flags != MS_ALL_FLAGS)
-		tmpinv_flags &= ~MS_CMDS;
-	if (!build_mnt_flags(flagsbuf, PATH_MAX, tmpflags, tmpinv_flags))
+	if (!build_mnt_flags(flagsbuf, PATH_MAX, flags & MS_NEW_FLAGS,
+			     inv_flags & MS_NEW_FLAGS))
 		goto fail;
 	vec[3] = flagsbuf;
 
@@ -923,7 +893,7 @@ int mnt_rule::gen_policy_re(Profile &prof)
 		if (gen_policy_bind_mount(prof, count) == RULE_ERROR)
 			goto fail;
 	} else if ((allow & AA_MAY_MOUNT) &&
-		   (flags & (MS_UNBINDABLE | MS_PRIVATE | MS_SLAVE | MS_SHARED))
+		   (flags & (MS_MAKE_CMDS))
 		   && !device && !dev_type && !opts) {
 		if (gen_policy_change_mount_type(prof, count) == RULE_ERROR)
 			goto fail;

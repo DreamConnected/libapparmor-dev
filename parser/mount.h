@@ -121,6 +121,11 @@
 
 
 class mnt_rule: public rule_t {
+	int gen_policy_remount(Profile &prof, int &count);
+	int gen_policy_bind_mount(Profile &prof, int &count);
+	int gen_policy_change_mount_type(Profile &prof, int &count);
+	int gen_policy_move_mount(Profile &prof, int &count);
+	int gen_policy_new_mount(Profile &prof, int &count);
 public:
 	char *mnt_point;
 	char *device;

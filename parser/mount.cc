@@ -898,29 +898,41 @@ int mnt_rule::gen_policy_re(Profile &prof)
 	 * created in the backend to cover all the possible choices
 	 */
 
-	if ((allow & AA_MAY_MOUNT) && (flags & MS_REMOUNT)
-	    && !device && !dev_type) {
+	if ((allow & AA_MAY_MOUNT) && (flags == MS_ALL_FLAGS)) {
+		/* no mount flags specified, generate multiple rules */
+		if (!device && !dev_type &&
+		    gen_policy_remount(prof, count) == RULE_ERROR)
+			goto fail;
+		if (!dev_type && !opts &&
+		    gen_policy_bind_mount(prof, count) == RULE_ERROR)
+			goto fail;
+		if (!device && !dev_type && !opts &&
+		    gen_policy_change_mount_type(prof, count) == RULE_ERROR)
+			goto fail;
+		if (!dev_type && !opts &&
+		    gen_policy_move_mount(prof, count) == RULE_ERROR)
+			goto fail;
+		if (gen_policy_new_mount(prof, count) == RULE_ERROR)
+			goto fail;
+	} else if ((allow & AA_MAY_MOUNT) && (flags & MS_REMOUNT)
+		   && !device && !dev_type) {
 		if (gen_policy_remount(prof, count) == RULE_ERROR)
 			goto fail;
-	}
-	if ((allow & AA_MAY_MOUNT) && (flags & MS_BIND)
-	    && !dev_type && !opts) {
+	} else if ((allow & AA_MAY_MOUNT) && (flags & MS_BIND)
+		   && !dev_type && !opts) {
 		if (gen_policy_bind_mount(prof, count) == RULE_ERROR)
 			goto fail;
-	}
-	if ((allow & AA_MAY_MOUNT) &&
-	    (flags & (MS_UNBINDABLE | MS_PRIVATE | MS_SLAVE | MS_SHARED))
-	    && !device && !dev_type && !opts) {
+	} else if ((allow & AA_MAY_MOUNT) &&
+		   (flags & (MS_UNBINDABLE | MS_PRIVATE | MS_SLAVE | MS_SHARED))
+		   && !device && !dev_type && !opts) {
 		if (gen_policy_change_mount_type(prof, count) == RULE_ERROR)
 			goto fail;
-	}
-	if ((allow & AA_MAY_MOUNT) && (flags & MS_MOVE)
-	    && !dev_type && !opts) {
+	} else if ((allow & AA_MAY_MOUNT) && (flags & MS_MOVE)
+		   && !dev_type && !opts) {
 		if (gen_policy_move_mount(prof, count) == RULE_ERROR)
 			goto fail;
-	}
-	if ((allow & AA_MAY_MOUNT) &&
-	    (flags | inv_flags) & ~MS_CMDS) {
+	} else if ((allow & AA_MAY_MOUNT) &&
+		   (flags | inv_flags) & ~MS_CMDS) {
 		/* generic mount if flags are set that are not covered by
 		 * above commands
 		 */

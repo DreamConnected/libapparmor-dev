@@ -1094,6 +1094,9 @@ def handle_children(profile, hat, root):
                     prelog[aamode][profile][hat]['path'][path] = mode
 
                 if do_execute:
+                    if not aa[profile][hat]:
+                        continue  # ignore log entries for non-existing profiles
+
                     if profile_known_exec(aa[profile][hat], 'exec', exec_target):
                         continue
 

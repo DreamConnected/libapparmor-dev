@@ -85,7 +85,7 @@ class ChangeProfileTestParseInvalid(ChangeProfileTest):
             ChangeProfileRule.parse(rawrule)
 
 class ChangeProfileTestParseFromLog(ChangeProfileTest):
-    def test_net_from_log(self):
+    def test_change_profile_from_log(self):
         parser = ReadLog('', '', '', '', '')
 
         event = 'type=AVC msg=audit(1428699242.551:386): apparmor="DENIED" operation="change_profile" profile="/foo/changeprofile" pid=3459 comm="changeprofile" target="/foo/rename"'
@@ -99,7 +99,6 @@ class ChangeProfileTestParseFromLog(ChangeProfileTest):
             'request_mask': None,
             'denied_mask': None,
             'error_code': 0,
-            #'family': 'inet',
             'magic_token': 0,
             'parent': 0,
             'profile': '/foo/changeprofile',
@@ -114,6 +113,9 @@ class ChangeProfileTestParseFromLog(ChangeProfileTest):
             'attr': None,
             'name2': '/foo/rename', # target
             'name': None,
+            'family': None,
+            'protocol': None,
+            'sock_type': None,
         })
 
         obj = ChangeProfileRule(ChangeProfileRule.ALL, parsed_event['name2'], log_event=parsed_event)

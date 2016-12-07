@@ -5,7 +5,7 @@
     #include <abstractions/apache2-common>
     #include <abstractions/base>
     #include <abstractions/nameservice>
-    #include <abstractions/php5>
+    #include <abstractions/php>
     #include <abstractions/python>
 
     /{,usr/}bin/dash ixr,

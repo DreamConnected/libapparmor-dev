@@ -354,9 +354,9 @@ def get_reqs(file):
     pattern2 = re.compile('^\s*(\/\S+)')
     reqs = []
     ret, ldd_out = get_output([ldd, file])
-    if ret == 0:
+    if ret == 0 or ret == 1:
         for line in ldd_out:
-            if 'not a dynamic executable' in line:
+            if 'not a dynamic executable' in line:  # comes with ret == 1
                 break
             if 'cannot read header' in line:
                 break

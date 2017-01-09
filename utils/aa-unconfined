@@ -46,10 +46,10 @@ else:
     regex_tcp_udp = re.compile(r"^(tcp|udp|raw)6?\s+\d+\s+\d+\s+\S+\:(\d+)\s+\S+\:(\*|\d+)\s+(LISTEN|\d+|\s+)\s+(\d+)\/(\S+)")
     import subprocess
     if sys.version_info < (3, 0):
-        output = subprocess.check_output("LANG=C netstat -nlp46", shell=True).split("\n")
+        output = subprocess.check_output("LANG=C netstat -nlp --protocol inet,inet6", shell=True).split("\n")
     else:
         #Python3 needs to translate a stream of bytes to string with specified encoding
-        output = str(subprocess.check_output("LANG=C netstat -nlp46", shell=True), encoding='utf8').split("\n")
+        output = str(subprocess.check_output("LANG=C netstat -nlp --protocol inet,inet6", shell=True), encoding='utf8').split("\n")
 
     for line in output:
         match = regex_tcp_udp.search(line)

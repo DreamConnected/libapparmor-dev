@@ -1966,16 +1966,20 @@ def save_profiles():
                 if not changed:
                     return
 
-                q.options = sorted(changed.keys())
+                options = sorted(changed.keys())
+                q.options = options
 
                 ans, arg = q.promptUser()
+
+                q.selected = arg  # remember selection
+                which = options[arg]
+
                 if ans == 'CMD_SAVE_SELECTED':
-                    profile_name = list(changed.keys())[arg]
-                    write_profile_ui_feedback(profile_name)
-                    reload_base(profile_name)
+                    write_profile_ui_feedback(which)
+                    reload_base(which)
+                    q.selected = 0  # saving the selected profile removes it from the list, therefore reset selection
 
                 elif ans == 'CMD_VIEW_CHANGES':
-                    which = list(changed.keys())[arg]
                     oldprofile = None
                     if aa[which][which].get('filename', False):
                         oldprofile = aa[which][which]['filename']
@@ -1991,7 +1995,6 @@ def save_profiles():
                     display_changes_with_comments(oldprofile, newprofile)
 
                 elif ans == 'CMD_VIEW_CHANGES_CLEAN':
-                    which = list(changed.keys())[arg]
                     oldprofile = serialize_profile(original_aa[which], which, '')
                     newprofile = serialize_profile(aa[which], which, '')
 

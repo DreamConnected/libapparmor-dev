@@ -17,12 +17,9 @@ DIRS=libraries/libapparmor \
      profiles \
      tests
 
-#REPO_URL?=lp:apparmor
-# --per-file-timestamps is failing over SSH, https://bugs.launchpad.net/bzr/+bug/1257078
-REPO_URL?=https://code.launchpad.net/~apparmor-dev/apparmor/2.11
-# alternate possibilities to export from
-#REPO_URL=.
-#REPO_URL="bzr+ssh://bazaar.launchpad.net/~sbeattie/+junk/apparmor-dev/"
+# with conversion to git, we don't export from the remote
+REPO_URL?=git@gitlab.com:apparmor/apparmor.git
+REPO_BRANCH?=apparmor-2.11
 
 COVERITY_DIR=cov-int
 RELEASE_DIR=apparmor-${VERSION}
@@ -31,7 +28,9 @@ __SETUP_DIR?=.
 # We create a separate version for tags because git can't handle tags
 # with embedded ~s in them. No spaces around '-' or they'll get
 # embedded in ${VERSION}
-TAG_VERSION=$(subst ~,-,${VERSION})
+# apparmor version tag format 'vX.Y.ZZ'
+# apparmor branch name format 'apparmor-X.Y'
+TAG_VERSION="v$(subst ~,-,${VERSION})"
 
 # Add exclusion entries arguments for tar here, of the form:
 #   --exclude dir_to_exclude --exclude other_dir
@@ -47,9 +46,9 @@ tarball: clean
 .PHONY: snapshot
 snapshot: clean
 	$(eval REPO_VERSION:=$(shell $(value REPO_VERSION_CMD)))
-	$(eval SNAPSHOT_NAME=apparmor-$(VERSION)~$(REPO_VERSION))
-	make export_dir __EXPORT_DIR=${SNAPSHOT_NAME} __REPO_VERSION=${REPO_VERSION} && \
-	make setup __SETUP_DIR=${SNAPSHOT_NAME} && \
+	$(eval SNAPSHOT_NAME=apparmor-$(VERSION)~$(shell echo $(REPO_VERSION) | cut -d '-' -f 2-))
+	$(MAKE) export_dir __EXPORT_DIR=${SNAPSHOT_NAME} __REPO_VERSION=${REPO_VERSION} && \
+	$(MAKE) setup __SETUP_DIR=${SNAPSHOT_NAME} && \
 	tar ${TAR_EXCLUSIONS} -cvzf ${SNAPSHOT_NAME}.tar.gz ${SNAPSHOT_NAME}
 
 .PHONY: coverity
@@ -66,8 +65,8 @@ coverity: snapshot
 .PHONY: export_dir
 export_dir:
 	mkdir $(__EXPORT_DIR)
-	/usr/bin/bzr export --per-file-timestamps -r $(__REPO_VERSION) $(__EXPORT_DIR) $(REPO_URL)
-	echo "$(REPO_URL) $(__REPO_VERSION)" > $(__EXPORT_DIR)/common/.stamp_rev
+	/usr/bin/git archive --prefix=$(__EXPORT_DIR)/ --format tar $(__REPO_VERSION) | tar xv
+	echo "$(REPO_URL) $(REPO_BRANCH) $(__REPO_VERSION)" > $(__EXPORT_DIR)/common/.stamp_rev
 
 .PHONY: clean
 clean:
@@ -88,5 +87,4 @@ setup:
 
 .PHONY: tag
 tag:
-	bzr tag apparmor_${TAG_VERSION}
-
+	git tag -m 'AppArmor $(VERSION)' -s $(TAG_VERSION)

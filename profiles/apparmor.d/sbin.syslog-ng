@@ -38,6 +38,7 @@
   /dev/syslog w,
   /dev/tty10 rw,
   /dev/xconsole rw,
+  /dev/kmsg r,
   /etc/machine-id r,
   /etc/syslog-ng/* r,
   /etc/syslog-ng/conf.d/ r,

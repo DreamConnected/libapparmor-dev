@@ -1,8 +1,7 @@
-# Last Modified: Mon Dec  1 22:15:18 2014
-
 # ------------------------------------------------------------------
 #
 #    Copyright (C) 2002-2005 Novell/SUSE
+#    Copyright (C) 2018 Christian Boltz
 #
 #    This program is free software; you can redistribute it and/or
 #    modify it under the terms of version 2 of the GNU General Public
@@ -17,11 +16,79 @@
 /usr/bin/man {
   #include <abstractions/base>
   #include <abstractions/nameservice>
+  #include <abstractions/user-manpages>
 
   capability setgid,
   capability setuid,
 
+  /**/ r,
+  /dev/tty r,
+  /etc/manpath.config r,
+  /proc/sys/kernel/ngroups_max r,
+  /usr/bin/less Cx,
   /usr/bin/man r,
+  /usr/bin/neqn Cx,
+  /usr/bin/nroff Cx,
+  /usr/bin/preconv Cx,
+  /usr/bin/tbl Cx,
   /usr/lib/man-db/man Px,
+  /var/cache/man/*/index.db rk,
+  /var/cache/man/index.db rk,
 
+  profile /usr/bin/less {
+    #include <abstractions/base>
+
+    /dev/tty rw,
+    /etc/lesskey.bin r,
+    owner @{HOME}/.lesshsQ rw,
+    owner @{HOME}/.lesshst rw,
+    /usr/bin/less mr,
+    /usr/share/terminfo/** r,
+
+  }
+
+  profile /usr/bin/neqn {
+    #include <abstractions/base>
+    #include <abstractions/bash>
+
+    /bin/bash mr,
+    /dev/tty rw,
+    /usr/bin/eqn mrix,
+    /usr/bin/neqn r,
+    /usr/share/groff/*/tmac/eqnrc r,
+
+  }
+
+  profile /usr/bin/nroff {
+    #include <abstractions/base>
+    #include <abstractions/bash>
+
+    /bin/bash rix,
+    /dev/tty rw,
+    /usr/bin/groff mrix,
+    /usr/bin/grotty mrix,
+    /usr/bin/locale mrix,
+    /usr/bin/nroff r,
+    /usr/bin/troff mrix,
+    /usr/share/groff/*/font/** r,
+    /usr/share/groff/*/tmac/** r,
+    /usr/share/groff/site-tmac/man.local r,
+    /usr/share/groff/site-tmac/mdoc.local r,
+
+  }
+
+  profile /usr/bin/preconv {
+    #include <abstractions/base>
+
+    /usr/bin/preconv mr,
+
+  }
+
+  profile /usr/bin/tbl {
+    #include <abstractions/base>
+
+    /dev/tty rw,
+    /usr/bin/tbl mr,
+
+  }
 }

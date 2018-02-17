@@ -16,5 +16,6 @@
   @{PROC}/driver/nvidia/params r,
   @{PROC}/modules r,
 
-  owner @{HOME}/.nv/GLCache/ r,
+  owner @{HOME}/.nv/ w,
+  owner @{HOME}/.nv/GLCache/ rw,
   owner @{HOME}/.nv/GLCache/** rwk,

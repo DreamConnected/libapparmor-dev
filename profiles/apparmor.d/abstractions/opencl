@@ -1,0 +1,52 @@
+# vim:syntax=apparmor
+# OpenCL access requirements
+
+  #include <abstractions/nvidia>
+  #include <abstractions/dri-enumerate>
+
+  # Executables
+
+  /usr/bin/nvidia-modprobe PUx,
+
+  # Additional libraries
+
+  /usr/lib/@{multiarch}/gallium-pipe/*.so rm, # libMesaOpenCL.so
+
+  # System files
+
+  / r, # libpocl -> libhwloc
+  /dev/dri/ r,
+  /dev/dri/card[0-9]* rw,
+  /dev/dri/render* rw,
+  /dev/nvidia-uvm rw, # libnvidia-opencl.so
+  /etc/OpenCL/** r,
+  /etc/drirc r, # libMesaOpenCL.so
+  /proc/sys/vm/mmap_min_addr r, # libnvidia-opencl.so
+  /sys/bus/pci/devices/ r,
+  /sys/bus/{cpu,node}/devices/ r,
+  /sys/devices/pci[0-9]*/**/{config,resource} r, # libcl.so -> libdrm_intel.so -> libpciaccess.so (move to dri-enumerate ?)
+  /sys/devices/system/cpu/cpu[0-9]*/cache/index[0-9]*/* r,
+  /sys/devices/system/cpu/cpu[0-9]*/online r,
+  /sys/devices/system/cpu/cpu[0-9]*/topology/* r,
+  /sys/devices/system/cpu/cpufreq/policy[0-9]*/* r,
+  /sys/devices/system/cpu/possible r,
+  /sys/devices/system/node/ r,
+  /sys/devices/system/node/node[0-9]*/meminfo r,
+  /sys/devices/virtual/dmi/id/{,*} r, # libpocl -> libhwloc
+  /sys/fs/cgroup/cpuset/cpuset.{cpus,mems} r, # libpocl -> libhwloc
+  /sys/kernel/mm/hugepages{/,/**} r, # libpocl.so -> libhwloc.so
+  @{PROC}/devices r,
+
+  # Owner files
+
+  owner @{HOME}/.Xauthority r, # beignet libcl.so calls XOpenDisplay()
+  owner @{HOME}/.cache/ w,
+  owner @{HOME}/.cache/pocl/ w,
+  owner @{HOME}/.cache/pocl/kcache/ w,
+  owner @{HOME}/.cache/pocl/kcache/** rw,
+  owner @{HOME}/.cache/pocl/kcache/**.so m, # dangerous ? TODO: use conditionals to enable libpocl to load user-writable libraries
+  owner @{HOME}/.nv/ComputeCache/ w,
+  owner @{HOME}/.nv/ComputeCache/** rw,
+  owner @{HOME}/.nv/ComputeCache/index rwk,
+  owner @{PROC}/@{pid}/{cgroup,cpuset} r, # libpocl.so -> libhwloc.so
+

@@ -7,6 +7,7 @@
   # Executables
 
   /usr/bin/nvidia-modprobe PUx,
+  /usr/bin/@{multiarch}-ld.bfd Cx -> opencl_ld, # POCL links. TODO: use conditionals to enable potentially dangerous libpocl behaviour?
 
   # Additional libraries
 
@@ -35,6 +36,9 @@
   /sys/devices/virtual/dmi/id/{,*} r, # libpocl -> libhwloc
   /sys/fs/cgroup/cpuset/cpuset.{cpus,mems} r, # libpocl -> libhwloc
   /sys/kernel/mm/hugepages{/,/**} r, # libpocl.so -> libhwloc.so
+  /usr/lib/@{multiarch}/beignet/** r,
+  /usr/lib/llvm-[0-9]*.[0-9]*/lib/clang/[0-9]*/include/* r,
+  /usr/share/pocl/** r,
   @{PROC}/devices r,
 
   # Owner files
@@ -44,9 +48,24 @@
   owner @{HOME}/.cache/pocl/ w,
   owner @{HOME}/.cache/pocl/kcache/ w,
   owner @{HOME}/.cache/pocl/kcache/** rw,
-  owner @{HOME}/.cache/pocl/kcache/**.so m, # dangerous ? TODO: use conditionals to enable libpocl to load user-writable libraries
+  owner @{HOME}/.cache/pocl/kcache/**.so m, # dangerous ? TODO: use conditionals to enable potentially dangerous libpocl behaviour?
   owner @{HOME}/.nv/ComputeCache/ w,
   owner @{HOME}/.nv/ComputeCache/** rw,
   owner @{HOME}/.nv/ComputeCache/index rwk,
   owner @{PROC}/@{pid}/{cgroup,cpuset} r, # libpocl.so -> libhwloc.so
+
+  # Child profiles
+
+  profile opencl_ld {
+    #include <abstractions/base>
+
+    # Main executables
+
+    /usr/bin/@{multiarch}-ld.bfd rm,
+
+    # Owner files
+
+    owner @{HOME}/.cache/pocl/kcache/tempfile_*.so rw,
+    owner @{HOME}/.cache/pocl/kcache/**.so.o r,
+  }
 

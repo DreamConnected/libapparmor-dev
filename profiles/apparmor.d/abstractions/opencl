@@ -1,6 +1,9 @@
 # vim:syntax=apparmor
 # OpenCL access requirements
 
+  # for libc.so (libOpenCL.so -> beignet/libcl.so calls XOpenDisplay())
+  #include <abstractions/X>
+
   #include <abstractions/nvidia>
   #include <abstractions/dri-enumerate>
 
@@ -8,6 +11,7 @@
 
   /usr/bin/nvidia-modprobe PUx,
   /usr/bin/@{multiarch}-ld.bfd Cx -> opencl_ld, # POCL links. TODO: use conditionals to enable potentially dangerous libpocl behaviour?
+  /usr/lib/llvm-[0-9]*.[0-9]*/bin/clang Cx -> opencl_clang, # POCL. TODO: use conditionals to enable potentially dangerous libpocl behaviour?
 
   # Additional libraries
 
@@ -15,7 +19,7 @@
 
   # System files
 
-  / r, # libpocl -> libhwloc
+  / r, # libpocl.so -> libhwloc.so
   /dev/dri/ r,
   /dev/dri/card[0-9]* rw,
   /dev/dri/render* rw,
@@ -24,8 +28,14 @@
   /etc/drirc r, # libMesaOpenCL.so
   /proc/sys/vm/mmap_min_addr r, # libnvidia-opencl.so
   /sys/bus/pci/devices/ r,
+  /sys/bus/pci/slots/ r, # libpocl.so -> hwloc_topology_load() from libhwloc.so
   /sys/bus/{cpu,node}/devices/ r,
-  /sys/devices/pci[0-9]*/**/{config,resource} r, # libcl.so -> libdrm_intel.so -> libpciaccess.so (move to dri-enumerate ?)
+  /sys/class/net/ r, # libpocl.so -> hwloc_pci_traverse_lookuposdevices_cb() from libhwloc.so
+  /sys/devices/pci[0-9]*/**/ r, # for libpocl ->  hwloc_linux_lookup_block_class() from libhwloc.so
+  /sys/devices/pci[0-9]*/**/block/*/dev r, # libpocl.so -> hwloc_linux_lookup_host_block_class() from libhwloc.so
+  /sys/devices/pci[0-9]*/**/{class,config,local_cpus,resource} r, # libcl.so -> libdrm_intel.so -> libpciaccess.so (move to dri-enumerate ?). class, local_cpus for libhwloc.so
+  /sys/devices/pci[0-9]*/*/net/*/address r, # libpocl.so ->  hwloc_pci_traverse_lookuposdevices_cb() from libhwloc.so
+  /sys/devices/system/cpu/ r, # libpocl.so -> libnuma.so
   /sys/devices/system/cpu/cpu[0-9]*/cache/index[0-9]*/* r,
   /sys/devices/system/cpu/cpu[0-9]*/online r,
   /sys/devices/system/cpu/cpu[0-9]*/topology/* r,
@@ -33,17 +43,17 @@
   /sys/devices/system/cpu/possible r,
   /sys/devices/system/node/ r,
   /sys/devices/system/node/node[0-9]*/meminfo r,
-  /sys/devices/virtual/dmi/id/{,*} r, # libpocl -> libhwloc
-  /sys/fs/cgroup/cpuset/cpuset.{cpus,mems} r, # libpocl -> libhwloc
+  /sys/devices/virtual/dmi/id/{,*} r, # libpocl.so -> libhwloc.so
+  /sys/fs/cgroup/cpuset/cpuset.{cpus,mems} r, # libpocl.so -> libhwloc.so
   /sys/kernel/mm/hugepages{/,/**} r, # libpocl.so -> libhwloc.so
   /usr/lib/@{multiarch}/beignet/** r,
   /usr/lib/llvm-[0-9]*.[0-9]*/lib/clang/[0-9]*/include/* r,
   /usr/share/pocl/** r,
+  /{,var/}run/udev/data/*:* r, # libpoc.so -> hwloc_linux_block_class_fillinfos() from libhwloc.so
   @{PROC}/devices r,
 
   # Owner files
 
-  owner @{HOME}/.Xauthority r, # beignet libcl.so calls XOpenDisplay()
   owner @{HOME}/.cache/ w,
   owner @{HOME}/.cache/pocl/ w,
   owner @{HOME}/.cache/pocl/kcache/ w,
@@ -52,7 +62,7 @@
   owner @{HOME}/.nv/ComputeCache/ w,
   owner @{HOME}/.nv/ComputeCache/** rw,
   owner @{HOME}/.nv/ComputeCache/index rwk,
-  owner @{PROC}/@{pid}/{cgroup,cpuset} r, # libpocl.so -> libhwloc.so
+  owner @{PROC}/@{pid}/{cgroup,cpuset,status} r, # libpocl.so -> libhwloc.so, status for libpocl.so -> libnuma.so
 
   # Child profiles
 
@@ -66,6 +76,27 @@
     # Owner files
 
     owner @{HOME}/.cache/pocl/kcache/tempfile_*.so rw,
-    owner @{HOME}/.cache/pocl/kcache/**.so.o r,
+    owner @{HOME}/.cache/pocl/kcache/*/*/*/*.so.o r,
+  }
+
+  profile opencl_clang {
+    #include <abstractions/base>
+
+    # Main executablles
+
+    /usr/lib/llvm-[0-9]*.[0-9]*/bin/clang rm,
+
+    # Additional executables
+
+    /usr/bin/*linux-gnu-ld.bfd ix, # TODO: transfer to opencl_ld child profile?
+
+    # System files
+
+    /etc/debian-version r,
+    /etc/lsb-release r,
+
+    # Owner files
+
+    owner @{HOME}/.cache/pocl/kcache/*/*/*/*/*.so{,.o} rw,
   }
 

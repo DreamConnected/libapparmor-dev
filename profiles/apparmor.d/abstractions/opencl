@@ -41,6 +41,7 @@
   /sys/devices/system/cpu/cpu[0-9]*/topology/* r,
   /sys/devices/system/cpu/cpufreq/policy[0-9]*/* r,
   /sys/devices/system/cpu/possible r,
+  /sys/devices/system/memory/block_size_bytes r, # libnvidia-opencl.so
   /sys/devices/system/node/ r,
   /sys/devices/system/node/node[0-9]*/meminfo r,
   /sys/devices/virtual/dmi/id/{,*} r, # libpocl.so -> libhwloc.so
@@ -76,7 +77,7 @@
     # Owner files
 
     owner @{HOME}/.cache/pocl/kcache/tempfile_*.so rw,
-    owner @{HOME}/.cache/pocl/kcache/*/*/*/*.so.o r,
+    owner @{HOME}/.cache/pocl/kcache/*/*/*/*/*.so.o r,
   }
 
   profile opencl_clang {

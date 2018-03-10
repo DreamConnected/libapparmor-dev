@@ -10,12 +10,13 @@
   # Executables
 
   /usr/bin/nvidia-modprobe PUx,
-  /usr/bin/@{multiarch}-ld.bfd Cx -> opencl_ld, # POCL links. TODO: use conditionals to enable potentially dangerous libpocl behaviour?
+  /usr/bin/{,@{multiarch}-}ld.bfd Cx -> opencl_ld, # POCL links. TODO: use conditionals to enable potentially dangerous libpocl behaviour?
   /usr/lib/llvm-[0-9]*.[0-9]*/bin/clang Cx -> opencl_clang, # POCL. TODO: use conditionals to enable potentially dangerous libpocl behaviour?
 
   # Additional libraries
 
   /usr/lib/@{multiarch}/gallium-pipe/*.so rm, # libMesaOpenCL.so
+  /usr/lib{,64}/gallium-pipe/*.so rm, # libMesaOpenCL.so on openSUSE
 
   # System files
 
@@ -72,7 +73,7 @@
 
     # Main executables
 
-    /usr/bin/@{multiarch}-ld.bfd rm,
+    /usr/bin/{,@{multiarch}-}ld.bfd rm,
 
     # Owner files
 

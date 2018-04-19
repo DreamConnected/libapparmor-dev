@@ -1,0 +1,25 @@
+before_script:
+        - apt-get update -qq && apt-get install -y flex bison swig libpcre2-dev python3 python3-pyflakes libpython3-dev libtool make gettext g++ dejagnu liblocale-gettext-perl
+
+builder:
+    stage: build
+    script:
+        - export PYTHON=/usr/bin/python3
+        - export PYTHON_VERSIONS=python3
+        - pushd .
+        - cd libraries/libapparmor
+        - ./autogen.sh
+        - ./configure --with-python --prefix=/usr
+        - make
+        - popd
+        - make -C utils
+        - make -C binutils
+        - make -C parser V=1
+        - make -C profiles
+        - make install -C libraries/libapparmor
+        - make check -C libraries/libapparmor
+        - make check -C binutils
+        - make check -C parser
+        - make check -C utils
+
+

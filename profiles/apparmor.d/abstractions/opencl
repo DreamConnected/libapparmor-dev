@@ -25,6 +25,7 @@
   /dev/dri/card[0-9]* rw,
   /dev/dri/render* rw,
   /dev/nvidia-uvm rw, # libnvidia-opencl.so
+  /dev/nvidia-uvm-tools rw, # libnvidia-opencl.so
   /etc/OpenCL/** r,
   /etc/drirc r, # libMesaOpenCL.so
   /proc/sys/vm/mmap_min_addr r, # libnvidia-opencl.so
@@ -50,6 +51,7 @@
   /sys/kernel/mm/hugepages{/,/**} r, # libpocl.so -> libhwloc.so
   /usr/lib/@{multiarch}/beignet/** r,
   /usr/lib/llvm-[0-9]*.[0-9]*/lib/clang/[0-9]*/include/* r,
+  /usr/share/nvidia/** r, # libnvidia-opencl.so
   /usr/share/pocl/** r,
   /{,var/}run/udev/data/*:* r, # libpoc.so -> hwloc_linux_block_class_fillinfos() from libhwloc.so
   @{PROC}/devices r,

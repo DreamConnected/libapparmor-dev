@@ -79,8 +79,8 @@
 
     # Owner files
 
-    owner @{HOME}/.cache/pocl/kcache/tempfile_*.so rw,
-    owner @{HOME}/.cache/pocl/kcache/*/*/*/*/*.so.o r,
+    owner @{HOME}/.cache/pocl/kcache/tempfile*.so rw,
+    owner @{HOME}/.cache/pocl/kcache/**.so.o r,
   }
 
   profile opencl_clang {

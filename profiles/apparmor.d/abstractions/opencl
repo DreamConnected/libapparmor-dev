@@ -59,6 +59,7 @@
   # Owner files
 
   owner @{HOME}/.cache/ w,
+  owner @{HOME}/.cache/mesa_shader_cache/{,**} rw, # libMesaOpenCL.so -> pipe_nouveau.so
   owner @{HOME}/.cache/pocl/ w,
   owner @{HOME}/.cache/pocl/kcache/ w,
   owner @{HOME}/.cache/pocl/kcache/** rw,

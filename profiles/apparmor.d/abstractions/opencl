@@ -1,7 +1,7 @@
 # vim:syntax=apparmor
 # OpenCL access requirements
 
-  # for libc.so (libOpenCL.so -> beignet/libcl.so calls XOpenDisplay())
+  # for libcl.so (libOpenCL.so -> beignet/libcl.so calls XOpenDisplay())
   #include <abstractions/X>
 
   #include <abstractions/nvidia>
@@ -15,8 +15,8 @@
 
   # Additional libraries
 
-  /usr/lib/@{multiarch}/gallium-pipe/*.so rm, # libMesaOpenCL.so
-  /usr/lib{,64}/gallium-pipe/*.so rm, # libMesaOpenCL.so on openSUSE
+  /usr/lib/@{multiarch}/gallium-pipe/*.so mr, # libMesaOpenCL.so
+  /usr/lib{,64}/gallium-pipe/*.so mr, # libMesaOpenCL.so on openSUSE
 
   # System files
 
@@ -53,10 +53,10 @@
   /usr/lib/llvm-[0-9]*.[0-9]*/lib/clang/[0-9]*/include/* r,
   /usr/share/nvidia/** r, # libnvidia-opencl.so
   /usr/share/pocl/** r,
-  /{,var/}run/udev/data/*:* r, # libpoc.so -> hwloc_linux_block_class_fillinfos() from libhwloc.so
+  /{,var/}run/udev/data/*:* r, # libpocl.so -> hwloc_linux_block_class_fillinfos() from libhwloc.so
   @{PROC}/devices r,
 
-  # Owner files
+  # User files
 
   owner @{HOME}/.cache/ w,
   owner @{HOME}/.cache/mesa_shader_cache/{,**} rw, # libMesaOpenCL.so -> pipe_nouveau.so
@@ -76,9 +76,9 @@
 
     # Main executables
 
-    /usr/bin/{,@{multiarch}-}ld.bfd rm,
+    /usr/bin/{,@{multiarch}-}ld.bfd mr,
 
-    # Owner files
+    # User files
 
     owner @{HOME}/.cache/pocl/kcache/tempfile*.so rw,
     owner @{HOME}/.cache/pocl/kcache/**.so.o r,
@@ -87,20 +87,20 @@
   profile opencl_clang {
     #include <abstractions/base>
 
-    # Main executablles
+    # Main executables
 
-    /usr/lib/llvm-[0-9]*.[0-9]*/bin/clang rm,
+    /usr/lib/llvm-[0-9]*.[0-9]*/bin/clang mr,
 
     # Additional executables
 
-    /usr/bin/*linux-gnu-ld.bfd ix, # TODO: transfer to opencl_ld child profile?
+    //usr/bin/{,@{multiarch}-}ld.bfd ix, # TODO: transfer to opencl_ld child profile?
 
     # System files
 
     /etc/debian-version r,
     /etc/lsb-release r,
 
-    # Owner files
+    # User files
 
     owner @{HOME}/.cache/pocl/kcache/*/*/*/*/*.so{,.o} rw,
   }

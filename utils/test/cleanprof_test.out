@@ -8,6 +8,8 @@
 
   unix (receive) type=dgram,
 
+  link subset /alpha/beta -> /tmp/**,
+
   /home/*/** r,
   /home/foo/** w,
 

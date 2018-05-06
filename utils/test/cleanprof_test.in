@@ -8,6 +8,9 @@
 	allow /usr/share/X11/locale/**  r,
 	allow /home/*/** r,
 	unix (receive) type=dgram,
+
+	link subset /alpha/beta -> /tmp/**,
+
 	allow /home/foo/bar r,
 	allow /home/foo/** w,
 }

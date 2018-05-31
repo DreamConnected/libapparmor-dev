@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/apparmor.h>
+#include <sys/types.h>
 #include <unistd.h>
 #define _(s) gettext(s)
 
@@ -213,6 +214,7 @@ int main(int argc, char **argv)
 
 exec:
 	verbose_print_argv(argv);
+	verbose("pid: %ld\n", getpid());
 	execvp(argv[0], argv);
 	error("Failed to execute \"%s\": %m", argv[0]);
 }

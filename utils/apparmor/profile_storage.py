@@ -104,3 +104,15 @@ class ProfileStorage:
             return self.data.get(key, fallback)
         else:
             raise AppArmorBug('attempt to read unknown key %s' % key)
+
+
+def split_flags(flags):
+    '''split the flags given as string into a sorted, de-duplicated list'''
+
+    if flags is None:
+        flags = ''
+
+    # Flags may be whitespace and/or comma separated
+    flags_list = flags.replace(',', ' ').split()
+    # sort and remove duplicates
+    return sorted(set(flags_list))

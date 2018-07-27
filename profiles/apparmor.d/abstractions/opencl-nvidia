@@ -15,7 +15,7 @@
   /dev/nvidia-uvm-tools rw,
   /sys/devices/pci[0-9]*/**/config r,
   /sys/devices/system/memory/block_size_bytes r,
-  /usr/share/nvidia/** r,
+  @{system_share_dirs}/nvidia/** r,
   @{PROC}/devices r,
   @{PROC}/sys/vm/mmap_min_addr r,
 

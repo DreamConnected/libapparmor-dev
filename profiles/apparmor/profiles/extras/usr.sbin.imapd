@@ -20,5 +20,5 @@
   /dev/urandom                              r,
   /tmp/*                                    rwl,
   /usr/sbin/imapd                           r,
-  /usr/share/ssl/certs/imapd.pem            r,
+  @{system_share_dirs}/ssl/certs/imapd.pem            r,
 }

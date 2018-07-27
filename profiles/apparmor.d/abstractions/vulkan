@@ -6,9 +6,9 @@
   /etc/vulkan/{explicit,implicit}_layer.d/{,*.json} r,
   # for drmGetMinorNameForFD() from libvulkan_intel.so (Mesa)
   /sys/devices/pci[0-9]*/*/drm/ r,
-  /usr/share/vulkan/icd.d/{,*.json} r,
-  /usr/share/vulkan/{explicit,implicit}_layer.d/{,*.json} r,
+  @{system_share_dirs}/vulkan/icd.d/{,*.json} r,
+  @{system_share_dirs}/vulkan/{explicit,implicit}_layer.d/{,*.json} r,
 
   # User files
-  owner @{HOME}/.local/share/vulkan/implicit_layer.d/{,*.json} r,
+  owner @{user_share_dirs}/vulkan/implicit_layer.d/{,*.json} r,
 

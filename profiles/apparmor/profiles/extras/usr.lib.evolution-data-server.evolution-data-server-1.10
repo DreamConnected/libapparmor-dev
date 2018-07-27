@@ -35,6 +35,6 @@
   /usr/lib/evolution-data-server*/extensions r,
   /usr/lib/evolution-data-server*/extensions/lib*.so r,
   /usr/lib/gnome-vfs** mr,
-  /usr/share/evolution-data-server*/** mr,
+  @{system_share_dirs}/evolution-data-server*/** mr,
 
 }

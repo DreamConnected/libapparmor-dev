@@ -25,7 +25,7 @@
   /usr/bin/juk Cxr -> sanitized_helper,
   /usr/bin/kaffeine Cxr -> sanitized_helper,
   /usr/bin/listen Cxr -> sanitized_helper,
-  /usr/share/minirok/minirok.py Cxr -> sanitized_helper,
+  @{system_share_dirs}/minirok/minirok.py Cxr -> sanitized_helper,
 
   # mplayer
   /etc/mplayerplug-in.conf r,

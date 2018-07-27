@@ -34,8 +34,8 @@
   / r,
 
   # skeleton data
-  /usr/share/mlmmj/text.skel r,
-  /usr/share/mlmmj/text.skel/** r,
+  @{system_share_dirs}/mlmmj/text.skel r,
+  @{system_share_dirs}/mlmmj/text.skel/** r,
 
   # spool dirs
   /var/spool r,

@@ -43,7 +43,7 @@
     @{PROC}/filesystems r,
     /sys/devices/system/cpu/ r,
     /sys/devices/system/cpu/** r,
-    /usr/share/** r,
+    @{system_share_dirs}/** r,
     /var/lib/dbus/machine-id r,
 
     /usr/bin/env ix,
@@ -90,7 +90,7 @@
     @{PROC}/filesystems r,
     /sys/devices/system/cpu/ r,
     /sys/devices/system/cpu/** r,
-    /usr/share/** r,
+    @{system_share_dirs}/** r,
     /var/lib/dbus/machine-id r,
 
     /usr/bin/env ix,
@@ -112,5 +112,5 @@
     owner @{HOME}/.java/**/cache/** m,
     owner /tmp/** m,
     /usr/lib{,32,64}/jvm/**/*.jar mr,
-    /usr/share/fonts/** m,
+    @{system_share_dirs}/fonts/** m,
   }

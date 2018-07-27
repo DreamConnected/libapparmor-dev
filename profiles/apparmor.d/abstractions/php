@@ -26,11 +26,11 @@
   /var/lib/php{,5,7}/sessions/* rwlk,
 
   # php libraries
-  /usr/share/php{,5,7}/ r,
-  /usr/share/php{,5,7}/** mr,
+  @{system_share_dirs}/php{,5,7}/ r,
+  @{system_share_dirs}/php{,5,7}/** mr,
 
   # MySQL extension
-  /usr/share/mysql/** r,
+  @{system_share_dirs}/mysql/** r,
 
   # Zend opcache
   /tmp/.ZendSem.* rwlk,

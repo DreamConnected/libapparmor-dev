@@ -21,8 +21,8 @@
   /usr/bin/mlmmj-unsub Px,
   /usr/bin/mlmmj-bounce Px,
   # skeleton data
-  /usr/share/mlmmj/text.skel/ r,
-  /usr/share/mlmmj/text.skel/*/* r,
+  @{system_share_dirs}/mlmmj/text.skel/ r,
+  @{system_share_dirs}/mlmmj/text.skel/*/* r,
 
   /var/spool/mlmmj/*/control/* r,
   /var/spool/mlmmj/*/text/* r,

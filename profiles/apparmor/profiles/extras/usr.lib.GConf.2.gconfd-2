@@ -30,5 +30,5 @@
   /usr/lib/GConf/2/gconfd-2 rmix,
   /usr/lib/GConf/2/libgconfbackend-xml.so mr,
   /usr/lib64/GConf/2/libgconfbackend-xml.so mr,
-  /usr/share/locale/** r,
+  @{system_share_dirs}/locale/** r,
 }

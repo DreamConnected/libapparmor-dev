@@ -11,7 +11,7 @@
   /usr/bin/gnome-codec-install Cxr -> sanitized_helper,
   /usr/lib/gstreamer0.10/gstreamer-0.10/gst-plugin-scanner ix,
   /usr/lib/@{multiarch}/gstreamer0.10/gstreamer-0.10/gst-plugin-scanner ix,
-  /usr/share/software-center/software-center Cxr -> sanitized_helper,
+  @{system_share_dirs}/software-center/software-center Cxr -> sanitized_helper,
 
   # Input Methods
   /usr/bin/scim Cx -> sanitized_helper,
@@ -36,6 +36,6 @@
 
   # unity webapps integration. Could go in its own abstraction
   owner /run/user/*/dconf/user rw,
-  owner @{HOME}/.local/share/unity-webapps/availableapps*.db rwk,
+  owner @{user_share_dirs}/unity-webapps/availableapps*.db rwk,
   /usr/bin/debconf-communicate Cxr -> sanitized_helper,
   owner @{HOME}/.config/libaccounts-glib/accounts.db rk,

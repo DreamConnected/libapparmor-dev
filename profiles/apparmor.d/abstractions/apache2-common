@@ -17,7 +17,7 @@
   network inet stream,
   network inet6 stream,
   # apache manual, error pages and icons
-  /usr/share/apache2/** r,
+  @{system_share_dirs}/apache2/** r,
 
   # changehat itself
   @{PROC}/@{pid}/attr/current                        rw,

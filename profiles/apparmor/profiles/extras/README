@@ -12,7 +12,7 @@ configuration.
 To use, for example, the postfix profiles, we recommend running commands
 such as:
 
-  # cd /usr/share/apparmor/extra-profiles/
+  # cd @{system_share_dirs}/apparmor/extra-profiles/
   # cp *postfix* usr.sbin.post* /etc/apparmor.d/
   # cp usr.bin.procmail usr.sbin.sendmail /etc/apparmor.d/
   # aa-complain /etc/apparmor.d/*postfix*

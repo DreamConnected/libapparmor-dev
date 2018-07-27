@@ -19,7 +19,7 @@
     /** rwlk,
     /{,usr/}{,s}bin/* Pixr,
     /{,usr/}lib*/{,**/}*.so{,.*} m,
-    /usr/share/apport/* Pixr,
+    @{system_share_dirs}/apport/* Pixr,
 
     # Dangerous files
     audit deny owner /**/*.py* r,       # python imports

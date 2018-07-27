@@ -35,6 +35,6 @@
 
   /var/spool/mlmmj/*/unsubconf/* w,
 
-  /usr/share/mlmmj/text.skel/*/* r,
+  @{system_share_dirs}/mlmmj/text.skel/*/* r,
   /var/spool/mlmmj/*/control/*  r,
 }

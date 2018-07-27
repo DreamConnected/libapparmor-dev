@@ -20,5 +20,5 @@
   /dev/urandom                           r     ,
   /tmp/.*                                rwl   ,
   /usr/sbin/ipop2d                       rmix,
-  /usr/share/ssl/certs/ipop2d.pem        r     ,
+  @{system_share_dirs}/ssl/certs/ipop2d.pem        r     ,
 }

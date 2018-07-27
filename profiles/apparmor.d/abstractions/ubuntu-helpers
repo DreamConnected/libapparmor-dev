@@ -58,10 +58,10 @@ profile sanitized_helper {
 
   # Allow exec of software-center scripts. We may need to allow wider
   # permissions for /usr/share, but for now just do this. (LP: #972367)
-  /usr/share/software-center/* Pixr,
+  @{system_share_dirs}/software-center/* Pixr,
 
   # Allow exec of texlive font build scripts (LP: #1010909)
-  /usr/share/texlive/texmf{,-dist}/web2c/{,**/}* Pixr,
+  @{system_share_dirs}/texlive/texmf{,-dist}/web2c/{,**/}* Pixr,
 
   # While the chromium and chrome sandboxes are setuid root, they only link
   # in limited libraries so glibc's secure execution should be enough to not

@@ -17,8 +17,7 @@
   owner @{HOME}/.config/ rw,
 
   owner @{HOME}/.local/ rw,
-  owner @{HOME}/.local/share/ rw,
+  owner @{user_share_dirs}/ rw,
 
   # fallbacks
-  /usr/share/ r,
-  /usr/local/share/ r,
+  @{system_share_dirs}/ r,

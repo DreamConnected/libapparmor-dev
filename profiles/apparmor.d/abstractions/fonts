@@ -10,17 +10,17 @@
 #
 # ------------------------------------------------------------------
 
-  /usr/share/AbiSuite/fonts/**          r,
+  @{system_share_dirs}/AbiSuite/fonts/**          r,
 
   /usr/lib/xorg/modules/fonts/**.so*    mr,
 
-  /usr/share/fonts/                     r,
-  /usr/share/fonts/**                   r,
+  @{system_share_dirs}/fonts/                     r,
+  @{system_share_dirs}/fonts/**                   r,
 
   /etc/fonts/**                         r,
   # Debian, openSUSE paths are different
-  /usr/share/{fontconfig,fonts-config,*-fonts}/conf.avail/{,**} r,
-  /usr/share/ghostscript/fonts/{,**}    r,
+  @{system_share_dirs}/{fontconfig,fonts-config,*-fonts}/conf.avail/{,**} r,
+  @{system_share_dirs}/ghostscript/fonts/{,**}    r,
 
   /opt/kde3/share/fonts/**              r,
 
@@ -30,19 +30,19 @@
   /var/cache/fontconfig/**              mr,
   /var/lib/defoma/**                    mr,
 
-  /usr/share/a2ps/fonts/**              r,
-  /usr/share/xfce/fonts/**              r,
-  /usr/share/ghostscript/fonts/**       r,
-  /usr/share/javascript/*/fonts/**      r,
-  /usr/share/texmf/{,*/}fonts/**        r,
-  /usr/share/texlive/texmf-dist/fonts/** r,
+  @{system_share_dirs}/a2ps/fonts/**              r,
+  @{system_share_dirs}/xfce/fonts/**              r,
+  @{system_share_dirs}/ghostscript/fonts/**       r,
+  @{system_share_dirs}/javascript/*/fonts/**      r,
+  @{system_share_dirs}/texmf/{,*/}fonts/**        r,
+  @{system_share_dirs}/texlive/texmf-dist/fonts/** r,
   /var/lib/ghostscript/**               r,
 
   owner @{HOME}/.fonts.conf             r,
   owner @{HOME}/.fonts/                 r,
   owner @{HOME}/.fonts/**               r,
-  owner @{HOME}/.local/share/fonts/     r,
-  owner @{HOME}/.local/share/fonts/**   r,
+  owner @{user_share_dirs}/fonts/       r,
+  owner @{user_share_dirs}/fonts/**     r,
   owner @{HOME}/.fonts.cache-2          mr,
   owner @{HOME}/.{,cache/}fontconfig/   r,
   owner @{HOME}/.{,cache/}fontconfig/** mrl,
@@ -51,11 +51,8 @@
   owner @{HOME}/.config/fontconfig/     r,
   owner @{HOME}/.config/fontconfig/**   r,
 
-  /usr/local/share/fonts/               r,
-  /usr/local/share/fonts/**             r,
-
   # poppler CMap tables
-  /usr/share/poppler/cMap/**            r,
+  @{system_share_dirs}/poppler/cMap/**            r,
 
   # data files for LibThai
-  /usr/share/libthai/thbrk.tri          r,
+  @{system_share_dirs}/libthai/thbrk.tri          r,

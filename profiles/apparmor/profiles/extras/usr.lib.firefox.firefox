@@ -32,7 +32,7 @@
   @{PROC}/@{pid}/net/ipv6_route r,
 
   # should maybe be in abstractions
-  /usr/share/xubuntu/applications/defaults.list r,
+  @{system_share_dirs}/xubuntu/applications/defaults.list r,
   owner /tmp/** m,
   owner /var/tmp/** m,
   /tmp/.X[0-9]*-lock r,
@@ -91,7 +91,8 @@
 
   # allow access to documentation and other files the user may want to look
   # at in /usr
-  /usr/{include,share,src}/** r,
+  @{system_share_dirs}/** r,
+  /usr/{include,src}/** r,
 
   # Default profile allows downloads to ~/Downloads and uploads from ~/Public
   owner @{HOME}/ r,
@@ -111,15 +112,15 @@
 
   #
   # Extensions
-  # /usr/share/.../extensions/... is already covered by '/usr/.../** r', above.
+  # @{system_share_dirs}/.../extensions/... is already covered by '/usr/.../** r', above.
   # Allow 'x' for downloaded extensions, but inherit policy for safety
   owner @{HOME}/.mozilla/**/extensions/** mixr,
 
   deny /usr/lib/firefox{,-[0-9]*}/update.test w,
   deny /usr/lib/mozilla/extensions/**/ w,
   deny /usr/lib/xulrunner-addons/extensions/**/ w,
-  deny /usr/share/mozilla/extensions/**/ w,
-  deny /usr/share/mozilla/ w,
+  deny @{system_share_dirs}/mozilla/extensions/**/ w,
+  deny @{system_share_dirs}/mozilla/ w,
 
   # Site-specific additions and overrides. See local/README for details.
   # Local path is disabled, we only enable them for profiles we promote

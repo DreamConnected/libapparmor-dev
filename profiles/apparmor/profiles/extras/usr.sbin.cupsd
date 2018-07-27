@@ -24,7 +24,7 @@
   /usr/bin/gs ix,
   /usr/lib/ghostscript/** m,
   /usr/lib64/ghostscript/** m,
-  /usr/share/ghostscript/** r,
+  @{system_share_dirs}/ghostscript/** r,
   /etc/ghostscript/** r,
 
   /dev/lp0 rw,
@@ -51,7 +51,7 @@
   /usr/lib/cups/backend/* ixr,
   /usr/lib/cups/filter/* ixr,
   /usr/sbin/cupsd mixr,
-  /usr/share/cups/** r,
+  @{system_share_dirs}/cups/** r,
   /var/log/cups/access_log rw,
   /var/log/cups/error_log rw,
   /var/spool/cups rw,

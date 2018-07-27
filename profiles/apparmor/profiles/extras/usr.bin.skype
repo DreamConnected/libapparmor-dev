@@ -44,9 +44,9 @@
   /usr/bin/skype mr,
   /etc/xdg/sni-qt.conf rk,
   /etc/xdg/Trolltech.conf rk,
-  /usr/share/skype/** kr,
-  /usr/share/skype/**/*.qm mr,
-  /usr/share/skype/sounds/*.wav kr,
+  @{system_share_dirs}/skype/** kr,
+  @{system_share_dirs}/skype/**/*.qm mr,
+  @{system_share_dirs}/skype/sounds/*.wav kr,
   /usr/lib/@{multiarch}/pango/** mr,
 
   # For opening links in the browser (still requires explicit access to execute
@@ -72,7 +72,7 @@
   # files. Let's deny them for now.
   deny /etc/passwd m,
   deny /etc/group m,
-  deny /usr/share/fonts/** m,
+  deny @{system_share_dirs}/fonts/** m,
 
   # Silence a few non-needed writes
   deny /var/cache/fontconfig/ w,

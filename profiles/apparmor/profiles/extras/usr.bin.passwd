@@ -33,7 +33,7 @@
   /usr/bin/passwd mr,
   /usr/lib/pwdutils/lib*.so* mr,
   /usr/lib64/pwdutils/lib*.so* mr,
-  /usr/share/cracklib/pw_dict.hwm r,
-  /usr/share/cracklib/pw_dict.pwd r,
-  /usr/share/cracklib/pw_dict.pwi r,
+  @{system_share_dirs}/cracklib/pw_dict.hwm r,
+  @{system_share_dirs}/cracklib/pw_dict.pwd r,
+  @{system_share_dirs}/cracklib/pw_dict.pwi r,
 }

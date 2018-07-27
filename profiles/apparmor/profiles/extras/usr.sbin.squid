@@ -31,7 +31,7 @@
   /etc/squid/* r,
   @{PROC}/@{pid}/mounts r,
   @{PROC}/mounts r,
-  /usr/share/squid/** r,
+  @{system_share_dirs}/squid/** r,
   /var/log/squid/access.log w,
   /var/log/squid/cache.log rw,
   /var/log/squid/store.log w,

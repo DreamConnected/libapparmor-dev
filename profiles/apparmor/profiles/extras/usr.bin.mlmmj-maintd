@@ -46,7 +46,7 @@
   /var/spool/mlmmj/*/unsubconf/ r,
   /var/spool/mlmmj/*/unsubconf/* rw,
 
-  /usr/share/mlmmj/text.skel/*/digest r,
+  @{system_share_dirs}/mlmmj/text.skel/*/digest r,
   /var/spool/mlmmj/*/mlmmj.operation.log rwk,
 
 }

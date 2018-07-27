@@ -14,6 +14,6 @@
   /etc/magic r,
   /usr/bin/file rix,
   /usr/lib/firefox/firefox px,
-  /usr/share/misc/magic.mgc r,
+  @{system_share_dirs}/misc/magic.mgc r,
 
 }

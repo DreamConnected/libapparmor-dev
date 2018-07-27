@@ -35,7 +35,7 @@
   /var/spool/mlmmj/*/digesters.d/ rw,
   /var/spool/mlmmj/*/digesters.d/* rwk,
 
-  /usr/share/mlmmj/text.skel/*/* r,
+  @{system_share_dirs}/mlmmj/text.skel/*/* r,
   /etc/mlmmj/text/*/finish r,
 
 }

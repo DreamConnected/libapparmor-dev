@@ -18,6 +18,6 @@
   /usr/lib/@{multiarch}/perl{,5,-base}/**            r,
   /usr/lib/@{multiarch}/perl{,5,-base}/[0-9]*/**.so* mr,
 
-  /usr/share/perl/**             r,
-  /usr/share/perl5/**            r,
+  @{system_share_dirs}/perl/**             r,
+  @{system_share_dirs}/perl5/**            r,
   /etc/perl/**                   r,

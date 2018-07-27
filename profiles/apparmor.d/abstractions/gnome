@@ -24,8 +24,8 @@
   /usr/lib/@{multiarch}/gtk/**    mr,
   /usr/lib{,32,64}/gtk-[0-9]*/**  mr,
   /usr/lib/@{multiarch}/gtk-[0-9]*/** mr,
-  /usr/share/themes/              r,
-  /usr/share/themes/**            r,
+  @{system_share_dirs}/themes/              r,
+  @{system_share_dirs}/themes/**            r,
 
   # for gnome 1 applications
   /etc/orbitrc                    r,
@@ -64,11 +64,11 @@
 
   # icon caches
   /var/cache/**/icon-theme.cache  r,
-  /usr/share/**/icon-theme.cache  r,
+  @{system_share_dirs}/**/icon-theme.cache  r,
 
   # GLib schemas
-  /usr/{local/,}share/glib-[0-9]*/schemas/   r,
-  /usr/{local/,}share/glib-[0-9]*/schemas/** r,
+  @{system_share_dirs}/glib-[0-9]*/schemas/   r,
+  @{system_share_dirs}/glib-[0-9]*/schemas/** r,
 
   # gnome VFS modules
   /etc/gnome-vfs-2.0/modules/ r,
@@ -77,14 +77,14 @@
   /usr/lib/@{multiarch}/gnome-vfs-2.0/modules/*.so mr,
 
   # gvfs
-  /usr/share/gvfs/remote-volume-monitors/  r,
-  /usr/share/gvfs/remote-volume-monitors/* r,
+  @{system_share_dirs}/gvfs/remote-volume-monitors/  r,
+  @{system_share_dirs}/gvfs/remote-volume-monitors/* r,
   @{PROC}/@{pid}/mounts                    r,
 
   # printing
   /etc/papersize                   r,
   /etc/cups/lpoptions              r,
-  /usr/share/cups/charmaps/**      r,
+  @{system_share_dirs}/cups/charmaps/**      r,
 
   # holds MIT-MAGIC-COOKIE for gnome
   owner /{,var/}run/gdm/auth*/database r,
@@ -92,8 +92,8 @@
   # mime-types
   /etc/gnome/defaults.list r,
   /etc/xdg/*-mimeapps.list r,
-  /usr/share/gnome/applications/ r,
-  /usr/share/gnome/applications/mimeinfo.cache r,
+  @{system_share_dirs}/gnome/applications/ r,
+  @{system_share_dirs}/gnome/applications/mimeinfo.cache r,
 
   # Allow connecting to the GNOME vfs socket (still need corresponding DBus
   # rules)

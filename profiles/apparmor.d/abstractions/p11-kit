@@ -16,8 +16,8 @@
   /usr/lib{,32,64}/pkcs11/*.so mr,
   /usr/lib/@{multiarch}/pkcs11/*.so mr,
 
-  /usr/share/p11-kit/modules/  r,
-  /usr/share/p11-kit/modules/* r,
+  @{system_share_dirs}/p11-kit/modules/  r,
+  @{system_share_dirs}/p11-kit/modules/* r,
 
   # gnome-keyring pkcs11 module
   owner /{,var/}run/user/[0-9]*/keyring*/pkcs11 rw,

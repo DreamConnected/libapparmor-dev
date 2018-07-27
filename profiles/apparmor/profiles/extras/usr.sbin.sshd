@@ -59,7 +59,7 @@
   /etc/ssh/** r,
   /etc/ssl/openssl.cnf r,
   /usr/sbin/sshd mrix,
-  /usr/share/ssh/blacklist.* r,
+  @{system_share_dirs}/ssh/blacklist.* r,
   /var/log/btmp rw,
   owner /{,var/}run/sshd{,.init}.pid wl,
   @{HOME}/.ssh/authorized_keys{,2} r,

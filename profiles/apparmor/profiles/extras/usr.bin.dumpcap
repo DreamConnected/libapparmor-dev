@@ -29,8 +29,8 @@
 
   /usr/bin/dumpcap mr,
 
-  /usr/share/GeoIP/ r,
-  /usr/share/GeoIP/** r,
+  @{system_share_dirs}/GeoIP/ r,
+  @{system_share_dirs}/GeoIP/** r,
 
   @{PROC}/@{pid}/net/psched r,
 

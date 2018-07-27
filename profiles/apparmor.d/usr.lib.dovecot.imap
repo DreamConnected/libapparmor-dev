@@ -36,7 +36,7 @@
 
   /usr/bin/doveconf rix,
   /usr/lib/dovecot/imap mrix,
-  /usr/share/dovecot/** r,
+  @{system_share_dirs}/dovecot/** r,
   /run/dovecot/login/imap rw,
   /{,var/}run/dovecot/auth-master rw,
   /{,var/}run/dovecot/mounts r,

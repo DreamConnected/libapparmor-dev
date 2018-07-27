@@ -18,7 +18,7 @@
   owner /tmp/groff*                           rwl,
 
   # standard system manpages
-  /usr/local/share/man/man?/            r,
-  /usr/local/share/man/man?/**          r,
-  /usr/{share,X11R6,local,kerberos}/man/**	 r,
+  @{system_share_dirs}/man/   r,
+  @{system_share_dirs}/man/** r,
+  /usr/{X11R6,local,kerberos}/man/**	r,
   /usr/man/**				r,

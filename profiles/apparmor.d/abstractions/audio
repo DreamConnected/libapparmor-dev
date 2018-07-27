@@ -37,8 +37,8 @@
 
 @{PROC}/asound/** rw,
 
-/usr/share/alsa/** r,
-/usr/share/sounds/** r,
+@{system_share_dirs}/alsa/** r,
+@{system_share_dirs}/sounds/** r,
 
 owner @{HOME}/.esd_auth r,
 owner @{HOME}/.asoundrc r,
@@ -70,8 +70,8 @@ owner /tmp/pulse-*/* rw,
 # openal
 /etc/openal/alsoft.conf r,
 owner @{HOME}/.alsoftrc r,
-/usr/{,local/}share/openal/hrtf/{,**} r,
-owner @{HOME}/.local/share/openal/hrtf/{,**} r,
+@{system_share_dirs}/openal/hrtf/{,**} r,
+owner @{user_share_dirs}/openal/hrtf/{,**} r,
 
 # wildmidi
 /etc/wildmidi/wildmidi.cfg r,

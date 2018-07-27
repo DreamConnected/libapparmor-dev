@@ -10,7 +10,7 @@
   # System files
 
   /etc/xdg/QtProject/qtlogging.ini r,
-  /usr/share/qt5/translations/*.qm r,
+  @{system_share_dirs}/qt5/translations/*.qm r,
   /usr/lib{,64,/@{multiarch}}/qt5/plugins/** r,
   /usr/lib{,64,/@{multiarch}}/qt5/qml/** r,
 

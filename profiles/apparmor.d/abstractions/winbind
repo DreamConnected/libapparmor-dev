@@ -17,5 +17,5 @@
   /usr/lib*/samba/valid.dat   r,
   /usr/lib*/samba/upcase.dat  r,
   /usr/lib*/samba/lowcase.dat r,
-  /usr/share/samba/codepages/{lowcase,upcase,valid}.dat r,
+  @{system_share_dirs}/samba/codepages/{lowcase,upcase,valid}.dat r,
 

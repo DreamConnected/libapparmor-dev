@@ -42,7 +42,7 @@
   /usr/lib/sasl2/                             mr,
   /usr/lib/sasl2/*                            mr,
 
-  /usr/share/ssl/certs/ca-bundle.crt          r,
+  @{system_share_dirs}/ssl/certs/ca-bundle.crt          r,
 
   /{var/spool/postfix/,}pid/inet.*               rw,
   /{var/spool/postfix/,}private/anvil            w,

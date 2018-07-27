@@ -31,7 +31,7 @@
   /var/spool/mlmmj/*/text/ r, #
   /var/spool/mlmmj/*/text/* r,
 
-  /usr/share/mlmmj/text.skel/*/* r,
+  @{system_share_dirs}/mlmmj/text.skel/*/* r,
 
   /var/spool/mlmmj/*/nomailsubs.d/ rw,
   /var/spool/mlmmj/*/nomailsubs.d/* rwk,

@@ -33,8 +33,8 @@
   /tmp/spamd-*-init/** lrw,
   /usr/bin/perl mix,
   /usr/sbin/spamd r,
-  /usr/share/spamassassin r,
-  /usr/share/spamassassin/*.cf r,
-  /usr/share/spamassassin/*.template r,
-  /usr/share/spamassassin/*.txt r,
+  @{system_share_dirs}/spamassassin r,
+  @{system_share_dirs}/spamassassin/*.cf r,
+  @{system_share_dirs}/spamassassin/*.template r,
+  @{system_share_dirs}/spamassassin/*.txt r,
 }

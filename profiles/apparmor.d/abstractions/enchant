@@ -11,8 +11,8 @@
 
   # abstraction for Enchant spellchecking frontend
 
-  /usr/share/enchant/                              r,
-  /usr/share/enchant/enchant.ordering              r,
+  @{system_share_dirs}/enchant/                              r,
+  @{system_share_dirs}/enchant/enchant.ordering              r,
 
   # aspell
   #include <abstractions/aspell>
@@ -20,25 +20,25 @@
   /var/lib/dictionaries-common/aspell/*            r,
 
   # hspell
-  /usr/share/hspell/                               r,
-  /usr/share/hspell/*.wgz.*                        r,
+  @{system_share_dirs}/hspell/                               r,
+  @{system_share_dirs}/hspell/*.wgz.*                        r,
 
   # hunspell
-  /usr/share/hunspell/                             r,
-  /usr/share/hunspell/*                            r,
+  @{system_share_dirs}/hunspell/                             r,
+  @{system_share_dirs}/hunspell/*                            r,
 
   # ispell
   /usr/lib/ispell/                                 r,
   /usr/lib/ispell/*.hash                           r,
-  /usr/share/dict/                                 r,
-  /usr/share/dict/*                                r,
+  @{system_share_dirs}/dict/                                 r,
+  @{system_share_dirs}/dict/*                                r,
   /var/lib/dictionaries-common/                    r,
   /var/lib/dictionaries-common/{ispell,wordlist}/  r,
   /var/lib/dictionaries-common/{ispell,wordlist}/* r,
 
   # myspell
-  /usr/share/myspell/                              r,
-  /usr/share/myspell/**                            r,
+  @{system_share_dirs}/myspell/                              r,
+  @{system_share_dirs}/myspell/**                            r,
 
   # voikko
   /usr/lib/voikko/                                 r,
@@ -47,9 +47,9 @@
   /usr/lib/voikko/2/mor-standard/voikko*           r,
 
   # zemberek
-  /usr/share/java/                                 r,
-  /usr/share/java/zemberek-[0-9]*.jar              r,
-  /usr/share/java/zemberek-tr-[0-9]*.jar           r,
+  @{system_share_dirs}/java/                                 r,
+  @{system_share_dirs}/java/zemberek-[0-9]*.jar              r,
+  @{system_share_dirs}/java/zemberek-tr-[0-9]*.jar           r,
 
   # per-user dictionaries
   owner @{HOME}/.config/enchant/                   rw,

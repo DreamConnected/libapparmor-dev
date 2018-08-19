@@ -917,6 +917,7 @@ int process_profile(int option, aa_kernel_interface *kernel_interface,
 		}
 	} else {
 		pwarn("%s: cannot use or update cache, disable, or force-complain via stdin\n", progname);
+		skip_cache = write_cache = 0;
 	}
 
 	reset_parser(profilename);
@@ -1306,7 +1307,6 @@ int main(int argc, char *argv[])
 
 		if (create_cache_dir)
 			pwarn(_("The --create-cache-dir option is deprecated. Please use --write-cache.\n"));
-
 		retval = aa_policy_cache_new(&policy_cache, kernel_features,
 					     AT_FDCWD, cacheloc[0], max_caches);
 		if (retval) {

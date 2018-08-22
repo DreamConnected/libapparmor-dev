@@ -133,7 +133,7 @@ sub test_profile {
   } elsif ($istodo) {
     TODO: {
       local $TODO = "Unfixed testcase.";
-      ok($expass ? !$result : $result, "TODO: $profile: $description");
+      ok($expass ? $result : !$result, "TODO: $profile: $description");
     }
   } else {
     ok($expass ? !$result : $result, "$profile: $description");

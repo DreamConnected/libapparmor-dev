@@ -58,7 +58,7 @@ L<https://bugs.launchpad.net/apparmor/+filebug>.
 
 =head1 SEE ALSO
 
-netstat(8), apparmor(7), apparmor.d(5), aa_change_hat(2), and
-L<http://wiki.apparmor.net>.
+ss(8), netstat(8), apparmor(7), apparmor.d(5), aa_change_hat(2), and
+L<https://wiki.apparmor.net>.
 
 =cut

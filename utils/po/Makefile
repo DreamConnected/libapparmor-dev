@@ -24,3 +24,14 @@ COMMONDIR=../../common
 include $(COMMONDIR)/Make-po.rules
 
 XGETTEXT_ARGS+=--language=perl --language=python
+
+=head1 BUGS
+
+If you find any bugs, please report them at
+L<https://bugs.launchpad.net/apparmor/+filebug>.
+
+=head1 SEE ALSO
+
+apparmor(7), apparmor.d(5), and L<https://wiki.apparmor.net>.
+
+=cut

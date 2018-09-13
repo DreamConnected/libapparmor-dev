@@ -1,3 +1,9 @@
+# AppArmor
+
+[![Build status](https://gitlab.com/apparmor/apparmor/badges/master/build.svg)](https://gitlab.com/apparmor/apparmor/commits/master)
+[![Overall test coverage](https://gitlab.com/apparmor/apparmor/badges/master/coverage.svg)](https://gitlab.com/apparmor/apparmor/pipelines)
+[![Core Infrastructure Initiative Best Practices](https://bestpractices.coreinfrastructure.org/projects/1699/badge)](https://bestpractices.coreinfrastructure.org/projects/1699)
+
 ------------
 Introduction
 ------------
@@ -45,6 +51,7 @@ Source Layout
 
 AppArmor consists of several different parts:
 
+```
 binutils/	source for basic utilities written in compiled languages
 changehat/	source for using changehat with Apache, PAM and Tomcat
 common/		common makefile rules
@@ -55,6 +62,7 @@ parser/		source for parser/loader and corresponding documentation
 profiles/	configuration files, reference profiles and abstractions
 tests/		regression and stress testsuites
 utils/		high-level utilities for working with AppArmor
+```
 
 --------------------------------------
 Important note on AppArmor kernel code
@@ -75,60 +83,86 @@ Building and Installing AppArmor Userspace
 ------------------------------------------
 
 To build and install AppArmor userspace on your system, build and install in
-the following order.
+the following order. Some systems may need to export various python-related
+environment variables to complete the build. For example, before building
+anything on these systems, use something along the lines of:
 
+```
+$ export PYTHONPATH=$(realpath libraries/libapparmor/swig/python)
+$ export PYTHON=/usr/bin/python3
+$ export PYTHON_VERSION=3
+$ export PYTHON_VERSIONS=python3
+```
 
 libapparmor:
+
+```
 $ cd ./libraries/libapparmor
 $ sh ./autogen.sh
 $ sh ./configure --prefix=/usr --with-perl --with-python # see below
 $ make
 $ make check
 $ make install
+```
 
 [an additional optional argument to libapparmor's configure is --with-ruby, to
 generate Ruby bindings to libapparmor.]
 
 
 Binary Utilities:
+
+```
 $ cd binutils
 $ make
 $ make check
 $ make install
-
+```
 
 parser:
+
+```
 $ cd parser
 $ make		# depends on libapparmor having been built first
 $ make check
 $ make install
+```
 
 
 Utilities:
+
+```
 $ cd utils
 $ make
 $ make check
 $ make install
-
+```
 
 Apache mod_apparmor:
+
+```
 $ cd changehat/mod_apparmor
 $ make		# depends on libapparmor having been built first
 $ make install
+```
 
 
 PAM AppArmor:
+
+```
 $ cd changehat/pam_apparmor
 $ make		# depends on libapparmor having been built first
 $ make install
+```
 
 
 Profiles:
+
+```
 $ cd profiles
 $ make
 $ make check	# depends on the parser having been built first
 $ make install
-
+```
 
 [Note that for the parser, binutils, and utils, if you only wish to build/use
  some of the locale languages, you can override the default by passing
@@ -149,38 +183,50 @@ For details on structure and adding tests, see
 tests/regression/apparmor/README.
 
 To run:
+
+```
 $ cd tests/regression/apparmor (requires root)
 $ make
 $ sudo make tests
 $ sudo bash open.sh -r	 # runs and saves the last testcase from open.sh
-
+```
 
 Parser tests
 ------------
 For details on structure and adding tests, see parser/tst/README.
 
 To run:
+
+```
 $ cd parser/tst
 $ make
 $ make tests
-
+```
 
 Libapparmor
 -----------
 For details on structure and adding tests, see libraries/libapparmor/README.
+
+```
 $ cd libraries/libapparmor
 $ make check
+```
 
 Utils
 -----
 Tests for the Python utilities exist in the test/ subdirectory.
+
+```
 $ cd utils
 $ make check
+```
 
 The aa-decode utility to be tested can be overridden by
 setting up environment variable APPARMOR_DECODE; e.g.:
 
+```
 $ APPARMOR_DECODE=/usr/bin/aa-decode make check
+```
 
 Profile checks
 --------------
@@ -188,29 +234,44 @@ A basic consistency check to ensure that the parser and aa-logprof parse
 successfully the current set of shipped profiles. The system or other
 parser and logprof can be passed in by overriding the PARSER and LOGPROF
 variables.
+
+```
 $ cd profiles
 $ make && make check
+```
 
 Stress Tests
 ------------
 To run AppArmor stress tests:
+
+```
 $ make all
+```
 
 Use these:
+
+```
 $ ./change_hat
 $ ./child
 $ ./kill.sh
 $ ./open
 $ ./s.sh
+```
 
 Or run all at once:
+
+```
 $ ./stress.sh
+```
 
 Please note that the above will stress the system so much it may end up
 invoking the OOM killer.
 
 To run parser stress tests (requires /usr/bin/ruby):
+
+```
 $ ./stress.sh
+```
 
 (see stress.sh -h for options)
 
@@ -225,7 +286,10 @@ https://scan.coverity.com/download?tab=cxx to obtain a pre-built copy of
 cov-build.
 
 To generate a compressed tarball of an intermediate Coverity directory:
+
+```
 $ make coverity
+```
 
 The compressed tarball is written to
 apparmor-<SNAPSHOT_VERSION>-cov-int.tar.gz, where <SNAPSHOT_VERSION>

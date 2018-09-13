@@ -19,7 +19,7 @@ DIRS=libraries/libapparmor \
 
 # with conversion to git, we don't export from the remote
 REPO_URL?=git@gitlab.com:apparmor/apparmor.git
-REPO_BRANCH?=master
+REPO_BRANCH?=apparmor-2.13
 
 COVERITY_DIR=cov-int
 RELEASE_DIR=apparmor-${VERSION}

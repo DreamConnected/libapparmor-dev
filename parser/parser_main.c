@@ -109,15 +109,6 @@ static bool print_cache_dir = false;
 static aa_features *compile_features = NULL;
 static aa_features *kernel_features = NULL;
 
-static const char *config_file = "/etc/apparmor/parser.conf";
-
-static const char *early_short_options = "+";
-struct option early_long_options[] = {
-	{"config-file",		1, 0, 139},	/* no short option */
-	{"print-config-file",	0, 0, 140},	/* no short option */
-	{NULL, 0, 0, 0},
-};
-
 /* Make sure to update BOTH the short and long_options */
 static const char *short_options = "ad::f:h::rRVvI:b:BCD:NSm:M:qQn:XKTWkL:O:po:j:";
 struct option long_options[] = {
@@ -165,8 +156,6 @@ struct option long_options[] = {
 	{"jobs",		1, 0, 'j'},
 	{"max-jobs",		1, 0, 136},	/* no short option */
 	{"print-cache-dir",	0, 0, 137},	/* no short option */
-	{"config-file",		1, 0, 139},	/* early option */
-	{"print-config-file",	0, 0, 140},	/* early option */
 	{NULL, 0, 0, 0},
 };
 
@@ -222,7 +211,6 @@ static void display_usage(const char *command)
 	       "--max-jobs n		Hard cap on --jobs. Default 8*cpus\n"
 	       "--abort-on-error	Abort processing of profiles on first error\n"
 	       "--skip-bad-cache-rebuild Do not try rebuilding the cache if it is rejected by the kernel\n"
-	       "--config-file n		Specify the parser config file location\n"
 	       "--warn n		Enable warnings (see --help=warn)\n"
 	       ,command);
 }
@@ -383,27 +371,6 @@ static long process_jobs_arg(const char *arg, const char *val) {
 	}
 
 	return n;
-}
-
-static int process_early_arg(int c, char *optarg)
-{
-	switch (c) {
-	case 0:
-		PERROR("Assert, in getopt_long handling\n");
-		exit(1);
-		break;
-	case 139:
-		config_file = strdup(optarg);
-		break;
-	case 140:
-		printf("%s\n", config_file);
-		break;
-	default:
-		/* do nothing */
-		break;
-	}
-
-	return 0;
 }
 
 /* process a single argment from getopt_long
@@ -638,12 +605,6 @@ static int process_arg(int c, char *optarg)
 		kernel_load = 0;
 		print_cache_dir = true;
 		break;
-	case 139:
-		/* early arg do nothing */
-		break;
-	case 140:
-		/* early arg do nothing */
-		break;
 	default:
 		/* 'unrecognized option' error message gets printed by getopt_long() */
 		exit(1);
@@ -653,31 +614,12 @@ static int process_arg(int c, char *optarg)
 	return count;
 }
 
-static int process_early_args(int argc, char *argv[])
-{
-	int c, o;
-	int count = 0;
-	option = OPTION_ADD;
-
-	opterr = 0;
-	while ((c = getopt_long(argc, argv, early_short_options, early_long_options, &o)) != -1)
-	{
-		count += process_early_arg(c, optarg);
-	}
-
-	PDEBUG("optind = %d argc = %d\n", optind, argc);
-	return optind;
-}
-
 static int process_args(int argc, char *argv[])
 {
 	int c, o;
 	int count = 0;
 	option = OPTION_ADD;
 
-	/* reset scanning */
-	opterr = 1;
-	optind = 1;
 	while ((c = getopt_long(argc, argv, short_options, long_options, &o)) != -1)
 	{
 		count += process_arg(c, optarg);
@@ -1248,8 +1190,7 @@ int main(int argc, char *argv[])
 
 	init_base_dir();
 
-	process_early_args(argc, argv);
-	process_config_file(config_file);
+	process_config_file("/etc/apparmor/parser.conf");
 	optind = process_args(argc, argv);
 
 	setup_parallel_compile();

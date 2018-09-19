@@ -239,6 +239,8 @@ EQUALS		=
 ADD_ASSIGN	\+=
 ARROW		->
 LT_EQUAL	<=
+LT		<
+GT		>
 
 /* IF adding new state please update state_names table at eof */
 %x SUB_ID
@@ -628,6 +630,10 @@ include/{WS}	{
 {COLON}		{ RETURN_TOKEN(TOK_COLON); }
 
 {OPEN_PAREN}	{ PUSH_AND_RETURN(LIST_VAL_MODE, TOK_OPENPAREN); }
+
+{LT}		{ RETURN_TOKEN(TOK_LT); }
+
+{GT}		{ RETURN_TOKEN(TOK_GT); }
 
 {VARIABLE_NAME}	{
 	int token = get_keyword_token(yytext);

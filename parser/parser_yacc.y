@@ -96,7 +96,9 @@ void add_local_entry(Profile *prof);
 %token TOK_EQUALS
 %token TOK_ARROW
 %token TOK_ADD_ASSIGN
+%token TOK_LT
 %token TOK_LE
+%token TOK_GT
 %token TOK_SET_VAR
 %token TOK_BOOL_VAR
 %token TOK_VALUE
@@ -152,6 +154,7 @@ void add_local_entry(Profile *prof);
 %token TOK_TRACE
 %token TOK_TRACEDBY
 %token TOK_READBY
+%token TOK_ABI
 
  /* rlimits */
 %token TOK_RLIMIT
@@ -614,6 +617,15 @@ rules:	{ /* nothing */
 
 		$$ = prof;
 	};
+
+rules: rules TOK_ABI TOK_ID TOK_END_OF_RULE
+	{
+		pwarn(_("%s: Profile abi not supported, falling back to system abi.\n"), progname);
+	}
+rules: rules TOK_ABI TOK_LT TOK_ID TOK_GT TOK_END_OF_RULE
+	{
+		pwarn(_("%s: Profile abi not supported, falling back to system abi.\n"), progname);
+	}
 
 rules:  rules opt_prefix rule
 	{

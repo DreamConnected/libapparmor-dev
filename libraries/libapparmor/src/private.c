@@ -368,6 +368,7 @@ static ssize_t readdirfd(int dirfd, struct dirent ***out,
 
 	*out = dents;
 	closedir(dir);
+	close(dirfd);
 	return n;
 
 fail:
@@ -378,6 +379,7 @@ fail:
 	}
 	free(dents);
 	closedir(dir);
+	close(dirfd);
 	errno = save;
 	return -1;
 }

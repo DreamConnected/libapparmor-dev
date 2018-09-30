@@ -1703,6 +1703,8 @@ provided AppArmor policy:
   @{sys}
   @{tid}
   @{run}
+  @{bin}
+  @{lib}
   @{XDG_DESKTOP_DIR}
   @{XDG_DOWNLOAD_DIR}
   @{XDG_TEMPLATES_DIR}

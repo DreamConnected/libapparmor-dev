@@ -51,6 +51,16 @@ skip_startswith = (
 
 # testcases that should raise an exception, but don't
 exception_not_raised = [
+    # several   #include "does not exist"   examples
+    'bare_include_tests/bad_11.sd',
+    'bare_include_tests/bad_12.sd',
+    'bare_include_tests/bad_13.sd',
+    'bare_include_tests/bad_14.sd',
+    'include_tests/bad_11.sd',
+    'include_tests/bad_12.sd',
+    'include_tests/bad_13.sd',
+    'include_tests/bad_14.sd',
+
     'capability/bad_1.sd',
     'capability/bad_2.sd',
     'capability/bad_3.sd',

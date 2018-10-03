@@ -308,8 +308,6 @@ unknown_line = [
     'bare_include_tests/ok_27.sd',
     'bare_include_tests/ok_28.sd',
     'bare_include_tests/ok_29.sd',
-    'bare_include_tests/ok_30.sd',
-    'bare_include_tests/ok_31.sd',
     'bare_include_tests/ok_61.sd',
     'bare_include_tests/ok_62.sd',
     'bare_include_tests/ok_63.sd',

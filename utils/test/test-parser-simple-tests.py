@@ -333,6 +333,9 @@ unknown_line = [
 
 # testcases with various unexpected failures
 syntax_failure = [
+    # causes "bad escape" regex error ("\o" in path)
+    'file/ok_slashquote_1.sd',
+
     # profile keyword?
     'profile/re_named_ok2.sd',
 

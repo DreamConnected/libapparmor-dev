@@ -58,6 +58,16 @@ exception_not_raised = [
     'generated_dbus/duplicated-conditionals-45128.sd',
     'generated_dbus/duplicated-conditionals-45129.sd',
 
+    # several   #include "does not exist"   examples
+    'bare_include_tests/bad_11.sd',
+    'bare_include_tests/bad_12.sd',
+    'bare_include_tests/bad_13.sd',
+    'bare_include_tests/bad_14.sd',
+    'include_tests/bad_11.sd',
+    'include_tests/bad_12.sd',
+    'include_tests/bad_13.sd',
+    'include_tests/bad_14.sd',
+
     'dbus/bad_modifier_2.sd',
     'dbus/bad_regex_01.sd',
     'dbus/bad_regex_02.sd',

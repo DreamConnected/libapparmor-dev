@@ -52,6 +52,7 @@ class ProfileStorage:
             data[rule] = ruletypes[rule]['ruleset']()
 
         data['alias']            = dict()
+        data['abi']              = []
         data['include']          = dict()
         data['localinclude']     = dict()
         data['lvar']             = dict()
@@ -131,3 +132,14 @@ def add_or_remove_flag(flags, flag_to_change, set_flag):
             flags.remove(flag_to_change)
 
     return sorted(flags)
+
+def write_abi(ref, depth):
+    pre = '  ' * depth
+    data = []
+
+    if ref.get('abi'):
+        for line in ref.get('abi'):
+            data.append('%s%s' % (pre, line))
+        data.append('')
+
+    return data

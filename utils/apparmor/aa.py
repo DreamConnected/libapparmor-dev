@@ -40,7 +40,7 @@ import apparmor.ui as aaui
 from apparmor.aamode import str_to_mode, split_mode
 
 from apparmor.regex import (RE_PROFILE_START, RE_PROFILE_END, RE_PROFILE_LINK,
-                            RE_PROFILE_ALIAS,
+                            RE_ABI, RE_PROFILE_ALIAS,
                             RE_PROFILE_BOOLEAN, RE_PROFILE_VARIABLE, RE_PROFILE_CONDITIONAL,
                             RE_PROFILE_CONDITIONAL_VARIABLE, RE_PROFILE_CONDITIONAL_BOOLEAN,
                             RE_PROFILE_CHANGE_HAT,
@@ -49,7 +49,7 @@ from apparmor.regex import (RE_PROFILE_START, RE_PROFILE_END, RE_PROFILE_LINK,
                             RE_PROFILE_UNIX, RE_RULE_HAS_COMMA, RE_HAS_COMMENT_SPLIT,
                             strip_quotes, parse_profile_start_line, re_match_include )
 
-from apparmor.profile_storage import ProfileStorage, add_or_remove_flag, ruletypes
+from apparmor.profile_storage import ProfileStorage, add_or_remove_flag, ruletypes, write_abi
 
 import apparmor.rules as aarules
 
@@ -2302,6 +2302,16 @@ def parse_profile_data(data, file, do_include):
             # Conditional Boolean defined
             pass
 
+        elif RE_ABI.search(line):
+            if profile:
+                profile_data[profile][hat]['abi'].append(line)
+            else:
+                if not filelist.get(file):
+                    filelist[file] = hasher()
+                if not filelist[file].get('abi'):
+                    filelist[file]['abi'] = []
+                filelist[file]['abi'].append(line)
+
         elif re_match_include(line):
             # Include files
             include_name = re_match_include(line)
@@ -2776,7 +2786,8 @@ def write_file(prof_data, depth):
     return data
 
 def write_rules(prof_data, depth):
-    data = write_alias(prof_data, depth)
+    data = write_abi(prof_data, depth)
+    data += write_alias(prof_data, depth)
     data += write_list_vars(prof_data, depth)
     data += write_includes(prof_data, depth)
     data += write_rlimits(prof_data, depth)
@@ -2866,6 +2877,7 @@ def serialize_profile(profile_data, name, options):
 
     prof_filename = get_profile_filename(name)
     if filelist.get(prof_filename, False):
+        data += write_abi(filelist[prof_filename], 0)
         data += write_alias(filelist[prof_filename], 0)
         data += write_list_vars(filelist[prof_filename], 0)
         data += write_includes(filelist[prof_filename], 0)
@@ -2938,7 +2950,8 @@ def serialize_profile_from_old_profile(profile_data, name, options):
     with open_file_read(prof_filename) as f_in:
         profile = None
         hat = None
-        write_methods = {'alias': write_alias,
+        write_methods = {'abi': write_abi,
+                         'alias': write_alias,
                          'lvar': write_list_vars,
                          'include': write_includes,
                          'rlimit': write_rlimits,

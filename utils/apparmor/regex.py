@@ -113,6 +113,7 @@ def parse_profile_start_line(line, filename):
 
     return result
 
+RE_ABI = re.compile('^\s*#?abi\s*(<(?P<magicpath>.*)>|"(?P<quotedpath>.*)"|(?P<unquotedpath>[^<>"]*))' + RE_COMMA_EOL)
 
 RE_INCLUDE = re.compile('^\s*#?include\s*<(?P<magicpath>.*)>' + RE_EOL)
 

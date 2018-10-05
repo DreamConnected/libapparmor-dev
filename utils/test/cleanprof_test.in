@@ -2,6 +2,7 @@
 #include <tunables/global>
 
 		alias /foo    ->    /bar	,
+  abi  <abi/4.19>    ,
 
 /usr/bin/a/simple/cleanprof/test/profile {
 	# Just for the heck of it, this comment wont see the day of light
@@ -14,6 +15,7 @@
     change_profile,
 
     network inet stream,
+               abi  "abi/4.20"    ,
     network stream,
 
 	#Below rule comes from abstractions/base

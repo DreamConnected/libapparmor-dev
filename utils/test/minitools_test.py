@@ -38,9 +38,9 @@ class MinitoolsTest(AATest):
         apparmor.profile_dir = self.profile_dir
 
         # Path for the program
-        self.test_path = '/usr/sbin/winbindd'
+        self.test_path = '/usr/lib/dovecot/anvil'
         # Path for the target file containing profile
-        self.local_profilename = '%s/usr.sbin.winbindd' % self.profile_dir
+        self.local_profilename = '%s/usr.lib.dovecot.anvil' % self.profile_dir
 
     def test_audit(self):
         # Set test profile to audit mode and check if it was correctly set

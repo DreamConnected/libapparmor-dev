@@ -464,6 +464,8 @@ class AaTest_is_skippable_dir(AATest):
         ('lxc',                         True),
         ('force-complain',              True),
         ('/etc/apparmor.d/cache',       True),
+        ('/etc/apparmor.d/cache.d',     True),
+        ('/etc/apparmor.d/cache.d/',    True),
         ('/etc/apparmor.d/lxc/',        True),
         ('/etc/apparmor.d/.git/',       True),
 

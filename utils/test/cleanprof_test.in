@@ -2,6 +2,7 @@
 #include <tunables/global>
 
 		alias /foo    ->    /bar	,
+  abi  <abi/4.19>    ,
 
 /usr/bin/a/simple/cleanprof/test/profile {
 	# Just for the heck of it, this comment wont see the day of light
@@ -9,6 +10,7 @@
 	#Below rule comes from abstractions/base
 	allow /usr/share/X11/locale/**  r,
 	allow /home/*/** r,
+               abi  "abi/4.20"    ,
 
     unix (receive) type=dgram,
 

@@ -156,18 +156,6 @@ if (-s $conf) {
     }
 }
 
-# find user's notify.conf
-if (-e "$ENV{HOME}/.apparmor/notify.conf" ) {
-    # use legacy path if the conf file is there
-    $user_conf = "$ENV{HOME}/.apparmor/notify.conf";
-} elsif (defined $ENV{XDG_CONFIG_HOME}) {
-    # use XDG_CONFIG_HOME if it is defined
-    $user_conf = "$ENV{XDG_CONFIG_HOME}/apparmor/notify.conf";
-} else {
-    # fallback to the default value of XDG_CONFIG_HOME
-    $user_conf = "$ENV{HOME}/.config/apparmor/notify.conf";
-}
-
 if ($opt_p) {
     # notify-send is packaged in libnotify-bin on Debian/Ubuntu, libnotify-tools on openSUSE
     -x "$notify_exe" or _error("Could not find '$notify_exe'. Please install it (package libnotify-bin or libnotify-tools). Aborting");
@@ -208,6 +196,18 @@ if ($opt_w) {
 }
 
 if ($opt_p or $opt_l) {
+    # find user's notify.conf
+    if (-e "$ENV{HOME}/.apparmor/notify.conf" ) {
+        # use legacy path if the conf file is there
+        $user_conf = "$ENV{HOME}/.apparmor/notify.conf";
+    } elsif (defined $ENV{XDG_CONFIG_HOME}) {
+        # use XDG_CONFIG_HOME if it is defined
+        $user_conf = "$ENV{XDG_CONFIG_HOME}/apparmor/notify.conf";
+    } else {
+        # fallback to the default value of XDG_CONFIG_HOME
+        $user_conf = "$ENV{HOME}/.config/apparmor/notify.conf";
+    }
+
     if (-s $user_conf) {
         readconf($user_conf);
     }

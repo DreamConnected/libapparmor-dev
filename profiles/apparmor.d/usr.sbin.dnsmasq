@@ -40,6 +40,8 @@
 
   /usr/sbin/dnsmasq mr,
 
+  /var/log/*dnsmasq.log w,
+
   /{,var/}run/*dnsmasq*.pid w,
   /{,var/}run/dnsmasq-forwarders.conf r,
   /{,var/}run/dnsmasq/ r,

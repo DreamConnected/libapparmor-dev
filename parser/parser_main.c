@@ -759,7 +759,8 @@ int process_profile(int option, aa_kernel_interface *kernel_interface,
 			return errno;
 		}
 	} else {
-		pwarn("%s: cannot use or update cache, disable, or force-complain via stdin\n", progname);
+		if (write_cache)
+			pwarn("%s: cannot use or update cache, disable, or force-complain via stdin\n", progname);
 	}
 
 	reset_parser(profilename);

@@ -288,6 +288,10 @@ class Merge(object):
         sev_db.load_variables(get_profile_filename(profile))
 
         for hat in sorted(other.aa[profile].keys()):
+            if not aa[profile].get(hat):
+                # hat only exists in the to-be-merged profile, initialize it in 'aa'
+                aa[profile][hat] = apparmor.aa.profile_storage(profile, hat, 'Merge.ask_the_questions new hat')
+
             #Add the includes from the other profile to the user profile
             done = False
 

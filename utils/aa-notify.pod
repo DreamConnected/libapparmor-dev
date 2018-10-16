@@ -92,7 +92,8 @@ System-wide configuration for B<aa-notify> is done via
   # only people in use_group can use aa-notify
   use_group="admin"
 
-Per-user configuration is done via ~/.apparmor/notify.conf:
+Per-user configuration is done via $XDG_CONFIG_HOME/apparmor/notify.conf (or
+the deprecated ~/.apparmor/notify.conf if it exists):
 
   # set to 'yes' to enable AppArmor DENIED notifications
   show_notifications="yes"

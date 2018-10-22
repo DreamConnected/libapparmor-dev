@@ -95,6 +95,8 @@ libraries/libapparmor/src/.deps
 libraries/libapparmor/src/.libs
 libraries/libapparmor/src/Makefile
 libraries/libapparmor/src/Makefile.in
+libraries/libapparmor/src/PMurHash.lo
+libraries/libapparmor/src/PMurHash.o
 libraries/libapparmor/src/af_protos.h
 libraries/libapparmor/src/change_hat.lo
 libraries/libapparmor/src/features.lo
@@ -188,6 +190,7 @@ utils/*.tmp
 utils/po/*.mo
 utils/apparmor/*.pyc
 utils/apparmor/rule/*.pyc
+utils/test/common_test.pyc
 utils/test/.coverage
 utils/test/htmlcov/
 utils/vim/apparmor.vim

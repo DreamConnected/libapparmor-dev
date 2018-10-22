@@ -2923,11 +2923,11 @@ def serialize_parse_profile_start(line, file, lineno, profile, hat, prof_data_pr
 
     return (profile, hat, attachment, flags, in_contained_hat, correct)
 
-def write_profile_ui_feedback(profile):
+def write_profile_ui_feedback(profile, is_attachment=False):
     aaui.UI_Info(_('Writing updated profile for %s.') % profile)
-    write_profile(profile)
+    write_profile(profile, is_attachment)
 
-def write_profile(profile):
+def write_profile(profile, is_attachment=False):
     prof_filename = None
     if aa[profile][profile].get('filename', False):
         prof_filename = aa[profile][profile]['filename']
@@ -2942,8 +2942,7 @@ def write_profile(profile):
         #os.chmod(newprof.name, permission_600)
         pass
 
-    serialize_options = {}
-    serialize_options['METADATA'] = True
+    serialize_options = {'METADATA': True, 'is_attachment': is_attachment}
 
     profile_string = serialize_profile(aa[profile], profile, serialize_options)
     newprof.write(profile_string)

@@ -21,7 +21,7 @@
   /etc/postfix                         r,
   /etc/postfix/main.cf                 r,
   /etc/postfix/aliases                 r,
-  /etc/postfix/aliases.db              rwl,
+  /etc/postfix/aliases.db              rwlk,
   /etc/postfix/__db.aliases.db         lrw,
   /etc/__db.aliases.db                 rwl,
   /usr/sbin/postalias                  rmix,

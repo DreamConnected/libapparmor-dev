@@ -327,6 +327,26 @@ void sd_serialize_dfa(std::ostringstream &buf, void *dfa, size_t size)
 		sd_write_aligned_blob(buf, dfa, size, "aadfa");
 }
 
+void sd_serialize_secmark(std::ostringstream &buf, SecmarkList rules)
+{
+	int count = rules.size();
+
+	if (!count)
+		return;
+
+	sd_write_struct(buf, "secmark");
+	sd_write_array(buf, NULL, count);
+	while (!rules.empty()) {
+		secmark *rule = rules.front();
+		rules.pop_front();
+		sd_write_uint16(buf, rule->audit);
+		sd_write_uint16(buf, rule->deny);
+		sd_write_string(buf, rule->label, NULL);
+	}
+	sd_write_arrayend(buf);
+	sd_write_structend(buf);
+}
+
 void sd_serialize_rlimits(std::ostringstream &buf, struct aa_rlimits *limits)
 {
 	if (!limits->specified)
@@ -434,6 +454,7 @@ void sd_serialize_profile(std::ostringstream &buf, Profile *profile,
 
 	sd_serialize_rlimits(buf, &profile->rlimits);
 
+	sd_serialize_secmark(buf, profile->secmark_rules);
 	if (profile->net.allow && kernel_supports_network) {
 		size_t i;
 		sd_write_array(buf, "net_allowed_af", get_af_max());

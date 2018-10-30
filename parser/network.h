@@ -87,6 +87,7 @@ struct aa_network_entry {
 	unsigned int family;
 	unsigned int type;
 	unsigned int protocol;
+	char *label;
 
 	struct aa_network_entry *next;
 };
@@ -94,10 +95,12 @@ struct aa_network_entry {
 int parse_net_mode(const char *str_mode, int *mode, int fail);
 extern struct aa_network_entry *new_network_ent(unsigned int family,
 						unsigned int type,
-						unsigned int protocol);
+						unsigned int protocol,
+						struct cond_entry *conds);
 extern struct aa_network_entry *network_entry(const char *family,
 					      const char *type,
-					      const char *protocol);
+					      const char *protocol,
+					      struct cond_entry *conds);
 extern size_t get_af_max(void);
 
 void __debug_network(unsigned int *array, const char *name);
@@ -131,4 +134,11 @@ const struct network_tuple *net_find_mapping(const struct network_tuple *map,
 					     const char *type,
 					     const char *protocol);
 
+struct secmark {
+	int audit;
+	int deny;
+	char *label;
+};
+
+typedef std::list<struct secmark *> SecmarkList;
 #endif /* __AA_NETWORK_H */

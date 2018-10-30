@@ -241,15 +241,28 @@ size_t get_af_max() {
 }
 struct aa_network_entry *new_network_ent(unsigned int family,
 					 unsigned int type,
-					 unsigned int protocol)
+					 unsigned int protocol,
+					 struct cond_entry *conds)
 {
 	struct aa_network_entry *new_entry;
+	struct cond_entry *cond_ent;
+
 	new_entry = (struct aa_network_entry *) calloc(1, sizeof(struct aa_network_entry));
 	if (new_entry) {
 		new_entry->family = family;
 		new_entry->type = type;
 		new_entry->protocol = protocol;
+		new_entry->label = NULL;
 		new_entry->next = NULL;
+
+		list_for_each(conds, cond_ent) {
+			if (strcmp(cond_ent->name, "label") == 0) {
+				move_conditional_value("label", &new_entry->label, cond_ent);
+			} else {
+				yyerror("invalid network conditional \"%s\"\n",
+					cond_ent->name);
+			}
+		}
 	}
 	return new_entry;
 }
@@ -302,15 +315,17 @@ const struct network_tuple *net_find_mapping(const struct network_tuple *map,
 	return NULL;
 }
 
-struct aa_network_entry *network_entry(const char *family, const char *type,
-				       const char *protocol)
+struct aa_network_entry *network_entry(const char *family,
+				       const char *type,
+				       const char *protocol,
+				       struct cond_entry *conds)
 {
 	struct aa_network_entry *new_entry, *entry = NULL;
 	const struct network_tuple *mapping = NULL;
 
 	while ((mapping = net_find_mapping(mapping, family, type, protocol))) {
 		new_entry = new_network_ent(mapping->family, mapping->type,
-					    mapping->protocol);
+					    mapping->protocol, conds);
 		if (!new_entry)
 			yyerror(_("Memory allocation error."));
 		new_entry->next = entry;

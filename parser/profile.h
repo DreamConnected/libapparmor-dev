@@ -143,6 +143,8 @@ public:
 	struct dfa_stuff dfa;
 	struct dfa_stuff policy;
 
+	SecmarkList secmark_rules;
+
 	Profile(void)
 	{
 		ns = name = attachment = NULL;

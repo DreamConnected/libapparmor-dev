@@ -694,7 +694,16 @@ rules: rules opt_prefix network_rule
 		if (!$1->alloc_net_table())
 			yyerror(_("Memory allocation error."));
 		list_for_each_safe($3, entry, tmp) {
-
+			/* check if this is a secmark rule */
+			if (entry->label) {
+				secmark *rule = new secmark;
+				rule->audit = $2.audit;
+				rule->deny = $2.deny;
+				rule->label = strdup(entry->label);
+				$1->secmark_rules.push_back(rule);
+				free(entry);
+				continue;
+			}
 			/* map to extended mediation if available */
 			if (entry->family == AF_UNIX && kernel_supports_unix) {
 				unix_rule *rule = new unix_rule(entry->type, $2.audit, $2.deny);
@@ -1153,13 +1162,13 @@ link_rule: TOK_LINK opt_subset_flag id_or_var TOK_ARROW id_or_var TOK_END_OF_RUL
 		$$ = entry;
 	};
 
-network_rule: TOK_NETWORK TOK_END_OF_RULE
+network_rule: TOK_NETWORK opt_conds TOK_END_OF_RULE
 	{
 		size_t family;
 		struct aa_network_entry *new_entry, *entry = NULL;
 		for (family = AF_UNSPEC; family < get_af_max(); family++) {
 			new_entry = new_network_ent(family, 0xffffffff,
-						    0xffffffff);
+						    0xffffffff, $2);
 			if (!new_entry)
 				yyerror(_("Memory allocation error."));
 			new_entry->next = entry;
@@ -1171,10 +1180,10 @@ network_rule: TOK_NETWORK TOK_END_OF_RULE
 network_rule: TOK_NETWORK TOK_ID TOK_END_OF_RULE
 	{
 		struct aa_network_entry *entry;
-		entry = network_entry($2, NULL, NULL);
+		entry = network_entry($2, NULL, NULL, NULL);
 		if (!entry)
 			/* test for short circuiting of family */
-			entry = network_entry(NULL, $2, NULL);
+			entry = network_entry(NULL, $2, NULL, NULL);
 		if (!entry)
 			yyerror(_("Invalid network entry."));
 		free($2);
@@ -1184,7 +1193,7 @@ network_rule: TOK_NETWORK TOK_ID TOK_END_OF_RULE
 network_rule: TOK_NETWORK TOK_ID TOK_ID TOK_END_OF_RULE
 	{
 		struct aa_network_entry *entry;
-		entry = network_entry($2, $3, NULL);
+		entry = network_entry($2, $3, NULL, NULL);
 		if (!entry)
 			yyerror(_("Invalid network entry."));
 		free($2);

@@ -307,7 +307,7 @@ GT		>
 		yyterminate();
 }
 
-<INITIAL,MOUNT_MODE,DBUS_MODE,SIGNAL_MODE,PTRACE_MODE,UNIX_MODE>{
+<INITIAL,MOUNT_MODE,DBUS_MODE,SIGNAL_MODE,PTRACE_MODE,UNIX_MODE,NETWORK_MODE>{
 	peer/{WS}*={WS}*\(	{
 		/* we match to the = in the lexer so that we can switch scanner
 		 * state.  By the time the parser see the = it may be too late
@@ -445,13 +445,6 @@ GT		>
 	}
 }
 
-<NETWORK_MODE>{
-	{IDS} {
-		yylval.id = strdup(yytext);
-		RETURN_TOKEN(TOK_ID);
-	}
-}
-
 <CHANGE_PROFILE_MODE>{
 	safe		{ RETURN_TOKEN(TOK_SAFE); }
 	unsafe		{ RETURN_TOKEN(TOK_UNSAFE); }
@@ -533,7 +526,7 @@ GT		>
 	{ARROW}		{ RETURN_TOKEN(TOK_ARROW); }
 }
 
-<MOUNT_MODE,DBUS_MODE,SIGNAL_MODE,PTRACE_MODE,UNIX_MODE>{
+<MOUNT_MODE,DBUS_MODE,SIGNAL_MODE,PTRACE_MODE,UNIX_MODE,NETWORK_MODE>{
 	({IDS_NOEQ}|{LABEL}|{QUOTED_ID}) {
 		yylval.id = processid(yytext, yyleng);
 		RETURN_TOKEN(TOK_ID);

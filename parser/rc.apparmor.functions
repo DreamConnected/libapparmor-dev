@@ -334,7 +334,7 @@ load_module() {
 	fi
 
 	if ! is_apparmor_present apparmor subdomain ; then
-		aa_action "Loading AppArmor module" /sbin/modprobe -q $MODULE $1
+		aa_action "Loading AppArmor module" /sbin/modprobe -q $MODULE
 		rc=$?
 		if [ $rc -ne 0 ] ; then
 			module_panic

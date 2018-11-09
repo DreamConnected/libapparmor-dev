@@ -1,0 +1,831 @@
+# vim:syntax=apparmor
+# Author: Jamie Strandboge <jamie@canonical.com>
+# TODO:
+# - imports
+# - backup/restore
+# - dbus mediation for evolution-data-server
+# - lot's more (evolution is huge)
+
+#include <tunables/global>
+
+/usr/bin/evolution flags=(attach_disconnected) {
+  #include <abstractions/audio>
+  #include <abstractions/cups-client>
+  #include <abstractions/dbus-accessibility>
+  #include <abstractions/dbus-strict>
+  #include <abstractions/dbus-session-strict>
+  #include <abstractions/enchant>
+  #include <abstractions/gnome>
+  #include <abstractions/ibus>
+  #include <abstractions/nameservice>
+  #include <abstractions/p11-kit>
+  #include <abstractions/python>
+  #include <abstractions/ubuntu-unity7-base>
+  #include <abstractions/ubuntu-unity7-launcher>
+  #include <abstractions/ubuntu-unity7-messaging>
+  #include <abstractions/ubuntu-helpers>
+  #include <abstractions/ubuntu-browsers>
+
+  #include <abstractions/wayland>
+  owner /run/user/[0-9]*/webkitgtk-wayland-compositor-*{,.lock} rwk,
+
+  unix (connect, receive, send) type=stream peer=(addr="@/tmp/dbus-*"),
+  /bin/dash rix,
+
+  / r,
+  deny /boot/{vmlinuz,initrd}* r,
+  /etc/timezone r,
+  owner @{PROC}/@{pid}/fd/ r, # needed for addressbook manipulation
+  owner @{PROC}/@{pid}/stat r,
+  owner @{PROC}/@{pid}/status r,
+  owner @{PROC}/@{pid}/auxv r, # investigate
+  /usr/include/python2.7/pyconfig.h r,
+  /usr/share/evolution-data-server/** r,
+  /usr/lib/evolution-data-server/*/*.so mr,
+  /usr/share/evolution/** r,
+  /usr/lib/evolution/{,*/}modules/*.so mr,
+  /usr/share/mx/style/*.css r,
+  /usr/share/gtkhtml-*/** r,
+  /usr/bin/evolution mrix,
+  /usr/lib/@{multiarch}/libproxy/**.so mr,
+  /usr/lib/@{multiarch}/libproxy/**/pxgsettings ixr,
+  /usr/share/applications/screensavers/ r,
+
+  # Noisy when searching /tmp for file attachments
+  deny /tmp/.X[0-9]*-lock r,
+  deny /tmp/.pkapi_xpk r,
+
+  # deny?
+  /etc/udev/udev.conf r,
+  /sys/devices/**/uevent r,
+  /sys/devices/system/node/ r,
+
+  /usr/share/ubuntu/applications/{,*} r,
+  /var/lib/snapd/desktop/applications/{,*} r,
+
+  # debugging
+  /dev/tty rw,
+
+  # Helper applications
+  /usr/lib/evolution/{,*/}killev Cx -> killev,
+  /usr/lib/evolution/{,*/}evolution-backup Cx -> evohelper,
+  /usr/lib/evolution/{,*/}evolution-alarm-notify Cx -> evohelper,
+  /usr/bin/evince Pix,
+  /usr/bin/gedit Cx -> gedit,
+  /usr/bin/sa-learn PUx,
+  /usr/bin/seahorse-tool ix,
+  /usr/share/seahorse-plugins/** r,
+  /usr/bin/spamassassin Cx -> spamassassin,
+
+  /usr/bin/gpg{,2} Cx -> gpg,
+  signal (send) peer=/usr/bin/evolution//gpg,
+
+  signal (receive) peer=/usr/bin/evolution//killev,
+
+  owner @{HOME}/.icons/default/index.theme r,
+  owner @{HOME}/.gnome2_private/Evolution rw,
+  owner @{HOME}/.{,local/share/}camel_certs/ rw,
+  owner @{HOME}/.{,local/share/}camel_certs/* rw,
+
+  # Old evolution storage locations
+  owner @{HOME}/.evolution/ rw,
+  owner @{HOME}/.evolution/** rwlk,
+  owner @{HOME}/.gnome2/accels/evolution rw,
+
+  # New evolution storage locations
+  owner @{HOME}/.cache/evolution/ rw,
+  owner @{HOME}/.cache/evolution/** rwkl,
+  owner @{HOME}/.config/evolution/ rw,
+  owner @{HOME}/.config/evolution/** rwkl,
+  owner @{HOME}/.local/share/evolution/ rw,
+  owner @{HOME}/.local/share/evolution/** rwkl,
+
+  # Webkit integration
+  owner @{HOME}/.cache/thumbnails/** r,
+  owner @{HOME}/.{cache,local/share}/webkit{,gtk}/ rw,
+  owner @{HOME}/.{cache,local/share}/webkit{,gtk}/localstorage/ rw,
+  owner @{HOME}/.{cache,local/share}/webkit{,gtk}/localstorage/*.db* rwkl,
+  owner @{HOME}/.{cache,local/share}/webkit{,gtk}/icondatabase/ rw,
+  owner @{HOME}/.{cache,local/share}/webkit{,gtk}/icondatabase/WebpageIcons.db* rwkl,
+
+  /dev/shm/WK2SharedMemory.[0-9]* rwk,
+  /usr/lib/@{multiarch}/webkit2gtk-*/WebKitWebProcess Cxr -> WebKitWebProcess,
+  unix (receive, send) type=seqpacket peer=(label=/usr/bin/evolution//WebKitWebProcess),
+  dbus
+    bus=session
+    peer=(label=/usr/bin/evolution//WebKitWebProcess),
+
+  /usr/lib/@{multiarch}/webkit2gtk-*/WebKitNetworkProcess Cxr -> WebKitNetworkProcess,
+  unix (receive, send) type=seqpacket peer=(label=/usr/bin/evolution//WebKitNetworkProcess),
+
+  # portals
+  dbus (send)
+    bus=session
+    path="/org/freedesktop/portal/desktop{,**}"
+    interface="org.freedesktop.portal.*"
+    peer=(label=unconfined),
+  dbus (send)
+    bus=session
+    path="/org/freedesktop/portal/desktop{,**}"
+    interface=org.freedesktop.DBus.Properties
+    peer=(label=unconfined),
+
+  # launching firefox as a snap
+  /usr/bin/env ixr,
+  /{,snap/core/*/}usr/bin/snap Cxr -> snap,
+
+  profile snap flags=(attach_disconnected) {
+    #include <abstractions/base>
+    #include <abstractions/nameservice>
+
+    /{,snap/core/*/}usr/bin/snap rmix,
+    /{,snap/core/*/}usr/lib/snapd/snap-confine Pxr,
+
+    /{,snap/core/*/}usr/lib/snapd/snapd r,
+    /run/snapd.socket rw,
+
+    @{PROC}/@{pid}/mountinfo r,
+    @{PROC}/sys/kernel/seccomp/actions_avail r,
+    @{PROC}/sys/net/core/somaxconn r,
+
+    /snap/core/*/usr/lib/snapd/info r,
+    /sys/kernel/security/apparmor/features/ r,
+
+    /run/user/[0-9]*/gdm/Xauthority r,
+    /etc/fstab r,
+    /var/lib/snapd/system-key r,
+
+    # What we allow to be launched (this can be circumvented since the call to
+    # snap-confine is what is important and it decides what to launch based on
+    # the arguments passed to it)
+    /snap/firefox/*/meta/snap.yaml r,
+  }
+
+  profile WebKitWebProcess flags=(attach_disconnected) {
+    #include <abstractions/base>
+    #include <abstractions/cups-client>
+    #include <abstractions/dbus-accessibility>
+    #include <abstractions/audio>
+    #include <abstractions/dbus-session-strict>
+    #include <abstractions/dconf>
+    #include <abstractions/nameservice>
+    #include <abstractions/gnome>
+    #include <abstractions/wayland>
+    owner /run/user/[0-9]*/webkitgtk-wayland-* rwk,
+    /usr/lib/@{multiarch}/webkit2gtk-*/WebKitWebProcess m,
+    /usr/lib/evolution/web-extensions/**.so mr,
+    /usr/lib/@{multiarch}/libproxy/**.so mr,
+    /usr/lib/@{multiarch}/libproxy/**/pxgsettings ixr,
+    /bin/dash ixr,
+
+    # To detect if online or not
+    dbus (send)
+         bus=system
+         path=/org/freedesktop/NetworkManager
+         member=state
+         peer=(label=unconfined),
+    dbus (receive)
+         bus=system
+         path=/org/freedesktop/NetworkManager
+         peer=(label=unconfined),
+    dbus (send)
+         bus=system
+         path=/org/freedesktop/NetworkManager
+         interface="org.freedesktop.DBus.Properties"
+         member=GetAll
+         peer=(label=unconfined),
+
+    # portals
+    dbus (send)
+      bus=session
+      path="/org/freedesktop/portal/desktop{,**}"
+      interface="org.freedesktop.portal.*"
+      peer=(label=unconfined),
+    dbus (send)
+      bus=session
+      path="/org/freedesktop/portal/desktop{,**}"
+      interface=org.freedesktop.DBus.Properties
+      peer=(label=unconfined),
+
+    unix (receive, send) type=seqpacket peer=(label=/usr/bin/evolution),
+    unix (receive, send) type=seqpacket peer=(label=/usr/bin/evolution//WebKitNetworkProcess),
+    unix (connect, receive, send) type=stream peer=(addr="@/tmp/dbus-*"),
+
+    owner @{PROC}/@{pid}/cmdline r,
+    owner @{PROC}/@{pid}/fd/ r, # needed for addressbook manipulation
+    owner @{PROC}/@{pid}/stat r,
+    owner @{PROC}/@{pid}/statm r,
+    /sys/devices/** r,
+    /usr/share/X11/xkb/rules/evdev r,
+    /usr/share/hyphen/ r,
+    /usr/share/hyphen/*.dic r,
+
+    /dev/ r,
+    /dev/bus/usb/ r,
+
+    /usr/share/glib-*/schemas/* r,
+    /dev/shm/WK2SharedMemory.[0-9]* rwk,
+    owner /run/user/[0-9]*/bus rw,
+
+    owner /run/user/[0-9]*/dconf/user w,
+    dbus (receive)
+      bus=session
+      path="/ca/desrt/dconf/Writer/user"
+      interface="ca.desrt.dconf.Writer"
+      member="Notify"
+      peer=(label=unconfined),
+
+    dbus (send)
+         bus=session
+         interface=org.gtk.vfs.MountTracker
+         peer=(label=unconfined),
+
+    # couple of DBus well-known names
+    dbus (send)
+         bus=session
+         interface=org.freedesktop.DBus
+         member=RequestName
+         peer=(label=unconfined),
+    dbus (send)
+         bus=session
+         interface=org.freedesktop.DBus
+         member=ReleaseName
+         peer=(label=unconfined),
+    dbus (bind)
+         bus=session
+         name=org.gnome.Evolution.WebExtension,
+    dbus (bind)
+         bus=session
+         name=org.gnome.Evolution.Module.ItipFormatter.WebExtension,
+    dbus (bind)
+         bus=session
+         name=org.gnome.Evolution.WebExtension.EWebKitEditor.*,
+    dbus
+      bus=session
+      peer=(label=/usr/bin/evolution),
+
+    dbus
+        bus=session
+        path="/org/gnome/Evolution/WebExtension"
+        interface="org.gnome.Evolution.WebExtension"
+        member="ClipboardFlagsChanged"
+        peer=(name=org.freedesktop.DBus, label=unconfined),
+    dbus
+        bus=session
+        path="/org/gnome/Evolution/WebExtension/EWebKitEditor"
+        interface="org.gnome.Evolution.WebExtension.EWebKitEditor"
+        member="*Changed"
+        peer=(name=org.freedesktop.DBus, label=unconfined),
+
+  dbus (receive)
+       bus=system
+       path=/org/freedesktop/UPower/devices/DisplayDevice
+       peer=(label=unconfined),
+  dbus (send)
+       bus=system
+       path=/org/freedesktop/UPower/devices/DisplayDevice
+       interface=org.freedesktop.DBus.Properties
+       member=GetAll
+       peer=(label=unconfined),
+
+    dbus (receive)
+        bus=session
+        interface=org.freedesktop.DBus.Introspectable
+        member=Introspect
+       peer=(label=unconfined),
+
+    /usr/lib/@{multiarch}/gstreamer*/gstreamer*/gst-plugin-scanner ixr,
+    owner @{HOME}/.cache/gstreamer*/registry.*.bin* r,
+    deny @{HOME}/.cache/gstreamer*/registry.*.bin* w,
+
+    owner @{HOME}/.cache/evolution/**/.ev-store-summary rw,
+    owner @{HOME}/.local/share/gvfs-metadata/ r,
+    owner @{HOME}/.local/share/gvfs-metadata/** r,
+
+    # for wayland abstraction?
+    /dev/dri/ r,
+
+    # file_inherit
+    network inet dgram,
+
+    owner @{PROC}/@{pid}/smaps r,
+
+    # noisy and we don't use it
+    deny /run/user/1000/at-spi2-*/ w,
+  }
+
+  profile WebKitNetworkProcess flags=(attach_disconnected) {
+    #include <abstractions/base>
+    #include <abstractions/dbus-accessibility>
+    #include <abstractions/dbus-session-strict>
+    #include <abstractions/dconf>
+    #include <abstractions/gnome>
+    #include <abstractions/nameservice>
+    #include <abstractions/ssl_certs>
+    /usr/lib/@{multiarch}/webkit2gtk-*/WebKitNetworkProcess m,
+    /usr/lib/evolution/web-extensions/**.so mr,
+    /usr/lib/@{multiarch}/libproxy/**.so mr,
+    /usr/lib/@{multiarch}/libproxy/**/pxgsettings ixr,
+    /bin/dash ixr,
+
+    # To detect if online or not
+    dbus (send)
+         bus=system
+         path=/org/freedesktop/NetworkManager
+         member=state
+         peer=(label=unconfined),
+    dbus (receive)
+         bus=system
+         path=/org/freedesktop/NetworkManager
+         peer=(label=unconfined),
+    dbus (send)
+         bus=system
+         path=/org/freedesktop/NetworkManager
+         interface="org.freedesktop.DBus.Properties"
+         member=GetAll
+         peer=(label=unconfined),
+
+    # portals
+    dbus (send)
+      bus=session
+      path="/org/freedesktop/portal/desktop{,**}"
+      interface="org.freedesktop.portal.*"
+      peer=(label=unconfined),
+    dbus (send)
+      bus=session
+      path="/org/freedesktop/portal/desktop{,**}"
+      interface=org.freedesktop.DBus.Properties
+      peer=(label=unconfined),
+
+
+    unix (receive, send) type=seqpacket peer=(label=/usr/bin/evolution),
+    unix (receive, send) type=seqpacket peer=(label=/usr/bin/evolution//WebKitWebProcess),
+
+    /usr/share/glib-*/schemas/* r,
+    /dev/shm/WK2SharedMemory.[0-9]* rwk,
+    owner /run/user/[0-9]*/bus rw,
+    owner /run/user/[0-9]*/dconf/user w,
+
+    dbus (send)
+         bus=session
+         interface=org.gtk.vfs.MountTracker
+         peer=(label=unconfined),
+    dbus (receive)
+         bus=session
+         interface=org.freedesktop.DBus.Introspectable
+         member=Introspect
+         peer=(label=unconfined),
+
+  dbus (receive)
+       bus=system
+       path=/org/freedesktop/UPower/devices/DisplayDevice
+       peer=(label=unconfined),
+  dbus (send)
+       bus=system
+       path=/org/freedesktop/UPower/devices/DisplayDevice
+       interface=org.freedesktop.DBus.Properties
+       member=GetAll
+       peer=(label=unconfined),
+
+    owner @{HOME}/.cache/evolution/WebKitCache/{,**} rw,
+
+    owner @{HOME}/.local/share/gvfs-metadata/ r,
+    owner @{HOME}/.local/share/gvfs-metadata/** r,
+
+    owner @{PROC}/@{pid}/stat r,
+    owner @{PROC}/@{pid}/statm r,
+  }
+
+  deny /{,var/}run/user/*/icedteaplugin-*/ rw,
+  deny /{,var/}run/user/*/icedteaplugin-*/** rwk,
+  deny /usr/lib/jvm/** mr,
+
+  # accounts-db
+  owner @{HOME}/.config/libaccounts-glib/**        rwk,
+
+  # indicator-messages
+  owner @{HOME}/.config/indicators/messages/**/evolution* rwk,
+
+  # Default profile allows saves to ~/Downloads and attachments from ~/Public
+  owner @{HOME}/ r,
+  owner @{HOME}/Public/ r,
+  owner @{HOME}/Public/* r,
+  owner @{HOME}/Downloads/ r,
+  owner @{HOME}/Downloads/* rw,
+
+  # Possibly in abstractions?
+  owner @{HOME}/.goutputstream-* rw,
+  owner @{HOME}/.thumbnails/** r,
+  /usr/share/gnome/applications/mimeinfo.cache r,
+  /var/lib/snapd/desktop/applications/mimeinfo.cache r,
+  /usr/share/glib-*/schemas/* r,
+  /usr/share/xml/iso-codes/*.xml r,
+  owner @{HOME}/.config/gtk-3.0/bookmarks r,
+  /usr/lib/@{multiarch}/libvisual*/actor/*.so mr,
+
+  owner @{HOME}/{,.cache/}.gstreamer*/registry.*.bin* r,
+  deny /tmp/orcexec.* rwk,
+  deny @{HOME}/orcexec.* rwk,
+  owner /run/user/[0-9]*/orcexec.* mrwk,
+
+  /var/lib/nssdb/cert9.db r,
+  /var/lib/nssdb/pkcs11.txt r,
+  /usr/share/p11-kit/modules/ r,
+
+  owner /{,var/}run/user/*/dconf/ w,
+  owner /{,var/}run/user/*/dconf/user rw,
+  owner @{HOME}/.cache/dconf/user rw,
+  owner @{HOME}/.config/dconf/user r,
+  owner @{HOME}/.local/share/gvfs-metadata/home* r,
+
+  owner @{HOME}/.pki/ rw,
+  owner @{HOME}/.pki/nssdb/ rw,
+  owner @{HOME}/.pki/nssdb/* rwk,
+
+  dbus (send)
+       bus=session
+       path=/org/freedesktop/DBus
+       interface=org.freedesktop.DBus
+       member=GetId
+       peer=(label=unconfined),
+
+  # To detect if online or not
+  dbus (send)
+       bus=system
+       path=/org/freedesktop/NetworkManager
+       member=state
+       peer=(label=unconfined),
+  dbus (receive)
+       bus=system
+       path=/org/freedesktop/NetworkManager
+       peer=(label=unconfined),
+  dbus (send)
+       bus=system
+       path=/org/freedesktop/NetworkManager
+       interface="org.freedesktop.DBus.Properties"
+       member=GetAll
+       peer=(label=unconfined),
+
+  # gnome DBus accesses
+  dbus (send, receive)
+       bus=session
+       interface=org.gtk.vfs.**
+       peer=(label=unconfined),
+  dbus (send)
+       bus=session
+       interface=org.gtk.vfs.**
+       peer=(label=unconfined),
+  dbus (receive, send)
+       bus=session
+       interface=org.gtk.Private.RemoteVolumeMonitor
+       peer=(label=unconfined),
+  dbus (send, receive)
+       bus=session
+       interface=ca.desrt.dconf.Writer
+       peer=(label=unconfined),
+
+  # gnome dbus accesses (gconf)
+  dbus (send)
+       bus=session
+       path=/org/gnome/GConf/Server
+       member=GetDefaultDatabase
+       peer=(label=unconfined),
+  dbus (send)
+       bus=session
+       path=/org/gnome/GConf/Database/*
+       member={AddMatch,AddNotify,AllEntries,LookupExtended,RemoveNotify}
+       peer=(label=unconfined),
+
+  # evolution provides a dbus service
+  dbus (send)
+       bus=session
+       interface=org.freedesktop.DBus
+       member=RequestName
+       peer=(label=unconfined),
+  dbus (send)
+       bus=session
+       interface=org.freedesktop.DBus
+       member=ReleaseName
+       peer=(label=unconfined),
+  dbus (bind)
+       bus=session
+       name=org.gnome.Evolution,
+  dbus (send, receive)
+       bus=session
+       peer=(name=org.gnome.Evolution),
+  dbus (receive, send)
+       path=/org/gnome/evolution/**
+       peer=(label=unconfined),
+  dbus (send)
+       bus=session
+       interface=org.freedesktop.DBus
+       member=NameHasOwner
+       peer=(label=unconfined),
+  dbus (receive)
+    bus=session
+    path="/org/gnome/Evolution"
+    interface="org.freedesktop.DBus.Properties"
+    peer=(label=unconfined),
+
+  # gnome dbus services
+  dbus (send)
+       bus=session
+       interface=org.gnome.SessionManager
+       member=RegisterClient
+       peer=(label=unconfined),
+  dbus (send)
+       bus=session
+       path=/org/gnome/SessionManager/Client[0-9]*
+       member="GetAll"
+       peer=(label=unconfined),
+  dbus (send)
+       bus=session
+       path="/org/gnome/SessionManager"
+       interface="org.gnome.SessionManager"
+       member="{Inhibit,Uninhibit}"
+       peer=(label=unconfined),
+  dbus (send, receive)
+       bus=session
+       path="/org/gnome/SessionManager"
+       interface="org.gnome.SessionManager"
+       member="Inhibitor{Added,Removed}"
+       peer=(label=unconfined),
+  dbus (send, receive)
+       bus=session
+       path="/org/gnome/SessionManager"
+       interface="org.gnome.SessionManager"
+       member=Client{Added,Removed}
+       peer=(label=unconfined),
+
+  # gnome-keyring
+  dbus (receive, send)
+       bus=session
+       path=/org/freedesktop/secrets{,**}
+       peer=(label=unconfined),
+
+  # printing
+  dbus (receive)
+      bus=system
+      path="/org/freedesktop/ColorManager"
+      peer=(label=unconfined),
+
+  # ???
+  dbus (send)
+    bus=session
+    path=/org/gtk/gio/DesktopAppInfo
+    interface=org.gtk.gio.DesktopAppInfo
+    member=Launched
+    peer=(name=org.freedesktop.DBus, label=unconfined),
+
+  #
+  # Site-specific additions and overrides. See local/README for details.
+  #
+
+  deny /opt/google/talkplugin/* r,
+  deny /etc/udev/udev.conf r,
+  deny /sys/devices/**/uevent r,
+  deny /sys/devices/system/{cpu,node}/ r,
+  deny /run/udev/** r,
+
+  dbus (send)
+      bus=session
+      path="/messaging/commands"
+      interface="com.canonical.dbusmenu"
+      peer=(label=unconfined),
+
+  /dev/dri/ r,
+
+  /etc/glvnd/egl_vendor.d/{,*} r,
+  /usr/share/glvnd/egl_vendor.d/{,*} r,
+  owner @{HOME}/#[0-9]* mrw,
+
+  #
+  # end site-specific additions and overrides. See local/README for details.
+  #
+
+  profile killev flags=(attach_disconnected) {
+    #include <abstractions/base>
+    #include <abstractions/dbus-session-strict>
+    #include <abstractions/gnome>
+    #include <abstractions/nameservice>
+
+    capability sys_ptrace,
+    #deny ptrace (trace) peer=unconfined,
+    ptrace (trace),
+
+    # unfortunate, but needed to kill dbus services.
+    signal peer=unconfined,
+    signal (send) peer=/usr/bin/evolution//evohelper,
+    signal (send) peer=/usr/bin/evolution,
+
+    unix (connect, receive, send) type=stream peer=(addr="@/tmp/dbus-*"),
+    dbus (send)
+         bus=session
+         interface=org.gtk.vfs.MountTracker
+         peer=(label=unconfined),
+
+    /bin/dash rix,
+    @{PROC}/ r,
+    @{PROC}/@{pid}/cmdline r,
+    @{PROC}/@{pid}/stat r,
+    deny @{PROC}/@{pid}/fd/ r,
+    /usr/bin/killall rix,
+
+    /usr/bin/evolution Px,
+    /usr/lib/evolution/killev m,
+
+    owner @{HOME}/.config/evolution/.running r,
+  }
+
+  profile gpg flags=(attach_disconnected) {
+    #include <abstractions/base>
+    signal (receive) peer=/usr/bin/evolution,
+
+    /usr/bin/pinentry-gnome3 ixr,
+    owner @{HOME}/.gnupg/S.gpg-agent rw,
+
+    /usr/bin/gpg{,2} mr,
+    owner @{HOME}/.gnupg r,
+    owner @{HOME}/.gnupg/gpg.conf r,
+    owner @{HOME}/.gnupg/random_seed rwk,
+    owner @{HOME}/.gnupg/pubring.{kbx,gpg} r,
+    owner @{HOME}/.gnupg/secring.{kbx,gpg} r,
+    owner @{HOME}/.gnupg/trustdb.{kbx,gpg} rw,
+    owner @{HOME}/.gnupg/*.{lock,tmp} rwl,
+    owner @{HOME}/.gnupg/.#*[0-9] rw,
+    owner @{HOME}/.gnupg/.gpg-*-migrated w,
+    owner @{HOME}/.gnupg/private-keys-v1.d/ rw,
+    owner @{HOME}/.gnupg/private-keys-v1.d/** rwk,
+
+    owner /tmp/evolution-pgp.* rw,
+    owner /tmp/gpg-*/** rwk,
+    owner @{HOME}/.gnupg/.#* wl,
+
+    /usr/bin/gpg-agent ixr,
+    @{PROC}/@{pid}/fd/ r,
+    owner /run/user/[0-9]*/gnupg/ rw,
+    owner /run/user/[0-9]*/gnupg/S.gpg-agent rw,
+    /run/user/[0-9]*/bus rw,
+    #include <abstractions/dbus-session-strict>
+    dbus (receive, send)
+        bus=session
+        path=/org/gnome/keyring/Prompt**
+        peer=(label=unconfined),
+    dbus (receive, send)
+        bus=session
+        path="/org/freedesktop/secrets{,/**}"
+        peer=(label=unconfined),
+
+    dbus (send)
+        bus=session
+        path="/org/gnome/ScreenSaver{,/**}"
+        peer=(label=unconfined),
+  }
+
+  profile evohelper flags=(attach_disconnected) {
+    #include <abstractions/base>
+    #include <abstractions/dbus-session-strict>
+    #include <abstractions/dbus-accessibility>
+    #include <abstractions/gnome>
+    #include <abstractions/nameservice>
+    #include <abstractions/ubuntu-unity7-base>
+
+    /etc/timezone r,
+
+    owner @{PROC}/@{pid}/auxv r, # investigate
+
+    /bin/dash rix,
+    /bin/rm ix,
+    /bin/tar ix,
+    /bin/gzip ix,
+    /usr/bin/gconftool-2 ix,
+    /usr/bin/evolution Px,
+
+    unix (connect, receive, send) type=stream peer=(addr="@/tmp/dbus-*"),
+    signal (receive) peer=/usr/bin/evolution//killev,
+
+    owner @{HOME}/ r,
+
+    # What to backup
+    owner @{HOME}/.{,local/share/}camel_certs/ r,
+    owner @{HOME}/.{,local/share/}camel_certs/* r,
+
+    owner @{HOME}/.evolution/ r,
+    owner @{HOME}/.evolution/** r,
+    owner @{HOME}/.gnome2_private/Evolution r,
+
+    owner @{HOME}/.cache/evolution/ r,
+    owner @{HOME}/.cache/evolution/** r,
+    owner @{HOME}/.config/evolution/ r,
+    owner @{HOME}/.config/evolution/** r,
+    owner @{HOME}/.local/share/evolution/ r,
+    owner @{HOME}/.local/share/evolution/** r,
+
+    # Where to backup
+    owner @{HOME}/evolution-backup*.tar.gz w,
+    owner @{HOME}/evolution.dir* rw,
+    owner @{HOME}/.local/share/evolution/backup-restore-gconf.xml* rw,
+
+    # gnome DBus accesses
+    dbus (send, receive)
+         bus=session
+         interface=org.gtk.vfs.**
+         peer=(label=unconfined),
+    dbus (send)
+         bus=session
+         interface=org.gtk.vfs.**
+         peer=(label=unconfined),
+    dbus (receive, send)
+         bus=session
+         interface=org.gtk.Private.RemoteVolumeMonitor
+         peer=(label=unconfined),
+    dbus (send, receive)
+         bus=session
+         interface=ca.desrt.dconf.Writer
+         peer=(label=unconfined),
+
+    # For evolution-alarm-notify
+    /usr/lib/evolution/evolution-alarm-notify m,
+    /usr/share/glib-*/schemas/* r,
+    owner @{HOME}/.{cache,config}/dconf/user rw,
+    owner /{,var/}run/user/*/dconf/user rw,
+    dbus (send)
+         bus=session
+         interface=org.freedesktop.DBus
+         member=RequestName
+         peer=(label=unconfined),
+    dbus (send)
+         bus=session
+         interface=org.freedesktop.DBus
+         member=ReleaseName
+         peer=(label=unconfined),
+    dbus (bind)
+         bus=session
+         name=org.gnome.EvolutionAlarmNotify,
+    dbus (send, receive)
+         bus=session
+         peer=(label=/usr/bin/evolution//evohelper),
+
+    # evolution service
+    dbus (receive, send)
+         path=/org/gnome/evolution/**
+         peer=(label=unconfined),
+  }
+
+  profile gedit flags=(attach_disconnected) {
+    #include <abstractions/gnome>
+    #include <abstractions/enchant>
+    #include <abstractions/ibus>
+    #include <abstractions/private-files-strict>
+
+    /usr/bin/gedit mr,
+
+    /etc/passwd r,
+    deny /etc/nsswitch.conf r,
+    deny /tmp/.X[0-9]*-lock r,
+
+    /sys/devices/**/uevent r,
+    /dev/.udev/db/* r,
+    /etc/udev/udev.conf r,
+    @{PROC}/@{pid}/mountinfo r,
+
+    /usr/share/gedit{,-2}/ r,
+    /usr/share/gedit{,-2}/** r,
+    /usr/share/gtksourceview-[2-9]*/ r,
+    /usr/share/gtksourceview-[2-9]*/** r,
+
+    # possibly in abstractions?
+    /usr/share/glib-*/schemas/* r,
+    owner @{HOME}/.{cache,config}/dconf/user rw,
+    owner /{,var/}run/user/*/dconf/user rw,
+
+    owner @{HOME}/.cache/evolution/tmp/** r,
+    owner @{HOME}/.local/share/gvfs-metadata/ r,
+    owner @{HOME}/.local/share/gvfs-metadata/** r,
+    owner @{HOME}/.gnome2/accels/gedit rw,
+    owner @{HOME}/.{config,gnome2}/gedit/ r,
+    owner @{HOME}/.{config,gnome2}/gedit/** rw,
+
+    # allow writes here
+    owner @{HOME}/Downloads/** rw,
+  }
+
+  profile spamassassin flags=(attach_disconnected) {
+    #include <abstractions/base>
+    #include <abstractions/nameservice>
+    #include <abstractions/perl>
+    #include <abstractions/user-tmp>
+    signal (receive) peer=/usr/bin/evolution,
+
+    /usr/bin/spamassassin rix,
+    /etc/spamassassin/ r,
+    /etc/spamassassin/** r,
+    /usr/share/spamassassin/ r,
+    /usr/share/spamassassin/** r,
+    /var/lib/spamassassin/compiled/** rk,
+    owner @{HOME}/.spamassassin/ r,
+    owner @{HOME}/.spamassassin/** rk,
+    owner @{HOME}/.spamassassin/bayes* wl,
+    owner @{HOME}/.spamassassin/user_prefs w,
+  }
+}

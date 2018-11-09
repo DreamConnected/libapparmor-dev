@@ -1,0 +1,309 @@
+#include <tunables/global>
+
+/usr/bin/rhythmbox {
+  #include <abstractions/audio>
+  #include <abstractions/dbus-session-strict>
+  #include <abstractions/gnome>
+  #include <abstractions/ibus>
+  #include <abstractions/nameservice>
+  #include <abstractions/python>
+  #include <abstractions/p11-kit>
+
+  #include <abstractions/ubuntu-unity7-base>
+  #include <abstractions/ubuntu-unity7-launcher>
+
+#  audit deny owner /** m,
+  deny /usr/lib/rhythmbox/plugins/ubuntuone/ubuntuone.pyc w,
+  deny /usr/lib/rhythmbox/plugins/ubuntuone/__pycache__/ w,
+  deny /usr/lib/@{multiarch}/rhythmbox/plugins/** w,
+
+
+  #include <abstractions/private-files>
+  audit deny @{HOME}/.gnupg/** mrwkl,
+  audit deny @{HOME}/.ssh/** mrwkl,
+  audit deny @{HOME}/.gnome2_private/** mrwkl,
+  audit deny @{HOME}/.gnome2/keyrings/** mrwkl,
+  audit deny @{HOME}/.mozilla/** mrwkl,
+  audit deny @{HOME}/.config/chromium/** mrwkl,
+  audit deny @{HOME}/.{,mozilla-}thunderbird/** mrwkl,
+  audit deny @{HOME}/.evolution/** mrwkl,
+  audit deny @{HOME}/.config/evolution/** mrwkl,
+  audit deny @{HOME}/.kde{,4}/share/apps/kmail{,2}/** mrwkl,
+  audit deny @{HOME}/.kde{,4}/share/apps/kwallet/** mrwkl,
+
+  # Maybe move to abstraction?
+  /usr/lib/@{multiarch}/libproxy/[0-9]*/modules/config_gnome3.so mr,
+  /usr/lib/@{multiarch}/libproxy/[0-9]*/modules/network_networkmanager.so mr,
+  /usr/lib/@{multiarch}/libproxy/[0-9]*/pxgsettings Cxr -> pxgsettings,
+
+  /bin/dash ixr,
+  /etc/fstab r,
+  /etc/udev/udev.conf r,
+  deny /run/udev/data/** r,
+  /sys/devices/**/uevent r,
+  /sys/devices/system/node/*/meminfo r,
+  /run/mount/utab r,
+  # noisy
+  deny /sys/devices/virtual/block/loop**/backing_file r,
+
+  signal peer=/usr/bin/rhythmbox//rhythmbox_metadata,
+
+  /usr/lib/rhythmbox/rhythmbox-metadata Cxr -> rhythmbox_metadata,
+  owner @{HOME}/.cache/gstreamer-1.0/registry.* rw,
+  /usr/lib/@{multiarch}/gstreamer1.0/gstreamer-1.0/gst-plugin-scanner Cxr -> gst_plugin_scanner,
+  /usr/bin/gst-install Cxr -> gst_plugin_scanner,
+  /usr/bin/rhythmbox r,
+  /usr/bin/dbus-launch Cx -> dbus_launch,
+  owner @{PROC}/@{pid}/cmdline r,
+  owner @{PROC}/@{pid}/status r,
+  owner @{PROC}/@{pid}/auxv r,
+
+  # Allow read on all directories
+  /**/ r,
+
+  # Allow reads to all of home
+  owner @{HOME}/** r,
+
+  # allow dconf (dbus in include file)
+  owner /run/user/*/dconf/     w,
+  owner /run/user/*/dconf/user rw,
+
+  # Allow read on removable media and files in /usr/share and /usr/local/share
+  /usr/local/share/** r,
+  /usr/share/** r,
+  /{media,mnt,opt,srv}/** r,
+
+  owner @{HOME}/.cache/rhythmbox/ rw,
+  owner @{HOME}/.cache/rhythmbox/** rwk,
+  owner @{HOME}/.local/share/rhythmbox/ rw,
+  owner @{HOME}/.local/share/rhythmbox/** rwk,
+
+  # audio abstraction?
+  owner @{HOME}/.local/share/grilo-plugins/   r,
+  owner @{HOME}/.local/share/grilo-plugins/** r,
+  # but not these
+  owner @{HOME}/.local/share/grilo-plugins/   w,
+  owner @{HOME}/.local/share/grilo-plugins/** wk,
+
+  # for ripping
+  /dev/sr0 rw,
+  owner @{HOME}/Music/Extracted/** rwk,
+  owner /run/user/[0-9]*/orcexec.* mrwk,
+  deny /tmp/orcexec.* rwk,
+  deny @{HOME}/orcexec.* rwk,
+  /usr/lib/firefox/firefox.sh Px,
+
+  # for copying
+  /dev/bus/usb/[0-9]*/[0-9]* rw,
+
+  # To detect if online or not
+  dbus (send)
+       bus=system
+       path=/org/freedesktop/NetworkManager
+       member=state,
+  dbus (receive)
+       bus=system
+       path=/org/freedesktop/NetworkManager,
+
+  # gnome DBus accesses
+  dbus (send, receive)
+       bus=session
+       interface=org.gtk.vfs.MountTracker,
+  dbus (send)
+       bus=session
+       path="/org/gtk/vfs/mount/*"
+       interface=org.gtk.vfs.Mount,
+  dbus (send)
+       bus=session
+       interface="org.gtk.vfs.Daemon",
+  dbus (receive, send)
+       bus=session
+       interface=org.gtk.Private.RemoteVolumeMonitor,
+  dbus (send, receive)
+       bus=session
+       interface=ca.desrt.dconf.Writer,
+
+  dbus (send)
+       bus=session
+       path="/org/gnome/SettingsDaemon/MediaKeys"
+       interface="org.freedesktop.DBus.Properties",
+  dbus (send)
+       bus=session
+       interface=org.gnome.SessionManager
+       member=RegisterClient,
+  dbus (send)
+       bus=session
+       path=/org/gnome/SessionManager/Client[0-9]*
+       member="GetAll",
+
+  # rhytmbox provides a dbus service
+  dbus (send)
+       bus=session
+       interface=org.freedesktop.DBus
+       member=RequestName,
+  dbus (send)
+       bus=session
+       interface=org.freedesktop.DBus
+       member=ReleaseName,
+  dbus (bind)
+       bus=session
+       name=org.gnome.Rhythmbox3,
+  dbus (send, receive)
+       bus=session
+       peer=(name=org.gnome.Rhythmbox3),
+  dbus (send, receive)
+       bus=session
+       interface=org.gtk.Application
+       path=/org/gnome/Rhythmbox3,
+
+  # gnome dbus services
+  dbus (send)
+       bus=session
+       path="/org/gnome/SessionManager"
+       interface="org.freedesktop.DBus.Properties"
+       member="GetAll",
+  dbus (send)
+       bus=session
+       path="/org/gnome/SessionManager"
+       interface="org.gnome.SessionManager"
+       member="{Inhibit,Uninhibit}",
+  dbus (send, receive)
+       bus=session
+       path="/org/gnome/SessionManager"
+       interface="org.gnome.SessionManager"
+       member="Inhibitor{Added,Removed}",
+  dbus (send, receive)
+       bus=session
+       path="/org/gnome/SessionManager"
+       interface="org.gnome.SessionManager"
+       member=Client{Added,Removed},
+
+  dbus (bind)
+       bus=session
+       name=org.gnome.UPnP.MediaServer2.Rhythmbox,
+  dbus (send)
+       bus=session
+       path=/org/gnome/UPnP/MediaServer2/**,
+
+  dbus (bind)
+       bus=session
+       name=org.mpris.MediaPlayer2.rhythmbox,
+  dbus (send, receive)
+       bus=session
+       path="/org/mpris/MediaPlayer2",
+
+  # avahi
+  dbus (send)
+       bus=system
+       interface="org.freedesktop.DBus.Peer"
+       member=Ping
+       peer=(name=org.freedesktop.Avahi),
+  dbus (send, receive)
+       bus=system
+       interface="org.freedesktop.Avahi.*"
+       peer=(name="org.freedesktop.Avahi"),
+  dbus (receive)
+       bus=system
+       interface="org.freedesktop.Avahi.*",
+
+  dbus (send)
+       bus=system
+       interface=org.freedesktop.DBus
+       member=StartServiceByName,
+
+  dbus (send)
+       bus=system
+       path="/org/freedesktop/hostname1"
+       interface=org.freedesktop.DBus.Properties
+       member=GetAll,
+
+  # gnome sound?
+  dbus (send, receive)
+       bus=session
+       interface=org.gnome.SettingsDaemon.MediaKeys,
+
+
+  # dnla
+  dbus (send, receive)
+       bus=session
+       path=/com/intel/dLeynaServer{,/**},
+
+  # tracker
+  owner @{HOME}/.cache/tracker/*.db* rwk,
+  owner @{HOME}/.local/share/tracker/data/*.journal* rwk,
+
+# FIXME
+  dbus,
+  owner @{PROC}/@{pid}/mountinfo r,
+
+  profile rhythmbox_metadata {
+    #include <abstractions/dbus-session-strict>
+    #include <abstractions/gnome>
+
+    /usr/lib/rhythmbox/rhythmbox-metadata m,
+    deny /dev/ r,
+    deny /dev/dri/ r,
+    deny /tmp/orcexec* w,
+    deny @{HOME}/orcexec* w,
+    owner /run/user/[0-9]*/orcexec.* mrk,
+    deny /usr/lib/@{multiarch}/gstreamer1.0/gstreamer-1.0/gst-plugin-scanner xr,
+
+    /sys/devices/system/node/node[0-9]*/meminfo r,
+    owner @{PROC}/@{pid}/auxv r,
+
+    signal peer=/usr/bin/rhythmbox,
+    unix (bind, listen)
+         type=stream
+         addr="@/tmp/dbus-*",
+    unix (send, receive, accept)
+         type=stream
+         peer=(label=/usr/bin/rhythmbox),
+
+    owner @{PROC}/@{pid}/cmdline r,
+    owner @{PROC}/@{pid}/fd/ r,
+    owner @{HOME}/.cache/gstreamer-1.0/registry.* rw,
+    /**.[mM][pP]3     r,
+    /**.[oO][gG][gG]  r,
+    /**.[wW][aA][vV]  r,
+
+    owner @{PROC}/@{pid}/status r,
+    /sys/devices/system/cpu/ r,
+    /sys/devices/system/node/ r,
+
+    owner @{HOME}/Music/** r,
+  }
+
+  profile pxgsettings {
+    #include <abstractions/gnome>
+    #include <abstractions/ubuntu-unity7-base>
+    /usr/share/glib-*/schemas/** r,
+    /usr/lib/@{multiarch}/libproxy/0.4.14/pxgsettings mr,
+    owner @{HOME}/.config/dconf/user r,
+    owner /run/user/*/dconf/     w,
+    owner /run/user/*/dconf/user rw,
+    dbus (receive, send)
+         bus=session
+         interface=ca.desrt.dconf.Writer,
+  }
+
+  profile dbus_launch {
+    #include <abstractions/base>
+    #include <abstractions/nameservice>
+    #include <abstractions/X>
+    /usr/bin/dbus-launch r,
+  }
+
+  profile gst_plugin_scanner {
+    #include <abstractions/base>
+    #include <abstractions/audio>
+    #include <abstractions/dbus-session-strict>
+    /etc/wildmidi/wildmidi.cfg r,
+    /etc/pkcs11/modules/ r,
+    deny /dev/ r,
+    deny /tmp/orcexec* w,
+    deny @{HOME}/orcexec* w,
+    owner /run/user/[0-9]*/orcexec.* mrk,
+
+    /usr/lib/@{multiarch}/gstreamer1.0/gstreamer-1.0/gst-plugin-scanner m,
+  }
+}

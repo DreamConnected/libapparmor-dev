@@ -1,0 +1,29 @@
+
+#include <tunables/global>
+
+@{SNAP_NAME}="test-classic"
+@{SNAP_REVISION}="x1"
+@{PROFILE_DBUS}="snap_2etest_2dclassic_2esh"
+@{INSTALL_DIR}="/{,var/lib/snapd/}snap"
+
+profile "snap.test-classic.sh" (attach_disconnected,mediate_deleted,complain) {
+  # set file rules so that exec() inherits our profile unless there is
+  # already a profile for it (eg, snap-confine)
+  / rwkl,
+  /** rwlkm,
+  /** pix,
+
+  capability,
+  change_profile,
+  dbus,
+  network,
+  mount,
+  remount,
+  umount,
+  pivot_root,
+  ptrace,
+  signal,
+  unix,
+
+
+}

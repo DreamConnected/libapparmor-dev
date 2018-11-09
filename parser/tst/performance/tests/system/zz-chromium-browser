@@ -1,0 +1,490 @@
+# Author: Jamie Strandboge <jamie@canonical.com>
+#include <tunables/global>
+
+@{CHROMIUM_INSTALL}="{/usr/lib/chromium-browser,/opt/google/chrome*}"
+
+# We need 'flags=(attach_disconnected)' in newer chromium versions
+profile chromium /{opt/google/chrome*/google-chrome,usr/lib/chromium-browser/chromium-browser} flags=(attach_disconnected) {
+  #include <abstractions/audio>
+  #include <abstractions/cups-client>
+  #include <abstractions/dbus-session-strict>
+  #include <abstractions/dbus-strict>
+  #include <abstractions/dbus-accessibility>
+  #include <abstractions/gnome>
+  #include <abstractions/ibus>
+  #include <abstractions/nameservice>
+  #include <abstractions/user-tmp>
+  #include <abstractions/ubuntu-unity7-base>
+  #include <abstractions/ubuntu-unity7-launcher>
+
+  # This include specifies which ubuntu-browsers.d abstractions to use. Eg, if
+  # you want access to productivity applications, adjust the following file
+  # accordingly.
+  #include <abstractions/ubuntu-browsers.d/plugins-common>
+  #include <abstractions/ubuntu-browsers.d/multimedia>
+
+  # Networking
+  network inet stream,
+  network inet6 stream,
+  @{PROC}/@{pid}/net/if_inet6 r,
+  @{PROC}/@{pid}/net/ipv6_route r,
+
+  # Should maybe be in abstractions
+  /etc/fstab r,
+  /etc/mime.types r,
+  /etc/mailcap r,
+  /etc/mtab r,
+  /etc/xdg/xubuntu/applications/defaults.list r,
+  owner @{HOME}/.local/share/applications/defaults.list r,
+  owner @{HOME}/.local/share/applications/mimeinfo.cache r,
+  owner @{HOME}/.config/gtk-3.0/bookmarks r,
+
+  @{PROC}/@{pid}/fd/ r,
+  @{PROC}/filesystems r,
+  @{PROC}/ r,
+  @{PROC}/@{pid}/task/[0-9]*/stat r,
+  owner @{PROC}/@{pid}/cmdline r,
+  owner @{PROC}/@{pid}/io r,
+  @{PROC}/@{pid}/smaps r,
+  @{PROC}/@{pid}/sched r,
+  owner @{PROC}/@{pid}/stat r,
+  @{PROC}/@{pid}/statm r,
+  owner @{PROC}/@{pid}/status r,
+  owner @{PROC}/@{pid}/oom_{,score_}adj w,
+  @{PROC}/sys/kernel/yama/ptrace_scope r,
+  @{PROC}/sys/net/ipv4/tcp_fastopen r,
+  @{PROC}/sys/vm/overcommit_memory r,
+
+  # Newer chromium needs these now
+  /etc/udev/udev.conf r,
+  /sys/devices/system/cpu/{,cpu*/}cpufreq/{,policy[0-9]*/}cpuinfo_max_freq r,
+  /sys/devices/**/bConfigurationValue r,
+  /sys/devices/**/class r,
+  /sys/devices/**/config r,
+  /sys/devices/**/descriptors r,
+  /sys/devices/**/{,subsystem_}device r,
+  /sys/devices/**/irq r,
+  /sys/devices/**/idProduct r,
+  /sys/devices/**/idVendor r,
+  /sys/devices/**/manufacturer r,
+  /sys/devices/**/modalias r,
+  /sys/devices/**/product r,
+  /sys/devices/**/resource r,
+  /sys/devices/**/revision r,
+  /sys/devices/**/serial r,
+  /sys/devices/**/{,subsystem_}vendor r,
+  /sys/devices/**/idProduct r,
+  /sys/devices/**/removable r,
+  /sys/devices/**/uevent r,
+  /sys/devices/**/block/**/size r,
+  /sys/devices/virtual/tty/tty0/active r,
+  /sys/devices/virtual/block/**/size r,
+  /run/udev/data/** r,
+
+  # Needed for the crash reporter
+  owner @{PROC}/@{pid}/auxv r,
+
+  # For inhibiting the screensaver
+  dbus (send)
+       bus=session
+       interface="org.gnome.SessionManager"
+       member={Inhibit,Uninhibit},
+  dbus (receive)
+      bus=system
+      interface="org.freedesktop.UPower",
+
+  # chromium mmaps all kinds of things for speed.
+  /etc/passwd m,
+  /usr/share/fonts/truetype/**/*.tt[cf] m,
+  /usr/share/fonts/**/*.pfb m,
+  /usr/share/mime/mime.cache m,
+  /usr/share/icons/**/*.cache m,
+  owner /{dev,run}/shm/pulse-shm* m,
+  owner /{,var/}run/user/[0-9]*/pulse/autospawn.lock rw,
+  owner @{HOME}/.local/share/mime/mime.cache m,
+  owner /tmp/** m,
+
+  @{PROC}/sys/kernel/shmmax r,
+  owner /{dev,run}/shm/{,.}{com.google.Chrome,org.chromium}.* mrw,
+  owner /{dev,run}/shm/shmfd-* mrw,
+
+  @{CHROMIUM_INSTALL}/** r,
+  @{CHROMIUM_INSTALL}/*.pak m,
+  @{CHROMIUM_INSTALL}/locales/* m,
+
+  # Noisy
+  deny @{CHROMIUM_INSTALL}/** w,
+
+  # Allow ptracing ourselves
+  ptrace (trace) peer=@{profile_name},
+
+  # Make browsing directories work
+  / r,
+  /**/ r,
+
+  # Allow access to documentation and other files the user may want to look
+  # at in /usr
+  /usr/{include,share,src}** r,
+
+  # Default profile allows downloads to ~/Downloads and uploads from ~/Public
+  owner @{HOME}/ r,
+  owner @{HOME}/Public/ r,
+  owner @{HOME}/Public/* r,
+  owner @{HOME}/Downloads/ r,
+  owner @{HOME}/Downloads/* rw,
+  dbus (send)
+       bus=session
+       interface=org.gtk.vfs.MountTracker,
+  dbus (send)
+       bus=session
+       interface=org.gtk.vfs.Metadata,
+  dbus (send)
+       bus=session
+       interface=org.gtk.Private.RemoteVolumeMonitor,
+
+  # Helpers
+  /usr/bin/xdg-open ixr,
+  /usr/bin/gnome-open ixr,
+  /usr/bin/gvfs-open ixr,
+  /usr/bin/kdialog ixr,
+  # TODO: xfce
+
+  # Importing firefox settings (requires 'r' access to @{HOME}/.mozilla/**
+  # which is provided by abstractions/ubuntu-browsers.d/user-files).
+  owner @{HOME}/.mozilla/firefox/profiles.ini r,
+  owner @{HOME}/.mozilla/firefox/*/prefs.js r,
+  owner @{HOME}/.mozilla/firefox/*/compatibility.ini r,
+  /etc/firefox/profile/bookmarks.html r,
+  owner @{HOME}/.mozilla/firefox/*/*.db r,
+  owner @{HOME}/.mozilla/** k,
+
+  # Chromium configuration
+  owner @{HOME}/.pki/nssdb/* rwk,
+  owner @{HOME}/.cache/{chromium,google-chrome*}/ rw,
+  owner @{HOME}/.cache/{chromium,google-chrome*}/** rw,
+  owner @{HOME}/.cache/{chromium,google-chrome*}/Cache/* mr,
+  owner @{HOME}/.config/{chromium,google-chrome*}/ rw,
+  owner @{HOME}/.config/{chromium,google-chrome*}/** rwk,
+  owner @{HOME}/.config/{chromium,google-chrome*}/**/Cache/* mr,
+  owner @{HOME}/.config/{chromium,google-chrome*}/Dictionaries/*.bdic mr,
+  owner @{HOME}/.config/{chromium,google-chrome*}/**/Dictionaries/*.bdic mr,
+
+  # Allow transitions to ourself and our sandbox
+  @{CHROMIUM_INSTALL}/{chrome,chromium-browser,google-chrome} ix,
+  @{CHROMIUM_INSTALL}/{chrome,chromium-browser}-sandbox cx -> chromium_browser_sandbox,
+
+  # Allow communicating with sandbox
+  unix (receive, send) peer=(label=chromium//chromium_browser_sandbox),
+  unix (receive, send) peer=(label=chromium_nacl_helper),
+
+  /bin/ps Uxr,
+  @{CHROMIUM_INSTALL}/xdg-settings Cxr -> xdgsettings,
+  /usr/bin/xdg-settings Cxr -> xdgsettings,
+  /bin/readlink Cxr -> xdgsettings,    # google-chrome
+  /bin/which Cxr -> xdgsettings,       # google-chrome
+  /bin/cat Cxr -> xdgsettings,         # google-chrome
+  /bin/mkdir Cxr -> xdgsettings,       # google-chrome
+  /usr/bin/dirname Cxr -> xdgsettings, # google-chrome
+
+  # Google Chrome wants this but works fine without it
+  deny /dev/tty rw,
+
+  /usr/bin/lsb_release Cxr -> lsb_release,
+
+  # GSettings
+  owner /{,var/}run/user/*/dconf/     rw,
+  owner /{,var/}run/user/*/dconf/user rw,
+  owner @{HOME}/.config/dconf/user r,
+  dbus (send)
+       bus=session
+       path=/org/gnome/GConf/Server
+       member=GetDefaultDatabase,
+  dbus (send)
+       bus=session
+       path=/org/gnome/GConf/Database/*
+       member={AddMatch,AddNotify,AllEntries,LookupExtended,RemoveNotify},
+
+  # for unprivileged user namespace sandbox (sigh)
+  # LP: #1447345
+  capability sys_admin,
+  capability sys_chroot,
+  @{PROC}/@{pid}/setgroups w,
+  @{PROC}/@{pid}/uid_map w,
+  @{PROC}/@{pid}/gid_map w,
+  @{PROC}/@{pid}/stat r,
+
+  profile xdgsettings {
+    #include <abstractions/bash>
+    #include <abstractions/gnome>
+
+    /bin/dash ixr,
+
+    /etc/ld.so.cache r,
+    /usr/bin/xdg-settings r,
+    @{CHROMIUM_INSTALL}/xdg-settings r,
+    /usr/share/applications/*.desktop r,
+
+    # Checking default browser
+    /bin/grep ixr,
+    /bin/readlink ixr,
+    /bin/sed ixr,
+    /bin/which ixr,
+    /usr/bin/basename ixr,
+    /usr/bin/cut ixr,
+    /bin/cat ixr,
+    /usr/bin/tr ixr,
+    /usr/bin/head ixr,
+
+    # Setting the default browser
+    /bin/mkdir ixr,
+    /bin/mv ixr,
+    /bin/touch ixr,
+    /usr/bin/dirname ixr,
+    /usr/bin/gconftool-2 ix,
+    /usr/bin/[gm]awk ixr,
+    /usr/bin/xdg-mime ixr,
+    owner @{HOME}/.local/share/applications/ w,
+    owner @{HOME}/.local/share/applications/mimeapps.list* rw,
+  }
+
+  profile lsb_release {
+    #include <abstractions/base>
+    #include <abstractions/python>
+    /usr/bin/lsb_release r,
+    /bin/dash ixr,
+    /usr/bin/dpkg-query ixr,
+    /usr/include/python2.[4567]/pyconfig.h r,
+    /etc/lsb-release r,
+    /etc/debian_version r,
+    /var/lib/dpkg/** r,
+    /usr/share/distro-info/** r,
+
+    /usr/local/lib/python3.[0-4]/dist-packages/ r,
+    /usr/bin/ r,
+    /usr/bin/python3.[0-5] mr,
+  }
+
+  #
+  # Site-specific additions and overrides. See local/README for details.
+  #
+
+  # googletalk
+  /dev/video[0-9]* rw,
+  /sys/devices/system/cpu/present r,
+  /sys/devices/system/cpu/cpu[0-9]*/topology/* r,
+  /sys/devices/**/video4linux/** r,
+  owner /run/shm/google-* rw,
+  /opt/google/talkplugin/** r,
+  owner @{HOME}/.config/google-googletalkplugin/ rw,
+  owner @{HOME}/.config/google-googletalkplugin/** rwk,
+
+  deny /tmp/.X0-lock r,
+
+  /sys/devices/**/uevent r,
+  /etc/chromium/{,**} r,
+  owner @{PROC}/@{pid}/task/[0-9]*/status r,
+
+  capability sys_ptrace,
+  ptrace (trace) peer=chromium//xdgsettings,
+  ptrace (trace) peer=chromium//lsb_release,
+
+  deny dbus (send)
+      bus=system
+      peer=(name=org.bluez),
+
+  /usr/bin/chrome-gnome-shell ixr,
+
+
+  # libsecret
+audit deny dbus (send) bus=session path=/org/freedesktop/secrets{,/**},
+  dbus (send)
+      bus=session
+      path=/org/freedesktop/secrets
+      interface=org.freedesktop.DBus.Properties
+      member=GetAll
+      peer=(label=unconfined),
+  dbus (send)
+      bus=session
+      path=/org/freedesktop/secrets
+      interface=org.freedesktop.DBus.Peer
+      member=Ping
+      peer=(label=unconfined),
+
+  # to search for the various keyrings
+  dbus (send)
+      bus=session
+      path=/org/freedesktop/secrets
+      interface=org.freedesktop.Secret.Service
+      member=SearchItems
+      peer=(label=unconfined),
+
+  # open a session to do things with keyrings
+  dbus (send)
+      bus=session
+      path=/org/freedesktop/secrets
+      interface=org.freedesktop.Secret.Service
+      member=OpenSession
+      peer=(label=unconfined),
+
+  # unlock keyrings
+  dbus (send)
+      bus=session
+      path=/org/freedesktop/secrets
+      interface=org.freedesktop.Secret.Service
+      member=Unlock
+      peer=(label=unconfined),
+
+  # create db entries in the default keyring
+  dbus (send)
+      bus=session
+      path=/org/freedesktop/secrets/aliases/default
+      interface=org.freedesktop.Secret.Collection
+      member=CreateItem
+      peer=(label=unconfined),
+  dbus (receive)
+      bus=session
+      path=/org/freedesktop/secrets/aliases/default
+      interface=org.freedesktop.Secret.Collection
+      member=ItemCreated
+      peer=(label=unconfined),
+
+  # list properties and obtain secrets from the login keyring (default)
+  dbus (send)
+      bus=session
+      path=/org/freedesktop/secrets/collection/login/*
+      interface=org.freedesktop.DBus.Properties
+      member=GetAll
+      peer=(label=unconfined),
+  dbus (send)
+      bus=session
+      path=/org/freedesktop/secrets
+      interface=org.freedesktop.Secret.Service
+      member=GetSecrets
+      peer=(label=unconfined),
+
+  # obtain secret from a particular keyring
+  dbus (send)
+      bus=session
+      path=/org/freedesktop/secrets/collection/login/*
+      interface=org.freedesktop.Secret.Item
+      member=GetSecret
+      peer=(label=unconfined),
+
+  # create db entries in the default keyring
+  dbus (send)
+      bus=session
+      path=/org/freedesktop/secrets/collection/login/*
+      interface=org.freedesktop.Secret.Item
+      member=Delete
+      peer=(label=unconfined),
+  dbus (receive)
+      bus=session
+      path=/org/freedesktop/secrets/collection/login/*
+      interface=org.freedesktop.Secret.Item
+      member=ItemDeleted
+      peer=(label=unconfined),
+
+  #
+  # end site-specific
+  #
+
+
+  profile chromium_browser_sandbox {
+    # Be fanatical since it is setuid root and don't use an abstraction
+    /lib/libgcc_s.so* mr,
+    /lib/@{multiarch}/libgcc_s.so* mr,
+    /lib{,32,64}/libm-*.so* mr,
+    /lib/@{multiarch}/libm-*.so* mr,
+    /lib{,32,64}/libpthread-*.so* mr,
+    /lib/@{multiarch}/libpthread-*.so* mr,
+    /lib{,32,64}/libc-*.so* mr,
+    /lib/@{multiarch}/libc-*.so* mr,
+    /lib{,32,64}/libld-*.so* mr,
+    /lib/@{multiarch}/libld-*.so* mr,
+    /lib{,32,64}/ld-*.so* mr,
+    /lib/@{multiarch}/ld-*.so* mr,
+    /lib/tls/*/{cmov,nosegneg}/libm-*.so* mr,
+    /lib/tls/*/{cmov,nosegneg}/libpthread-*.so* mr,
+    /lib/tls/*/{cmov,nosegneg}/libc-*.so* mr,
+    /usr/lib/libstdc++.so* mr,
+    /usr/lib/@{multiarch}/libstdc++.so* mr,
+    /etc/ld.so.cache r,
+
+    # nacl_helper
+    /lib{,32,64}/librt-*.so* mr,
+    /lib/@{multiarch}/librt-*.so* mr,
+    /lib{,32,64}/libdl-*.so* mr,
+    /lib/@{multiarch}/libdl-*.so* mr,
+
+    # Required for dropping into PID namespace. Keep in mind that until the
+    # process drops this capability it can escape confinement, but once it
+    # drops CAP_SYS_ADMIN we are ok.
+    capability sys_admin,
+
+    # All of these are for sanely dropping from root and chrooting
+    capability chown,
+    capability fsetid,
+    capability setgid,
+    capability setuid,
+    capability dac_override,
+    capability sys_chroot,
+
+    capability sys_ptrace,
+    ptrace (read, readby),
+
+    signal (receive) peer=unconfined,
+    signal peer=@{profile_name},
+    signal (receive, send) set=("exists"),
+    signal (receive) peer=chromium,
+
+    # TODO: reduce to the first (LP: #...)
+    unix (receive, send) peer=(label=chromium),
+
+    unix (create),
+    unix peer=(label=@{profile_name}),
+    unix (getattr, getopt, setopt, shutdown) addr=none,
+
+    @{PROC}/ r,
+    @{PROC}/@{pid}/ r,
+    @{PROC}/@{pid}/fd/ r,
+    owner @{PROC}/@{pid}/oom_adj w,
+    owner @{PROC}/@{pid}/oom_score_adj w,
+    @{PROC}/@{pid}/status r,
+    @{PROC}/@{pid}/task/[0-9]*/stat r,
+
+    /usr/bin/{chromium-browser,google-chrome*} r,
+
+    @{CHROMIUM_INSTALL}/{chrome,chromium-browser}-sandbox r,
+    # 'px' needed by google-chrome
+    @{CHROMIUM_INSTALL}/{chrome,chromium-browser,google-chrome} px -> chromium,
+
+    @{CHROMIUM_INSTALL}/nacl_helper px -> chromium_nacl_helper,
+    unix (receive, send) peer=(label=chromium_nacl_helper),
+
+    /dev/null rw,
+
+    owner /tmp/** rw,
+  }
+}
+
+
+profile chromium_nacl_helper /{opt/google/chrome*/nacl_helper,usr/lib/chromium-browser/nacl_helper} flags=(attach_disconnected) {
+  #include <abstractions/base>
+  @{CHROMIUM_INSTALL}/nacl_helper r,
+
+  @{PROC}/ r,
+  @{PROC}/@{pid}/ r,
+  @{PROC}/@{pid}/fd/ r,
+  owner @{PROC}/@{pid}/oom_adj w,
+  owner @{PROC}/@{pid}/oom_score_adj w,
+  @{PROC}/@{pid}/task/ r,
+  @{PROC}/@{pid}/task/[0-9]*/stat r,
+  /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_max_freq r,
+
+  unix peer=(label=chromium),
+  unix peer=(label=chromium//chromium_browser_sandbox),
+
+  signal peer=chromium,
+
+  ptrace peer=chromium,
+}

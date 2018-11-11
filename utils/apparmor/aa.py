@@ -2918,7 +2918,7 @@ def serialize_profile(profile_data, name, options):
 #         comment.replace('\\n', '\n')
 #         string += comment + '\n'
 
-    if options.get('is_attachment'):
+    if options and options.get('is_attachment'):
         prof_filename = get_profile_filename_from_attachment(name, True)
     else:
         prof_filename = get_profile_filename_from_profile_name(name, True)

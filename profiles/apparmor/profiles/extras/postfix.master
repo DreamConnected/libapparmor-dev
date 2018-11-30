@@ -19,6 +19,7 @@ profile postfix-master /usr/lib/postfix/{sbin/,}master {
   capability net_bind_service,
   capability kill,
   capability dac_override,
+  capability dac_read_search,
 
   signal send peer=/usr/lib/postfix/*,
   signal send peer=postfix-*,

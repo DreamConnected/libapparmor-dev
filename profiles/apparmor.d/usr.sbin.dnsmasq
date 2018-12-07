@@ -44,7 +44,7 @@
 
   /usr/sbin/dnsmasq mr,
 
-  /var/log/*dnsmasq.log w,
+  /var/log/dnsmasq*.log w,
 
   /usr/share/dnsmasq/ r,
   /usr/share/dnsmasq/* r,

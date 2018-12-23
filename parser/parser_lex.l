@@ -317,9 +317,12 @@ LT_EQUAL	<=
 <ABI_MODE>{
 	(\<(([^"\>\t\r\n]+)|{QUOTED_ID})\>|{QUOTED_ID}|{IDS})	{ /* <filename> | <"filename"> | "filename" | filename */
 		int lt = *yytext == '<'  ? 1 : 0;
-		char *filename = processid(yytext + lt, yyleng - lt*2);
+		char *filename;
 		bool exists = YYSTATE == INCLUDE_EXISTS;
 
+		if (yyleng - lt < 1)
+			yyerror(_("Bad filename\n"));
+		filename = processid(yytext + lt, yyleng - lt*2);
 		if (!filename)
 			yyerror(_("Failed to process filename\n"));
 		yylval.id = filename;

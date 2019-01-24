@@ -45,7 +45,7 @@ def write_json(jsonout):
 def set_json_mode():
     global UI_mode
     UI_mode = 'json'
-    jsonout = {'dialog': 'apparmor-json-version', 'data': '2.12'}
+    jsonout = {'dialog': 'apparmor-json-version', 'data': '2.13'}
     write_json(jsonout)
 
 # reads the response on command line for json and verifies the response

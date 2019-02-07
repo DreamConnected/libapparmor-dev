@@ -19,7 +19,7 @@ alias /foo -> /bar,
 
   audit capability,
 
-  network stream,
+  network stream label=foo,
 
   dbus send bus=session,
 

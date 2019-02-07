@@ -24,8 +24,8 @@ from apparmor.logparser import ReadLog
 from apparmor.translations import init_translation
 _ = init_translation()
 
-exp = namedtuple('exp', ['audit', 'allow_keyword', 'deny', 'comment',
-        'domain', 'all_domains', 'type_or_protocol', 'all_type_or_protocols'])
+exp = namedtuple('exp', ['audit', 'allow_keyword', 'deny', 'comment', 'domain',
+        'all_domains', 'type_or_protocol', 'all_type_or_protocols', 'label'])
 
 # --- tests for single NetworkRule --- #
 
@@ -39,16 +39,18 @@ class NetworkTest(AATest):
         self.assertEqual(expected.all_type_or_protocols, obj.all_type_or_protocols)
         self.assertEqual(expected.deny, obj.deny)
         self.assertEqual(expected.comment, obj.comment)
+        self.assertEqual(expected.label, obj.label)
 
 class NetworkTestParse(NetworkTest):
     tests = [
-        # rawrule                                     audit  allow  deny   comment        domain    all?   type/proto  all?
-        ('network,'                             , exp(False, False, False, ''           , None  ,   True , None     , True )),
-        ('network inet,'                        , exp(False, False, False, ''           , 'inet',   False, None     , True )),
-        ('network inet stream,'                 , exp(False, False, False, ''           , 'inet',   False, 'stream' , False)),
-        ('deny network inet stream, # comment'  , exp(False, False, True , ' # comment' , 'inet',   False, 'stream' , False)),
-        ('audit allow network tcp,'             , exp(True , True , False, ''           , None  ,   True , 'tcp'    , False)),
-        ('network stream,'                      , exp(False, False, False, ''           , None  ,   True , 'stream' , False)),
+        # rawrule                                     audit  allow  deny   comment        domain    all?   type/proto  all?  label
+        ('network,'                             , exp(False, False, False, ''           , None  ,   True , None     , True , None)),
+        ('network inet,'                        , exp(False, False, False, ''           , 'inet',   False, None     , True , None)),
+        ('network inet stream,'                 , exp(False, False, False, ''           , 'inet',   False, 'stream' , False, None)),
+        ('deny network inet stream, # comment'  , exp(False, False, True , ' # comment' , 'inet',   False, 'stream' , False, None)),
+        ('audit allow network tcp,'             , exp(True , True , False, ''           , None  ,   True , 'tcp'    , False, None)),
+        ('network stream,'                      , exp(False, False, False, ''           , None  ,   True , 'stream' , False, None)),
+        ('network label=test,'                  , exp(False, False, False, ''           , None  ,   True , None     , True,  "test")),
     ]
 
     def _run_test(self, rawrule, expected):
@@ -102,8 +104,8 @@ class NetworkTestParseFromLog(NetworkTest):
 
         obj = NetworkRule(parsed_event['family'], parsed_event['sock_type'], log_event=parsed_event)
 
-        #              audit  allow  deny   comment        domain    all?   type/proto  all?
-        expected = exp(False, False, False, ''           , 'inet',   False, 'raw'    , False)
+        #              audit  allow  deny   comment        domain    all?   type/proto  all?  label
+        expected = exp(False, False, False, ''           , 'inet',   False, 'raw'    , False, None)
 
         self._compare_obj(obj, expected)
 
@@ -112,13 +114,13 @@ class NetworkTestParseFromLog(NetworkTest):
 
 class NetworkFromInit(NetworkTest):
     tests = [
-        # NetworkRule object                                  audit  allow  deny   comment        domain    all?   type/proto  all?
-        (NetworkRule('inet', 'raw', deny=True)          , exp(False, False, True , ''           , 'inet',   False, 'raw'    , False)),
-        (NetworkRule('inet', 'raw')                     , exp(False, False, False, ''           , 'inet',   False, 'raw'    , False)),
-        (NetworkRule('inet', NetworkRule.ALL)           , exp(False, False, False, ''           , 'inet',   False, None     , True )),
-        (NetworkRule(NetworkRule.ALL, NetworkRule.ALL)  , exp(False, False, False, ''           , None  ,   True , None     , True )),
-        (NetworkRule(NetworkRule.ALL, 'tcp')            , exp(False, False, False, ''           , None  ,   True , 'tcp'    , False)),
-        (NetworkRule(NetworkRule.ALL, 'stream')         , exp(False, False, False, ''           , None  ,   True , 'stream' , False)),
+        # NetworkRule object                                  audit  allow  deny   comment        domain    all?   type/proto  all?  label
+        (NetworkRule('inet', 'raw', deny=True)          , exp(False, False, True , ''           , 'inet',   False, 'raw'    , False, None)),
+        (NetworkRule('inet', 'raw')                     , exp(False, False, False, ''           , 'inet',   False, 'raw'    , False, None)),
+        (NetworkRule('inet', NetworkRule.ALL)           , exp(False, False, False, ''           , 'inet',   False, None     , True , None)),
+        (NetworkRule(NetworkRule.ALL, NetworkRule.ALL)  , exp(False, False, False, ''           , None  ,   True , None     , True , None)),
+        (NetworkRule(NetworkRule.ALL, 'tcp')            , exp(False, False, False, ''           , None  ,   True , 'tcp'    , False, None)),
+        (NetworkRule(NetworkRule.ALL, 'stream')         , exp(False, False, False, ''           , None  ,   True , 'stream' , False, None)),
     ]
 
     def _run_test(self, obj, expected):

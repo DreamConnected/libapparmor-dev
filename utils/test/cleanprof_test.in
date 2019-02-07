@@ -21,7 +21,7 @@
 
     network inet stream,
                abi  "abi/4.20"    ,
-    network stream,
+    network stream label=foo,
 
 	#Below rule comes from abstractions/base
 	allow /usr/share/X11/locale/**  r,

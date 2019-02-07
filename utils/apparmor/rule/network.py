@@ -15,7 +15,7 @@
 
 import re
 
-from apparmor.regex import RE_PROFILE_NETWORK
+from apparmor.regex import RE_PROFILE_NETWORK, RE_PROFILE_NAME, strip_quotes
 from apparmor.common import AppArmorBug, AppArmorException, type_is_str
 from apparmor.rule import BaseRule, BaseRuleset, logprof_value_or_all, parse_modifiers
 
@@ -41,6 +41,7 @@ RE_NETWORK_DETAILS  = re.compile(
     '^\s*' +
     '(?P<domain>' + RE_NETWORK_DOMAIN + ')?' +  # optional domain
     '(\s+(?P<type_or_protocol>' + RE_NETWORK_TYPE + '|' + RE_NETWORK_PROTOCOL + '))?' +  # optional type or protocol
+    '(\s+(label=' + RE_PROFILE_NAME % 'label' + '))?'
     '\s*$')
 
 
@@ -57,7 +58,7 @@ class NetworkRule(BaseRule):
     rule_name = 'network'
 
     def __init__(self, domain, type_or_protocol, audit=False, deny=False, allow_keyword=False,
-                 comment='', log_event=None):
+                 comment='', log_event=None, label=None):
 
         super(NetworkRule, self).__init__(audit=audit, deny=deny,
                                              allow_keyword=allow_keyword,
@@ -78,6 +79,7 @@ class NetworkRule(BaseRule):
 
         self.type_or_protocol = None
         self.all_type_or_protocols = False
+        self.label = label
         if type_or_protocol == NetworkRule.ALL:
             self.all_type_or_protocols = True
         elif type_is_str(type_or_protocol):
@@ -122,12 +124,18 @@ class NetworkRule(BaseRule):
                 type_or_protocol = details.group('type_or_protocol')
             else:
                 type_or_protocol = NetworkRule.ALL
+
+            if details.group('label'):
+                label = strip_quotes(details.group('label'))
+            else:
+                label = None
         else:
             domain = NetworkRule.ALL
             type_or_protocol = NetworkRule.ALL
+            label = None
 
         return NetworkRule(domain, type_or_protocol,
-                           audit=audit, deny=deny, allow_keyword=allow_keyword, comment=comment)
+                           audit=audit, deny=deny, allow_keyword=allow_keyword, comment=comment, label=label)
 
     def get_clean(self, depth=0):
         '''return rule (in clean/default formatting)'''

@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION verify that labels are parsed correctly
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  network label=foo,
+}

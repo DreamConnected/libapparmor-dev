@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION verify that invalid network conditionals aren't parsed
+#=EXRESULT FAIL
+#
+/usr/bin/foo {
+  network lab=foo,
+}

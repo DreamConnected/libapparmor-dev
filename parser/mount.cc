@@ -299,6 +299,22 @@ static struct mnt_keyword_table mnt_conds_table[] = {
 	{NULL, 0, 0}
 };
 
+static ostream &dump_flags(ostream &os,
+			    pair <unsigned int, unsigned int> flags)
+{
+	for (int i = 0; mnt_opts_table[i].keyword; i++) {
+		if ((flags.first & mnt_opts_table[i].set) ||
+		    (flags.second & mnt_opts_table[i].clear))
+			os << mnt_opts_table[i].keyword;
+	}
+	return os;
+}
+
+ostream &operator<<(ostream &os, pair<unsigned int, unsigned int> flags)
+{
+	return dump_flags(os, flags);
+}
+
 static int find_mnt_keyword(struct mnt_keyword_table *table, const char *name)
 {
 	int i;
@@ -321,7 +337,7 @@ int is_valid_mnt_cond(const char *name, int src)
 
 static unsigned int extract_flags(struct value_list **list, unsigned int *inv)
 {
-	unsigned int flags = 0;
+	unsigned int flags = 0, invflags = 0;
 	*inv = 0;
 
 	struct value_list *entry, *tmp, *prev = NULL;
@@ -330,11 +346,11 @@ static unsigned int extract_flags(struct value_list **list, unsigned int *inv)
 		i = find_mnt_keyword(mnt_opts_table, entry->value);
 		if (i != -1) {
 			flags |= mnt_opts_table[i].set;
-			*inv |= mnt_opts_table[i].clear;
+			invflags |= mnt_opts_table[i].clear;
 			PDEBUG(" extracting mount flag %s req: 0x%x inv: 0x%x"
 			       " => req: 0x%x inv: 0x%x\n",
 			       entry->value, mnt_opts_table[i].set,
-			       mnt_opts_table[i].clear, flags, *inv);
+			       mnt_opts_table[i].clear, flags, invflags);
 			if (prev)
 				prev->next = tmp;
 			if (entry == *list)
@@ -345,7 +361,26 @@ static unsigned int extract_flags(struct value_list **list, unsigned int *inv)
 			prev = entry;
 	}
 
+	if (inv)
+		*inv = invflags;
+
 	return flags;
+}
+
+static bool conflicting_flags(unsigned int flags, unsigned int inv)
+{
+	if (flags & inv) {
+		for (int i = 0; i < 31; i++) {
+			unsigned int mask = 1 << i;
+			if ((flags & inv) & mask) {
+				cerr << "conflicting flag value = ";
+				cerr << make_pair(flags, inv);
+				cerr << "\n";
+			}
+		}
+		return true;
+	}
+	return false;
 }
 
 static struct value_list *extract_fstype(struct cond_entry **conds)
@@ -445,7 +480,7 @@ mnt_rule::mnt_rule(struct cond_entry *src_conds, char *device_p,
 		struct cond_entry *opts_in = extract_options(&src_conds, 0);
 
 		if (opts_in) {
-			unsigned int tmpflags, tmpinv_flags = 0;
+			unsigned int tmpflags = 0, tmpinv_flags = 0;
 
 			process_one_option(opts_in, tmpflags, tmpinv_flags);
 			/* optional flags if set/clear mean the same thing and can be
@@ -458,11 +493,17 @@ mnt_rule::mnt_rule(struct cond_entry *src_conds, char *device_p,
 		/* move options=() to opts list */
 		struct cond_entry *opts_eq = extract_options(&src_conds, 1);
 		if (opts_eq) {
-			unsigned int tmpflags, tmpinv_flags = 0;
+			unsigned int tmpflags = 0, tmpinv_flags = 0;
 
 			process_one_option(opts_eq, tmpflags, tmpinv_flags);
 			if (allow_p & AA_DUMMY_REMOUNT)
 				tmpflags |= MS_REMOUNT;
+
+			if (conflicting_flags(tmpflags, tmpinv_flags)) {
+				PERROR("conflicting flags in the rule\n");
+				exit(1);
+			}
+
 			flags = tmpflags;
 		}
 

@@ -32,7 +32,6 @@ profile dovecot /usr/{bin,sbin}/dovecot flags=(attach_disconnected) {
   capability sys_resource,
 
   signal send set=(int,quit) peer=/usr/lib/dovecot/*,
-  signal receive set=(term) peer=/usr/bin/doveadm,
 
   unix (receive, send) type=stream peer=(label=/usr/lib/dovecot/anvil),
 
@@ -42,7 +41,6 @@ profile dovecot /usr/{bin,sbin}/dovecot flags=(attach_disconnected) {
   /etc/SuSE-release r,
   @{PROC}/@{pid}/mounts r,
   @{PROC}/sys/fs/suid_dumpable r,
-  /usr/bin/doveadm mrPx,
   /usr/bin/doveconf rix,
   /usr/lib/dovecot/anvil mrPx,
   /usr/lib/dovecot/auth mrPx,
@@ -70,6 +68,17 @@ profile dovecot /usr/{bin,sbin}/dovecot flags=(attach_disconnected) {
   /{,var/}run/dovecot/ rw,
   /{,var/}run/dovecot/** rw,
   link /{,var/}run/dovecot/** -> /var/lib/dovecot/**,
+
+  # for "dovecot pw"
+  /usr/bin/doveadm Cx -> doveadm,
+  profile doveadm flags=(attach_disconnected) {
+    #include <abstractions/base>
+    #include <abstractions/dovecot-common>
+
+    /usr/bin/doveadm mr,
+
+    /dev/tty rw,
+  }
 
   # Site-specific additions and overrides. See local/README for details.
   #include <local/usr.sbin.dovecot>

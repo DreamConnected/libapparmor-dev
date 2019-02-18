@@ -55,7 +55,15 @@
   /etc/ld.so.cache               mr,
   /etc/ld.so.conf                r,
   /etc/ld.so.conf.d/{,*.conf}    r,
-  /etc/ld.so.preload             r,
+
+  # Warning this has security implications, please see man ld.so
+  # Uncomment if you have local ld.so.preload entries you need to allow
+  # to modify every binary run on your system.
+  # It is better to put this in specific application profiles and not
+  # the base abstraction. Allowing ld.so.preload to be applied on
+  # an application specific basis.
+  #/etc/ld.so.preload             r,
+
   /{usr/,}lib{,32,64}/ld{,32,64}-*.so   mr,
   /{usr/,}lib/@{multiarch}/ld{,32,64}-*.so    mr,
   /{usr/,}lib/tls/i686/{cmov,nosegneg}/ld-*.so     mr,

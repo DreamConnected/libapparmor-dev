@@ -899,8 +899,11 @@ do {									\
 		work_sync_one(RESULT);					\
 } while (0)
 
+/* returns -1 if work_spawn fails, not a return value of any unit of work */
 #define work_spawn(WORK, RESULT)					\
-do {									\
+({									\
+	int localrc = 0;						\
+	do {								\
 	/* what to do to avoid fork() overhead when single threaded	\
 	if (jobs == 1) {						\
 		// no parallel work so avoid fork() overhead		\
@@ -937,11 +940,17 @@ do {									\
 			fprintf(stderr, "    JOBS SPAWN: created %ld ...\n", njobs);									\
 	} else {							\
 		/* error */						\
-		if (debug_jobs)						\
-			fprintf(stderr, "    JOBS SPAWN: failed error: %d) ...\n", errno);								\
+		if (debug_jobs)	{					\
+			int error = errno;				\
+			fprintf(stderr, "    JOBS SPAWN: failed error: %d) ...\n", errno);	\
+			errno = error;					\
+		}							\
 		RESULT(errno);						\
+		localrc = -1;						\
 	}								\
-} while (0)
+	} while (0);							\
+	localrc;							\
+})
 
 
 /* sadly C forces us to do this with exit, long_jump or returning error
@@ -1018,11 +1027,15 @@ static int profile_dir_cb(int dirfd unused, const char *name, struct stat *st,
 	if (!S_ISDIR(st->st_mode) && !is_blacklisted(name, NULL)) {
 		struct dir_cb_data *cb_data = (struct dir_cb_data *)data;
 		autofree char *path = NULL;
-		if (asprintf(&path, "%s/%s", cb_data->dirname, name) < 0)
+		if (asprintf(&path, "%s/%s", cb_data->dirname, name) < 0) {
 			PERROR(_("Out of memory"));
-		work_spawn(process_profile(option, cb_data->kernel_interface,
-					   path, cb_data->cachedir),
-			   handle_work_result);
+			handle_work_result(errno);
+			return -1;
+		}
+		rc = work_spawn(process_profile(option,
+						cb_data->kernel_interface,
+						path, cb_data->cachedir),
+				handle_work_result);
 	}
 	return rc;
 }
@@ -1036,11 +1049,15 @@ static int binary_dir_cb(int dirfd unused, const char *name, struct stat *st,
 	if (!S_ISDIR(st->st_mode) && !is_blacklisted(name, NULL)) {
 		struct dir_cb_data *cb_data = (struct dir_cb_data *)data;
 		autofree char *path = NULL;
-		if (asprintf(&path, "%s/%s", cb_data->dirname, name) < 0)
+		if (asprintf(&path, "%s/%s", cb_data->dirname, name) < 0) {
 			PERROR(_("Out of memory"));
-		work_spawn(process_binary(option, cb_data->kernel_interface,
-					   path),
-			    handle_work_result);
+			handle_work_result(errno);
+			return -1;
+		}
+		rc = work_spawn(process_binary(option,
+					       cb_data->kernel_interface,
+					       path),
+				handle_work_result);
 	}
 	return rc;
 }
@@ -1157,11 +1174,14 @@ int main(int argc, char *argv[])
 		}
 		/* skip stdin if we've seen other command line arguments */
 		if (i == argc && optind != argc)
-			continue;
+			goto cleanup;
 
 		if (profilename && stat(profilename, &stat_file) == -1) {
+			last_error = errno;
 			PERROR("File %s not found, skipping...\n", profilename);
-			continue;
+			if (abort_on_error)
+				break;
+			goto cleanup;
 		}
 
 		if (profilename && S_ISDIR(stat_file.st_mode)) {
@@ -1176,20 +1196,27 @@ int main(int argc, char *argv[])
 			cb = binary_input ? binary_dir_cb : profile_dir_cb;
 			if ((retval = dirat_for_each(AT_FDCWD, profilename,
 						     &cb_data, cb))) {
+				last_error = errno;
 				PDEBUG("Failed loading profiles from %s\n",
 				       profilename);
+				if (abort_on_error)
+					break;
 			}
 		} else if (binary_input) {
+			/* ignore return as error is handled in work_spawn */
 			work_spawn(process_binary(option, kernel_interface,
 						  profilename),
 				   handle_work_result);
 		} else {
+			/* ignore return as error is handled in work_spawn */
 			work_spawn(process_profile(option, kernel_interface,
 						   profilename, cacheloc),
 				   handle_work_result);
 		}
 
-		if (profilename) free(profilename);
+	cleanup:
+		if (profilename)
+			free(profilename);
 		profilename = NULL;
 	}
 	work_sync(handle_work_result);

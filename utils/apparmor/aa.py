@@ -992,7 +992,7 @@ def handle_children(profile, hat, root):
                     hat = default_hat
                 elif ans == 'CMD_DENY':
                     # As unknown hat is denied no entry for it should be made
-                    return None
+                    continue
 
             elif typ == 'capability':
                 # If capability then we (should) have pid, profile, hat, program, mode, capability

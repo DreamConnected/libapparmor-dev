@@ -11,7 +11,7 @@
 
 #include <tunables/global>
 
-profile postfix-proxymap /usr/lib/postfix/{sbin/,}proxymap {
+profile postfix-proxymap /usr/lib/postfix/{bin/,sbin/,}proxymap {
   #include <abstractions/base>
   #include <abstractions/nameservice>
   #include <abstractions/postfix-common>
@@ -21,6 +21,6 @@ profile postfix-proxymap /usr/lib/postfix/{sbin/,}proxymap {
 
   /etc/postfix/main.cf          r,
   @{PROC}/net/if_inet6          r,
-  /usr/lib/postfix/{sbin/,}proxymap          rmix,
+  /usr/lib/postfix/{bin/,sbin/,}proxymap     mrix,
   /{var/spool/postfix/,}private/proxymap     rw,
 }

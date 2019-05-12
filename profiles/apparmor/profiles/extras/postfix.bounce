@@ -11,7 +11,7 @@
 
 #include <tunables/global>
 
-profile postfix-bounce /usr/lib/postfix/{sbin/,}bounce {
+profile postfix-bounce /usr/lib/postfix/{bin/,sbin/,}bounce {
   #include <abstractions/base>
   #include <abstractions/nameservice>
   #include <abstractions/postfix-common>
@@ -19,7 +19,7 @@ profile postfix-bounce /usr/lib/postfix/{sbin/,}bounce {
   capability setgid,
   capability setuid,
 
-  /usr/lib/postfix/{sbin/,}bounce                               rmix,
+  /usr/lib/postfix/{bin/,sbin/,}bounce                             mrix,
 
   /{var/spool/postfix/,}active/[0-9A-F]/[0-9A-F]/*                 rwl,
   /{var/spool/postfix/,}active/[0-9A-F]/[0-9A-F]/                  rwl,

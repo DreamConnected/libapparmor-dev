@@ -17,8 +17,10 @@
 
   # postfix's master can send us signals
   signal receive peer=/usr/lib/postfix/master,
+  signal receive peer=postfix-master,
 
   unix (send, receive) peer=(label=/usr/lib/postfix/master),
+  unix (send, receive) peer=(label=postfix-master),
 
   /etc/mailname         r,
   /etc/postfix/*.cf     r,

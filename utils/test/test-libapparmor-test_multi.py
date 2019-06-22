@@ -19,6 +19,7 @@ import apparmor.aa
 from apparmor.logparser import ReadLog
 from apparmor.profile_list import ProfileList
 
+
 class TestLibapparmorTestMulti(AATest):
     '''Parse all libraries/libapparmor/testsuite/test_multi tests and compare the result with the *.out files'''
 
@@ -26,6 +27,9 @@ class TestLibapparmorTestMulti(AATest):
 
     def _run_test(self, params, expected):
         # tests[][expected] is a dummy, replace it with the real values
+        if params.split('/')[-1] in log_to_skip:
+            return
+
         expected = self._parse_libapparmor_test_multi(params)
 
         with open_file_read('%s.in' % params) as f_in:
@@ -139,6 +143,10 @@ class TestLibapparmorTestMulti(AATest):
 
         return exresult
 
+# tests that cause crashes or need user interaction (will be skipped)
+log_to_skip = [
+    'testcase_dbus_09',  # multiline log not currently supported
+]
 
 # tests that do not produce the expected profile (checked with assertNotEqual)
 log_to_profile_known_failures = [
@@ -184,6 +192,7 @@ log_to_profile_skip = [
     'testcase_syslog_changehat_negative_error',  # fails in write_header -> quote_if_needed because data is None
 
     'testcase_changehat_01',  # interactive, asks to add a hat
+    'testcase_dbus_09',  # multiline log not currently supported
 ]
 
 class TestLogToProfile(AATest):

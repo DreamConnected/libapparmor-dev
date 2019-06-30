@@ -26,3 +26,5 @@
 
   # certbot / letsencrypt
   /etc/letsencrypt/archive/*/privkey*.pem r,
+
+  /etc/certbot/archive/*/privkey*.pem r,

@@ -12,11 +12,12 @@
   abi <abi/4.0>,
 
   /etc/samba/* r,
+
   /etc/gnutls/config r,
-  /usr/lib*/ldb/*.so mr,
-  /usr/lib*/ldb2/*.so mr,
-  /usr/lib*/ldb2/modules/ldb/*.so mr,
-  /usr/lib*/samba/ldb/*.so mr,
+  @{lib}/ldb/*.so mr,
+  @{lib}/ldb2/*.so mr,
+  @{lib}/ldb2/modules/ldb/*.so mr,
+  @{lib}/samba/ldb/*.so mr,
   /usr/share/samba/*.dat r,
   /usr/share/samba/codepages/{lowcase,upcase,valid}.dat r,
   /var/cache/samba/ w,

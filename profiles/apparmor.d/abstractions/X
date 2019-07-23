@@ -48,7 +48,7 @@
   /usr/X11R6/**.so*               mr,
 
   # EGL
-  /usr/lib/@{multiarch}/egl/*.so* mr,
+  @{lib}/egl/*.so* mr,
 
   # Xcompose
   owner @{HOME}/.XCompose         r,

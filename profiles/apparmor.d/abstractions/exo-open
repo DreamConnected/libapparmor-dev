@@ -14,7 +14,7 @@
 # ```
 # profile foo /usr/bin/foo {
 # ...
-# /usr/bin/exo-open rPx -> foo//exo-open,
+# @{bin}/exo-open rPx -> foo//exo-open,
 # ...
 # } # end of main profile
 #
@@ -44,12 +44,12 @@
 
   # Main executables
 
-  /usr/bin/exo-open rix,
-  /usr/lib{32,64,/@{multiarch}}/xfce4/exo-[0-9]/exo-helper-[0-9] ix,
+  @{bin}/exo-open rix,
+  @{lib}/xfce4/exo-[0-9]/exo-helper-[0-9] ix,
 
   # Other executables
 
-  /{,usr/}bin/which rix,
+  @{bin}/which rix,
 
   # System files
 

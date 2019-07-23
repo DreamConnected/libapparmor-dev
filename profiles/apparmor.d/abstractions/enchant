@@ -33,8 +33,8 @@
   /usr/share/hunspell/*                            r,
 
   # ispell
-  /usr/lib/ispell/                                 r,
-  /usr/lib/ispell/*.hash                           r,
+  @{lib}/ispell/                                   r,
+  @{lib}/ispell/*.hash                             r,
   /usr/share/dict/                                 r,
   /usr/share/dict/*                                r,
   /var/lib/dictionaries-common/                    r,
@@ -46,10 +46,10 @@
   /usr/share/myspell/**                            r,
 
   # voikko
-  /usr/lib/voikko/                                 r,
-  /usr/lib/voikko/2/                               r,
-  /usr/lib/voikko/2/mor-standard/                  r,
-  /usr/lib/voikko/2/mor-standard/voikko*           r,
+  @{lib}/voikko/                                   r,
+  @{lib}/voikko/2/                                 r,
+  @{lib}/voikko/2/mor-standard/                    r,
+  @{lib}/voikko/2/mor-standard/voikko*             r,
 
   # zemberek
   /usr/share/java/                                 r,

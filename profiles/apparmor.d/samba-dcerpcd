@@ -18,12 +18,12 @@ profile samba-dcerpcd /usr/lib*/samba/{,samba/}samba-dcerpcd {
 
   @{run}/{,samba/}samba-dcerpcd.pid rwk,
 
-  /usr/lib*/samba/{,samba/}samba-dcerpcd mr,
+  @{lib}/samba/{,samba/}samba-dcerpcd mr,
 
-  /usr/lib*/samba/ r,
-  /usr/lib*/samba/{,samba/}rpcd_{mdssvc,epmapper,rpcecho,fsrvp,lsad,winreg} Px -> samba-rpcd,
-  /usr/lib*/samba/{,samba/}rpcd_classic Px -> samba-rpcd-classic,
-  /usr/lib*/samba/{,samba/}rpcd_spoolss Px -> samba-rpcd-spoolss,
+  @{lib}/samba/ r,
+  @{lib}/samba/{,samba/}rpcd_{mdssvc,epmapper,rpcecho,fsrvp,lsad,winreg} Px -> samba-rpcd,
+  @{lib}/samba/{,samba/}rpcd_classic Px -> samba-rpcd-classic,
+  @{lib}/samba/{,samba/}rpcd_spoolss Px -> samba-rpcd-spoolss,
 
   @{run}/samba/ncalrpc/ rw,
   @{run}/samba/ncalrpc/** rw,

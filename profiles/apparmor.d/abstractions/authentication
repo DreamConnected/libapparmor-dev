@@ -24,12 +24,9 @@
   @{etc_ro}/gshadow                r,
   @{etc_ro}/pwdb.conf              r,
 
-  /{usr/,}lib{,32,64}/security/pam_filter/*  mr,
-  /{usr/,}lib{,32,64}/security/pam_*.so      mr,
-  /{usr/,}lib{,32,64}/security/              r,
-  /{usr/,}lib/@{multiarch}/security/pam_filter/*  mr,
-  /{usr/,}lib/@{multiarch}/security/pam_*.so      mr,
-  /{usr/,}lib/@{multiarch}/security/              r,
+  @{lib}/security/pam_filter/*  mr,
+  @{lib}/security/pam_*.so      mr,
+  @{lib}/security/              r,
 
   # pam_unix
   owner /proc/@{pid}/loginuid r,

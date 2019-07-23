@@ -17,7 +17,7 @@ include <tunables/global>
 #define this to be where syslog-ng is chrooted
 @{CHROOT_BASE}=""
 
-profile syslog-ng /{usr/,}{bin,sbin}/syslog-ng {
+profile syslog-ng /{usr/,}{s,}bin/syslog-ng {
   include <abstractions/base>
   include <abstractions/consoles>
   include <abstractions/nameservice>
@@ -47,7 +47,7 @@ profile syslog-ng /{usr/,}{bin,sbin}/syslog-ng {
   /etc/syslog-ng/conf.d/ r,
   /etc/syslog-ng/conf.d/* r,
   @{PROC}/kmsg r,
-  /{usr/,}{bin,sbin}/syslog-ng mr,
+  @{bin}/syslog-ng mr,
   @{sys}/devices/system/cpu/online r,
   /usr/share/syslog-ng/** r,
   /var/lib/syslog-ng/syslog-ng-?????.qf rw,

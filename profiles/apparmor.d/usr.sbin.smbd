@@ -2,7 +2,7 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile smbd /usr/{bin,sbin}/smbd {
+profile smbd /{usr/,}{s,}bin/smbd {
   include <abstractions/authentication>
   include <abstractions/base>
   include <abstractions/consoles>
@@ -32,20 +32,20 @@ profile smbd /usr/{bin,sbin}/smbd {
   /etc/samba/* rwk,
   @{PROC}/@{pid}/mounts r,
   @{PROC}/sys/kernel/core_pattern r,
-  /usr/lib*/samba/vfs/*.so mr,
-  /usr/lib*/samba/auth/*.so mr,
-  /usr/lib*/samba/charset/*.so mr,
-  /usr/lib*/samba/gensec/*.so mr,
-  /usr/lib*/samba/pdb/*.so mr,
-  /usr/lib*/samba/{,samba/}samba-bgqd Px -> samba-bgqd,
-  /usr/lib*/samba/{,samba/}samba-dcerpcd Px -> samba-dcerpcd,
-  /usr/lib*/samba/{lowcase,upcase,valid}.dat r,
-  /usr/lib/@{multiarch}/samba/*.so{,.[0-9]*} mr,
-  /usr/lib/@{multiarch}/samba/**/ r,
-  /usr/lib/@{multiarch}/samba/**/*.so{,.[0-9]*} mr,
+  @{lib}/samba/vfs/*.so mr,
+  @{lib}/samba/auth/*.so mr,
+  @{lib}/samba/charset/*.so mr,
+  @{lib}/samba/gensec/*.so mr,
+  @{lib}/samba/pdb/*.so mr,
+  @{lib}/samba/{,samba/}samba-bgqd Px -> samba-bgqd,
+  @{lib}/samba/{,samba/}samba-dcerpcd Px -> samba-dcerpcd,
+  @{lib}/samba/{lowcase,upcase,valid}.dat r,
+  @{lib}/samba/*.so{,.[0-9]*} mr,
+  @{lib}/samba/**/ r,
+  @{lib}/samba/**/*.so{,.[0-9]*} mr,
   /usr/share/samba/** r,
-  /usr/{bin,sbin}/smbd mr,
-  /usr/{bin,sbin}/smbldap-useradd Px,
+  @{bin}/smbd mr,
+  @{bin}/smbldap-useradd Px,
   /var/cache/samba/** rwk,
   /var/{cache,lib}/samba/printing/printers.tdb mrw,
   /var/lib/nscd/netgroup r,

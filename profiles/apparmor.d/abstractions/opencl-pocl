@@ -7,8 +7,8 @@
 
   # Executables
 
-  /usr/bin/{,@{multiarch}-}ld.bfd Cx -> opencl_pocl_ld,
-  /usr/lib/llvm-[0-9]*.[0-9]*/bin/clang Cx -> opencl_pocl_clang,
+  @{bin}/{,@{multiarch}-}ld.bfd Cx -> opencl_pocl_ld,
+  @{lib}/llvm-[0-9]*.[0-9]*/bin/clang Cx -> opencl_pocl_clang,
 
   # System files
 
@@ -47,7 +47,7 @@
 
     # Main executables
 
-    /usr/bin/{,@{multiarch}-}ld.bfd mr,
+    @{bin}/{,@{multiarch}-}ld.bfd mr,
 
     # User files
 
@@ -60,11 +60,11 @@
 
     # Main executables
 
-    /usr/lib/llvm-[0-9]*.[0-9]*/bin/clang mr,
+    @{lib}/llvm-[0-9]*.[0-9]*/bin/clang mr,
 
     # Additional executables
 
-    /usr/bin/{,@{multiarch}-}ld.bfd ix, # TODO: transfer to opencl_ld child profile?
+    @{bin}/{,@{multiarch}-}ld.bfd ix, # TODO: transfer to opencl_ld child profile?
 
     # System files
 

@@ -12,7 +12,7 @@
 # ```
 # profile foo /usr/bin/foo {
 # ...
-# /usr/bin/xdg-open rPx -> foo//xdg-open,
+# @{bin}/xdg-open rPx -> foo//xdg-open,
 # ...
 # } # end of main profile
 #
@@ -55,18 +55,18 @@
 
   # Main executables
 
-  /{,usr/}bin/{b,d}ash mr,
-  /usr/bin/xdg-open r,
+  @{bin}/{b,d}ash mr,
+  @{bin}/xdg-open r,
 
   # Additional executables
 
-  /usr/bin/xdg-mime rix,
-  /{,usr/}bin/cut rix, # for xdg-mime
-  /{,usr/}bin/head rix, # for xdg-mime
-  /{,usr/}bin/sed rix, # for xdg-open
-  /{,usr/}bin/tr rix, # for xdg-mime
-  /{,usr/}bin/which rix, # for xdg-open
-  /{,usr/}bin/{grep,egrep} rix, # for xdg-open
+  @{bin}/xdg-mime rix,
+  @{bin}/cut rix, # for xdg-mime
+  @{bin}/head rix, # for xdg-mime
+  @{bin}/sed rix, # for xdg-open
+  @{bin}/tr rix, # for xdg-mime
+  @{bin}/which rix, # for xdg-open
+  @{bin}/{e,}grep rix, # for xdg-open
 
   # System files
 

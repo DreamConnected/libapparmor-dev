@@ -13,7 +13,7 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile klogd /{usr/,}{bin,sbin}/klogd {
+profile klogd /{usr/,}{s,}bin/klogd {
   include <abstractions/base>
 
   capability sys_admin, # for backward compatibility with kernel <= 2.6.37
@@ -26,7 +26,7 @@ profile klogd /{usr/,}{bin,sbin}/klogd {
   @{PROC}/kallsyms	r,
   /dev/tty		rw,
 
-  /{usr/,}{bin,sbin}/klogd	rmix,
+  @{bin}/klogd	rmix,
   /var/log/boot.msg     rwl,
   @{run}/klogd.pid    krwl,
   @{run}/klogd/klogd.pid krwl,

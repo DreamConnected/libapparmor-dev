@@ -4,20 +4,20 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile smbldap-useradd /usr/{bin,sbin}/smbldap-useradd {
+profile smbldap-useradd /{usr/,}{s,}bin/smbldap-useradd {
   include <abstractions/base>
   include <abstractions/bash>
   include <abstractions/nameservice>
   include <abstractions/perl>
 
   /dev/tty rw,
-  /{,usr/}bin/bash ix,
+  @{bin}/bash ix,
   /etc/init.d/nscd Cx,
   /etc/shadow r,
   /etc/smbldap-tools/smbldap.conf r,
   /etc/smbldap-tools/smbldap_bind.conf r,
-  /usr/{bin,sbin}/smbldap-useradd r,
-  /usr/{bin,sbin}/smbldap_tools.pm r,
+  @{bin}/smbldap-useradd r,
+  @{bin}/smbldap_tools.pm r,
   /var/log/samba/log.smbd w,
 
   # Site-specific additions and overrides. See local/README for details.
@@ -29,9 +29,9 @@ profile smbldap-useradd /usr/{bin,sbin}/smbldap-useradd {
 
     capability sys_ptrace,
 
-    /{,usr/}bin/bash r,
-    /{,usr/}bin/mountpoint rix,
-    /{,usr/}bin/systemctl rix,
+    @{bin}/bash r,
+    @{bin}/mountpoint rix,
+    @{bin}/systemctl rix,
     /dev/tty rw,
     /etc/init.d/nscd r,
     /etc/rc.status r,

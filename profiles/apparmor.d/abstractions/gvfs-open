@@ -14,7 +14,7 @@
 # ```
 # profile foo /usr/bin/foo {
 # ...
-# /usr/bin/gvfs-open rPx -> foo//gvfs-open,
+# @{bin}/gvfs-open rPx -> foo//gvfs-open,
 # ...
 # } # end of main profile
 #
@@ -40,8 +40,8 @@
 
   # Main executables
 
-  /usr/bin/gvfs-open r,
-  /{,usr/}bin/dash mr,
+  @{bin}/gvfs-open r,
+  @{bin}/dash mr,
 
   # Include additions to the abstraction
   include if exists <abstractions/gvfs-open.d>

@@ -14,7 +14,7 @@
 # ```
 # profile foo /usr/bin/foo {
 # ...
-# /usr/bin/kde-open5 rPx -> foo//kde-open5,
+# @{bin}/kde-open5 rPx -> foo//kde-open5,
 # ...
 # } # end of main profile
 #
@@ -56,8 +56,9 @@
 
   # Main executables
 
-  /usr/bin/kde-open5 rix,
-  /usr/lib/@{multiarch}/libexec/kf5/kioslave{,5} ix,
+  @{bin}/kde-open5 rix,
+  @{lib}/kf5/kioslave{,5} ix,
+  /usr/libexec/kf5/kioslave{,5} ix,
 
   # DBus
 
@@ -69,7 +70,7 @@
 
   # Denied system files
 
-  deny /usr/lib/vlc/plugins/* w, # VLC backed tries to create plugins.dat.16109
+  deny @{lib}/vlc/plugins/* w, # VLC backed tries to create plugins.dat.16109
 
   # libpcre2 on openSUSE tries to mmap() shared memory on directory.
   # see: https://lists.ubuntu.com/archives/apparmor/2019-January/011925.html

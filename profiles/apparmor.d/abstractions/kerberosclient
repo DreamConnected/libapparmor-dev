@@ -12,15 +12,11 @@
   abi <abi/4.0>,
 
   # files required by kerberos client programs
-  /usr/lib{,32,64}/krb5/plugins/libkrb5/ r,
-  /usr/lib{,32,64}/krb5/plugins/libkrb5/* mr,
-  /usr/lib/@{multiarch}/krb5/plugins/libkrb5/ r,
-  /usr/lib/@{multiarch}/krb5/plugins/libkrb5/* mr,
+  @{lib}/krb5/plugins/libkrb5/ r,
+  @{lib}/krb5/plugins/libkrb5/* mr,
 
-  /usr/lib{,32,64}/krb5/plugins/preauth/ r,
-  /usr/lib{,32,64}/krb5/plugins/preauth/* mr,
-  /usr/lib/@{multiarch}/krb5/plugins/preauth/ r,
-  /usr/lib/@{multiarch}/krb5/plugins/preauth/* mr,
+  @{lib}/krb5/plugins/preauth/ r,
+  @{lib}/krb5/plugins/preauth/* mr,
 
   /usr/lib{,32,64}/krb5/plugins/authdata/ r,
   /usr/lib{,32,64}/krb5/plugins/authdata/* mr,

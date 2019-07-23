@@ -5,16 +5,16 @@
 
   # Additional libraries
 
-  /usr/lib{,64,/@{multiarch}}/qt5/plugins/**.so mr,
-  /usr/lib{,64,/@{multiarch}}/qt5/qml/**.so mr,
-  /usr/lib{,64,/@{multiarch}}/qt5/qml/**.{qmlc,jsc} mr, # Precompiled QML/JavaScript modules
+  @{lib}/qt5/plugins/**.so mr,
+  @{lib}/qt5/qml/**.so mr,
+  @{lib}/qt5/qml/**.{qmlc,jsc} mr, # Precompiled QML/JavaScript modules
 
   # System files
 
   /etc/xdg/QtProject/qtlogging.ini r,
   /usr/share/qt5/translations/*.qm r,
-  /usr/lib{,64,/@{multiarch}}/qt5/plugins/** r,
-  /usr/lib{,64,/@{multiarch}}/qt5/qml/** r,
+  @{lib}/qt5/plugins/** r,
+  @{lib}/qt5/qml/** r,
 
   # User files
 

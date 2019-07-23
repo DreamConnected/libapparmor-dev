@@ -1,7 +1,7 @@
 abi <abi/4.0>,
 
 include <tunables/global>
-profile avahi-daemon /usr/{bin,sbin}/avahi-daemon flags=(attach_disconnected) {
+profile avahi-daemon /{usr/,}{s,}bin/avahi-daemon flags=(attach_disconnected)  {
   include <abstractions/base>
   include <abstractions/consoles>
   include <abstractions/dbus>
@@ -25,7 +25,7 @@ profile avahi-daemon /usr/{bin,sbin}/avahi-daemon flags=(attach_disconnected) {
   @{PROC}/1/environ r,
   @{PROC}/cmdline r,
   @{PROC}/sys/kernel/osrelease r,
-  /usr/{bin,sbin}/avahi-daemon mr,
+  @{bin}/avahi-daemon mr,
   /usr/share/avahi/introspection/*.introspect r,
   /usr/share/dbus-1/interfaces/org.freedesktop.Avahi.*.xml r,
   @{run}/avahi-daemon/ w,

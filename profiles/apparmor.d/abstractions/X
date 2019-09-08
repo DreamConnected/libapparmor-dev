@@ -52,3 +52,7 @@
   # mouse themes
   /etc/X11/cursors/               r,
   /etc/X11/cursors/**             r,
+
+  # Xwayland
+  owner /run/user/*/.mutter-Xwaylandauth.* r,
+

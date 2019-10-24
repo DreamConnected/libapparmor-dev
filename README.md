@@ -133,7 +133,7 @@ Utilities:
 ```
 $ cd utils
 $ make
-$ make check
+$ make check PYFLAKES=/usr/bin/pyflakes3
 $ make install
 ```
 

@@ -1,4 +1,4 @@
 profile unbalanced_parenthesis {
-  owner /dev/shm/test(me r,
+  /dev/shm/test(me r,
 
 }

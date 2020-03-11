@@ -87,3 +87,6 @@ install: $(NAME).so
 .PHONY: clean
 clean:
 	rm -f core core.* *.so *.o *.s *.a *~
+
+.PHONY: check
+check: ;

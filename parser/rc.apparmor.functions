@@ -134,7 +134,7 @@ force_complain() {
 	local profile=$1
 
 	# if profile not in complain mode
-	if ! egrep -q "^/.*[ \t]+flags[ \t]*=[ \t]*\([ \t]*complain[ \t]*\)[ \t]+{" $profile ; then
+	if ! egrep -q '^/.*[ \t]+flags[ \t]*=[ \t]*\([ \t]*complain[ \t]*\)[ \t]+\{' $profile ; then
 		local link="${PROFILE_DIR}/force-complain/`basename ${profile}`"
 		if [ -e "$link" ] ; then
 			aa_log_warning_msg "found $link, forcing complain mode"

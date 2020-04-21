@@ -112,6 +112,8 @@ static struct keyword_table keyword_table[] = {
 	{"tracedby",		TOK_TRACEDBY},
 	{"readby",		TOK_READBY},
 	{"abi",			TOK_ABI},
+	{"and",			TOK_AND},
+	{"or",			TOK_OR},
 
 	/* terminate */
 	{NULL, 0}

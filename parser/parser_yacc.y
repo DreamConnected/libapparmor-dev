@@ -153,6 +153,8 @@ void add_local_entry(Profile *prof);
 %token TOK_TRACEDBY
 %token TOK_READBY
 %token TOK_ABI
+%token TOK_AND
+%token TOK_OR
 
  /* rlimits */
 %token TOK_RLIMIT
@@ -252,6 +254,9 @@ void add_local_entry(Profile *prof);
 %type <var_val>	TOK_VALUE
 %type <val_list> valuelist
 %type <boolean> expr
+%type <boolean> term
+%type <boolean> notfactor
+%type <boolean> factor
 %type <id>	id_or_var
 %type <id>	opt_id_or_var
 %type <boolean> opt_subset_flag
@@ -1027,12 +1032,37 @@ cond_rule: TOK_IF expr TOK_OPEN rules TOK_CLOSE TOK_ELSE cond_rule
 		$$ = ret;
 	}
 
-expr:	TOK_NOT expr
+
+expr:   expr TOK_OR term
+	{
+		$$ = $1 || $3;
+	}
+
+	| term
+	{
+		$$ = $1;
+	}
+
+term:	term TOK_AND notfactor
+	{
+		$$ = $1 && $3;
+	}
+
+	| notfactor
+	{
+		$$ = $1;
+	}
+
+notfactor:	TOK_NOT notfactor
 	{
 		$$ = !$2;
 	}
+	| factor
+	{
+		$$ = $1;
+	}
 
-expr:	TOK_BOOL_VAR
+factor:	TOK_BOOL_VAR
 	{
 		char *var_name = process_var($1);
 		int boolean  = get_boolean_var(var_name);
@@ -1047,7 +1077,7 @@ expr:	TOK_BOOL_VAR
 		free($1);
 	}
 
-expr:	TOK_DEFINED TOK_SET_VAR
+factor:	TOK_DEFINED TOK_SET_VAR
 	{
 		char *var_name = process_var($2);
 		void *set_value = get_set_var(var_name);
@@ -1057,7 +1087,7 @@ expr:	TOK_DEFINED TOK_SET_VAR
 		free($2);
 	}
 
-expr:	TOK_DEFINED TOK_BOOL_VAR
+factor:	TOK_DEFINED TOK_BOOL_VAR
 	{
 		char *var_name = process_var($2);
 		int boolean = get_boolean_var(var_name);
@@ -1065,6 +1095,11 @@ expr:	TOK_DEFINED TOK_BOOL_VAR
 		$$ = (boolean != -1);
 		free(var_name);
 		free($2);
+	}
+
+factor:   TOK_OPENPAREN expr TOK_CLOSEPAREN
+	{
+		$$ = $2;
 	}
 
 id_or_var: TOK_ID { $$ = $1; }

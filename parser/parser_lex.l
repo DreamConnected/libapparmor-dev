@@ -265,6 +265,7 @@ GT		>
 %x INCLUDE
 %x INCLUDE_EXISTS
 %x ABI_MODE
+%x EXPR_MODE
 
 %%
 
@@ -277,7 +278,7 @@ GT		>
 	}
 %}
 
-<INITIAL,SUB_ID_WS,INCLUDE,INCLUDE_EXISTS,LIST_VAL_MODE,EXTCOND_MODE,LIST_COND_VAL,LIST_COND_PAREN_VAL,LIST_COND_MODE,EXTCONDLIST_MODE,ASSIGN_MODE,NETWORK_MODE,CHANGE_PROFILE_MODE,RLIMIT_MODE,MOUNT_MODE,DBUS_MODE,SIGNAL_MODE,PTRACE_MODE,UNIX_MODE>{
+<INITIAL,SUB_ID_WS,INCLUDE,INCLUDE_EXISTS,LIST_VAL_MODE,EXTCOND_MODE,LIST_COND_VAL,LIST_COND_PAREN_VAL,LIST_COND_MODE,EXTCONDLIST_MODE,ASSIGN_MODE,NETWORK_MODE,CHANGE_PROFILE_MODE,RLIMIT_MODE,MOUNT_MODE,DBUS_MODE,SIGNAL_MODE,PTRACE_MODE,UNIX_MODE,EXPR_MODE>{
 	{WS}+	{  DUMP_PREPROCESS; /* Ignoring whitespace */ }
 }
 
@@ -540,6 +541,19 @@ GT		>
 	}
 }
 
+<EXPR_MODE>{
+	{OPEN_PAREN}	{ RETURN_TOKEN(TOK_OPENPAREN); }
+	{CLOSE_PAREN}	{ RETURN_TOKEN(TOK_CLOSEPAREN); }
+	and		{ RETURN_TOKEN(TOK_AND); }
+	or		{ RETURN_TOKEN(TOK_OR); }
+	not		{ RETURN_TOKEN(TOK_NOT); }
+	defined		{ RETURN_TOKEN(TOK_DEFINED); }
+
+	{OPEN_BRACE}	{ POP_AND_RETURN(TOK_OPEN); }
+
+
+}
+
 #include{WS}+if{WS}+exists/{WS}.*\r?\n	{
 	/* Don't use PUSH() macro here as we don't want #include echoed out.
 	 * It needs to be handled specially
@@ -581,14 +595,16 @@ include/{WS}	{
 
 {ADD_ASSIGN}	{ PUSH_AND_RETURN(ASSIGN_MODE, TOK_ADD_ASSIGN); }
 
-{SET_VARIABLE}	{
-	yylval.set_var = strdup(yytext);
-	RETURN_TOKEN(TOK_SET_VAR);
-}
+<INITIAL,EXPR_MODE>{
+	{SET_VARIABLE}	{
+		yylval.set_var = strdup(yytext);
+		RETURN_TOKEN(TOK_SET_VAR);
+	}
 
-{BOOL_VARIABLE}	{
-	yylval.bool_var = strdup(yytext);
-	RETURN_TOKEN(TOK_BOOL_VAR);
+	{BOOL_VARIABLE}	{
+		yylval.bool_var = strdup(yytext);
+		RETURN_TOKEN(TOK_BOOL_VAR);
+	}
 }
 
 {OPEN_BRACE}	{ RETURN_TOKEN(TOK_OPEN); }
@@ -653,6 +669,9 @@ include/{WS}	{
 	case TOK_ABI:
 		state = ABI_MODE;
 		break;
+	case TOK_IF:
+		state = EXPR_MODE;
+		break;
 	default: /* nothing */
 		break;
 	}
@@ -707,4 +726,5 @@ unordered_map<int, string> state_names = {
 	STATE_TABLE_ENT(INCLUDE),
 	STATE_TABLE_ENT(INCLUDE_EXISTS),
 	STATE_TABLE_ENT(ABI_MODE),
+	STATE_TABLE_ENT(EXPR_MODE),
 };

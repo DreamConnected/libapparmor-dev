@@ -1951,6 +1951,10 @@ def collapse_log():
     for aamode in prelog.keys():
         for profile in prelog[aamode].keys():
             for hat in prelog[aamode][profile].keys():
+                # used to avoid to accidently initialize aa[profile][hat] or calling is_known_rule() on events for a non-existing profile
+                hat_exists = False
+                if aa.get(profile) and aa[profile].get(hat):
+                    hat_exists = True
 
                 log_dict[aamode][profile][hat] = ProfileStorage(profile, hat, 'collapse_log()')
 
@@ -1976,12 +1980,12 @@ def collapse_log():
 
                     file_event = FileRule(path, mode, None, FileRule.ALL, owner=owner, log_event=True)
 
-                    if not is_known_rule(aa[profile][hat], 'file', file_event):
+                    if not hat_exists or not is_known_rule(aa[profile][hat], 'file', file_event):
                         log_dict[aamode][profile][hat]['file'].add(file_event)
 
                 for cap in prelog[aamode][profile][hat]['capability'].keys():
                     cap_event = CapabilityRule(cap, log_event=True)
-                    if not is_known_rule(aa[profile][hat], 'capability', cap_event):
+                    if not hat_exists or not is_known_rule(aa[profile][hat], 'capability', cap_event):
                         log_dict[aamode][profile][hat]['capability'].add(cap_event)
 
                 dbus = prelog[aamode][profile][hat]['dbus']
@@ -2004,20 +2008,21 @@ def collapse_log():
                                             else:
                                                 raise AppArmorBug('unexpected dbus access: %s')
 
-                                            log_dict[aamode][profile][hat]['dbus'].add(dbus_event)
+                                            if not hat_exists or not is_known_rule(aa[profile][hat], 'dbus', dbus_event):
+                                                log_dict[aamode][profile][hat]['dbus'].add(dbus_event)
 
                 nd = prelog[aamode][profile][hat]['netdomain']
                 for family in nd.keys():
                     for sock_type in nd[family].keys():
                         net_event = NetworkRule(family, sock_type, log_event=True)
-                        if not is_known_rule(aa[profile][hat], 'network', net_event):
+                        if not hat_exists or not is_known_rule(aa[profile][hat], 'network', net_event):
                             log_dict[aamode][profile][hat]['network'].add(net_event)
 
                 ptrace = prelog[aamode][profile][hat]['ptrace']
                 for peer in ptrace.keys():
                     for access in ptrace[peer].keys():
                         ptrace_event = PtraceRule(access, peer, log_event=True)
-                        if not is_known_rule(aa[profile][hat], 'ptrace', ptrace_event):
+                        if not hat_exists or not is_known_rule(aa[profile][hat], 'ptrace', ptrace_event):
                             log_dict[aamode][profile][hat]['ptrace'].add(ptrace_event)
 
                 sig = prelog[aamode][profile][hat]['signal']
@@ -2025,7 +2030,7 @@ def collapse_log():
                     for access in sig[peer].keys():
                         for signal in sig[peer][access].keys():
                             signal_event = SignalRule(access, signal, peer, log_event=True)
-                            if not is_known_rule(aa[profile][hat], 'signal', signal_event):
+                            if not hat_exists or not is_known_rule(aa[profile][hat], 'signal', signal_event):
                                 log_dict[aamode][profile][hat]['signal'].add(signal_event)
 
     return log_dict

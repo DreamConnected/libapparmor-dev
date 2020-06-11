@@ -28,7 +28,7 @@
   @{DOVECOT_MAILSTORE}/** rwkl,
 
   @{HOME}/.dovecot.svbin r,
-
+  @{PROC}/@{pid}/attr/current rw,
   /proc/*/mounts r,
   /tmp/dovecot.lmtp.* rw,
   /usr/lib/dovecot/lmtp mr,

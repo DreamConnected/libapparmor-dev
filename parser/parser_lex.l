@@ -24,6 +24,7 @@
 %option noyywrap
 %option nounput
 %option stack
+%option nodefault
 
 %{
 #include <stdio.h>

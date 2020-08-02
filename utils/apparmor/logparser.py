@@ -418,6 +418,7 @@ class ReadLog:
        'rename_dest',
        'unlink',
        'rmdir',
+       'symlink',
        'symlink_create',
        'link',
        'sysctl',

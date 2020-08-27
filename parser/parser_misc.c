@@ -61,6 +61,11 @@ int is_blacklisted(const char *name, const char *path)
 	return !retval ? 0 : 1;
 }
 
+/*
+ * WARNING: if the format of the following table is changed then
+ *          the Makefile targets, cap_names.h and generated_cap_names.h
+ *          must be updated.
+ */
 struct keyword_table {
 	const char *keyword;
 	unsigned int token;

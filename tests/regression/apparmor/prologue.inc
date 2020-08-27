@@ -578,7 +578,7 @@ settest()
 	elif [ $# -eq 2 ]
 	then
 		test=$bin/$1
-		testexec=`echo $2 | sed "s~{}~$test~"`
+		testexec=`echo $2 | sed "s#{}#$test#"`
 	else
 		fatalerror "settest, illegal usage"
 	fi

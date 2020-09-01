@@ -61,9 +61,14 @@ int is_blacklisted(const char *name, const char *path)
 	return !retval ? 0 : 1;
 }
 
+/*
+ * WARNING: if the format of the following table is changed then
+ *          the Makefile targets, cap_names.h and generated_cap_names.h
+ *          must be updated.
+ */
 struct keyword_table {
 	const char *keyword;
-	int token;
+	unsigned int token;
 };
 
 static struct keyword_table keyword_table[] = {
@@ -165,12 +170,18 @@ static int get_table_token(const char *name unused, struct keyword_table *table,
 	return -1;
 }
 
+#ifndef CAP_PERFMON
+#define CAP_PERFMON 38
+#endif
+
+#ifndef CAP_BPF
+#define CAP_BPF 39
+#endif
+
 static struct keyword_table capability_table[] = {
 	/* capabilities */
 	#include "cap_names.h"
-#ifndef CAP_SYSLOG
-	{"syslog", 34},
-#endif
+
 	/* terminate */
 	{NULL, 0}
 };
@@ -832,52 +843,16 @@ void debug_cod_entries(struct cod_entry *list)
 	}
 }
 
-
-static const char *capnames[] = {
-	"chown",
-	"dac_override",
-	"dac_read_search",
-	"fowner",
-	"fsetid",
-	"kill",
-	"setgid",
-	"setuid",
-	"setpcap",
-	"linux_immutable",
-	"net_bind_service",
-	"net_broadcast",
-	"net_admin",
-	"net_raw",
-	"ipc_lock",
-	"ipc_owner",
-	"sys_module",
-	"sys_rawio",
-	"sys_chroot",
-	"sys_ptrace",
-	"sys_pacct",
-	"sys_admin",
-	"sys_boot",
-	"sys_nice",
-	"sys_resource",
-	"sys_time",
-	"sys_tty_config",
-	"mknod",
-	"lease",
-	"audit_write",
-	"audit_control",
-	"setfcap",
-	"mac_override",
-	"syslog",
-};
-
 const char *capability_to_name(unsigned int cap)
 {
-	const char *capname;
+	int i;
 
-	capname = (cap < (sizeof(capnames) / sizeof(char *))
-		   ? capnames[cap] : "invalid-capability");
+	for (i = 0; capability_table[i].keyword; i++) {
+		if (capability_table[i].token == cap)
+			return capability_table[i].keyword;
+	}
 
-	return capname;
+	return "invalid-capability";
 }
 
 void __debug_capabilities(uint64_t capset, const char *name)
@@ -885,10 +860,10 @@ void __debug_capabilities(uint64_t capset, const char *name)
 	unsigned int i;
 
 	printf("%s:", name);
-	for (i = 0; i < (sizeof(capnames)/sizeof(char *)); i++) {
-		if (((1ull << i) & capset) != 0) {
-			printf (" %s", capability_to_name(i));
-		}
+
+	for (i = 0; capability_table[i].keyword; i++) {
+		if ((1ull << capability_table[i].token) & capset)
+			printf (" %s", capability_table[i].keyword);
 	}
 	printf("\n");
 }

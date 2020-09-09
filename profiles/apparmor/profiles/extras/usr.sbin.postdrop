@@ -26,9 +26,10 @@
   /etc/postfix/postfix-script mixr,
   @{PROC}/net/if_inet6 r,
   /usr/sbin/postdrop rmix,
+  /usr/share/icu/[0-9]*.[0-9]*/*.dat r,
   /var/spool/postfix r,
   /var/spool/postfix/maildrop r,
   /var/spool/postfix/maildrop/* rwl,
   /var/spool/postfix/pid r,
-  /var/spool/postfix/public/pickup w,
+  /var/spool/postfix/public/pickup rw,
 }

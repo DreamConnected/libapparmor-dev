@@ -102,6 +102,8 @@ arch: 	$(BINTOOLS) $(SBINTOOLS)
 
 manpages:	$(MANPAGES)
 
+markdown:	$(MARKDOWNPAGES)
+
 docs:	manpages
 
 indep: docs

@@ -1,6 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 POD2MAN = pod2man
+POD2MD  = pod2markdown
 PODCHECKER = podchecker
 
 if ENABLE_MAN_PAGES
@@ -9,13 +10,17 @@ man_MANS = aa_change_hat.2 aa_change_profile.2 aa_stack_profile.2 aa_getcon.2 aa
 
 PODS = $(subst .2,.pod,$(man_MANS)) $(subst .3,.pod,$(man_MANS))
 
+MARKDOWNPAGES=$(foreach manpage, ${PODS}, ${manpage}.md)
+
 EXTRA_DIST = $(man_MANS) $(PODS)
 
 ## delete man pages at make clean
-CLEANFILES = $(man_MANS)
+CLEANFILES = $(man_MANS) $(MARKDOWNPAGES)
 
 %.2: %.pod
 	$(PODCHECKER) -warnings -warnings $<
+# TODO: MOVE this hack to the targets below
+	$(POD2MD) $< $@.md
 	$(POD2MAN) \
 		--section=2 \
 		--release="AppArmor $(VERSION)" \
@@ -25,11 +30,19 @@ CLEANFILES = $(man_MANS)
 
 %.3: %.pod
 	$(PODCHECKER) -warnings -warnings $<
+	$(POD2MD) $< $@.md
 	$(POD2MAN) \
 		--section=3 \
 		--release="AppArmor $(VERSION)" \
 		--center="AppArmor" \
 		--stderr \
 		$< > $@
+
+# TODO: make this work
+%.2.md: %.pod
+	$(POD2MD) $< manpage_$@
+
+%.3.md: %.pod
+	$(POD2MD) $< manpage_$@
 
 endif

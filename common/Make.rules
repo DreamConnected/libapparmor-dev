@@ -84,7 +84,7 @@ ifndef VERBOSE
 .SILENT: pod_clean
 endif
 pod_clean:
-	-rm -f ${MANPAGES} *.[0-9].gz ${HTMLMANPAGES} pod2htm*.tmp
+	-rm -f ${MANPAGES} *.[0-9].gz ${HTMLMANPAGES} ${MARKDOWNPAGES} pod2htm*.tmp
 
 # =====================
 # manpages
@@ -92,12 +92,16 @@ pod_clean:
 
 POD2MAN                         = /usr/bin/pod2man
 POD2HTML                        = /usr/bin/pod2html
+POD2MD				= pod2markdown
 MANDIR                          = /usr/share/man
 DOCDIR                          = /usr/share/doc/${NAME}-${VERSION}
 
 # get list of directory numbers based on definition of MANPAGES variable
 MANDIRS=$(sort $(foreach dir, 1 2 3 4 5 6 7 8, $(patsubst %.${dir}, ${dir}, $(filter %.${dir}, ${MANPAGES}))))
 HTMLMANPAGES=$(foreach manpage, ${MANPAGES}, ${manpage}.html)
+
+MARKDOWNPAGES=$(foreach manpage, ${MANPAGES}, ${manpage}.md)
+
 
 .PHONY: install_manpages
 install_manpages: $(MANPAGES)
@@ -110,6 +114,9 @@ MAN_RELEASE="AppArmor ${VERSION}"
 
 %.1 %.2 %.3 %.4 %.5 %.6 %.7 %.8: %.pod
 	$(POD2MAN) $< --release=$(MAN_RELEASE) --center=AppArmor --stderr --section=$(subst .,,$(suffix $@)) > $@
+
+%.1.md %.2.md %.3.md %.4.md %.5.md %.6.md %.7.md %.8.md: %.pod
+	$(POD2MD) $< manpage_$@
 
 %.1.html: %.pod
 	$(POD2HTML) --header --css apparmor.css --infile=$< --outfile=$@

@@ -38,6 +38,8 @@ all: docs
 .PHONY: docs
 docs: ${MANPAGES} ${HTMLMANPAGES}
 
+markdown:	$(MARKDOWNPAGES)
+
 # need some better way of determining this
 DESTDIR=/
 BINDIR=${DESTDIR}/usr/sbin

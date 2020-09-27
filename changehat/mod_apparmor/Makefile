@@ -78,6 +78,8 @@ libapparmor_check: ; $(ERROR_MESSAGE)
 
 all: libapparmor_check $(TARGET) docs
 
+markdown:	$(MARKDOWNPAGES)
+
 .PHONY: docs
 docs: ${MANPAGES} ${HTMLMANPAGES}
 

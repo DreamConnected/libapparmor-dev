@@ -48,6 +48,9 @@ endif # USE_SYSTEM
 
 CFLAGS += -g -O0 -Wall -Wstrict-prototypes
 
+USE_SYSCTL:=$(shell echo "#include <sys/sysctl.h>" | cpp -dM >/dev/null 2>/dev/null && echo true)
+
+
 SRC=access.c \
     introspect.c \
     changeprofile.c \
@@ -109,7 +112,6 @@ SRC=access.c \
     syscall_sethostname.c \
     syscall_setdomainname.c \
     syscall_setscheduler.c \
-    syscall_sysctl.c \
     sysctl_proc.c \
     tcp.c \
     unix_fd_client.c \
@@ -122,6 +124,12 @@ SRC=access.c \
 #only do the ioperm/iopl tests for x86 derived architectures
 ifneq (,$(findstring $(shell uname -i),i386 i486 i586 i686 x86 x86_64))
 SRC+=syscall_ioperm.c syscall_iopl.c
+endif
+
+#only do sysctl syscall test if defines installed and OR supported by the
+# kernel
+ifeq ($(USE_SYSCTL),true)
+SRC+=syscall_sysctl.c
 endif
 
 #only do dbus if proper libs are installl

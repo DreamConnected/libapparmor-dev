@@ -178,6 +178,10 @@ static int get_table_token(const char *name unused, struct keyword_table *table,
 #define CAP_BPF 39
 #endif
 
+#ifndef CAP_CHECKPOINT_RESTORE
+#define CAP_CHECKPOINT_RESTORE 40
+#endif
+
 static struct keyword_table capability_table[] = {
 	/* capabilities */
 	#include "cap_names.h"

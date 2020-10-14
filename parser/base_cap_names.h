@@ -8,6 +8,8 @@
 
 {"bpf", CAP_BPF},
 
+{"checkpoint_restore", CAP_CHECKPOINT_RESTORE},
+
 {"chown", CAP_CHOWN},
 
 {"dac_override", CAP_DAC_OVERRIDE},

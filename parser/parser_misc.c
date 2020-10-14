@@ -170,16 +170,53 @@ static int get_table_token(const char *name unused, struct keyword_table *table,
 	return -1;
 }
 
+
+#ifndef CAP_AUDIT_WRITE
+#define CAP_AUDIT_WRITE		29
+#endif
+
+#ifndef CAP_AUDIT_CONTROL
+#define CAP_AUDIT_CONTROL	30
+#endif
+
+#ifndef CAP_SETFCAP
+#define CAP_SETFCAP		31
+#endif
+
+#ifndef CAP_MAC_OVERRIDE
+#define CAP_MAC_OVERRIDE	32
+#endif
+
+#ifndef CAP_MAC_ADMIN
+#define CAP_MAC_ADMIN		33
+#endif
+
+#ifndef CAP_SYSLOG
+#define CAP_SYSLOG		34
+#endif
+
+#ifndef CAP_WAKE_ALARM
+#define CAP_WAKE_ALARM		35
+#endif
+
+#ifndef CAP_BLOCK_SUSPEND
+#define CAP_BLOCK_SUSPEND	36
+#endif
+
+#ifndef CAP_AUDIT_READ
+#define CAP_AUDIT_READ		37
+#endif
+
 #ifndef CAP_PERFMON
-#define CAP_PERFMON 38
+#define CAP_PERFMON		38
 #endif
 
 #ifndef CAP_BPF
-#define CAP_BPF 39
+#define CAP_BPF			39
 #endif
 
 #ifndef CAP_CHECKPOINT_RESTORE
-#define CAP_CHECKPOINT_RESTORE 40
+#define CAP_CHECKPOINT_RESTORE	40
 #endif
 
 static struct keyword_table capability_table[] = {

@@ -28,7 +28,7 @@ INCLUDES = $(all_includes)
 #
 AA_LIB_CURRENT = 7
 AA_LIB_REVISION = 3
-AA_LIB_AGE = 7
+AA_LIB_AGE = 6
 
 SUFFIXES = .pc.in .pc
 

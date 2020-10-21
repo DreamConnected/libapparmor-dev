@@ -14,7 +14,6 @@
 #
 # ----------------------------------------------------------------------
 import argparse
-import os
 
 import apparmor.aa
 import apparmor.aamode
@@ -23,7 +22,6 @@ import apparmor.severity
 import apparmor.cleanprofile as cleanprofile
 import apparmor.ui as aaui
 
-from apparmor.common import AppArmorException
 from apparmor.regex import re_match_include
 
 
@@ -43,15 +41,10 @@ args = parser.parse_args()
 
 args.other = None
 
-apparmor.aa.init_aa()
+apparmor.aa.init_aa(profiledir=args.dir)
 
 profiles = args.files
 
-profiledir = args.dir
-if profiledir:
-    apparmor.aa.profile_dir = apparmor.aa.get_full_path(profiledir)
-    if not os.path.isdir(apparmor.aa.profile_dir):
-        raise AppArmorException(_("%s is not a directory.") %profiledir)
 
 def reset_aa():
     apparmor.aa.aa = apparmor.aa.hasher()

@@ -31,7 +31,8 @@
   capability sys_chroot,
   capability sys_resource,
 
-  signal send set=(int,quit,term) peer=/usr/lib/dovecot/*,
+  signal send set=(int,quit,term,kill) peer=/usr/lib/dovecot/*,
+  signal send set=(int,quit,term,kill) peer=dovecot-*,
 
   unix (receive, send) type=stream peer=(label=/usr/lib/dovecot/anvil),
 

@@ -1,6 +1,4 @@
 #
-PROVE=/usr/bin/prove
-TESTS=simple.pl
 PARSER_DIR=..
 PARSER_BIN=apparmor_parser
 PARSER=$(PARSER_DIR)/$(PARSER_BIN)
@@ -9,7 +7,6 @@ PARSER_ARGS=--config-file=./parser.conf
 PROVE_ARG=-f --directives
 
 ifeq ($(VERBOSE),1)
-  PROVE_ARG+=-v
   PYTEST_ARG = -v
 else
   VERBOSE=
@@ -35,7 +32,7 @@ error_output: $(PARSER)
 	LANG=C ./errors.py -p "$(PARSER)" $(PYTEST_ARG)
 
 parser_sanity: $(PARSER) gen_xtrans gen_dbus
-	$(Q)LANG=C APPARMOR_PARSER="$(PARSER)" ${PROVE} ${PROVE_ARG} ${TESTS}
+	LANG=C ./simple.py -p "$(PARSER)" $(PYTEST_ARG)
 
 caching: $(PARSER)
 	LANG=C ./caching.py -p "$(PARSER)" $(PYTEST_ARG)

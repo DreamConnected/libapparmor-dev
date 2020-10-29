@@ -34,10 +34,16 @@ def subprocess_setup():
 class AANoCleanupMetaClass(type):
     def __new__(cls, name, bases, attrs):
 
-        for attr_name, attr_value in attrs.items():
-            if attr_name.startswith("test_"):
-                attrs[attr_name] = cls.keep_on_fail(attr_value)
-        return super(AANoCleanupMetaClass, cls).__new__(cls, name, bases, attrs)
+        if attrs['__qualname__'] == 'AAParserSimpleTests':
+            for attr_name, attr_value in attrs.items():
+                if attr_name.startswith("test_profile"):
+                    attrs[attr_name] = cls.simpletest_keep_on_fail(attr_value)
+            return super(AANoCleanupMetaClass, cls).__new__(cls, name, bases, attrs)
+        else:
+            for attr_name, attr_value in attrs.items():
+                if attr_name.startswith("test_"):
+                    attrs[attr_name] = cls.keep_on_fail(attr_value)
+            return super(AANoCleanupMetaClass, cls).__new__(cls, name, bases, attrs)
 
     @classmethod
     def keep_on_fail(cls, unittest_func):
@@ -56,6 +62,22 @@ class AANoCleanupMetaClass(type):
 
         return new_unittest_func
 
+    @classmethod
+    def simpletest_keep_on_fail(cls, unittest_func):
+        '''wrapping function for unittest testcases to detect failure
+           and leave behind test files in tearDown(); to be used as
+           a decorator'''
+
+        def new_unittest_func(self, args):
+            try:
+                return unittest_func(self, args)
+            except unittest.SkipTest:
+                raise
+            except Exception:
+                self.do_cleanup = False
+                raise
+
+        return new_unittest_func
 
 class AATestTemplate(unittest.TestCase, metaclass=AANoCleanupMetaClass):
     '''Stub class for use by test scripts'''
@@ -94,7 +116,8 @@ class AATestTemplate(unittest.TestCase, metaclass=AANoCleanupMetaClass):
 
         try:
             sp = subprocess.Popen(command, stdin=stdin, stdout=stdout, stderr=stderr,
-                                  close_fds=True, preexec_fn=subprocess_setup, universal_newlines=True)
+                                  close_fds=True, preexec_fn=subprocess_setup, encoding="latin-1",
+                                  universal_newlines=True)
         except OSError as e:
             return [127, str(e)]
 

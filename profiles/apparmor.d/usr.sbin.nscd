@@ -21,6 +21,7 @@
   capability setgid,
   capability setuid,
 
+  /etc/machine-id r,
   /etc/netgroup r,
   /etc/nscd.conf r,
   /usr/sbin/nscd rmix,

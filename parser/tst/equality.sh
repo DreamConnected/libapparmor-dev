@@ -547,7 +547,21 @@ verify_binary_equality "set rlimit memlock <= 2GB" \
                        "/t { set rlimit memlock <= 2GB, }" \
                        "/t { set rlimit memlock <= $((2 * 1024)) MB, }" \
                        "/t { set rlimit memlock <= $((2 * 1024 * 1024)) KB, }" \
-                       "/t { set rlimit memlock <= $((2 * 1024 * 1024 * 1024)) , }" \
+                       "/t { set rlimit memlock <= $((2 * 1024 * 1024 * 1024)) , }"
+
+# verify slash filtering for link rules
+verify_binary_equality "link rules slash filtering" \
+                       "/t { link /dev/foo -> /mnt/bar, }" \
+                       "/t { link ///dev/foo -> /mnt/bar, }" \
+                       "/t { link /dev/foo -> /mnt//bar, }" \
+                       "/t { link /dev///foo -> ////mnt/bar, }" \
+                       "@{BAR}=/mnt/
+                           /t { link /dev///foo -> @{BAR}/bar, }" \
+                       "@{FOO}=/dev/
+                           /t { link @{FOO}//foo -> /mnt/bar, }" \
+                       "@{FOO}=/dev/
+                        @{BAR}=/mnt/
+                           /t { link @{FOO}/foo -> @{BAR}/bar, }" \
 
 if [ $fails -ne 0 -o $errors -ne 0 ]
 then

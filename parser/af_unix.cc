@@ -215,7 +215,7 @@ void unix_rule::downgrade_rule(Profile &prof) {
 		 * allowed by the profile.
 		 */
 		if (warnflags & WARN_RULE_NOT_ENFORCED)
-			rule_t::warn_once(prof.name, "deny unix socket rule not enforced, can't be downgraded to generic network rule\n");
+			warn_once(prof.name, "deny unix socket rule not enforced, can't be downgraded to generic network rule\n");
 	}
 }
 

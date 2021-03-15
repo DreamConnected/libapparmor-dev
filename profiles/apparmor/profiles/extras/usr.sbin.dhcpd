@@ -30,6 +30,7 @@
   /etc/hosts.allow	r,
   /etc/hosts.deny	r,
   @{PROC}/net/dev	r,
+  @{PROC}/sys/net/ipv4/ip_local_port_range r,
   /usr/sbin/dhcpd	rmix,
   /var/lib/dhcp/{db/,}dhcpd.leases*	rwl,
   /var/lib/dhcp/etc/dhcpd.conf  r,

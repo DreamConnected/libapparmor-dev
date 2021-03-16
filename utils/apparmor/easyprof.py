@@ -622,7 +622,7 @@ class AppArmorEasyProfile:
             s = "%s# Specified read permissions" % (prefix)
             read_path.sort()
             for i in read_path:
-                for r in self.gen_path_rule(i, 'rk'):
+                for r in self.gen_path_rule(i, 'mrk'):
                     s += "\n%s%s" % (prefix, r)
         policy = re.sub(r' *%s' % search, s, policy)
 
@@ -633,7 +633,7 @@ class AppArmorEasyProfile:
             s = "%s# Specified write permissions" % (prefix)
             write_path.sort()
             for i in write_path:
-                for r in self.gen_path_rule(i, 'rwk'):
+                for r in self.gen_path_rule(i, 'mrwkl'):
                     s += "\n%s%s" % (prefix, r)
         policy = re.sub(r' *%s' % search, s, policy)
 

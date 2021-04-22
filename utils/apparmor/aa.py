@@ -1948,7 +1948,11 @@ def parse_profile_data(data, file, do_include):
                 active_profiles.add_inc_ie(file, rule_obj)
 
             for incname in rule_obj.get_full_paths(profile_dir):
-                load_include(incname)
+                if incname == file:
+                    # warn about endless loop, and don't call load_include() (again) for this file
+                    aaui.UI_Important(_('WARNING: endless loop detected: file %s includes itsself' % incname))
+                else:
+                    load_include(incname)
 
         elif NetworkRule.match(line):
             if not profile:

@@ -28,4 +28,5 @@ profile dovecot-imap-hibernate /usr/lib/dovecot/imap-hibernate {
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.lib.dovecot.imap-hibernate>
+  include if exists <local/dovecot-imap-hibernate>
 }

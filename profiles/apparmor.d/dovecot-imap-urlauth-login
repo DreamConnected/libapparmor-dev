@@ -28,4 +28,5 @@ profile dovecot-imap-urlauth-login /usr/lib/dovecot/imap-urlauth-login {
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.lib.dovecot.imap-urlauth-login>
+  include if exists <local/dovecot-imap-urlauth-login>
 }

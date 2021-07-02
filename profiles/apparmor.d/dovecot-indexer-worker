@@ -36,5 +36,6 @@ profile dovecot-indexer-worker /usr/lib/dovecot/indexer-worker {
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.lib.dovecot.indexer-worker>
+  include if exists <local/dovecot-indexer-worker>
 }
 

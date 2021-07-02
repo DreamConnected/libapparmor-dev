@@ -28,4 +28,5 @@ profile dovecot-gdbhelper /usr/lib/dovecot/gdbhelper {
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.lib.dovecot.gdbhelper>
+  include if exists <local/dovecot-gdbhelper>
 }

@@ -38,4 +38,5 @@ profile dovecot-lmtp /usr/lib/dovecot/lmtp {
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.lib.dovecot.lmtp>
+  include if exists <local/dovecot-lmtp>
 }

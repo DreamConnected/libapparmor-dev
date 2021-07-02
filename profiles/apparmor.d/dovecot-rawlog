@@ -28,4 +28,5 @@ profile dovecot-rawlog /usr/lib/dovecot/rawlog {
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.lib.dovecot.rawlog>
+  include if exists <local/dovecot-rawlog>
 }

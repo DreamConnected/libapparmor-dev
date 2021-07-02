@@ -28,4 +28,5 @@ profile dovecot-decode2text.sh /usr/lib/dovecot/decode2text.sh {
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.lib.dovecot.decode2text.sh>
+  include if exists <local/dovecot-decode2text.sh>
 }

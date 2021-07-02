@@ -31,4 +31,5 @@ profile dovecot-dict /usr/lib/dovecot/dict {
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.lib.dovecot.dict>
+  include if exists <local/dovecot-dict>
 }

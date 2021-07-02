@@ -19,6 +19,7 @@ profile dovecot-ipc /usr/lib/dovecot/ipc {
   include <abstractions/dovecot-common>
 
   capability setuid,
+  capability sys_chroot,
 
   network unix stream,
 

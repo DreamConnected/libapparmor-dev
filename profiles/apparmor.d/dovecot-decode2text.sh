@@ -18,12 +18,6 @@ profile dovecot-decode2text.sh /usr/lib/dovecot/decode2text.sh {
   include <abstractions/base>
   include <abstractions/dovecot-common>
 
-  capability setuid,
-
-  network unix stream,
-
-  owner /tmp/dovecot.decode2text.sh.* rw,
-
   /usr/lib/dovecot/decode2text.sh rm,
 
   # Site-specific additions and overrides. See local/README for details.

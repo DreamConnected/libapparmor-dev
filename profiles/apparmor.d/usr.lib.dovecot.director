@@ -19,7 +19,8 @@ profile dovecot-director /usr/lib/dovecot/director flags=(attach_disconnected) {
   capability setuid,
   capability sys_chroot,
 
-  /run/dovecot/login/proxy-notify rw,
+  @{run}/dovecot/login/proxy-notify rw,
+
   /usr/lib/dovecot/director mr,
 
   # Site-specific additions and overrides. See local/README for details.

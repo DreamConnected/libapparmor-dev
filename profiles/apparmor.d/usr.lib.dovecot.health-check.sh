@@ -1,0 +1,31 @@
+# ------------------------------------------------------------------
+#
+#    Copyright (C) 2021 SUSE LLC
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#
+# ------------------------------------------------------------------
+# vim: ft=apparmor
+
+abi <abi/3.0>,
+
+include <tunables/global>
+include <tunables/dovecot>
+
+profile dovecot-health-check /usr/lib/dovecot/health-check {
+  include <abstractions/base>
+  include <abstractions/dovecot-common>
+
+  capability setuid,
+
+  network unix stream,
+
+  owner /tmp/dovecot.health-check.sh.* rw,
+
+  /usr/lib/dovecot/health-check.sh rm,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.lib.dovecot.health-check.sh>
+}

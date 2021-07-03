@@ -17,6 +17,7 @@ include <tunables/dovecot>
 
 profile dovecot-managesieve /usr/lib/dovecot/managesieve {
   include <abstractions/base>
+  include <abstractions/nameservice>
   include <abstractions/dovecot-common>
 
   capability setuid,

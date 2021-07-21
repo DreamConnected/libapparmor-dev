@@ -18,6 +18,10 @@
   capability setuid,
   capability sys_chroot,
 
+  # for metrics end-point (Prometheus)
+  network inet stream,
+  network inet6 stream,
+
   /usr/lib/dovecot/stats mr,
 
   # Site-specific additions and overrides. See local/README for details.

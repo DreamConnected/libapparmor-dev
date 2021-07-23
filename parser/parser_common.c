@@ -84,6 +84,7 @@ int conf_quiet = 0;
 int names_only = 0;
 int current_lineno = 1;
 int option = OPTION_ADD;
+int conf_raw_text = 0;
 
 dfaflags_t dfaflags = (dfaflags_t)(DFA_CONTROL_TREE_NORMAL | DFA_CONTROL_TREE_SIMPLE | DFA_CONTROL_MINIMIZE | DFA_CONTROL_DIFF_ENCODE);
 dfaflags_t warnflags = DEFAULT_WARNINGS;

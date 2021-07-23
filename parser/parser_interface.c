@@ -485,6 +485,13 @@ void sd_serialize_profile(std::ostringstream &buf, Profile *profile,
 	sd_serialize_dfa(buf, profile->dfa.dfa, profile->dfa.size);
 	sd_serialize_xtable(buf, profile->exec_table);
 
+	if (conf_raw_text) {
+		ostringstream ss;
+		profile->dump(ss, ss);
+		std::string s = ss.str();
+		sd_write_blob(buf, s.c_str(), s.size(), "text_policy");
+	}
+
 	sd_write_structend(buf);
 }
 

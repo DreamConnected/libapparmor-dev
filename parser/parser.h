@@ -355,6 +355,7 @@ extern char *current_filename;
 extern FILE *ofile;
 extern int read_implies_exec;
 extern IncludeCache_t *g_includecache;
+extern int conf_raw_text;
 
 extern void pwarnf(bool werr, const char *fmt, ...) __attribute__((__format__(__printf__, 2, 3)));
 extern void common_warn_once(const char *name, const char *msg, const char **warned_name);

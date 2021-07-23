@@ -423,6 +423,13 @@ regular options regardless of the order it is specified in.
 
 Print the config file location that will be used.
 
+=item --text-policy
+
+Load text policy into the kernel.
+
+=item --no-text-policy
+
+Do not load text policy into the kernel.
 
 =back
 

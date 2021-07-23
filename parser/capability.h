@@ -20,6 +20,7 @@
 #define __AA_CAPABILITY_H
 
 #include <linux/capability.h>
+#include <ostream>
 
 #define NO_BACKMAP_CAP 0xff
 
@@ -63,7 +64,7 @@ typedef enum capability_flags {
 
 int name_to_capability(const char *keyword);
 void capabilities_init(void);
-void __debug_capabilities(uint64_t capset, const char *name);
+void __debug_capabilities(std::ostream &os, uint64_t capset, const char *name);
 bool add_cap_feature_mask(struct aa_features *features, capability_flags flags);
 void clear_cap_flag(capability_flags flags);
 int capability_backmap(unsigned int cap);

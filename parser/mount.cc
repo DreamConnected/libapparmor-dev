@@ -462,11 +462,11 @@ ostream &mnt_rule::dump(ostream &os)
 	os << " (0x" << hex << flags << " - 0x" << inv_flags << ") ";
 	if (dev_type) {
 		os << " type=";
-		print_value_list(dev_type);
+		print_value_list(os, dev_type);
 	}
 	if (opts) {
 		os << " options=";
-		print_value_list(opts);
+		print_value_list(os, opts);
 	}
 	if (device)
 		os << " " << device;

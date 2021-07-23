@@ -337,7 +337,7 @@ const char *net_find_af_name(unsigned int af)
 	return NULL;
 }
 
-void __debug_network(unsigned int *array, const char *name)
+void __debug_network(ostream& os, unsigned int *array, const char *name)
 {
 	unsigned int count = sizeof(sock_types)/sizeof(sock_types[0]);
 	unsigned int mask = ~((1 << count) -1);
@@ -354,11 +354,11 @@ void __debug_network(unsigned int *array, const char *name)
 	if (none)
 		return;
 
-	printf("%s: ", name);
+	os << name << ": ";
 
 	/* This can only be set by an unqualified network rule */
 	if (array[AF_UNSPEC]) {
-		printf("<all>\n");
+		os << "<all>\n";
 		return;
 	}
 
@@ -366,31 +366,31 @@ void __debug_network(unsigned int *array, const char *name)
 		if (array[i]) {
 			const char *fam = net_find_af_name(i);
 			if (fam)
-				printf("%s ", fam);
+				os << fam << " ";
 			else
-				printf("#%u ", i);
+				os << "#" << unsigned(i) << " ";
 
 			/* All types/protocols */
 			if (array[i] == 0xffffffff || array[i] == ALL_TYPES)
 				continue;
 
-			printf("{ ");
+			os << "{ ";
 
 			for (j = 0; j < count; j++) {
 				const char *type;
 				if (array[i] & (1 << j)) {
 					type = sock_types[j].name;
 					if (type)
-						printf("%s ", type);
+						os << type << " ";
 					else
-						printf("#%u ", j);
+						os << "#" << unsigned(j) << " ";
 				}
 			}
 			if (array[i] & mask)
-				printf("#%x ", array[i] & mask);
+				os << "#" << hex << (array[i] & mask) << " ";
 
-			printf("} ");
+			os << "} ";
 		}
 	}
-	printf("\n");
+	os << "\n";
 }

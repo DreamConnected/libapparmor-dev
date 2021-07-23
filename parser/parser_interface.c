@@ -251,7 +251,7 @@ static inline void sd_write_name(std::ostringstream &buf, const char *name)
 	}
 }
 
-static inline void sd_write_blob(std::ostringstream &buf, void *b, int buf_size, char *name)
+static inline void sd_write_blob(std::ostringstream &buf, const void *b, int buf_size, const char *name)
 {
 	sd_write_name(buf, name);
 	sd_write8(buf, SD_BLOB);
@@ -274,7 +274,7 @@ static inline void sd_write_aligned_blob(std::ostringstream &buf, void *b, int b
 	buf.write((const char *) b, b_size);
 }
 
-static void sd_write_strn(std::ostringstream &buf, char *b, int size, const char *name)
+static void sd_write_strn(std::ostringstream &buf, const char *b, int size, const char *name)
 {
 	sd_write_name(buf, name);
 	sd_write8(buf, SD_STRING);
@@ -282,7 +282,7 @@ static void sd_write_strn(std::ostringstream &buf, char *b, int size, const char
 	buf.write(b, size);
 }
 
-static inline void sd_write_string(std::ostringstream &buf, char *b, const char *name)
+static inline void sd_write_string(std::ostringstream &buf, const char *b, const char *name)
 {
 	sd_write_strn(buf, b, strlen(b) + 1, name);
 }

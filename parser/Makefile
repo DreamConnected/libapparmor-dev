@@ -102,11 +102,12 @@ SRCS = parser_common.c parser_include.c parser_interface.c parser_lex.c \
        parser_alias.c common_optarg.c lib.c network.c \
        mount.cc dbus.cc profile.cc rule.cc signal.cc ptrace.cc \
        af_rule.cc af_unix.cc policy_cache.c default_features.c userns.cc \
-       mqueue.cc io_uring.cc
+       mqueue.cc io_uring.cc module.cc
 STATIC_HDRS = af_rule.h af_unix.h capability.h common_optarg.h dbus.h \
        file_cache.h immunix.h lib.h mount.h network.h parser.h \
        parser_include.h parser_version.h policy_cache.h policydb.h \
-       profile.h ptrace.h rule.h signal.h userns.h mqueue.h io_uring.h
+       profile.h ptrace.h rule.h signal.h userns.h mqueue.h io_uring.h \
+       module.h
 
 SPECIAL_HDRS = parser_yacc.h unit_test.h base_cap_names.h
 GENERATED_HDRS = af_names.h generated_af_names.h \
@@ -319,6 +320,9 @@ mqueue.o: mqueue.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
 io_uring.o: io_uring.cc $(HDRS)
+	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
+
+module.o: module.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
 parser_version.h: Makefile

@@ -58,6 +58,7 @@ parser/parser_yacc.o
 parser/policy_cache.o
 parser/profile.o
 parser/ptrace.o
+parser/module.o
 parser/rule.o
 parser/signal.o
 parser/userns.o

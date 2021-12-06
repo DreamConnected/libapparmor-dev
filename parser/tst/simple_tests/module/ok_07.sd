@@ -1,0 +1,10 @@
+#
+#=DESCRIPTION module variable in target
+#=EXRESULT PASS
+#
+
+@{TARGET}=/path/to/target
+
+/usr/bin/foo {
+  module load_file @{TARGET},
+}

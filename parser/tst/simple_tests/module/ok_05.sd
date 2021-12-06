@@ -1,0 +1,9 @@
+#
+#=DESCRIPTION allow module rules
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  allow module load_data,
+  allow module load_file bar,
+  allow module request target,
+}

@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION module regex in target
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  module load_file /{**/,}path/{target1,target2},
+}

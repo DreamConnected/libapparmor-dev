@@ -1,0 +1,9 @@
+#
+#=DESCRIPTION deny module rules
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  deny module load_data,
+  deny module load_file bar,
+  deny module request target,
+}

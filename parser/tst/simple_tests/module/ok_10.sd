@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION module without mode
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  module,
+}

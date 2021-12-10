@@ -109,6 +109,7 @@ SRC=access.c \
     link_subset.c \
     mmap.c \
     mkdir.c \
+    module.c \
     mount.c \
     named_pipe.c \
     net_raw.c \
@@ -233,6 +234,7 @@ TESTS=aa_exec \
       link_subset \
       mkdir \
       mmap \
+      module \
       mount \
       mult_mount \
       named_pipe \
@@ -286,7 +288,11 @@ libapparmor_check: ; $(LIBAPPARMOR_ERROR_MESSAGE)
 
 aa_exec_check: ; $(AA_EXEC_ERROR_MESSAGE)
 
-all: libapparmor_check aa_exec_check $(EXEC) changehat.h uservars.inc
+all: libapparmor_check aa_exec_check $(EXEC) changehat.h uservars.inc module_test
+
+.PHONY: module_test
+module_test:
+	cd module_test && $(MAKE)
 
 uservars.inc: uservars.inc.source uservars.inc.system
 ifdef USE_SYSTEM
@@ -412,5 +418,6 @@ alltests: all
 
 clean:
 	rm -f $(EXEC) dbus_common.o unix_socket_common.o uservars.inc unix_fd_common.o
+	cd module_test && $(MAKE) clean
 
 regex.sh: open exec

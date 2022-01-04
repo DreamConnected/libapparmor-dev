@@ -60,6 +60,7 @@ class ReadLog:
             'userns':       hasher(),
             'mqueue':       hasher(),
             'io_uring':     hasher(),
+            'module':       hasher(),
         }
 
     def prefetch_next_log_entry(self):

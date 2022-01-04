@@ -2130,6 +2130,7 @@ def match_line_against_rule_classes(line, profile, file, lineno, in_preamble):
             'userns',
             'mqueue',
             'io_uring',
+            'module',
     ):
 
         if rule_name in ruletypes:

@@ -53,6 +53,7 @@ from apparmor.rule.signal import SignalRule
 from apparmor.rule.userns import UserNamespaceRule
 from apparmor.rule.mqueue import MessageQueueRule
 from apparmor.rule.io_uring import IOUringRule
+from apparmor.rule.module import ModuleRule
 from apparmor.translations import init_translation
 
 _ = init_translation()
@@ -1751,6 +1752,13 @@ def collapse_log(hashlog, ignore_null_profiles=True):
                     io_uring_event = IOUringRule(access, label, log_event=True)
                     if not hat_exists or not is_known_rule(aa[profile][hat], 'io_uring', io_uring_event):
                         log_dict[aamode][full_profile]['io_uring'].add(io_uring_event)
+
+            module = hashlog[aamode][full_profile]['module']
+            for mode in module.keys():
+                for target in module[mode].keys():
+                    module_event = ModuleRule(mode, target if target else ModuleRule.ALL, log_event=True)
+                    if not hat_exists or not is_known_rule(aa[profile][hat], 'module', module_event):
+                        log_dict[aamode][full_profile]['module'].add(module_event)
 
     return log_dict
 

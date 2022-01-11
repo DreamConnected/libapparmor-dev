@@ -1,0 +1,13 @@
+START
+File: testcase_module_01.in
+Event type: AA_RECORD_DENIED
+Audit ID: 1641827210.379:236
+Operation: module
+Mask: load_data
+Denied Mask: load_data
+Profile: /root/apparmor/tests/regression/apparmor/module
+Name: 
+Command: module
+PID: 5710
+Epoch: 1641827210
+Audit subid: 236

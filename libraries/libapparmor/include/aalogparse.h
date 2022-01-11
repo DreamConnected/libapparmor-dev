@@ -161,6 +161,7 @@ typedef struct
 	char *src_name;
 
 	char *class;
+	char *kmod;
 } aa_log_record;
 
 /**

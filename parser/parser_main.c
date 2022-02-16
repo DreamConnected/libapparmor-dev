@@ -1332,6 +1332,8 @@ static int profile_dir_cb(int dirfd unused, const char *name, struct stat *st,
 {
 	int rc = 0;
 
+	/* Handle symlink here. See _aa_dirat_for_each in private.c */
+
 	if (!S_ISDIR(st->st_mode) && !is_blacklisted(name, NULL)) {
 		struct dir_cb_data *cb_data = (struct dir_cb_data *)data;
 		autofree char *path = NULL;
@@ -1353,6 +1355,8 @@ static int binary_dir_cb(int dirfd unused, const char *name, struct stat *st,
 			 void *data)
 {
 	int rc = 0;
+
+	/* Handle symlink here. See _aa_dirat_for_each in private.c */
 
 	if (!S_ISDIR(st->st_mode) && !is_blacklisted(name, NULL)) {
 		struct dir_cb_data *cb_data = (struct dir_cb_data *)data;
@@ -1546,7 +1550,7 @@ int main(int argc, char *argv[])
 			if ((retval = dirat_for_each(AT_FDCWD, profilename,
 						     &cb_data, cb))) {
 				last_error = errno;
-				PDEBUG("Failed loading profiles from %s\n",
+				PERROR("There was an error while loading profiles from %s\n",
 				       profilename);
 				if (abort_on_error)
 					break;

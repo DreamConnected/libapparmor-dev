@@ -169,6 +169,7 @@ class FileTestParseFromLog(FileTest):
             'family': None,
             'protocol': None,
             'sock_type': None,
+            'class': None,
         })
 
         #FileRule#     path,                 perms,                         exec_perms, target,         owner,  file_keyword,   leading_perms

@@ -154,6 +154,7 @@ class DbusTestParseFromLog(DbusTest):
             'family': None,
             'protocol': None,
             'sock_type': None,
+            'class': None,
         })
 
 # XXX send rules must not contain name conditional, but the log event includes it - how should we handle this in logparser.py?

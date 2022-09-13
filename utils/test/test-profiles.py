@@ -9,6 +9,7 @@
 #
 # ------------------------------------------------------------------
 
+import os
 import unittest
 
 import apparmor.aa as aa
@@ -32,12 +33,22 @@ class TestFoo(AATest):
     def test_active_profiles(self):
         aa.read_profiles(skip_profiles=skip_active_profiles)
 
-        self.assertGreaterEqual(len(aa.active_profiles.profile_names), 42)
+        # when using system apparmor then we haven't necessarily installed all
+        # the profiles so checking against a specific number may fail - instead
+        # it is sufficient that profiles were read without an exception being
+        # thrown above
+        if os.getenv("USE_SYSTEM", "0") != "1":
+            self.assertGreaterEqual(len(aa.active_profiles.profile_names), 42)
 
     def test_extra_profiles(self):
         aa.read_inactive_profiles(skip_profiles=skip_extra_profiles)
 
-        self.assertGreaterEqual(len(aa.extra_profiles.profile_names), 100)
+        # when using system apparmor then we haven't necessarily installed all
+        # the profiles so checking against a specific number may fail - instead
+        # it is sufficient that profiles were read without an exception being
+        # thrown above
+        if os.getenv("USE_SYSTEM", "0") != "1":
+            self.assertGreaterEqual(len(aa.extra_profiles.profile_names), 100)
 
 
 setup_aa(aa)

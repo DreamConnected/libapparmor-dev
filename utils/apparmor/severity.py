@@ -168,9 +168,9 @@ class Severity(object):
             leading = True
         if resource.find(variable + "/") != -1 and resource.find(variable + "//") == -1:
             trailing = True
-        if replacement[0] == '/' and replacement[:2] != '//' and leading:  # finds if the replacement has leading / or not
+        if replacement.startswith('/') and not replacement.startswith('//') and leading:  # finds if the replacement has leading / or not
             replacement = replacement[1:]
-        if replacement[-1] == '/' and replacement[-2:] != '//' and trailing:
+        if replacement.endswith('/') and not replacement.endswith('//') and trailing:
             replacement = replacement[:-1]
         return resource.replace(variable, replacement)
 

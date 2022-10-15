@@ -123,6 +123,7 @@ SRC=access.c \
     readdir.c \
     rw.c \
     socketpair.c \
+    stat.c \
     symlink.c \
     syscall_mknod.c \
     swap.c \

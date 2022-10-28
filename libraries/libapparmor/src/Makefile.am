@@ -29,6 +29,7 @@ INCLUDES = $(all_includes)
 AA_LIB_CURRENT = 9
 AA_LIB_REVISION = 3
 AA_LIB_AGE = 8
+EXPECTED_SO_NAME = libapparmor.so.1.8.3
 
 SUFFIXES = .pc.in .pc
 
@@ -76,5 +77,9 @@ tst_kernel_LDFLAGS = -pthread
 
 check_PROGRAMS = tst_aalogmisc tst_features tst_kernel
 TESTS = $(check_PROGRAMS)
+
+.PHONY: check-local
+check-local:
+	test -f ./.libs/$(EXPECTED_SO_NAME) || { echo '*** unexpected .so name/number for libapparmor (expected $(EXPECTED_SO_NAME), the actual filename is shown below) ***' ; ls -l ./.libs/libapparmor.so.*.* ; exit 1; }
 
 EXTRA_DIST = grammar.y scanner.l libapparmor.map libapparmor.pc

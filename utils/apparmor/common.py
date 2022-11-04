@@ -10,7 +10,6 @@
 # ------------------------------------------------------------------
 
 from __future__ import print_function
-import codecs
 import collections
 import glob
 import logging
@@ -207,7 +206,7 @@ def open_file_anymode(mode, path, encoding='UTF-8'):
     if sys.version_info[0] < 3:
         errorhandling = 'replace'
 
-    orig = codecs.open(path, mode, encoding, errors=errorhandling)
+    orig = open(path, mode, encoding=encoding, errors=errorhandling)
 
     return orig
 

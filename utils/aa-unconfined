@@ -78,7 +78,7 @@ def get_pids_ss(ss='ss'):
 
 def get_pids_netstat(netstat='netstat'):
     """Get a set of pids listening on network sockets via netstat(8)"""
-    regex_tcp_udp = re.compile(r"^(tcp|udp|raw)6?\s+\d+\s+\d+\s+\S+\:(\d+)\s+\S+\:(\*|\d+)\s+(LISTEN|\d+|\s+)\s+(?P<pid>\d+)\/(\S+)")
+    regex_tcp_udp = re.compile(r"^(tcp|udp|raw)6?\s+\d+\s+\d+\s+\S+:(\d+)\s+\S+:(\*|\d+)\s+(LISTEN|\d+|\s+)\s+(?P<pid>\d+)/(\S+)")
 
     cmd = [netstat, '-nlp', '--protocol', 'inet,inet6']
     my_env = os.environ.copy()

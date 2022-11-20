@@ -240,7 +240,7 @@ def convert_regexp(regexp):
 
     regexp = regexp.replace('(', '\\(').replace(')', '\\)')  # escape '(' and ')'
 
-    new_reg = re.sub(r'(?<!\\)(\.|\+|\$)', r'\\\1', regexp)
+    new_reg = re.sub(r'(?<!\\)([.+$])', r'\\\1', regexp)
 
     while regex_paren.search(new_reg):
         match = regex_paren.search(new_reg).groups()

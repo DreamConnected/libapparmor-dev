@@ -360,8 +360,8 @@ def get_output(params):
 
 def get_reqs(file):
     """Returns a list of paths from ldd output"""
-    pattern1 = re.compile('^\s*\S+ => (\/\S+)')
-    pattern2 = re.compile('^\s*(\/\S+)')
+    pattern1 = re.compile('^\s*\S+ => (/\S+)')
+    pattern2 = re.compile('^\s*(/\S+)')
     reqs = []
 
     ldd = conf.find_first_file(cfg['settings'].get('ldd')) or '/usr/bin/ldd'
@@ -2539,10 +2539,10 @@ def loadincludes_dir(subdir, in_preamble):
 def glob_common(path):
     globs = []
 
-    if re.search('[\d\.]+\.so$', path) or re.search('\.so\.[\d\.]+$', path):
+    if re.search('[\d.]+\.so$', path) or re.search('\.so\.[\d.]+$', path):
         libpath = path
-        libpath = re.sub('[\d\.]+\.so$', '*.so', libpath)
-        libpath = re.sub('\.so\.[\d\.]+$', '.so.*', libpath)
+        libpath = re.sub('[\d.]+\.so$', '*.so', libpath)
+        libpath = re.sub('\.so\.[\d.]+$', '.so.*', libpath)
         if libpath != path:
             globs.append(libpath)
 

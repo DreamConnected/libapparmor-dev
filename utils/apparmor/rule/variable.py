@@ -179,7 +179,7 @@ def separate_vars(vs):
     data = set()
     vs = vs.strip()
 
-    re_vars = re.compile('^(("[^"]*")|([^"\s]+))\s*(.*)$')
+    re_vars = re.compile(r'^(("[^"]*")|([^"\s]+))\s*(.*)$')
     while re_vars.search(vs):
         matches = re_vars.search(vs).groups()
 

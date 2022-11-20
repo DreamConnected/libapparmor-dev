@@ -360,8 +360,8 @@ def get_output(params):
 
 def get_reqs(file):
     """Returns a list of paths from ldd output"""
-    pattern1 = re.compile('^\s*\S+ => (/\S+)')
-    pattern2 = re.compile('^\s*(/\S+)')
+    pattern1 = re.compile(r'^\s*\S+ => (/\S+)')
+    pattern2 = re.compile(r'^\s*(/\S+)')
     reqs = []
 
     ldd = conf.find_first_file(cfg['settings'].get('ldd')) or '/usr/bin/ldd'
@@ -439,9 +439,9 @@ def get_interpreter_and_abstraction(exec_target):
         abstraction = 'abstractions/bash'
     elif interpreter == 'perl':
         abstraction = 'abstractions/perl'
-    elif re.search('^python([23]|[23]\.[0-9]+)?$', interpreter):
+    elif re.search(r'^python([23]|[23]\.[0-9]+)?$', interpreter):
         abstraction = 'abstractions/python'
-    elif re.search('^ruby([0-9]+(\.[0-9]+)*)?$', interpreter):
+    elif re.search(r'^ruby([0-9]+(\.[0-9]+)*)?$', interpreter):
         abstraction = 'abstractions/ruby'
     else:
         abstraction = None
@@ -2539,10 +2539,10 @@ def loadincludes_dir(subdir, in_preamble):
 def glob_common(path):
     globs = []
 
-    if re.search('[\d.]+\.so$', path) or re.search('\.so\.[\d.]+$', path):
+    if re.search(r'[\d.]+\.so$', path) or re.search(r'\.so\.[\d.]+$', path):
         libpath = path
-        libpath = re.sub('[\d.]+\.so$', '*.so', libpath)
-        libpath = re.sub('\.so\.[\d.]+$', '.so.*', libpath)
+        libpath = re.sub(r'[\d.]+\.so$', '*.so', libpath)
+        libpath = re.sub(r'\.so\.[\d.]+$', '.so.*', libpath)
         if libpath != path:
             globs.append(libpath)
 

@@ -374,10 +374,10 @@ class AppArmorEasyProfile:
                 if not pat.search(line):
                     continue
                 if line.startswith("POLICYGROUPS_DIR="):
-                    d = re.split(r'=', line.strip())[1].strip('["\']')
+                    d = re.split('=', line.strip())[1].strip('["\']')
                     self.dirs['policygroups'] = d
                 elif line.startswith("TEMPLATES_DIR="):
-                    d = re.split(r'=', line.strip())[1].strip('["\']')
+                    d = re.split('=', line.strip())[1].strip('["\']')
                     self.dirs['templates'] = d
 
         keys = self.dirs.keys()

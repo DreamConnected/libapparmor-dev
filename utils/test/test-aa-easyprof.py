@@ -2645,7 +2645,7 @@ POLICYGROUPS_DIR="%s/templates"
             'foo<',
             'foo>',
             'foo?',
-            'foo\/',
+            r'foo\/',
             'foo,',
             '_foo',
         ]

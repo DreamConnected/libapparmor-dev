@@ -108,8 +108,8 @@ def get_translated_hotkey(translated, cmsg=''):
     msg = 'PromptUser: ' + _('Invalid hotkey for')
 
     # Originally (\S) was used but with translations it would not work :(
-    if re.search('\((\S+)\)', translated):
-        return re.search('\((\S+)\)', translated).groups()[0]
+    if re.search(r'\((\S+)\)', translated):
+        return re.search(r'\((\S+)\)', translated).groups()[0]
     else:
         if cmsg:
             raise AppArmorException(cmsg)
@@ -439,7 +439,7 @@ class PromptQuestion:
         function_regexp = '^('
         function_regexp += '|'.join(keys.keys())
         if options:
-            function_regexp += '|\d'
+            function_regexp += r'|\d'
         function_regexp += ')$'
 
         ans = 'XXXINVALIDXXX'
@@ -511,7 +511,7 @@ class PromptQuestion:
                     # If they hit return choose default option
                     ans = default_key
 
-                elif options and re.search('^\d$', ans):
+                elif options and re.search(r'^\d$', ans):
                     ans = int(ans)
                     if ans > 0 and ans <= len(options):
                         selected = ans - 1

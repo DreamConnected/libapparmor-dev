@@ -835,7 +835,7 @@ def ask_exec(hashlog):
 
                     if os.path.isdir(exec_target):
                         raise AppArmorBug(
-                            'exec permissions requested for directory %s. This should not happen - please open a bugreport!' % exec_target)
+                            'exec permissions requested for directory %s (profile %s). This should not happen - please open a bugreport!' % (exec_target, full_profile))
 
                     if not aa[profile].get(hat):
                         continue  # ignore log entries for non-existing profiles

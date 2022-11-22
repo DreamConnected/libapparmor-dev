@@ -29,7 +29,7 @@ INCLUDES = $(all_includes)
 AA_LIB_CURRENT = 9
 AA_LIB_REVISION = 4
 AA_LIB_AGE = 8
-EXPECTED_SO_NAME = libapparmor.so.1.8.3
+EXPECTED_SO_NAME = libapparmor.so.1.8.4
 
 SUFFIXES = .pc.in .pc
 

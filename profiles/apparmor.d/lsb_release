@@ -28,6 +28,8 @@ profile lsb_release {
   /{usr/,}bin/dash ixr,
   /usr/bin/basename ixr,
   /usr/bin/dpkg-query ixr,
+  /usr/bin/cat ixr,
+  /usr/bin/cut ixr,
   /usr/bin/getopt ixr,
   /usr/bin/sed ixr,
   /usr/bin/tr ixr,

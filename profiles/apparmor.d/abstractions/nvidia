@@ -24,5 +24,6 @@
   owner @{HOME}/.nv/ w,
   owner @{HOME}/.nv/GLCache/ rw,
   owner @{HOME}/.nv/GLCache/** rwk,
+  owner @{PROC}/@{pid}/comm r, # somehwere in libnvidia-glcore.so
 
   unix (send, receive) type=dgram peer=(addr="@nvidia[0-9a-f]*"),

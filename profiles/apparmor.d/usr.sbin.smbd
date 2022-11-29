@@ -49,6 +49,7 @@ profile smbd /usr/{bin,sbin}/smbd {
   /usr/{bin,sbin}/smbldap-useradd Px,
   /var/cache/samba/** rwk,
   /var/{cache,lib}/samba/printing/printers.tdb mrw,
+  /var/lib/nscd/netgroup r,
   /var/lib/samba/** rwk,
   /var/lib/sss/pubconf/kdcinfo.* r,
   @{run}/dbus/system_bus_socket rw,

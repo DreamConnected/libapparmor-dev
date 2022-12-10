@@ -193,9 +193,8 @@ void CHFA::insert_state(vector<pair<size_t, size_t> > &free_list,
 	State *default_state = dfa.nonmatching;
 	ssize_t base = 0;
 	int resize;
-
 	StateTrans &trans = from->trans;
-	ssize_t c = trans.begin()->first.c;
+	ssize_t c;
 	ssize_t prev = 0;
 	ssize_t x = first_free;
 
@@ -204,6 +203,7 @@ void CHFA::insert_state(vector<pair<size_t, size_t> > &free_list,
 	if (trans.empty())
 		goto do_insert;
 
+	c = trans.begin()->first.c;
 repeat:
 	resize = 0;
 	/* get the first free entry that won't underflow */
@@ -251,10 +251,18 @@ repeat:
 			first_free = next;
 	}
 
-do_insert:
+	/* these flags will only be set on states that have transitions */
 	if (c < 0) {
 		base |= MATCH_FLAG_OOB_TRANSITION;
 	}
+do_insert:
+	/* While a state without transitions could have the diff encode
+	 * flag set, it would be pointless resulting in just an extra
+	 * state transition in the encoding chain, and so it should be
+	 * considered an error
+	 * TODO: add check that state without transitions isn't being
+	 * given a diffencode flag
+	 */
 	if (from->flags & DiffEncodeFlag)
 		base |= DiffEncodeBit32;
 	default_base.push_back(make_pair(default_state, base));

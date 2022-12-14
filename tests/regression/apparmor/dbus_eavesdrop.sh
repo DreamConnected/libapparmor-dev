@@ -34,7 +34,7 @@ runchecktest "eavesdrop (unconfined)" pass $args
 
 # Make sure we get denials when confined but not allowed
 
-genprofile
+gendbusprofile
 runchecktest "eavesdrop (confined w/o dbus perms)" fail $args
 
 gendbusprofile "dbus send,"

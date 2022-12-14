@@ -13,6 +13,7 @@ gendbusprofile()
 ${__dbus_var_decl}
 $test {
   @{gen $test}
+  $outfile w,
   unix,
   $@
   signal receive peer=unconfined,

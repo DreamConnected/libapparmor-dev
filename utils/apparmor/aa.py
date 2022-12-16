@@ -2006,7 +2006,7 @@ def collapse_log():
                                             elif access == 'eavesdrop':
                                                 dbus_event = DbusRule(access, bus, DbusRule.ALL,    DbusRule.ALL,   DbusRule.ALL, DbusRule.ALL, DbusRule.ALL,   DbusRule.ALL, log_event=True)
                                             else:
-                                                raise AppArmorBug('unexpected dbus access: %s')
+                                                raise AppArmorBug('unexpected dbus access: {}'.format(access))
 
                                             if not hat_exists or not is_known_rule(aa[profile][hat], 'dbus', dbus_event):
                                                 log_dict[aamode][profile][hat]['dbus'].add(dbus_event)

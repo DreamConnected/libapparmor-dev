@@ -250,7 +250,7 @@ class ReadLog:
             self.hashlog[aamode][full_profile]['signal'][e['peer']][e['denied_mask']][e['signal']]= True
             return None
 
-        elif e['operation'].startswith('dbus_'):
+        elif e['operation'] and e['operation'].startswith('dbus_'):
             self.hashlog[aamode][full_profile]['dbus'][e['denied_mask']][e['bus']][e['path']][e['name']][e['interface']][e['member']][e['peer_profile']] = True
             return None
 
@@ -336,7 +336,9 @@ class ReadLog:
     def op_type(self, event):
         """Returns the operation type if known, unkown otherwise"""
 
-        if ( event['operation'].startswith('file_') or event['operation'].startswith('inode_') or event['operation'] in self.OP_TYPE_FILE_OR_NET ):
+        if event['operation'] and (event['operation'].startswith('file_') or
+                                   event['operation'].startswith('inode_') or
+                                   event['operation'] in self.OP_TYPE_FILE_OR_NET):
             # file or network event?
             if event['family'] and event['protocol'] and event['sock_type']:
                 # 'unix' events also use keywords like 'connect', but protocol is 0 and should therefore be filtered out

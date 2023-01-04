@@ -534,16 +534,19 @@ static int detailed_output(FILE *json) {
 				} else {
 					fprintf(json, "%s\"%s\": [{\"profile\": \"%s\", \"pid\": \"%s\", \"status\": \"%s\"}",
 					       // first element will be a unique executable
-					       i == 0 && j == 0 ? "" : "], ",
+					       j == 0 ? "" : "], ",
 					       filtered[j].exe, filtered[j].profile, filtered[j].pid, filtered[j].mode);
 				}
 
+			}
+			if (j > 0) {
+				fprintf(json, "]");
 			}
 		}
 		free_processes(filtered, nfiltered);
 	}
 	if (json) {
-		fprintf(json, "%s}}\n", nprocesses > 0 ? "]" : "");
+		fprintf(json, "}}\n");
 	}
 
 exit:

@@ -66,62 +66,82 @@ ur_gendbusprofile()
   $*"
 }
 
-start_bus
-
 settest dbus_service
 
-# Start a dbus service and send unrequested method_return and error messages to
-# the service. The service should always start and stop just fine. The test
-# results hinge on comparing the message log from confined services to the
-# message log from the initial unconfined run.
+run_tests()
+{
+	# Start a dbus service and send unrequested method_return and error messages to
+	# the service. The service should always start and stop just fine. The test
+	# results hinge on comparing the message log from confined services to the
+	# message log from the initial unconfined run.
 
-# Do an unconfined run to get an "expected" log for comparisons
-ur_runtestbg "unrequested_reply (method_return, unconfined)" pass $unconfined_log
-sendmethodreturn
-ur_checktestbg
+	# Do an unconfined run to get an "expected" log for comparisons
+	ur_runtestbg "unrequested_reply (method_return, unconfined)" pass $unconfined_log
+	sendmethodreturn
+	ur_checktestbg
 
-# All dbus perms are granted so the logs should be equal
-ur_gendbusprofile "dbus,"
-ur_runtestbg "unrequested_reply (method_return, dbus allowed)" pass $confined_log
-sendmethodreturn
-ur_checktestbg "compare_logs $unconfined_log eq $confined_log"
+	# All dbus perms are granted so the logs should be equal
+	ur_gendbusprofile "dbus,"
+	ur_runtestbg "unrequested_reply (method_return, dbus allowed)" pass $confined_log
+	sendmethodreturn
+	ur_checktestbg "compare_logs $unconfined_log eq $confined_log"
 
-# Only send perm is granted so the confined service should not be able to
-# receive unrequested replies from the client
-ur_gendbusprofile "dbus send,"
-ur_runtestbg "unrequested_reply (method_return, send allowed)" pass $confined_log
-sendmethodreturn
-ur_checktestbg "compare_logs $unconfined_log ne $confined_log"
+	# Only send perm is granted so the confined service should not be able to
+	# receive unrequested replies from the client
+	ur_gendbusprofile "dbus send,"
+	ur_runtestbg "unrequested_reply (method_return, send allowed)" pass $confined_log
+	sendmethodreturn
+	ur_checktestbg "compare_logs $unconfined_log ne $confined_log"
 
-# Send and receive perms are granted so the logs should be equal
-ur_gendbusprofile "dbus (send receive),"
-ur_runtestbg "unrequested_reply (method_return, send receive allowed)" pass $confined_log
-sendmethodreturn
-ur_checktestbg "compare_logs $unconfined_log eq $confined_log"
+	# Send and receive perms are granted so the logs should be equal
+	ur_gendbusprofile "dbus (send receive),"
+	ur_runtestbg "unrequested_reply (method_return, send receive allowed)" pass $confined_log
+	sendmethodreturn
+	ur_checktestbg "compare_logs $unconfined_log eq $confined_log"
 
-# Now test unrequested error replies
+	# Now test unrequested error replies
 
-# Do an unconfined run to get an "expected" log for comparisons
-removeprofile
-ur_runtestbg "unrequested_reply (error, unconfined)" pass $unconfined_log
-senderror
-ur_checktestbg
+	# Do an unconfined run to get an "expected" log for comparisons
+	removeprofile
+	ur_runtestbg "unrequested_reply (error, unconfined)" pass $unconfined_log
+	senderror
+	ur_checktestbg
 
-# All dbus perms are granted so the logs should be equal
-ur_gendbusprofile "dbus,"
-ur_runtestbg "unrequested_reply (error, dbus allowed)" pass $confined_log
-senderror
-ur_checktestbg "compare_logs $unconfined_log eq $confined_log"
+	# All dbus perms are granted so the logs should be equal
+	ur_gendbusprofile "dbus,"
+	ur_runtestbg "unrequested_reply (error, dbus allowed)" pass $confined_log
+	senderror
+	ur_checktestbg "compare_logs $unconfined_log eq $confined_log"
 
-# Only send perm is granted so the confined service should not be able to
-# receive unrequested replies from the client
-ur_gendbusprofile "dbus send,"
-ur_runtestbg "unrequested_reply (error, send allowed)" pass $confined_log
-senderror
-ur_checktestbg "compare_logs $unconfined_log ne $confined_log"
+	# Only send perm is granted so the confined service should not be able to
+	# receive unrequested replies from the client
+	ur_gendbusprofile "dbus send,"
+	ur_runtestbg "unrequested_reply (error, send allowed)" pass $confined_log
+	senderror
+	ur_checktestbg "compare_logs $unconfined_log ne $confined_log"
 
-# Send and receive perms are granted so the logs should be equal
-ur_gendbusprofile "dbus (send receive),"
-ur_runtestbg "unrequested_reply (error, send receive allowed)" pass $confined_log
-senderror
-ur_checktestbg "compare_logs $unconfined_log eq $confined_log"
+	# Send and receive perms are granted so the logs should be equal
+	ur_gendbusprofile "dbus (send receive),"
+	ur_runtestbg "unrequested_reply (error, send receive allowed)" pass $confined_log
+	senderror
+	ur_checktestbg "compare_logs $unconfined_log eq $confined_log"
+
+	# don't forget to remove the profile so the test can run again
+	removeprofile
+}
+
+if start_dbus_daemon
+then
+	run_tests
+	kill_dbus_daemon
+else
+	echo "Starting DBus Daemon failed. Skipping tests..."
+fi
+
+# Unrequested replies are not supported by DBus Broker
+# from https://github.com/bus1/dbus-broker/wiki/Deviations
+#
+# "... dbus-broker only allows expected replies, and those are allowed
+# unconditionally. Unexpected-replies and Reply-filtering have no
+# known users (nor use-cases), hence support has been dropped..."
+echo "DBus Broker does not support unrequested replies. Skipping tests..."

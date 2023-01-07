@@ -13,6 +13,7 @@ gendbusprofile()
 ${__dbus_var_decl}
 $test {
   @{gen $test}
+  $outfile w,
   unix,
   $*
   signal receive peer=unconfined,
@@ -30,12 +31,108 @@ set_dbus_var()
   __dbus_var_decl=$@
 }
 
-start_bus()
+cleanup_dbus_broker()
 {
+	rm -f /etc/systemd/system/dbus-apparmor-test.socket
+	rm -f /etc/systemd/system/dbus-apparmor-test.service
+	# don't stop test execution if systemctl is not available
+	systemctl daemon-reload 2>/dev/null || true
+}
+
+kill_dbus_broker()
+{
+	if [ $(systemctl is-active dbus-apparmor-test.service) == "active" ]
+	then
+		if ! systemctl -q stop dbus-apparmor-test.service
+		then
+			echo "Failed to stop DBus broker service"
+		fi
+	fi
+
+	if [ $(systemctl is-active dbus-apparmor-test.socket) == "active" ]
+	then
+		if ! systemctl -q stop dbus-apparmor-test.socket
+		then
+			echo "Failed to stop DBus broker socket"
+		fi
+	fi
+
+	cleanup_dbus_broker
+}
+
+start_dbus_broker()
+{
+	# TODO: remove systemd dependency from DBus Broker tests
+	if [ ! -d /run/systemd/system/ ]
+	then
+		echo "Error: DBus Broker tests require systemd"
+		return 1
+	fi
+
+	if [ $(which dbus-broker-launch > /dev/null; echo $?) -ne 0 ]
+	then
+		echo "Error: dbus-broker-launch not available"
+		return 1
+	fi
+
+	bus_addr=$(mktemp --dry-run /tmp/dbus-XXXXXX)
+
+	dbus_test_socket="
+[Unit]
+Description=AppArmor D-Bus Broker Test Socket
+
+[Socket]
+ListenStream=@$bus_addr
+"
+	dbus_test_service="
+[Unit]
+Description=AppArmor D-Bus Broker Test Service
+After=dbus-apparmor-test.socket
+Requires=dbus-apparmor-test.socket
+
+[Service]
+Sockets=dbus-apparmor-test.socket
+StartLimitBurst=0
+ExecStart=dbus-broker-launch --scope system --audit --config-file=$(pwd)/dbus.conf
+
+[Install]
+WantedBy=default.target
+"
+	echo "$dbus_test_socket" > /etc/systemd/system/dbus-apparmor-test.socket
+	echo "$dbus_test_service" > /etc/systemd/system/dbus-apparmor-test.service
+
+	systemctl daemon-reload
+
+	if ! systemctl -q start dbus-apparmor-test
+	then
+		echo "Error: Failed to start DBus broker launcher"
+		return 1
+	fi
+
+	do_onexit="kill_dbus_broker"
+
+	export DBUS_SESSION_BUS_ADDRESS="unix:abstract=$bus_addr"
+	return 0
+}
+
+kill_dbus_daemon()
+{
+	kill $bus_pid >/dev/null 2>&1 || true
+}
+
+start_dbus_daemon()
+{
+	if [ $(which dbus-daemon > /dev/null; echo $?) -ne 0 ]
+	then
+		echo "Error: dbus-daemon not available"
+		return 1
+	fi
+
 	out=$(dbus-daemon --fork --print-pid --print-address --config-file=dbus.conf)
 	if [ $? -ne 0 ]
 	then
-		fatalerror "Failed to start DBus daemon"
+		echo "Failed to start DBus daemon"
+		return 1
 	fi
 
 	bus_addr=$(echo $out | cut -d\  -f 1)
@@ -48,11 +145,13 @@ start_bus()
 	kill -0 $bus_pid 2>/dev/null
 	if [ $? -ne 0 ]
 	then
-		fatalerror "DBus daemon unexpectedly stopped"
+		echo "DBus daemon unexpectedly stopped"
+		return 1
 	fi
 
-	do_onexit="kill $bus_pid"
+	do_onexit="kill_dbus_daemon"
 	export DBUS_SESSION_BUS_ADDRESS=$bus_addr
+	return 0
 }
 
 bus="session"

@@ -24,55 +24,77 @@ requires_parser_support "dbus,"
 
 args="--session"
 
-start_bus
-
-# Make sure we can eavesdrop unconfined
-
 settest dbus_eavesdrop
 
-runchecktest "eavesdrop (unconfined)" pass $args
+run_tests()
+{
+	# Make sure we can eavesdrop unconfined
 
-# Make sure we get denials when confined but not allowed
+	runchecktest "eavesdrop (unconfined)" pass $args
 
-genprofile
-runchecktest "eavesdrop (confined w/o dbus perms)" fail $args
+	# Make sure we get denials when confined but not allowed
 
-gendbusprofile "dbus send,"
-runchecktest "eavesdrop (confined w/ only send allowed)" fail $args
+	gendbusprofile
+	runchecktest "eavesdrop (confined w/o dbus perms)" fail $args
 
-gendbusprofile "dbus eavesdrop,"
-runchecktest "eavesdrop (confined w/ only eavesdrop allowed)" fail $args
+	gendbusprofile "dbus send,"
+	runchecktest "eavesdrop (confined w/ only send allowed)" fail $args
 
-# Make sure we're okay when confined with appropriate permissions
+	gendbusprofile "dbus eavesdrop,"
+	runchecktest "eavesdrop (confined w/ only eavesdrop allowed)" fail $args
 
-gendbusprofile "dbus,"
-runchecktest "eavesdrop (dbus allowed)" pass $args
+	# Make sure we're okay when confined with appropriate permissions
 
-gendbusprofile "dbus (send eavesdrop),"
-runchecktest "eavesdrop (send, eavesdrop allowed)" pass $args
+	gendbusprofile "dbus,"
+	runchecktest "eavesdrop (dbus allowed)" pass $args
 
-gendbusprofile "dbus (send eavesdrop) bus=session,"
-runchecktest "eavesdrop (send, eavesdrop allowed w/ bus conditional)" pass $args
+	gendbusprofile "dbus (send eavesdrop),"
+	runchecktest "eavesdrop (send, eavesdrop allowed)" pass $args
 
-gendbusprofile "dbus send bus=session path=/org/freedesktop/DBus \
+	gendbusprofile "dbus (send eavesdrop) bus=session,"
+	runchecktest "eavesdrop (send, eavesdrop allowed w/ bus conditional)" pass $args
+
+	gendbusprofile "dbus send bus=session path=/org/freedesktop/DBus \
 			interface=org.freedesktop.DBus \
 			member=Hello, \
 		dbus send bus=session path=/org/freedesktop/DBus \
 			interface=org.freedesktop.DBus \
 			member=AddMatch, \
 		dbus eavesdrop bus=session,"
-runchecktest "eavesdrop (send, eavesdrop allowed w/ bus and send member conditionals)" pass $args
+	runchecktest "eavesdrop (send, eavesdrop allowed w/ bus and send member conditionals)" pass $args
 
-gendbusprofile "dbus send, \
+	gendbusprofile "dbus send, \
 		audit dbus eavesdrop,"
-runchecktest "eavesdrop (send allowed, eavesdrop audited)" pass $args
+	runchecktest "eavesdrop (send allowed, eavesdrop audited)" pass $args
 
-# Make sure we're denied when confined without appropriate conditionals
+	# Make sure we're denied when confined without appropriate conditionals
 
-gendbusprofile "dbus send bus=session, \
+	gendbusprofile "dbus send bus=session, \
 		dbus eavesdrop bus=system,"
-runchecktest "eavesdrop (wrong bus)" fail $args
+	runchecktest "eavesdrop (wrong bus)" fail $args
 
-gendbusprofile "dbus send, \
+	gendbusprofile "dbus send, \
 		deny dbus eavesdrop,"
-runchecktest "eavesdrop (send allowed, eavesdrop denied)" fail $args
+	runchecktest "eavesdrop (send allowed, eavesdrop denied)" fail $args
+
+	# don't forget to remove the profile so the test can run again
+	removeprofile
+}
+
+if start_dbus_daemon
+then
+	run_tests
+	kill_dbus_daemon
+else
+	echo "Starting DBus Daemon failed. Skipping tests..."
+fi
+
+# Eavesdropping is deprecated in DBus Broker
+# from https://github.com/bus1/dbus-broker/wiki/Deviations
+#
+# "The concept of eavesdropping has been deprecated in favor of
+# monitoring upstream ... For the time being eavesdropping is not
+# implemented in dbus-broker."
+#
+# TODO: add tests for the "BecomeMonitor" method
+echo "DBus Broker does not support eavesdrop. Skipping tests..."

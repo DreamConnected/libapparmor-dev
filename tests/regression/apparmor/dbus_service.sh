@@ -65,75 +65,96 @@ service_gendbusprofile()
   $*"
 }
 
-start_bus
-
-# Make sure we can bind a bus name and receive a message unconfined
-
 settest dbus_service
 
-service_runtestbg "service (unconfined)" pass $confined_log
-sendmethod
-sendsignal
-service_checktestbg
+run_tests()
+{
+	# Make sure we can bind a bus name and receive a message unconfined
 
-# Make sure we get denials when confined but not allowed
+	service_runtestbg "service (unconfined)" pass $confined_log
+	sendmethod
+	sendsignal
+	service_checktestbg
 
-genprofile
-service_runchecktest "service (confined w/o dbus perms)" fail
+	# Make sure we get denials when confined but not allowed
 
-service_gendbusprofile "dbus send,"
-service_runchecktest "service (send allowed)" fail
+	genprofile
+	service_runchecktest "service (confined w/o dbus perms)" fail
 
-service_gendbusprofile "dbus receive,"
-service_runchecktest "service (receive allowed)" fail
+	service_gendbusprofile "dbus send,"
+	service_runchecktest "service (send allowed)" fail
 
-service_gendbusprofile "dbus bind,"
-service_runchecktest "service (bind allowed)" fail
+	service_gendbusprofile "dbus receive,"
+	service_runchecktest "service (receive allowed)" fail
 
-# Make sure we're okay when confined with appropriate permissions
+	service_gendbusprofile "dbus bind,"
+	service_runchecktest "service (bind allowed)" fail
 
-service_gendbusprofile "dbus,"
-service_runtestbg "service (dbus allowed)" pass $unconfined_log
-sendmethod
-sendsignal
-service_checktestbg "compare_logs $unconfined_log eq $confined_log"
+	# Make sure we're okay when confined with appropriate permissions
 
-service_gendbusprofile "dbus (send, receive, bind),"
-service_runtestbg "service (send receive bind allowed)" pass $unconfined_log
-sendmethod
-sendsignal
-service_checktestbg "compare_logs $unconfined_log eq $confined_log"
+	service_gendbusprofile "dbus,"
+	service_runtestbg "service (dbus allowed)" pass $unconfined_log
+	sendmethod
+	sendsignal
+	service_checktestbg "compare_logs $unconfined_log eq $confined_log"
 
-service_gendbusprofile "dbus (send receive bind) bus=session,"
-service_runtestbg "service (send receive bind w/ bus)" pass $unconfined_log
-sendmethod
-sendsignal
-service_checktestbg "compare_logs $unconfined_log eq $confined_log"
+	service_gendbusprofile "dbus (send, receive, bind),"
+	service_runtestbg "service (send receive bind allowed)" pass $unconfined_log
+	sendmethod
+	sendsignal
+	service_checktestbg "compare_logs $unconfined_log eq $confined_log"
 
-service_gendbusprofile "dbus bind bus=session name=$dest, \
+	service_gendbusprofile "dbus (send receive bind) bus=session,"
+	service_runtestbg "service (send receive bind w/ bus)" pass $unconfined_log
+	sendmethod
+	sendsignal
+	service_checktestbg "compare_logs $unconfined_log eq $confined_log"
+
+	service_gendbusprofile "dbus bind bus=session name=$dest, \
 		dbus receive bus=session, \
 		dbus send bus=session peer=(name=org.freedesktop.DBus),"
-service_runtestbg "service (receive bind w/ bus, dest)" pass $unconfined_log
-sendmethod
-sendsignal
-service_checktestbg "compare_logs $unconfined_log eq $confined_log"
+	service_runtestbg "service (receive bind w/ bus, dest)" pass $unconfined_log
+	sendmethod
+	sendsignal
+	service_checktestbg "compare_logs $unconfined_log eq $confined_log"
 
-service_gendbusprofile "dbus bind bus=session name=$dest, \
+	service_gendbusprofile "dbus bind bus=session name=$dest, \
 		dbus receive bus=session, \
 		dbus send bus=session peer=(name=org.freedesktop.DBus),"
-service_runtestbg "service (receive bind w/ bus, dest)" pass $unconfined_log
-sendmethod
-sendsignal
-service_checktestbg "compare_logs $unconfined_log eq $confined_log"
+	service_runtestbg "service (receive bind w/ bus, dest)" pass $unconfined_log
+	sendmethod
+	sendsignal
+	service_checktestbg "compare_logs $unconfined_log eq $confined_log"
 
-# Make sure we're denied when confined without appropriate conditionals
+	# Make sure we're denied when confined without appropriate conditionals
 
-service_gendbusprofile "dbus bind bus=system name=$dest, \
+	service_gendbusprofile "dbus bind bus=system name=$dest, \
 		dbus receive bus=system, \
 		dbus send bus=session peer=(name=org.freedesktop.DBus),"
-service_runchecktest "service (receive bind w/ wrong bus)" fail
+	service_runchecktest "service (receive bind w/ wrong bus)" fail
 
-service_gendbusprofile "dbus bind bus=session name=${dest}.BAD, \
+	service_gendbusprofile "dbus bind bus=session name=${dest}.BAD, \
 		dbus receive bus=session, \
 		dbus send bus=session peer=(name=org.freedesktop.DBus),"
-service_runchecktest "service (receive bind w/ wrong dest)" fail
+	service_runchecktest "service (receive bind w/ wrong dest)" fail
+
+	# don't forget to remove the profile so the test can run again
+	removeprofile
+}
+
+if start_dbus_daemon
+then
+	run_tests
+	kill_dbus_daemon
+else
+	echo "Starting DBus Daemon failed. Skipping tests..."
+fi
+
+if start_dbus_broker
+then
+	run_tests
+	kill_dbus_broker
+else
+	echo "Starting DBus Broker failed. Skipping tests..."
+	cleanup_dbus_broker
+fi

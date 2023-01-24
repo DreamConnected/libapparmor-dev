@@ -80,6 +80,7 @@ profile sanitized_helper {
   /opt/brave.com/brave{,-beta,-dev,-nightly}/chrome-sandbox PUxr,
   /opt/brave.com/brave{,-beta,-dev,-nightly}/brave-browser{,-beta,-dev,-nightly} Pixr,
   /opt/brave.com/brave{,-beta,-dev,-nightly}/brave Pixr,
+  /opt/brave.com/brave{,-beta,-dev,-nightly}/chrome_crashpad_handler Pixr,
   /opt/brave.com/brave{,-beta,-dev,-nightly}/{,**/}lib*.so{,.*} m,
 
   # Full access

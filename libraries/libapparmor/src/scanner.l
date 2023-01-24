@@ -163,6 +163,7 @@ key_dest		"dest"
 key_path		"path"
 key_interface		"interface"
 key_member		"member"
+key_method		"method"
 key_signal		"signal"
 key_peer		"peer"
 key_fstype		"fstype"
@@ -350,6 +351,7 @@ yy_flex_debug = 0;
 {key_path}		{ return(TOK_KEY_PATH); }
 {key_interface}		{ return(TOK_KEY_INTERFACE); }
 {key_member}		{ return(TOK_KEY_MEMBER); }
+{key_method}		{ return(TOK_KEY_MEMBER); }
 {key_signal}		{ BEGIN(sub_id); return(TOK_KEY_SIGNAL); }
 {key_peer}		{ BEGIN(safe_string); return(TOK_KEY_PEER); }
 {key_fstype}		{ return(TOK_KEY_FSTYPE); }

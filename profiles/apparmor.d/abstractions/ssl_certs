@@ -17,7 +17,7 @@
   /etc/{,libre}ssl/certs/{,**} r,
   /{etc,usr/share}/pki/bl[ao]cklist/{,*} r,
   /{etc,usr/share}/pki/trust/{,*} r,
-  /{etc,usr/share}/pki/trust/anchors/{,**} r,
+  /{etc,usr/share}/pki/trust/{bl[oa]cklist,anchors}/{,**} r,
   /usr/share/ca-certificates/{,**} r,
   /usr/share/ssl/certs/ca-bundle.crt          r,
   /usr/local/share/ca-certificates/{,**} r,

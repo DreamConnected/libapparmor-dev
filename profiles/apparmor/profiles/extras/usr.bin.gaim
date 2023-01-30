@@ -66,4 +66,7 @@ include <tunables/global>
   /usr/share/icons r,
   /usr/share/tcl/tcl*/encoding/* r,
   /{,var/}run/.resmgr_socket w,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.bin.gaim>
 }

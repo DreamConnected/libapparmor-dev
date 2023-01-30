@@ -23,4 +23,7 @@ profile postfix-proxymap /usr/lib/postfix/{bin/,sbin/,}proxymap {
   /etc/my.cnf r,
   /usr/lib/postfix/{bin/,sbin/,}proxymap     mrix,
   /{var/spool/postfix/,}private/proxymap     rw,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/postfix-proxymap>
 }

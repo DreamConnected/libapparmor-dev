@@ -19,4 +19,6 @@ include <tunables/global>
   /usr/lib/firefox/firefox px,
   /usr/share/misc/magic.mgc r,
 
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.lib.firefox.firefox.sh>
 }

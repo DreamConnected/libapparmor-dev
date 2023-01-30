@@ -46,4 +46,7 @@ profile netstat /{usr/,}bin/netstat {
   @{PROC}/@{pid}/net/udplite r,
   @{PROC}/@{pid}/net/udplit6 r,
   @{PROC}/@{pid}/net/unix r,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/bin.netstat>
 }

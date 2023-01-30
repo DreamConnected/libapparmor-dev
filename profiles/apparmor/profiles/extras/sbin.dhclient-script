@@ -27,5 +27,6 @@ profile dhclient-script /{usr/,}sbin/dhclient-script {
   /{usr/,}sbin/ip rix,
   /{usr/,}sbin/resolvconf rPUx,
 
+  # Site-specific additions and overrides. See local/README for details.
   include if exists <local/sbin.dhclient-script>
 }

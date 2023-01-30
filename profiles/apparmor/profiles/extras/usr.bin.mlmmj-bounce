@@ -39,4 +39,7 @@ include <tunables/global>
 
   /usr/share/mlmmj/text.skel/*/* r,
   /var/spool/mlmmj/*/control/*  r,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.bin.mlmmj-bounce>
 }

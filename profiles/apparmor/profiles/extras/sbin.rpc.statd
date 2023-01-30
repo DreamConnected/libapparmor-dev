@@ -53,4 +53,7 @@ profile rpc.statd /{usr/,}sbin/rpc.statd {
   @{run}/rpc.statd.pid             w,
   @{run}/rpcbind.sock              rw,
   @{run}/sm-notify.pid             w,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/sbin.rpc.statd>
 }

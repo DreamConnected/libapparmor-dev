@@ -58,4 +58,7 @@ profile postfix-master /usr/lib/postfix/{bin/,sbin/,}master {
   /usr/lib/postfix/{bin/,sbin/,}trivial-rewrite     Px,
 
   owner /var/lib/postfix/master.lock rwk,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/postfix-master>
 }

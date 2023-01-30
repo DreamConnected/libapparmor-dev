@@ -17,5 +17,7 @@ profile pyzorsocket /usr/bin/pyzorsocket {
   /usr/bin/ r,
   /usr/bin/python[2-9]* ix,
   /usr/bin/pyzorsocket r,
+
+  # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.bin.pyzorsocket>
 }

@@ -34,4 +34,7 @@ include <tunables/global>
   /var/spool/postfix/maildrop/* rwl,
   /var/spool/postfix/pid r,
   /var/spool/postfix/public/pickup rw,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.sbin.postdrop>
 }

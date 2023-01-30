@@ -26,4 +26,7 @@ profile postfix-trivial-rewrite /usr/lib/postfix/{bin/,sbin/,}trivial-rewrite {
   /etc/{m,fs}tab                              r,
   /var/spool/postfix/pid/unix.rewrite         rw,
   /{var/spool/postfix/,}private/rewrite       rw,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/postfix-trivial-rewrite>
 }

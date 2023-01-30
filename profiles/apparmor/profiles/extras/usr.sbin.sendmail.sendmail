@@ -46,4 +46,7 @@ include <tunables/global>
   /var/spool/mail/*           rwl,
   /var/spool/mqueue           rwl,
   /var/spool/mqueue/*         rwl,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.sbin.sendmail.sendmail>
 }

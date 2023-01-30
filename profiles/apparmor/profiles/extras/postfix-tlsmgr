@@ -28,4 +28,7 @@ profile postfix-tlsmgr /usr/lib/postfix/{bin/,sbin/,}tlsmgr {
   /{,var/}run/smtpd_tls_session_cache.db rw,
   /var/lib/postfix/smtpd_scache.db rwk,
   /var/lib/postfix/smtp_scache.db rwk,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/postfix-tlsmgr>
 }

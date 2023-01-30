@@ -23,4 +23,7 @@ include <tunables/global>
   /tmp/.font-unix/fs710[0-9]		wl,
   /usr/bin/xfs                    	rmix,
   /{,var/}run/xfs.pid			rw,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.bin.xfs>
 }

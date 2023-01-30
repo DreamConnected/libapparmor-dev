@@ -43,4 +43,7 @@ include <tunables/global>
   /var/spool r,
   /var/spool/mlmmj rw,
   /var/spool/mlmmj/** w,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.bin.mlmmj-make-ml.sh>
 }

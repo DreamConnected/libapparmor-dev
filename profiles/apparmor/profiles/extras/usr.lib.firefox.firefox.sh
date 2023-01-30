@@ -20,5 +20,5 @@ include <tunables/global>
   /usr/share/misc/magic.mgc r,
 
   # Site-specific additions and overrides. See local/README for details.
-  include if exists <local/usr.lib.firefox.firefox.sh>
+  include if exists <local/firefox.sh>
 }

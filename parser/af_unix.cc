@@ -136,7 +136,7 @@ ostream &unix_rule::dump_local(ostream &os)
 {
 	af_rule::dump_local(os);
 	if (addr)
-		os << "addr='" << addr << "'";
+		os << " addr='" << addr << "'";
 	return os;
 }
 
@@ -144,7 +144,7 @@ ostream &unix_rule::dump_peer(ostream &os)
 {
 	af_rule::dump_peer(os);
 	if (peer_addr)
-		os << "addr='" << peer_addr << "'";
+		os << " addr='" << peer_addr << "'";
 	return os;
 }
 

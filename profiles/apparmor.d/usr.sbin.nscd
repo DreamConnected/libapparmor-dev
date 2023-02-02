@@ -39,6 +39,10 @@ profile nscd /usr/{bin,sbin}/nscd {
   @{PROC}/@{pid}/fd/* r,
   @{PROC}/@{pid}/mounts r,
 
+  # systemd-userdb
+  /{etc,run,run/host,/usr/lib}/userdb/ r,
+  /{etc,run,run/host,/usr/lib}/userdb/*.{user,user-privileged,group,group-privileged} r,
+
   # Site-specific additions and overrides. See local/README for details.
   #include <local/usr.sbin.nscd>
 }

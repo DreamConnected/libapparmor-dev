@@ -1,7 +1,7 @@
 abi <abi/3.0>,
 
 include <tunables/global>
-profile avahi-daemon /usr/{bin,sbin}/avahi-daemon {
+profile avahi-daemon /usr/{bin,sbin}/avahi-daemon flags=(attach_disconnected) {
   include <abstractions/base>
   include <abstractions/consoles>
   include <abstractions/dbus>

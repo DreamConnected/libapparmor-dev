@@ -105,8 +105,7 @@ unix_rule::unix_rule(unsigned int type_p, bool audit_p, bool denied):
 
 unix_rule::unix_rule(int mode_p, struct cond_entry *conds,
 		     struct cond_entry *peer_conds):
-	af_rule("unix"), addr(NULL), peer_addr(NULL),
-	audit(0), deny(0)
+	af_rule("unix"), addr(NULL), peer_addr(NULL)
 {
 	move_conditionals(conds);
 	move_peer_conditionals(peer_conds);

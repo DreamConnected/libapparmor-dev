@@ -36,9 +36,6 @@ class unix_rule: public af_rule {
 public:
 	char *addr;
 	char *peer_addr;
-	int mode;
-	int audit;
-	bool deny;
 
 	unix_rule(unsigned int type_p, bool audit_p, bool denied);
 	unix_rule(int mode, struct cond_entry *conds,

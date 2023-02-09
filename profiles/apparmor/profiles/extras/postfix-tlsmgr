@@ -17,6 +17,7 @@ include <tunables/global>
 profile postfix-tlsmgr /usr/lib/postfix/{bin/,sbin/,}tlsmgr {
   include <abstractions/base>
   include <abstractions/nameservice>
+  include <abstractions/openssl>
   include <abstractions/postfix-common>
 
   /usr/lib/postfix/{bin/,sbin/,}tlsmgr mrix,

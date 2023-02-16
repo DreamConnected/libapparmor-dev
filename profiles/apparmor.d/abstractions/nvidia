@@ -21,6 +21,9 @@
 
   @{sys}/devices/system/memory/block_size_bytes r,
 
+  owner @{HOME}/.cache/nvidia/ w,
+  owner @{HOME}/.cache/nvidia/GLCache/ rw,
+  owner @{HOME}/.cache/nvidia/GLCache/** rwk,
   owner @{HOME}/.nv/ w,
   owner @{HOME}/.nv/GLCache/ rw,
   owner @{HOME}/.nv/GLCache/** rwk,

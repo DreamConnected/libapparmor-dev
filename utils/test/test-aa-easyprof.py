@@ -771,7 +771,7 @@ POLICYGROUPS_DIR="%s/templates"
 #
 # Test genpolicy
 #
-    def _gen_policy(self, name=None, template=None, extra_args=[]):
+    def _gen_policy(self, name=None, template=None, extra_args=None):
         """Generate a policy"""
         # Build up our args
         args = self.full_args
@@ -942,7 +942,7 @@ POLICYGROUPS_DIR="%s/templates"
                 raise
             raise Exception("abstraction '%s' should be invalid" % s)
 
-    def _create_tmp_base_dir(self, prefix='', abstractions=[], tunables=[]):
+    def _create_tmp_base_dir(self, prefix='', abstractions=(), tunables=()):
         """Create a temporary base dir layout"""
         base_name = 'apparmor.d'
         if prefix:

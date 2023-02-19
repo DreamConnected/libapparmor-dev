@@ -27,7 +27,7 @@ trans_modifiers = {
 
 targets = ("", "target", "target2")
 # null_target uses "_" instead of "" because "" gets skipped in some for loops. Replace with "" when actually using the value.
-null_target = ("_")
+null_target = ("_",)
 
 named_trans = {
     "p": targets,

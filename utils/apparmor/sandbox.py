@@ -117,7 +117,7 @@ def set_environ(env):
         os.environ[k] = env[k]
 
 
-def aa_exec(command, opt, environ={}, verify_rules=[]):
+def aa_exec(command, opt, environ=None, verify_rules=()):
     """Execute binary under specified policy"""
     if opt.profile is not None:
         policy_name = opt.profile
@@ -162,7 +162,8 @@ def aa_exec(command, opt, environ={}, verify_rules=[]):
             if not found:
                 raise AppArmorException("Could not find required rule: %s" % r)
 
-    set_environ(environ)
+    if environ:
+        set_environ(environ)
     args = ['aa-exec', '-p', policy_name, '--']
     args.extend(command)
     rc, report = cmd(args)

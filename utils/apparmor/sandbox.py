@@ -110,11 +110,9 @@ def gen_policy_name(binary):
 
 
 def set_environ(env):
-    keys = env.keys()
-    keys.sort()
-    for k in keys:
-        msg("Using: %s=%s" % (k, env[k]))
-        os.environ[k] = env[k]
+    for k, v in sorted(env.items()):
+        msg("Using: {}={}".format(k, v))
+        os.environ[k] = v
 
 
 def aa_exec(command, opt, environ=None, verify_rules=()):

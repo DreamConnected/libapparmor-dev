@@ -110,14 +110,12 @@ def gen_policy_name(binary):
 
 
 def set_environ(env):
-    keys = env.keys()
-    keys.sort()
-    for k in keys:
-        msg("Using: %s=%s" % (k, env[k]))
-        os.environ[k] = env[k]
+    for k, v in sorted(env.items()):
+        msg("Using: {}={}".format(k, v))
+        os.environ[k] = v
 
 
-def aa_exec(command, opt, environ={}, verify_rules=[]):
+def aa_exec(command, opt, environ=None, verify_rules=()):
     """Execute binary under specified policy"""
     if opt.profile is not None:
         policy_name = opt.profile
@@ -162,7 +160,8 @@ def aa_exec(command, opt, environ={}, verify_rules=[]):
             if not found:
                 raise AppArmorException("Could not find required rule: %s" % r)
 
-    set_environ(environ)
+    if environ:
+        set_environ(environ)
     args = ['aa-exec', '-p', policy_name, '--']
     args.extend(command)
     rc, report = cmd(args)

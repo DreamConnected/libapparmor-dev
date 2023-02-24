@@ -1732,7 +1732,7 @@ def collapse_log(hashlog, ignore_null_profiles=True):
     return log_dict
 
 
-def read_profiles(ui_msg=False, skip_profiles=[]):
+def read_profiles(ui_msg=False, skip_profiles=()):
     # we'll read all profiles from disk, so reset the storage first (autodep() might have created/stored
     # a profile already, which would cause a 'Conflicting profile' error in attach_profile_data())
     #
@@ -1762,7 +1762,7 @@ def read_profiles(ui_msg=False, skip_profiles=[]):
                 read_profile(full_file, True)
 
 
-def read_inactive_profiles(skip_profiles=[]):
+def read_inactive_profiles(skip_profiles=()):
     # The skip_profiles parameter should only be specified by tests.
 
     if hasattr(read_inactive_profiles, 'already_read'):

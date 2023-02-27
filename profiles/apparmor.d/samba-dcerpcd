@@ -16,7 +16,7 @@ include <tunables/global>
 profile samba-dcerpcd /usr/lib*/samba/{,samba/}samba-dcerpcd {
   include <abstractions/samba-rpcd>
 
-  @{run}/samba/samba-dcerpcd.pid wk,
+  @{run}/{,samba/}samba-dcerpcd.pid rwk,
 
   /usr/lib*/samba/{,samba/}samba-dcerpcd mr,
 

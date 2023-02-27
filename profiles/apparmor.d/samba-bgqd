@@ -14,7 +14,7 @@ profile samba-bgqd /usr/lib*/samba/{,samba/}samba-bgqd {
   @{PROC}/sys/kernel/core_pattern r,
   owner @{PROC}/@{pid}/fd/ r,
 
-  @{run}/samba/samba-bgqd.pid wk,
+  @{run}/{,samba/}samba-bgqd.pid rwk,
 
   /usr/lib*/samba/{,samba/}samba-bgqd mr,
   /var/cache/samba/printing/*.tdb rwk,

@@ -53,11 +53,10 @@ profile smbd /usr/{bin,sbin}/smbd {
   /var/lib/samba/** rwk,
   /var/lib/sss/pubconf/kdcinfo.* r,
   @{run}/dbus/system_bus_socket rw,
-  @{run}/smbd.pid rwk,
+  @{run}/{,samba/}smbd.pid rwk,
   @{run}/samba/** rk,
   @{run}/samba/ncalrpc/ rw,
   @{run}/samba/ncalrpc/** rw,
-  @{run}/samba/smbd.pid rw,
   /var/spool/samba/** rw,
 
   @{HOMEDIRS}/** lrwk,

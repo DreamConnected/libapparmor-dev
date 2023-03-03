@@ -6,6 +6,7 @@ profile winbindd /usr/{bin,sbin}/winbindd {
   include <abstractions/base>
   include <abstractions/nameservice>
   include <abstractions/samba>
+  include <abstractions/kerberosclient>
 
   deny capability block_suspend,
 

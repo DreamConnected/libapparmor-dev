@@ -6,6 +6,7 @@ profile winbindd /usr/{bin,sbin}/winbindd {
   include <abstractions/base>
   include <abstractions/nameservice>
   include <abstractions/samba>
+  include <abstractions/kerberosclient>
 
   deny capability block_suspend,
 
@@ -30,6 +31,7 @@ profile winbindd /usr/{bin,sbin}/winbindd {
   /usr/{bin,sbin}/winbindd mr,
   /var/cache/krb5rcache/* rwk,
   /var/cache/samba/*.tdb rwk,
+  /var/lib/sss/pubconf/kdcinfo.* r,
   /var/log/samba/log.winbindd rw,
   @{run}/{samba/,}winbindd.pid rwk,
   @{run}/samba/winbindd/ rw,

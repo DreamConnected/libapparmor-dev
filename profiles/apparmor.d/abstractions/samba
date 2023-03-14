@@ -23,7 +23,7 @@
   /var/lib/samba/** rwk,
   /var/log/samba/cores/ rw,
   /var/log/samba/cores/** rw,
-  /var/log/samba/* w,
+  /var/log/samba/* rw,
   @{run}/{,lock/}samba/ w,
   @{run}/{,lock/}samba/*.tdb rwk,
   @{run}/{,lock/}samba/msg.{lock,sock}/ rwk,

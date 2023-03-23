@@ -1,7 +1,7 @@
 #
 #=Description basic mount rule
-#=EXRESULT PASS
+#=EXRESULT FAIL
 #
 /usr/bin/foo {
-  mount options=(rw, ro) -> /foo,
+  mount options=(rw ro) -> /foo,
 }

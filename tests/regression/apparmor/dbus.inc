@@ -32,7 +32,8 @@ set_dbus_var()
 
 start_bus()
 {
-	out=$(dbus-daemon --fork --print-pid --print-address --config-file=dbus.conf)
+	bus_addr=$(mktemp --dry-run /tmp/dbus-XXXXXX)
+	out=$(dbus-daemon --fork --print-pid --print-address --address="unix:abstract=$bus_addr" --config-file=dbus.conf)
 	if [ $? -ne 0 ]
 	then
 		fatalerror "Failed to start DBus daemon"

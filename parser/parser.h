@@ -204,6 +204,7 @@ do {						\
 #endif
 
 
+#define list_first(LIST) (LIST)
 #define list_for_each(LIST, ENTRY) \
 	for ((ENTRY) = (LIST); (ENTRY); (ENTRY) = (ENTRY)->next)
 #define list_for_each_safe(LIST, ENTRY, TMP) \

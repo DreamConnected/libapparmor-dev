@@ -370,11 +370,9 @@ static struct value_list *extract_fstype(struct cond_entry **conds)
 	return list;
 }
 
-static struct value_list *extract_options(struct cond_entry **conds, int eq)
+static struct cond_entry *extract_options(struct cond_entry **conds, int eq)
 {
-	struct value_list *list = NULL;
-
-	struct cond_entry *entry, *tmp, *prev = NULL;
+	struct cond_entry *list = NULL, *entry, *tmp, *prev = NULL;
 
 	list_for_each_safe(*conds, entry, tmp) {
 		if ((strcmp(entry->name, "options") == 0 ||
@@ -382,10 +380,8 @@ static struct value_list *extract_options(struct cond_entry **conds, int eq)
 		    entry->eq == eq) {
 			list_remove_at(*conds, prev, entry);
 			PDEBUG("  extracting option %s\n", entry->name);
-			list_append(entry->vals, list);
-			list = entry->vals;
-			entry->vals = NULL;
-			free_cond_entry(entry);
+			list_append(entry, list);
+			list = entry;
 		} else
 			prev = entry;
 	}
@@ -393,60 +389,109 @@ static struct value_list *extract_options(struct cond_entry **conds, int eq)
 	return list;
 }
 
+static void perror_conds(const char *rule, struct cond_entry *conds)
+{
+	struct cond_entry *entry;
+
+	list_for_each(conds, entry) {
+		PERROR(  "unsupported %s condition '%s%s(...)'\n", rule, entry->name, entry->eq ? "=" : " in ");
+	}
+}
+
+static void perror_vals(const char *rule, struct value_list *vals)
+{
+	struct value_list *entry;
+
+	list_for_each(vals, entry) {
+		PERROR(  "unsupported %s value '%s'\n", rule, entry->value);
+	}
+}
+
+static void process_one_option(struct cond_entry *&opts, unsigned int &flags,
+			       unsigned int &inv_flags)
+{
+	struct cond_entry *entry;
+	struct value_list *vals;
+
+	entry = list_first(opts);
+	list_remove(opts, entry);
+	vals = entry->vals;
+	entry->vals = NULL;
+	/* fail if there are any unknown optional flags */
+	if (opts) {
+		PERROR("  unsupported multiple 'mount options %s(...)'\n", entry->eq ? "=" : " in ");
+		exit(1);
+	}
+	free_cond_entry(entry);
+
+	flags = extract_flags(&vals, &inv_flags);
+	if (vals) {
+		perror_vals("mount option", vals);
+		exit(1);
+	}
+}
+
 mnt_rule::mnt_rule(struct cond_entry *src_conds, char *device_p,
 		   struct cond_entry *dst_conds unused, char *mnt_point_p,
 		   int allow_p):
 	mnt_point(mnt_point_p), device(device_p), trans(NULL), opts(NULL),
-	flags(0), inv_flags(0), audit(0), deny(0)
+	flags(0), opt_flags(0), audit(0), deny(0)
 {
 	/* FIXME: dst_conds are ignored atm */
 	dev_type = extract_fstype(&src_conds);
 
 	if (src_conds) {
-		struct value_list *list = extract_options(&src_conds, 0);
+		/* move options in () to local list */
+		struct cond_entry *opts_in = extract_options(&src_conds, 0);
 
-		opts = extract_options(&src_conds, 1);
-		if (opts)
-			flags = extract_flags(&opts, &inv_flags);
-
-		if (list) {
+		if (opts_in) {
 			unsigned int tmpflags, tmpinv_flags = 0;
 
-			tmpflags = extract_flags(&list, &tmpinv_flags);
-			/* these flags are optional so set both */
-			tmpflags |= tmpinv_flags;
-			tmpinv_flags |= tmpflags;
-
-			flags |= tmpflags;
-			inv_flags |= tmpinv_flags;
-
-			if (opts)
-				list_append(opts, list);
-			else if (list)
-				opts = list;
+			process_one_option(opts_in, tmpflags, tmpinv_flags);
+			/* optional flags if set/clear mean the same thing and can be
+			 * represented by a single bitset
+			 */
+			opt_flags |= tmpflags;
+			opt_flags |= tmpinv_flags;
 		}
+
+		/* move options=() to opts list */
+		struct cond_entry *opts_eq = extract_options(&src_conds, 1);
+		if (opts_eq) {
+			unsigned int tmpflags, tmpinv_flags = 0;
+
+			process_one_option(opts_eq, tmpflags, tmpinv_flags);
+			if (allow_p & AA_DUMMY_REMOUNT)
+				tmpflags |= MS_REMOUNT;
+			flags = tmpflags;
+		}
+
+		if (src_conds) {
+			perror_conds("mount", src_conds);
+			exit(1);
+		}
+	}
+
+	if (!(flags | opt_flags)) {
+		/* no flag options, and not remount, allow everything */
+		if (allow_p & AA_DUMMY_REMOUNT) {
+			flags = MS_REMOUNT;
+			opt_flags = MS_REMOUNT_FLAGS & (~MS_REMOUNT);
+		} else {
+			flags = MS_ALL_FLAGS;
+			opt_flags = MS_ALL_FLAGS;
+		}
+	} else if (!flags) {
+		/* no flags but opts set */
+		if (allow_p & AA_DUMMY_REMOUNT)
+			flags = MS_REMOUNT;
 	}
 
 	if (allow_p & AA_DUMMY_REMOUNT) {
 		allow_p = AA_MAY_MOUNT;
-		flags |= MS_REMOUNT;
-		inv_flags = 0;
-	} else if (!(flags | inv_flags)) {
-		/* no flag options, and not remount, allow everything */
-		flags = MS_ALL_FLAGS;
-		inv_flags = MS_ALL_FLAGS;
 	}
 
 	allow = allow_p;
-
-	if (src_conds) {
-		PERROR("  unsupported mount conditions\n");
-		exit(1);
-	}
-	if (opts) {
-		PERROR("  unsupported mount options\n");
-		exit(1);
-	}
 }
 
 ostream &mnt_rule::dump(ostream &os)
@@ -460,7 +505,7 @@ ostream &mnt_rule::dump(ostream &os)
 	else
 		os << "error: unknonwn mount perm";
 
-	os << " (0x" << hex << flags << " - 0x" << inv_flags << ") ";
+	os << " (0x" << hex << flags << " - 0x" << opt_flags << ") ";
 	if (dev_type) {
 		os << " type=";
 		print_value_list(dev_type);
@@ -516,7 +561,7 @@ int mnt_rule::expand_variables(void)
 }
 
 static int build_mnt_flags(char *buffer, int size, unsigned int flags,
-			   unsigned int inv_flags)
+			   unsigned int opt_flags)
 {
 	char *p = buffer;
 	int i, len = 0;
@@ -529,7 +574,7 @@ static int build_mnt_flags(char *buffer, int size, unsigned int flags,
 		return TRUE;
 	}
 	for (i = 0; i <= 31; ++i) {
-		if ((flags & inv_flags) & (1 << i))
+		if ((opt_flags) & (1 << i))
 			len = snprintf(p, size, "(\\x%02x|)", i + 1);
 		else if (flags & (1 << i))
 			len = snprintf(p, size, "\\x%02x", i + 1);
@@ -628,7 +673,7 @@ int mnt_rule::gen_policy_remount(Profile &prof, int &count)
 	vec[2] = default_match_pattern;
 
 	if (!build_mnt_flags(flagsbuf, PATH_MAX, flags & MS_REMOUNT_FLAGS,
-			     inv_flags & MS_REMOUNT_FLAGS))
+			     opt_flags & MS_REMOUNT_FLAGS))
 		goto fail;
 
 	vec[3] = flagsbuf;
@@ -689,7 +734,7 @@ int mnt_rule::gen_policy_bind_mount(Profile &prof, int &count)
 	vec[2] = default_match_pattern;
 
 	if (!build_mnt_flags(flagsbuf, PATH_MAX, flags & MS_BIND_FLAGS,
-			     inv_flags & MS_BIND_FLAGS))
+			     opt_flags & MS_BIND_FLAGS))
 		goto fail;
 	vec[3] = flagsbuf;
 	if (!prof.policy.rules->add_rule_vec(deny, allow, audit, 4, vec,
@@ -728,7 +773,7 @@ int mnt_rule::gen_policy_change_mount_type(Profile &prof, int &count)
 	vec[2] = default_match_pattern;
 
 	if (!build_mnt_flags(flagsbuf, PATH_MAX, flags & MS_MAKE_FLAGS,
-			     inv_flags & MS_MAKE_FLAGS))
+			     opt_flags & MS_MAKE_FLAGS))
 		goto fail;
 	vec[3] = flagsbuf;
 	if (!prof.policy.rules->add_rule_vec(deny, allow, audit, 4, vec,
@@ -769,7 +814,7 @@ int mnt_rule::gen_policy_move_mount(Profile &prof, int &count)
 	vec[2] = default_match_pattern;
 
 	if (!build_mnt_flags(flagsbuf, PATH_MAX, flags & MS_MOVE_FLAGS,
-			     inv_flags & MS_MOVE_FLAGS))
+			     opt_flags & MS_MOVE_FLAGS))
 		goto fail;
 	vec[3] = flagsbuf;
 	if (!prof.policy.rules->add_rule_vec(deny, allow, audit, 4, vec,
@@ -810,7 +855,7 @@ int mnt_rule::gen_policy_new_mount(Profile &prof, int &count)
 	vec[2] = typebuf.c_str();
 
 	if (!build_mnt_flags(flagsbuf, PATH_MAX, flags & MS_NEW_FLAGS,
-			     inv_flags & MS_NEW_FLAGS))
+			     opt_flags & MS_NEW_FLAGS))
 		goto fail;
 	vec[3] = flagsbuf;
 
@@ -850,12 +895,10 @@ int mnt_rule::gen_policy_re(Profile &prof)
 	std::string mntbuf;
 	std::string devbuf;
 	std::string typebuf;
-	char flagsbuf[PATH_MAX + 3];
 	std::string optsbuf;
 	char class_mount_hdr[64];
 	const char *vec[5];
 	int count = 0;
-	unsigned int tmpflags, tmpinv_flags;
 
 	if (!kernel_supports_mount) {
 		warn_once(prof.name);
@@ -868,7 +911,11 @@ int mnt_rule::gen_policy_re(Profile &prof)
 	 * created in the backend to cover all the possible choices
 	 */
 
-	if ((allow & AA_MAY_MOUNT) && (flags == MS_ALL_FLAGS)) {
+	/*
+	 * XXX: added !flags to cover cases like:
+	 * mount options in (bind) /d -> /4,
+	 */
+	if ((allow & AA_MAY_MOUNT) && (!flags || flags == MS_ALL_FLAGS)) {
 		/* no mount flags specified, generate multiple rules */
 		if (!device && !dev_type &&
 		    gen_policy_remount(prof, count) == RULE_ERROR)
@@ -902,7 +949,7 @@ int mnt_rule::gen_policy_re(Profile &prof)
 		if (gen_policy_move_mount(prof, count) == RULE_ERROR)
 			goto fail;
 	} else if ((allow & AA_MAY_MOUNT) &&
-		   (flags | inv_flags) & ~MS_CMDS) {
+		   (flags | opt_flags) & ~MS_CMDS) {
 		/* generic mount if flags are set that are not covered by
 		 * above commands
 		 */

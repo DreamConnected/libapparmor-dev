@@ -132,7 +132,7 @@ public:
 	struct value_list *dev_type;
 	struct value_list *opts;
 
-	unsigned int flags, inv_flags;
+	unsigned int flags, opt_flags;
 
 	int allow, audit;
 	int deny;

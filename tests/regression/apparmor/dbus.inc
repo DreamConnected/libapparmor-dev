@@ -128,7 +128,8 @@ start_dbus_daemon()
 		return 1
 	fi
 
-	out=$(dbus-daemon --fork --print-pid --print-address --config-file=dbus.conf)
+	bus_addr=$(mktemp --dry-run /tmp/dbus-XXXXXX)
+	out=$(dbus-daemon --fork --print-pid --print-address --address="unix:abstract=$bus_addr" --config-file=dbus.conf)
 	if [ $? -ne 0 ]
 	then
 		echo "Failed to start DBus daemon"

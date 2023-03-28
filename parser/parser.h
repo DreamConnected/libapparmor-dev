@@ -238,6 +238,16 @@ do {						\
 	prev;				\
 })
 
+#define list_pop(LIST)				\
+({						\
+	typeof(LIST) _entry = (LIST);		\
+	if (LIST) {				\
+		(LIST) = (LIST)->next;		\
+		_entry->next = NULL;		\
+	}					\
+	_entry;					\
+})
+
 #define list_remove_at(LIST, PREV, ENTRY)			\
 	if (PREV)						\
 		(PREV)->next = (ENTRY)->next;			\

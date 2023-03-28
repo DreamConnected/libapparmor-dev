@@ -448,8 +448,7 @@ static void process_one_option(struct cond_entry *&opts, unsigned int &flags,
 	struct cond_entry *entry;
 	struct value_list *vals;
 
-	entry = list_first(opts);
-	list_remove(opts, entry);
+	entry = list_pop(opts);
 	vals = entry->vals;
 	entry->vals = NULL;
 	/* fail if there are any unknown optional flags */
@@ -470,7 +469,7 @@ mnt_rule::mnt_rule(struct cond_entry *src_conds, char *device_p,
 		   struct cond_entry *dst_conds unused, char *mnt_point_p,
 		   int allow_p):
 	mnt_point(mnt_point_p), device(device_p), trans(NULL), opts(NULL),
-	flags(0), opt_flags(0), audit(0), deny(0)
+	flagsv(0), opt_flagsv(0), audit(0), deny(0)
 {
 	/* FIXME: dst_conds are ignored atm */
 	dev_type = extract_fstype(&src_conds);
@@ -481,30 +480,42 @@ mnt_rule::mnt_rule(struct cond_entry *src_conds, char *device_p,
 
 		if (opts_in) {
 			unsigned int tmpflags = 0, tmpinv_flags = 0;
+			struct cond_entry *entry;
 
-			process_one_option(opts_in, tmpflags, tmpinv_flags);
-			/* optional flags if set/clear mean the same thing and can be
-			 * represented by a single bitset
-			 */
-			opt_flags |= tmpflags;
-			opt_flags |= tmpinv_flags;
+			while ((entry = list_pop(opts_in))) {
+				process_one_option(entry, tmpflags,
+						   tmpinv_flags);
+				/* optional flags if set/clear mean the same
+				 * thing and can be represented by a single
+				 * bitset, also there is no need to check for
+				 * conflicting flags when they are optional
+				 */
+				opt_flagsv.push_back(tmpflags | tmpinv_flags);
+			}
 		}
 
 		/* move options=() to opts list */
 		struct cond_entry *opts_eq = extract_options(&src_conds, 1);
 		if (opts_eq) {
 			unsigned int tmpflags = 0, tmpinv_flags = 0;
+			struct cond_entry *entry;
 
-			process_one_option(opts_eq, tmpflags, tmpinv_flags);
-			if (allow_p & AA_DUMMY_REMOUNT)
-				tmpflags |= MS_REMOUNT;
+			while ((entry = list_pop(opts_eq))) {
+				process_one_option(entry, tmpflags,
+						   tmpinv_flags);
+				/* throw away tmpinv_flags, only needed in
+				 * consistancy check
+				 */
+				if (allow_p & AA_DUMMY_REMOUNT)
+					tmpflags |= MS_REMOUNT;
 
-			if (conflicting_flags(tmpflags, tmpinv_flags)) {
-				PERROR("conflicting flags in the rule\n");
-				exit(1);
+				if (conflicting_flags(tmpflags, tmpinv_flags)) {
+					PERROR("conflicting flags in the rule\n");
+					exit(1);
+				}
+
+				flagsv.push_back(tmpflags);
 			}
-
-			flags = tmpflags;
 		}
 
 		if (src_conds) {
@@ -513,25 +524,28 @@ mnt_rule::mnt_rule(struct cond_entry *src_conds, char *device_p,
 		}
 	}
 
-	if (!(flags | opt_flags)) {
+	if (!(flagsv.size() + opt_flagsv.size())) {
 		/* no flag options, and not remount, allow everything */
 		if (allow_p & AA_DUMMY_REMOUNT) {
-			flags = MS_REMOUNT;
-			opt_flags = MS_REMOUNT_FLAGS & (~MS_REMOUNT);
+			flagsv.push_back(MS_REMOUNT);
+			opt_flagsv.push_back(MS_REMOUNT_FLAGS & ~MS_REMOUNT);
 		} else {
-			flags = MS_ALL_FLAGS;
-			opt_flags = MS_ALL_FLAGS;
+			flagsv.push_back(MS_ALL_FLAGS);
+			opt_flagsv.push_back(MS_ALL_FLAGS);
 		}
-	} else if (!flags) {
+	} else if (!(flagsv.size())) {
 		/* no flags but opts set */
 		if (allow_p & AA_DUMMY_REMOUNT)
-			flags = MS_REMOUNT;
+			flagsv.push_back(MS_REMOUNT);
+		else
+			flagsv.push_back(0);
+	} else if (!(opt_flagsv.size())) {
+		opt_flagsv.push_back(0);
 	}
 
 	if (allow_p & AA_DUMMY_REMOUNT) {
 		allow_p = AA_MAY_MOUNT;
 	}
-
 	allow = allow_p;
 }
 
@@ -546,7 +560,11 @@ ostream &mnt_rule::dump(ostream &os)
 	else
 		os << "error: unknonwn mount perm";
 
-	os << " (0x" << hex << flags << " - 0x" << opt_flags << ") ";
+	for (unsigned int i = 0; i < flagsv.size(); i++)
+		os << " flags=(0x" << hex << flagsv[i] << ")";
+	for (unsigned int i = 0; i < opt_flagsv.size(); i++)
+		os << " flags in (0x" << hex << opt_flagsv[i] << ")";
+
 	if (dev_type) {
 		os << " type=";
 		print_value_list(dev_type);
@@ -682,7 +700,8 @@ static void warn_once(const char *name)
 }
 
 
-int mnt_rule::gen_policy_remount(Profile &prof, int &count)
+int mnt_rule::gen_policy_remount(Profile &prof, int &count,
+				 unsigned int flags, unsigned int opt_flags)
 {
 	std::string mntbuf;
 	std::string devbuf;
@@ -750,7 +769,8 @@ fail:
 	return RULE_ERROR;
 }
 
-int mnt_rule::gen_policy_bind_mount(Profile &prof, int &count)
+int mnt_rule::gen_policy_bind_mount(Profile &prof, int &count,
+				    unsigned int flags, unsigned int opt_flags)
 {
 	std::string mntbuf;
 	std::string devbuf;
@@ -789,7 +809,9 @@ fail:
 	return RULE_ERROR;
 }
 
-int mnt_rule::gen_policy_change_mount_type(Profile &prof, int &count)
+int mnt_rule::gen_policy_change_mount_type(Profile &prof, int &count,
+					   unsigned int flags,
+					   unsigned int opt_flags)
 {
 	std::string mntbuf;
 	std::string devbuf;
@@ -828,7 +850,8 @@ fail:
 	return RULE_ERROR;
 }
 
-int mnt_rule::gen_policy_move_mount(Profile &prof, int &count)
+int mnt_rule::gen_policy_move_mount(Profile &prof, int &count,
+				    unsigned int flags, unsigned int opt_flags)
 {
 	std::string mntbuf;
 	std::string devbuf;
@@ -869,7 +892,8 @@ fail:
 	return RULE_ERROR;
 }
 
-int mnt_rule::gen_policy_new_mount(Profile &prof, int &count)
+int mnt_rule::gen_policy_new_mount(Profile &prof, int &count,
+				   unsigned int flags, unsigned int opt_flags)
 {
 	std::string mntbuf;
 	std::string devbuf;
@@ -931,6 +955,53 @@ fail:
 	return RULE_ERROR;
 }
 
+int mnt_rule::gen_flag_rules(Profile &prof, int &count, unsigned int flags,
+			     unsigned int opt_flags)
+{
+	/*
+	 * XXX: added !flags to cover cases like:
+	 * mount options in (bind) /d -> /4,
+	 */
+	if ((allow & AA_MAY_MOUNT) && (!flags || flags == MS_ALL_FLAGS)) {
+		/* no mount flags specified, generate multiple rules */
+		if (!device && !dev_type &&
+		    gen_policy_remount(prof, count, flags, opt_flags) == RULE_ERROR)
+			return RULE_ERROR;
+		if (!dev_type && !opts &&
+		    gen_policy_bind_mount(prof, count, flags, opt_flags) == RULE_ERROR)
+			return RULE_ERROR;
+		if (!device && !dev_type && !opts &&
+		    gen_policy_change_mount_type(prof, count, flags, opt_flags) == RULE_ERROR)
+			return RULE_ERROR;
+		if (!dev_type && !opts &&
+		    gen_policy_move_mount(prof, count, flags, opt_flags) == RULE_ERROR)
+			return RULE_ERROR;
+
+		return gen_policy_new_mount(prof, count, flags, opt_flags);
+	} else if ((allow & AA_MAY_MOUNT) && (flags & MS_REMOUNT)
+		   && !device && !dev_type) {
+		return gen_policy_remount(prof, count, flags, opt_flags);
+	} else if ((allow & AA_MAY_MOUNT) && (flags & MS_BIND)
+		   && !dev_type && !opts) {
+		return gen_policy_bind_mount(prof, count, flags, opt_flags);
+	} else if ((allow & AA_MAY_MOUNT) &&
+		   (flags & (MS_MAKE_CMDS))
+		   && !device && !dev_type && !opts) {
+		return gen_policy_change_mount_type(prof, count, flags, opt_flags);
+	} else if ((allow & AA_MAY_MOUNT) && (flags & MS_MOVE)
+		   && !dev_type && !opts) {
+		return gen_policy_move_mount(prof, count, flags, opt_flags);
+	} else if ((allow & AA_MAY_MOUNT) &&
+		   (flags | opt_flags) & ~MS_CMDS) {
+		/* generic mount if flags are set that are not covered by
+		 * above commands
+		 */
+		return gen_policy_new_mount(prof, count, flags, opt_flags);
+	}
+
+	return RULE_OK;
+}
+
 int mnt_rule::gen_policy_re(Profile &prof)
 {
 	std::string mntbuf;
@@ -941,61 +1012,16 @@ int mnt_rule::gen_policy_re(Profile &prof)
 	const char *vec[5];
 	int count = 0;
 
-	if (!kernel_supports_mount) {
-		warn_once(prof.name);
-		return RULE_NOT_SUPPORTED;
-	}
-
 	sprintf(class_mount_hdr, "\\x%02x", AA_CLASS_MOUNT);
 
 	/* a single mount rule may result in multiple matching rules being
 	 * created in the backend to cover all the possible choices
 	 */
-
-	/*
-	 * XXX: added !flags to cover cases like:
-	 * mount options in (bind) /d -> /4,
-	 */
-	if ((allow & AA_MAY_MOUNT) && (!flags || flags == MS_ALL_FLAGS)) {
-		/* no mount flags specified, generate multiple rules */
-		if (!device && !dev_type &&
-		    gen_policy_remount(prof, count) == RULE_ERROR)
-			goto fail;
-		if (!dev_type && !opts &&
-		    gen_policy_bind_mount(prof, count) == RULE_ERROR)
-			goto fail;
-		if (!device && !dev_type && !opts &&
-		    gen_policy_change_mount_type(prof, count) == RULE_ERROR)
-			goto fail;
-		if (!dev_type && !opts &&
-		    gen_policy_move_mount(prof, count) == RULE_ERROR)
-			goto fail;
-		if (gen_policy_new_mount(prof, count) == RULE_ERROR)
-			goto fail;
-	} else if ((allow & AA_MAY_MOUNT) && (flags & MS_REMOUNT)
-		   && !device && !dev_type) {
-		if (gen_policy_remount(prof, count) == RULE_ERROR)
-			goto fail;
-	} else if ((allow & AA_MAY_MOUNT) && (flags & MS_BIND)
-		   && !dev_type && !opts) {
-		if (gen_policy_bind_mount(prof, count) == RULE_ERROR)
-			goto fail;
-	} else if ((allow & AA_MAY_MOUNT) &&
-		   (flags & (MS_MAKE_CMDS))
-		   && !device && !dev_type && !opts) {
-		if (gen_policy_change_mount_type(prof, count) == RULE_ERROR)
-			goto fail;
-	} else if ((allow & AA_MAY_MOUNT) && (flags & MS_MOVE)
-		   && !dev_type && !opts) {
-		if (gen_policy_move_mount(prof, count) == RULE_ERROR)
-			goto fail;
-	} else if ((allow & AA_MAY_MOUNT) &&
-		   (flags | opt_flags) & ~MS_CMDS) {
-		/* generic mount if flags are set that are not covered by
-		 * above commands
-		 */
-		if (gen_policy_new_mount(prof, count) == RULE_ERROR)
-			goto fail;
+	for (size_t i = 0; i < flagsv.size(); i++) {
+		for (size_t j = 0; j < opt_flagsv.size(); j++) {
+			if (gen_flag_rules(prof, count, flagsv[i], opt_flagsv[j]) == RULE_ERROR)
+				goto fail;
+		}
 	}
 	if (allow & AA_MAY_UMOUNT) {
 		/* rule class single byte header */

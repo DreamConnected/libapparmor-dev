@@ -20,6 +20,7 @@
 #define __AA_MOUNT_H
 
 #include <ostream>
+#include <vector>
 
 #include "parser.h"
 #include "rule.h"
@@ -120,11 +121,19 @@
 
 
 class mnt_rule: public rule_t {
-	int gen_policy_remount(Profile &prof, int &count);
-	int gen_policy_bind_mount(Profile &prof, int &count);
-	int gen_policy_change_mount_type(Profile &prof, int &count);
-	int gen_policy_move_mount(Profile &prof, int &count);
-	int gen_policy_new_mount(Profile &prof, int &count);
+	int gen_policy_remount(Profile &prof, int &count, unsigned int flags,
+			       unsigned int opt_flags);
+	int gen_policy_bind_mount(Profile &prof, int &count, unsigned int flags,
+				  unsigned int opt_flags);
+	int gen_policy_change_mount_type(Profile &prof, int &count,
+					 unsigned int flags,
+					 unsigned int opt_flags);
+	int gen_policy_move_mount(Profile &prof, int &count, unsigned int flags,
+				  unsigned int opt_flags);
+	int gen_policy_new_mount(Profile &prof, int &count, unsigned int flags,
+				 unsigned int opt_flags);
+	int gen_flag_rules(Profile &prof, int &count, unsigned int flags,
+			   unsigned int opt_flags);
 public:
 	char *mnt_point;
 	char *device;
@@ -132,7 +141,7 @@ public:
 	struct value_list *dev_type;
 	struct value_list *opts;
 
-	unsigned int flags, opt_flags;
+	std::vector<unsigned int> flagsv, opt_flagsv;
 
 	int allow, audit;
 	int deny;

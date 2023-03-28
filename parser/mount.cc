@@ -414,7 +414,8 @@ static struct cond_entry *extract_options(struct cond_entry **conds, int eq)
 		     strcmp(entry->name, "option") == 0) &&
 		    entry->eq == eq) {
 			list_remove_at(*conds, prev, entry);
-			PDEBUG("  extracting option %s\n", entry->name);
+			PDEBUG("  extracting %s %s\n", entry->name, entry->eq ? 
+"=" : "in");
 			list_append(entry, list);
 			list = entry;
 		} else
@@ -992,12 +993,12 @@ int mnt_rule::gen_flag_rules(Profile &prof, int &count, unsigned int flags,
 		   && !dev_type && !opts) {
 		return gen_policy_move_mount(prof, count, flags, opt_flags);
 	} else if ((allow & AA_MAY_MOUNT) &&
-		   (flags | opt_flags) & ~MS_CMDS) {
+		   ((flags | opt_flags) & ~MS_CMDS)) {
 		/* generic mount if flags are set that are not covered by
 		 * above commands
 		 */
 		return gen_policy_new_mount(prof, count, flags, opt_flags);
-	}
+	} /* else must be RULE_OK for some rules */
 
 	return RULE_OK;
 }

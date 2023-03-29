@@ -165,6 +165,7 @@ FILE *search_path(char *filename, char **fullpath, bool *skip)
 		if (g_includecache->find(buf)) {
 			/* hit do not want to re-include */
 			*skip = true;
+			free(buf);
 			return NULL;
 		}
 

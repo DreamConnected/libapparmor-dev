@@ -1,6 +1,6 @@
 #
 #=Description basic mount rule
-#=EXRESULT PASS
+#=EXRESULT FAIL
 #
 /usr/bin/foo {
   mount options=(rw ro) fstype=(procfs) none -> /foo,

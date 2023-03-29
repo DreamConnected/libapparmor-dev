@@ -1773,7 +1773,7 @@ static int abi_features_base(struct aa_features **features, char *filename, bool
 {
 	autofclose FILE *f = NULL;
 	struct stat my_stat;
-	char *fullpath = NULL;
+	autofree char *fullpath = NULL;
 	bool cached;
 
 	if (search) {

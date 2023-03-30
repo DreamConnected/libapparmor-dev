@@ -139,6 +139,9 @@
  * #define MS_STRICTATIME	(1<<24)	Always perform atime updates
  *	strictatime
  *	nostrictatime
+ * #define MS_LAZYTIME (1<<25)	Update the on-disk [acm]times lazily
+ *	lazytime
+ *	nolazytime
  * #define MS_NOSEC	(1<<28)
  * #define MS_BORN		(1<<29)
  * #define MS_ACTIVE	(1<<30)
@@ -284,6 +287,9 @@ static struct mnt_keyword_table mnt_opts_table[] = {
 	{"iversion",		MS_IVERSION, 0},
 	{"noiversion",		0, MS_IVERSION},
 	{"strictatime",		MS_STRICTATIME, 0},
+	{"nostrictatime",	0, MS_STRICTATIME},
+	{"lazytime",		MS_LAZYTIME, 0},
+	{"nolazytime",		0, MS_LAZYTIME},
 	{"user",		0, (unsigned int) MS_NOUSER},
 	{"nouser",		(unsigned int) MS_NOUSER, 0},
 

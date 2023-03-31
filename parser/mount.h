@@ -81,7 +81,7 @@
 			 MS_UNBINDABLE | MS_RUNBINDABLE | \
 			 MS_PRIVATE | MS_RPRIVATE | \
 			 MS_SLAVE | MS_RSLAVE | MS_SHARED | MS_RSHARED | \
-			 MS_RELATIME | MS_IVERSION | MS_STRICTATIME | MS_USER)
+			 MS_RELATIME | MS_IVERSION | MS_STRICTATIME | MS_LAZYTIME | MS_USER)
 
 /* set of flags we don't use but define (but not with the kernel values)
  *  for MNT_FLAGS

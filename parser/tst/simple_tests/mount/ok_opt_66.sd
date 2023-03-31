@@ -1,0 +1,7 @@
+#
+#=Description basic rules to test the "symfollow" mount option in combination
+#=EXRESULT PASS
+/usr/bin/foo {
+  mount options=(rw,symfollow) /c -> /3,
+  mount options in (ro,symfollow) /e -> /5,
+}

@@ -207,6 +207,9 @@ class ReadLog:
                 # in current log style, owner permissions are indicated by a match of fsuid and ouid
                 owner = True
 
+            if 'x' in dmask and dmask != 'x':
+                dmask = dmask.replace('x', '')  # if dmask contains x and another mode, drop x here - we should see a separate exec event
+
             for perm in dmask:
                 if perm in 'mrwalk':  # intentionally not allowing 'x' here
                     self.hashlog[aamode][full_profile]['path'][e['name']][owner][perm] = True

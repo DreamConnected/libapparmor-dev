@@ -1,0 +1,16 @@
+START
+File: file_xm.in
+Event type: AA_RECORD_DENIED
+Audit ID: 1676978994.840:1493
+Operation: link
+Mask: xm
+Denied Mask: xm
+fsuid: 250
+ouid: 250
+Profile: cargo
+Name: /var/tmp/portage/dev-lang/rust-1.67.1/work/rustc-1.67.1-src/build/bootstrap/debug/libbootstrap.rlib
+Command: cargo
+Name2: /var/tmp/portage/dev-lang/rust-1.67.1/work/rustc-1.67.1-src/build/bootstrap/debug/deps/libbootstrap-4542dd99e796257e.rlib
+PID: 12412
+Epoch: 1676978994
+Audit subid: 1493

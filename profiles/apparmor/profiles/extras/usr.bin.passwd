@@ -38,4 +38,7 @@ include <tunables/global>
   /usr/share/cracklib/pw_dict.hwm r,
   /usr/share/cracklib/pw_dict.pwd r,
   /usr/share/cracklib/pw_dict.pwi r,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.bin.passwd>
 }

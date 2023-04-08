@@ -68,4 +68,7 @@ include <tunables/global>
   /var/cache/man/** rk,
 
   owner @{HOME}/.lesshst rw,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.lib.man-db.man>
 }

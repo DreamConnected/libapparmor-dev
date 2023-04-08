@@ -29,4 +29,7 @@ include <tunables/global>
   # spoofing feature of oidentd
   @{HOME}/.ispoof          r,
   @{HOME}/.oidentd.conf    r,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.sbin.oidentd>
 }

@@ -23,4 +23,7 @@ include <tunables/global>
   /tmp/.*                                rwl   ,
   /usr/sbin/ipop2d                       rmix,
   /usr/share/ssl/certs/ipop2d.pem        r     ,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.sbin.ipop2d>
 }

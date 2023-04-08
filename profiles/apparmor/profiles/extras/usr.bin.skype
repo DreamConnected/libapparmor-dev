@@ -81,5 +81,8 @@ include <tunables/global>
   deny /var/cache/fontconfig/ w,
   deny owner @{HOME}/.fontconfig/ w,
   deny owner @{HOME}/.fontconfig/*.cache-*.TMP* w,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.bin.skype>
 }
 

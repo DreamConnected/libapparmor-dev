@@ -40,4 +40,6 @@ include <tunables/global>
   /usr/share/mlmmj/text.skel/*/* r,
   /etc/mlmmj/text/*/finish r,
 
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.bin.mlmmj-unsub>
 }

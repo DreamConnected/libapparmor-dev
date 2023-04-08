@@ -44,4 +44,7 @@ profile postfix-local /usr/lib/postfix/{bin/,sbin/,}local {
   /{var/spool/postfix/,}public/{cleanup,flush}          rw,
   # deliver mail
   /var/mail/*                                          wk,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/postfix-local>
 }

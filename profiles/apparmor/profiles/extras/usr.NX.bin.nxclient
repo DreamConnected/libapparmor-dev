@@ -36,4 +36,7 @@ include <tunables/global>
   @{HOME}/.Xauthority-l     rwl,
   @{HOME}/.ssh/config       r,
   @{HOME}/.ssh/known_hosts  rw,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.NX.bin.nxclient>
 }

@@ -23,4 +23,7 @@ include <tunables/global>
   /tmp/.*                                rwl   ,
   /usr/sbin/ipop3d                       rmix,
   /usr/share/ssl/certs/ipop3d.pem        r     ,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.sbin.ipop3d>
 }

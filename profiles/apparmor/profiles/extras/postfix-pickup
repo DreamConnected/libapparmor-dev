@@ -24,4 +24,7 @@ profile postfix-pickup /usr/lib/postfix/{bin/,sbin/,}pickup {
   /{var/spool/postfix/,}public/pickup            r,
   /{var/spool/postfix/,}maildrop/                r,
   /{var/spool/postfix/,}maildrop/*               rwl,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/postfix-pickup>
 }

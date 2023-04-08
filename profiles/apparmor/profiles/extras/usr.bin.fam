@@ -21,4 +21,7 @@ include <tunables/global>
   # it makes some level of sense for FAM to read all files on the
   # filesystem, even if this is a little unfortunate.
   /** 			r,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.bin.fam>
 }

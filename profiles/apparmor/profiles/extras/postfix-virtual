@@ -23,4 +23,7 @@ profile postfix-virtual /usr/lib/postfix/{bin/,sbin/,}virtual {
   /var/spool/postfix/active/* rw,
   /var/spool/postfix/pid/unix.virtual rw,
   /var/spool/postfix/private/bounce w,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/postfix-virtual>
 }

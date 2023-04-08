@@ -19,4 +19,7 @@ profile postfix-qmqpd /usr/lib/postfix/{bin/,sbin/,}qmqpd {
   include <abstractions/postfix-common>
 
   /usr/lib/postfix/{bin/,sbin/,}qmqpd mrix,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/postfix-qmqpd>
 }

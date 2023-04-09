@@ -18,7 +18,7 @@ include <tunables/global>
 #  /usr/lib/firefox-4.0b8/firefox
 # but not:
 #  /usr/lib/firefox-4.0b8/firefox.sh
-/usr/lib/firefox{,-[0-9]*}/firefox{,*[^s][^h]} {
+profile firefox /usr/lib/firefox{,-[0-9]*}/firefox{,*[^s][^h]} {
   include <abstractions/audio>
   include <abstractions/cups-client>
   include <abstractions/dbus-session>
@@ -128,7 +128,6 @@ include <tunables/global>
   @{HOME}/.mozilla/firefox/*/gmp-widevinecdm/*/lib*so m,
 
   # Site-specific additions and overrides. See local/README for details.
-  # Local path is disabled, we only enable them for profiles we promote
-  # out of extras.
   include if exists <local/usr.bin.firefox>
+  include if exists <local/firefox>
 }

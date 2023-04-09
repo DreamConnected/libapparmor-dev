@@ -4,7 +4,7 @@ abi <abi/3.0>,
 
 include <tunables/global>
 
-/usr/lib/firefox/firefox.sh {
+profile firefox.sh /usr/lib/firefox/firefox.sh {
   include <abstractions/base>
   include <abstractions/bash>
   include <abstractions/consoles>

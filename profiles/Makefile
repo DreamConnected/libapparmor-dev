@@ -47,10 +47,10 @@ else
     PYTHONPATH=../utils/:$(PYTHON_DIST_BUILD_PATH)
     PARSER?=../parser/apparmor_parser
     # use ../utils logprof
-    LOGPROF?=LD_LIBRARY_PATH=$(LD_LIBRARY_PATH) PYTHONPATH=$(PYTHONPATH) $(PYTHON) ../utils/aa-logprof
+    LOGPROF?=LD_LIBRARY_PATH=$(LD_LIBRARY_PATH) PYTHONPATH=$(PYTHONPATH) $(PYTHON) ../utils/aa-logprof --configdir ../utils/
 endif
 
-# $(PWD) is wrong when using "make -C profiles" - explicitely set it here to get the right value
+# $(PWD) is wrong when using "make -C profiles" - explicitly set it here to get the right value
 PWD=$(shell pwd)
 
 .PHONY: test-dependencies
@@ -83,7 +83,7 @@ local:
 		fn=$$(basename $$profile); \
 		echo "# Site-specific additions and overrides for '$$fn'" > ${PROFILES_SOURCE}/local/$$fn; \
 		grep "include[[:space:]]\\+if[[:space:]]\\+exists[[:space:]]\\+<local/$$fn>" "$$profile" >/dev/null || { echo "$$profile doesn't contain include if exists <local/$$fn>" ; exit 1; } ; \
-	done; \
+	done
 
 .PHONY: install
 install: local
@@ -119,7 +119,7 @@ CHECK_PROFILES=$(filter-out ${IGNORE_FILES} ${SUBDIRS}, $(wildcard ${PROFILES_SO
 CHECK_ABSTRACTIONS=$(shell find ${ABSTRACTIONS_SOURCE} -type f -print)
 
 .PHONY: check
-check: check-parser check-logprof check-abstractions.d
+check: check-parser check-logprof check-abstractions.d check-extras
 
 .PHONY: check-parser
 check-parser: test-dependencies local
@@ -150,4 +150,12 @@ check-abstractions.d:
 		test "$$file" = 'ubuntu-browsers' && continue ; \
 		test "$$file" = 'ubuntu-helpers' && continue ; \
 		grep -q "^  include if exists <abstractions/$${file}.d>$$" $$file || { echo "$$file does not contain 'include if exists <abstractions/$${file}.d>'"; exit 1; } ; \
+	done
+
+.PHONY: check-extras
+check-extras:
+	@echo "*** Checking if all extra profiles contain include if exists <local/*>"
+	$(Q)cd ${EXTRAS_SOURCE} && for file in * ; do \
+		test "$$file" = 'README' && continue ; \
+		grep -q "^  include if exists <local/$${file}>$$" $$file || { echo "$$file does not contain 'include if exists <local/$${file}>'"; exit 1; } ; \
 	done

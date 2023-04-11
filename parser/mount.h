@@ -40,6 +40,8 @@
 #define MS_MAND		(1 << 6)
 #define MS_NOMAND	0
 #define MS_DIRSYNC	(1 << 7)
+#define MS_SYMFOLLOW	0
+#define MS_NOSYMFOLLOW	(1 << 8)
 #define MS_NODIRSYNC	0
 #define MS_NOATIME	(1 << 10)
 #define MS_ATIME	0
@@ -76,12 +78,14 @@
 
 #define MS_ALL_FLAGS	(MS_RDONLY | MS_NOSUID | MS_NODEV | MS_NOEXEC | \
 			 MS_SYNC | MS_REMOUNT | MS_MAND | MS_DIRSYNC | \
+			 MS_NOSYMFOLLOW | \
 			 MS_NOATIME | MS_NODIRATIME | MS_BIND | MS_RBIND | \
 			 MS_MOVE | MS_VERBOSE | MS_ACL | \
 			 MS_UNBINDABLE | MS_RUNBINDABLE | \
 			 MS_PRIVATE | MS_RPRIVATE | \
 			 MS_SLAVE | MS_RSLAVE | MS_SHARED | MS_RSHARED | \
-			 MS_RELATIME | MS_IVERSION | MS_STRICTATIME | MS_LAZYTIME | MS_USER)
+			 MS_RELATIME | MS_IVERSION | MS_STRICTATIME | \
+			 MS_LAZYTIME | MS_USER)
 
 /* set of flags we don't use but define (but not with the kernel values)
  *  for MNT_FLAGS

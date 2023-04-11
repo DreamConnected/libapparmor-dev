@@ -98,6 +98,9 @@
  *	nomand
  * #define MS_DIRSYNC	128		Directory modifications are synchronous
  *	dirsync
+ * #define MS_NOSYMFOLLOW	256 	Do not follow symlinks
+ *	symfollow
+ *	nosymfollow
  * #define MS_NOATIME	1024		Do not update access times
  *	noatime
  *	atime
@@ -250,6 +253,8 @@ static struct mnt_keyword_table mnt_opts_table[] = {
 	{"mand",		MS_MAND, 0},
 	{"nomand",		0, MS_MAND},
 	{"dirsync",		MS_DIRSYNC, 0},
+	{"symfollow",		0, MS_NOSYMFOLLOW},
+	{"nosymfollow",		MS_NOSYMFOLLOW, 0},
 	{"atime",		0, MS_NOATIME},
 	{"noatime",		MS_NOATIME, 0},
 	{"diratime",		0, MS_NODIRATIME},

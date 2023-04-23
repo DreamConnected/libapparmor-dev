@@ -109,7 +109,7 @@ extern struct aa_network_entry *network_entry(const char *family,
 					      const char *protocol);
 extern size_t get_af_max(void);
 
-void __debug_network(unsigned int *array, const char *name);
+void __debug_network(ostream &os, unsigned int *array, const char *name);
 
 struct network {
 	unsigned int *allow;		/* array of type masks
@@ -120,15 +120,15 @@ struct network {
 
 	network(void) { allow = audit = deny = quiet = NULL; }
 
-	void dump(void) {
+	void dump(ostream &os) {
 		if (allow)
-			__debug_network(allow, "Network");
+			__debug_network(os, allow, "Network");
 		if (audit)
-			__debug_network(audit, "Audit Net");
+			__debug_network(os, audit, "Audit Net");
 		if (deny)
-			__debug_network(deny, "Deny Net");
+			__debug_network(os, deny, "Deny Net");
 		if (quiet)
-			__debug_network(quiet, "Quiet Net");
+			__debug_network(os, quiet, "Quiet Net");
 	}
 };
 

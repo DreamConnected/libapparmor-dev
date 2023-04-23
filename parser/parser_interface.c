@@ -251,7 +251,7 @@ static inline void sd_write_name(std::ostringstream &buf, const char *name)
 	}
 }
 
-static inline void sd_write_blob(std::ostringstream &buf, void *b, int buf_size, char *name)
+static inline void sd_write_blob(std::ostringstream &buf, const void *b, int buf_size, const char *name)
 {
 	sd_write_name(buf, name);
 	sd_write8(buf, SD_BLOB);
@@ -274,7 +274,7 @@ static inline void sd_write_aligned_blob(std::ostringstream &buf, void *b, int b
 	buf.write((const char *) b, b_size);
 }
 
-static void sd_write_strn(std::ostringstream &buf, char *b, int size, const char *name)
+static void sd_write_strn(std::ostringstream &buf, const char *b, int size, const char *name)
 {
 	sd_write_name(buf, name);
 	sd_write8(buf, SD_STRING);
@@ -282,7 +282,7 @@ static void sd_write_strn(std::ostringstream &buf, char *b, int size, const char
 	buf.write(b, size);
 }
 
-static inline void sd_write_string(std::ostringstream &buf, char *b, const char *name)
+static inline void sd_write_string(std::ostringstream &buf, const char *b, const char *name)
 {
 	sd_write_strn(buf, b, strlen(b) + 1, name);
 }
@@ -484,6 +484,13 @@ void sd_serialize_profile(std::ostringstream &buf, Profile *profile,
 	/* either have a single dfa or lists of different entry types */
 	sd_serialize_dfa(buf, profile->dfa.dfa, profile->dfa.size);
 	sd_serialize_xtable(buf, profile->exec_table);
+
+	if (conf_raw_text) {
+		ostringstream ss;
+		profile->dump(ss, ss);
+		std::string s = ss.str();
+		sd_write_blob(buf, s.c_str(), s.size(), "text_policy");
+	}
 
 	sd_write_structend(buf);
 }

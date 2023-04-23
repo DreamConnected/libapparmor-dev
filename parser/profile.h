@@ -50,7 +50,7 @@ public:
 	virtual pair<ProfileList::iterator,bool> insert(Profile *);
 	virtual void erase(ProfileList::iterator pos);
 	void clear(void);
-	void dump(void);
+	void dump(ostream &os, ostream &osflags);
 	void dump_profile_names(bool children);
 };
 
@@ -154,16 +154,16 @@ struct capabilities {
 
 	capabilities(void) { allow = audit = deny = quiet = 0; }
 
-	void dump()
+	void dump(ostream &os)
 		{
 			if (allow != 0ull)
-				__debug_capabilities(allow, "Capabilities");
+				__debug_capabilities(os, allow, "Capabilities");
 			if (audit != 0ull)
-				__debug_capabilities(audit, "Audit Caps");
+				__debug_capabilities(os, audit, "Audit Caps");
 			if (deny != 0ull)
-				__debug_capabilities(deny, "Deny Caps");
+				__debug_capabilities(os, deny, "Deny Caps");
 			if (quiet != 0ull)
-				__debug_capabilities(quiet, "Quiet Caps");
+				__debug_capabilities(os, quiet, "Quiet Caps");
 		};
 };
 
@@ -251,34 +251,39 @@ public:
 
 	void dump(void)
 	{
+		dump(cout, cerr);
+	}
+
+	void dump(ostream &os, ostream &osflags)
+	{
 		if (ns)
-			printf("Ns:\t\t%s\n", ns);
+			os << "Ns:\t\t" << ns << "\n";
 
 		if (name)
-			printf("Name:\t\t%s\n", name);
+			os << "Name:\t\t" << name << "\n";
 		else
-			printf("Name:\t\t<NULL>\n");
+			os << "Name:\t\t<NULL>\n";
 
 		if (local) {
 			if (parent)
-				printf("Local To:\t%s\n", parent->name);
+				os << "Local To:\t" << parent->name << "\n";
 			else
-				printf("Local To:\t<NULL>\n");
+				os << "Local To:\t<NULL>\n";
 		}
 
-		flags.dump(cerr);
-		caps.dump();
-		net.dump();
+		flags.dump(osflags);
+		caps.dump(os);
+		net.dump(os);
 
 		if (entries)
-			debug_cod_entries(entries);
+			debug_cod_entries(os, entries);
 
 		for (RuleList::iterator i = rule_ents.begin(); i != rule_ents.end(); i++) {
-			(*i)->dump(cout);
+			(*i)->dump(os);
 		}
 
-		printf("\n");
-		hat_table.dump();
+		os << "\n";
+		hat_table.dump(os, osflags);
 	}
 
 	bool alloc_net_table();

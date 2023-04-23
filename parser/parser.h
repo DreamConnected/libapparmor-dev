@@ -372,6 +372,7 @@ extern char *current_filename;
 extern FILE *ofile;
 extern int read_implies_exec;
 extern IncludeCache_t *g_includecache;
+extern int conf_raw_text;
 
 extern void pwarnf(bool werr, const char *fmt, ...) __attribute__((__format__(__printf__, 2, 3)));
 extern void common_warn_once(const char *name, const char *msg, const char **warned_name);
@@ -435,7 +436,7 @@ extern int is_blacklisted(const char *name, const char *path);
 extern struct value_list *new_value_list(char *value);
 extern struct value_list *dup_value_list(struct value_list *list);
 extern void free_value_list(struct value_list *list);
-extern void print_value_list(struct value_list *list);
+extern void print_value_list(ostream &os, struct value_list *list);
 extern struct cond_entry *new_cond_entry(char *name, int eq, struct value_list *list);
 extern void move_conditional_value(const char *rulename, char **dst_ptr,
 				   struct cond_entry *cond_ent);
@@ -460,7 +461,7 @@ extern struct cod_entry *new_entry(char *id, int mode, char *link_id);
 extern int str_to_boolean(const char* str);
 extern struct cod_entry *copy_cod_entry(struct cod_entry *cod);
 extern void free_cod_entries(struct cod_entry *list);
-void debug_cod_entries(struct cod_entry *list);
+void debug_cod_entries(ostream &os, struct cod_entry *list);
 
 #define SECONDS_P_MS (1000LL * 1000LL)
 long long convert_time_units(long long value, long long base, const char *units);

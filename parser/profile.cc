@@ -50,10 +50,10 @@ void ProfileList::clear(void)
 	}
 }
 
-void ProfileList::dump(void)
+void ProfileList::dump(ostream &os, ostream &osflags)
 {
 	for(ProfileList::iterator i = list.begin(); i != list.end(); i++) {
-		(*i)->dump();
+		(*i)->dump(os, osflags);
 	}
 }
 

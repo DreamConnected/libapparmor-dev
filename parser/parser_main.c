@@ -134,6 +134,8 @@ static const char *config_file = "/etc/apparmor/parser.conf";
 #define EARLY_ARG_CONFIG_FILE		142
 #define ARG_WERROR			143
 #define ARG_ESTIMATED_COMPILE_SIZE	144
+#define ARG_RAW_TEXT			145
+#define ARG_NO_RAW_TEXT 		146
 
 /* Make sure to update BOTH the short and long_options */
 static const char *short_options = "ad::f:h::rRVvI:b:BCD:NSm:M:qQn:XKTWkL:O:po:j:";
@@ -189,6 +191,8 @@ struct option long_options[] = {
 	{"override-policy-abi",	1, 0, ARG_OVERRIDE_POLICY_ABI},	/* no short option */
 	{"config-file",		1, 0, EARLY_ARG_CONFIG_FILE},	/* early option, no short option */
 	{"estimated-compile-size", 1, 0, ARG_ESTIMATED_COMPILE_SIZE}, /* no short option, not in help */
+	{"text-policy",		0, 0, ARG_RAW_TEXT},	/* no short option */
+	{"no-text-policy",	0, 0, ARG_NO_RAW_TEXT},	/* no short option */
 
 	{NULL, 0, 0, 0},
 };
@@ -251,6 +255,8 @@ static void display_usage(const char *command)
 	       "--print-config		Print config file location\n"
 	       "--warn n		Enable warnings (see --help=warn)\n"
 	       "--Werror [n]		Convert warnings to errors. If n is specified turn warn n into an error\n"
+	       "--text-policy		Load text policy into the kernel\n"
+	       "--no-text-policy	Do not load text policy into the kernel\n"
 	       ,command);
 }
 
@@ -784,6 +790,12 @@ static int process_arg(int c, char *optarg)
 			}
 			estimated_job_size = tmp * mult;
 		}
+		break;
+	case ARG_RAW_TEXT:
+		conf_raw_text = 1;
+		break;
+	case ARG_NO_RAW_TEXT:
+		conf_raw_text = 0;
 		break;
 	default:
 		/* 'unrecognized option' error message gets printed by getopt_long() */

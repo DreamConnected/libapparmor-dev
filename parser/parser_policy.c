@@ -290,7 +290,7 @@ int load_hats(std::ostringstream &buf, Profile *prof)
 
 void dump_policy(void)
 {
-	policy_list.dump();
+	policy_list.dump(cout, cerr);
 }
 
 void dump_policy_names(void)

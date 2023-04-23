@@ -567,11 +567,11 @@ ostream &mnt_rule::dump(ostream &os)
 
 	if (dev_type) {
 		os << " type=";
-		print_value_list(dev_type);
+		print_value_list(os, dev_type);
 	}
 	if (opts) {
 		os << " options=";
-		print_value_list(opts);
+		print_value_list(os, opts);
 	}
 	if (device)
 		os << " " << device;

@@ -406,17 +406,17 @@ bool capability_in_kernel(unsigned int cap)
 	return false;
 }
 
-void __debug_capabilities(uint64_t capset, const char *name)
+void __debug_capabilities(std::ostream &os, uint64_t capset, const char *name)
 {
 	unsigned int i;
 
-	printf("%s:", name);
+	os << name << ":";
 
 	for (i = 0; cap_table[i].name; i++) {
 		if ((1ull << cap_table[i].cap) & capset)
-			printf (" %s", cap_table[i].name);
+			os << " " << cap_table[i].name;
 	}
-	printf("\n");
+	os << "\n";
 }
 
 char *processunquoted(const char *string, int len)
@@ -1018,46 +1018,46 @@ void free_cod_entries(struct cod_entry *list)
 	free(list);
 }
 
-static void debug_base_perm_mask(int mask)
+static void debug_base_perm_mask(ostream &os, int mask)
 {
 	if (HAS_MAY_READ(mask))
-		printf("%c", COD_READ_CHAR);
+		os << COD_READ_CHAR;
 	if (HAS_MAY_WRITE(mask))
-		printf("%c", COD_WRITE_CHAR);
+		os << COD_WRITE_CHAR;
 	if (HAS_MAY_APPEND(mask))
-		printf("%c", COD_APPEND_CHAR);
+		os << COD_APPEND_CHAR;
 	if (HAS_MAY_LINK(mask))
-		printf("%c", COD_LINK_CHAR);
+		os << COD_LINK_CHAR;
 	if (HAS_MAY_LOCK(mask))
-		printf("%c", COD_LOCK_CHAR);
+		os << COD_LOCK_CHAR;
 	if (HAS_EXEC_MMAP(mask))
-		printf("%c", COD_MMAP_CHAR);
+		os << COD_MMAP_CHAR;
 	if (HAS_MAY_EXEC(mask))
-		printf("%c", COD_EXEC_CHAR);
+		os << COD_EXEC_CHAR;
 }
 
-void debug_cod_entries(struct cod_entry *list)
+void debug_cod_entries(ostream &os, struct cod_entry *list)
 {
 	struct cod_entry *item = NULL;
 
-	printf("--- Entries ---\n");
+	os << "--- Entries ---\n";
 
 	list_for_each(list, item) {
-		printf("Mode:\t");
+		os << "Mode:\t";
 		if (HAS_CHANGE_PROFILE(item->mode))
-			printf(" change_profile");
+			os << " change_profile";
 		if (HAS_EXEC_UNSAFE(item->mode))
-			printf(" unsafe");
-		debug_base_perm_mask(SHIFT_TO_BASE(item->mode, AA_USER_SHIFT));
-		printf(":");
-		debug_base_perm_mask(SHIFT_TO_BASE(item->mode, AA_OTHER_SHIFT));
+			os << " unsafe";
+		debug_base_perm_mask(os, SHIFT_TO_BASE(item->mode, AA_USER_SHIFT));
+		os << ":";
+		debug_base_perm_mask(os, SHIFT_TO_BASE(item->mode, AA_OTHER_SHIFT));
 		if (item->name)
-			printf("\tName:\t(%s)\n", item->name);
+			os << "\tName:\t(" << item->name << ")\n";
 		else
-			printf("\tName:\tNULL\n");
+			os << "\tName:\tNULL\n";
 
 		if (AA_LINK_BITS & item->mode)
-			printf("\tlink:\t(%s)\n", item->link_name ? item->link_name : "/**");
+			os << "\tlink:\t(" << (item->link_name ? item->link_name : "/**") << ")\n";
 
 	}
 }
@@ -1114,17 +1114,17 @@ fail2:
 	return NULL;
 }
 
-void print_value_list(struct value_list *list)
+void print_value_list(ostream &os, struct value_list *list)
 {
 	struct value_list *entry;
 
 	if (!list)
 		return;
 
-	fprintf(stderr, "%s", list->value);
+	os << list->value;
 	list = list->next;
 	list_for_each(list, entry) {
-		fprintf(stderr, ", %s", entry->value);
+		os << ", " << entry->value;
 	}
 }
 
@@ -1183,7 +1183,7 @@ void print_cond_entry(struct cond_entry *ent)
 {
 	if (ent) {
 		fprintf(stderr, "%s=(", ent->name);
-		print_value_list(ent->vals);
+		print_value_list(cerr, ent->vals);
 		fprintf(stderr, ")\n");
 	}
 }

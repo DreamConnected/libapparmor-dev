@@ -1038,7 +1038,12 @@ def ask_exec(hashlog):
                             hashlog[aamode][target_profile]['final_name'] = exec_target
 
                         # Check profile exists for px
-                        if not os.path.exists(get_profile_filename_from_attachment(exec_target, True)):
+                        if exec_target.startswith(('/', '@', '{')):
+                              prof_filename = get_profile_filename_from_attachment(exec_target, True)
+                        else:  # named exec
+                              prof_filename = get_profile_filename_from_profile_name(exec_target, True)
+
+                        if not os.path.exists(prof_filename):
                             ynans = 'y'
                             if 'i' in exec_mode:
                                 ynans = aaui.UI_YesNo(_('A profile for %s does not exist.\nDo you want to create one?') % exec_target, 'n')

@@ -13,9 +13,6 @@ profile nmbd /usr/{bin,sbin}/nmbd {
 
   /usr/{bin,sbin}/nmbd mr,
 
-  /var/cache/samba/gencache.tdb rwk,
-  /var/cache/samba/gencache_notrans.tdb rwk,
-  /var/cache/samba/names.tdb rwk,
   /var/{cache,lib}/samba/browse.dat* rw,
   /var/{cache,lib}/samba/gencache.dat rw,
   /var/{cache,lib}/samba/wins.dat* rw,

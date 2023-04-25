@@ -48,4 +48,7 @@ profile postfix-showq /usr/lib/postfix/{bin/,sbin/,}showq {
   /{var/spool/postfix/,}pid/unix.showq                             rwk,
   owner /{var/spool/postfix,}/defer/[0-9A-F]/[0-9A-F]* r,
   owner /{var/spool/postfix,}/deferred/[0-9A-F]/[0-9A-F]* r,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/postfix-showq>
 }

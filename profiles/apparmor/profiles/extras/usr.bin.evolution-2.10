@@ -20,7 +20,7 @@
 #            Mark mail as junk mail
 #            Print mail message with lpr local
 #            Print mail message with cups remote
-#            View pdf attachements
+#            View pdf attachments
 #            Decrypt using gpg
 #
 #    Send Mail: 
@@ -155,4 +155,7 @@ include <tunables/global>
   /usr/X11R6/lib/Acrobat7/Resource/Font r,
   /usr/X11R6/lib/Acrobat7/Resource/Font/** r,
   /var/tmp r,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.bin.evolution-2.10>
 }

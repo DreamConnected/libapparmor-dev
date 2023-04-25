@@ -30,7 +30,6 @@ profile winbindd /usr/{bin,sbin}/winbindd {
   /usr/lib*/samba/{,samba/}samba-dcerpcd Px -> samba-dcerpcd,
   /usr/{bin,sbin}/winbindd mr,
   /var/cache/krb5rcache/* rwk,
-  /var/cache/samba/*.tdb rwk,
   /var/lib/sss/pubconf/kdcinfo.* r,
   /var/log/samba/log.winbindd rw,
   @{run}/{samba/,}winbindd.pid rwk,

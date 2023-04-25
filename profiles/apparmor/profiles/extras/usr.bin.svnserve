@@ -32,4 +32,7 @@ include <tunables/global>
   /tmp/apr* rwl,  
   /var/tmp/apr* rwl, 
   /tmp/report*.tmp rwl, 
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.bin.svnserve>
 }

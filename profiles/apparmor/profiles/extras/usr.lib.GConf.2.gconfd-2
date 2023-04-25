@@ -33,4 +33,7 @@ include <tunables/global>
   /usr/lib/GConf/2/libgconfbackend-xml.so mr,
   /usr/lib64/GConf/2/libgconfbackend-xml.so mr,
   /usr/share/locale/** r,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.lib.GConf.2.gconfd-2>
 }

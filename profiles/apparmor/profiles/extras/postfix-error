@@ -26,4 +26,6 @@ profile postfix-error /usr/lib/postfix/{bin/,sbin/,}error {
   /var/spool/postfix/pid/unix.retry rwk,
   owner /var/spool/postfix/private/defer w,
 
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/postfix-error>
 }

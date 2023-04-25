@@ -24,4 +24,6 @@ profile postfix-lmtp /usr/lib/postfix/{bin/,sbin/,}lmtp {
   /var/spool/postfix/active/* rwk,
   /var/spool/postfix/pid/unix.lmtp rwk,
 
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/postfix-lmtp>
 }

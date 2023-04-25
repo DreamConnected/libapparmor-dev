@@ -22,4 +22,7 @@ include <tunables/global>
   /usr/bin/finger        mix,
   /var/log/lastlog       r,
   /{,var/}run/utmp       rk,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.sbin.in.fingerd>
 }

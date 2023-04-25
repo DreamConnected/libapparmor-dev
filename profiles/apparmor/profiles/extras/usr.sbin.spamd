@@ -39,4 +39,7 @@ include <tunables/global>
   /usr/share/spamassassin/*.cf r,
   /usr/share/spamassassin/*.template r,
   /usr/share/spamassassin/*.txt r,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.sbin.spamd>
 }

@@ -31,4 +31,7 @@ profile resmgrd /{usr/,}sbin/resmgrd {
   /{,var/}run/fence* lrw,
   /{,var/}run/resmgr/classes/** wl,
   /{run,var}/lock/LCK* lrw,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/sbin.resmgrd>
 }

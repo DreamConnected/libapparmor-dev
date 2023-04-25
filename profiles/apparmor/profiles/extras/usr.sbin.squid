@@ -62,4 +62,6 @@ include <tunables/global>
   /usr/sbin/wbinfo_group.pl   rmix,
   /usr/sbin/yp_auth   rmix,
 
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.sbin.squid>
 }

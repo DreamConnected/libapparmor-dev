@@ -20,4 +20,7 @@ include <tunables/global>
 
   /usr/lib/mozilla/lib*so* mr,
   /usr/lib/firefox/mozilla-xremote-client rmix,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.lib.firefox.mozilla-xremote-client>
 }

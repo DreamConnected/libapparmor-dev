@@ -161,6 +161,8 @@ run_all_combinations_test() {
 			genprofile cap:sys_admin "mount:ALL" "qual=deny:mount:options=($combination)"
 			runchecktest "MOUNT (confined cap mount combination deny test $combination)" fail mount ${loop_device} ${mount_point} -o $combination
 			remove_mnt
+		else
+			echo "    not supported by parser - skipping mount option=($combination),"
 		fi
 
 		genprofile cap:sys_admin "mount:options=(rw)"
@@ -171,6 +173,7 @@ run_all_combinations_test() {
 
 test_nonfs_options() {
 	if [ "$(parser_supports "mount options=($1),")" != "true" ] ; then
+	        echo "    not supported by parser - skipping mount options=($1),"
 		return
 	fi
 
@@ -189,6 +192,7 @@ test_nonfs_options() {
 
 test_dir_options() {
 	if [ "$(parser_supports "mount options=($1),")" != "true" ] ; then
+		echo "    not supported by parser - skipping mount option=($1),"
 		return
 	fi
 
@@ -206,6 +210,7 @@ test_dir_options() {
 
 test_propagation_options() {
 	if [ "$(parser_supports "mount options=($1),")" != "true" ] ; then
+		echo "    not supported by parser - skipping mount option=($1),"
 		return
 	fi
 
@@ -322,6 +327,7 @@ remove_mnt
 
 
 if [ "$(kernel_features mount)" != "true" -o "$(parser_supports 'mount,')" != "true" ] ; then
+	echo "    mount rules not supported, using capability check ..."
 	genprofile capability:sys_admin
 	runchecktest "MOUNT (confined cap)" pass mount ${loop_device} ${mount_point}
 	remove_mnt

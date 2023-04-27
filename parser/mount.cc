@@ -384,9 +384,8 @@ static bool conflicting_flags(unsigned int flags, unsigned int inv)
 		for (int i = 0; i < 31; i++) {
 			unsigned int mask = 1 << i;
 			if ((flags & inv) & mask) {
-				cerr << "conflicting flag value = ";
-				cerr << make_pair(flags, inv);
-				cerr << "\n";
+				cerr << "conflicting flag values = "
+				     << flags << ", " << inv << "\n";
 			}
 		}
 		return true;

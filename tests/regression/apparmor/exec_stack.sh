@@ -51,7 +51,7 @@ touch $file $otherfile $sharedfile $thirdfile
 # meaning the below conditional check has the wrong results for those
 # kernels. Since this test is not about testing mmap just always add
 # the mmap perm
-#if [ "$(kernel_features domain/fix_binfmt_elf_mmap)" == "true" ]; then
+#if [ "$(kernel_features domain/fix_binfmt_elf_mmap)" = "true" ]; then
 #    elfmmap="m"
 #else
 #    elfmmap=""

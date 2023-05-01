@@ -44,7 +44,7 @@ do_test()
     shift 4
 
     desc="ONEXEC $desc ($prof -> $target_prof)"
-    if [ "$target_prof" == "nochange" ] ; then
+    if [ "$target_prof" = "nochange" ] ; then
         runchecktest "$desc" $res -l "$prof" -- "$@"
     else
         runchecktest "$desc" $res -O "$target_prof" -l "$prof" -L "$target_prof" -- "$@"

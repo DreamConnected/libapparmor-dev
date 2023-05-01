@@ -37,7 +37,7 @@ af_unix_create_label=""
 af_unix_inherit=""
 aa_enabled="/sys/module/apparmor/parameters/enabled:r"
 
-if [ "$(kernel_features network/af_unix)" == "true" -a "$(parser_supports 'unix,')" == "true" ]; then
+if [ "$(kernel_features network/af_unix)" = "true" -a "$(parser_supports 'unix,')" = "true" ]; then
 	# AppArmor requires that the process inheriting the sock file
 	# descriptors have send,receive perms in its profile
 	af_unix_create="unix:(create,getopt)"

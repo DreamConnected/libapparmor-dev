@@ -55,7 +55,7 @@ fi
 # MS_PRIVATE temporarily.
 FINDMNT=/bin/findmnt
 if [ -x "${FINDMNT}" ] && ${FINDMNT} -no PROPAGATION / > /dev/null 2>&1 ; then
-	if [ "$(${FINDMNT} -no PROPAGATION /)" == "shared" ] ; then
+	if [ "$(${FINDMNT} -no PROPAGATION /)" = "shared" ] ; then
 	root_was_shared="yes"
 	fi
 elif [ "$(ps hp1  -ocomm)" = "systemd" ] ; then

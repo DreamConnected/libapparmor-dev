@@ -55,7 +55,7 @@ runchecktest "test 2 -h prog" pass -h -n 100 $helper ${bin_true}
 runchecktest "test 2 -hc prog" pass -h -c -n 100 $helper ${bin_true}
 
 
-if [ "$(kernel_features ptrace)" == "true" -a "$(parser_supports 'ptrace,')" == "true" ] ; then
+if [ "$(kernel_features ptrace)" = "true" -a "$(parser_supports 'ptrace,')" = "true" ] ; then
 	. $bin/ptrace_v6.inc
 else
 	. $bin/ptrace_v5.inc

@@ -16,7 +16,7 @@ fi
 out=$($1 -- cat /proc/self/attr/current 2>&1)
 rc=$?
 
-if [ $rc -eq 0 ] && [ "$out" == "$2" ]; then
+if [ $rc -eq 0 ] && [ "$out" = "$2" ]; then
 	echo PASS
 	exit 0
 elif [ $rc -ne 0 ]; then

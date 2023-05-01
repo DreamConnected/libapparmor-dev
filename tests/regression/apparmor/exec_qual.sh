@@ -57,7 +57,7 @@ local_runchecktest()
 
 	checktestbg
 
-	if [ "$teststatus" == "pass" -a -n "$actual_confinement" -a "$actual_confinement" != "$expected_confinement" ]
+	if [ "$teststatus" = "pass" -a -n "$actual_confinement" -a "$actual_confinement" != "$expected_confinement" ]
 	then
 		 echo "Error: ${testname} failed. Test '${_testdesc}' actual confinement '$actual_confinement' differed from expected confinement '$expected_confinement'"
 		testfailed

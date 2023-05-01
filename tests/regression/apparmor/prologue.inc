@@ -86,6 +86,19 @@ requires_kernel_features()
 	fi
 }
 
+requires_any_of_kernel_features()
+{
+	while [ $# -gt 0 ]; do
+		local res=$(kernel_features "$1")
+		if [ "$res" = "true" ] ; then
+			return 0;
+		fi
+		shift
+	done
+	echo "$res. Skipping tests ..."
+	exit 0
+}
+
 # requires_namespace_interface() - exit if namespace interface is not available
 requires_namespace_interface()
 {

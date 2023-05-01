@@ -29,7 +29,7 @@ bin=$pwd
 
 # check if we can run the test at all
 fstype=$(stat -f --format '%T' "${tmpdir}")
-if [ "${fstype}" == "tmpfs" ] ; then
+if [ "${fstype}" = "tmpfs" ] ; then
 	echo "ERROR: tmpdir '${tmpdir}' is of type tmpfs; can't mount a swapfile on it" 1>&2
 	echo "ERROR: skipping swap tests" 1>&2
 	num_testfailures=1

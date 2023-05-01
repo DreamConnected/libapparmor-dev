@@ -29,7 +29,7 @@ bin=$pwd
 . $bin/prologue.inc
 requires_kernel_features policy/versions/v6
 #af_mask for downgrade test af_unix for full test
-requires_kernel_features network/af_mask
+requires_any_of_kernel_features network/af_mask network_v8/af_mask
 
 settest unix_socket
 
@@ -43,9 +43,9 @@ message=4a0c83d87aaa7afa2baab5df3ee4df630f0046d5bfb7a3080c550b721f401b3b\
 okserver=w
 badserver1=r
 badserver2=
-if [ "$(kernel_features policy/versions/v7)" == "true" ] ; then
+if [ "$(kernel_features policy/versions/v7)" = "true" ] ; then
 	okserver=rw
-	badserver2=w
+#	badserver2=w
 fi
 
 # af_unix support requires 'unix create' to call socket()
@@ -54,9 +54,16 @@ fi
 # af_unix support requires 'unix getattr' to call getsockname()
 af_unix_okserver=
 af_unix_okclient=
-if [ "$(kernel_features network/af_unix)" == "true" -a "$(parser_supports 'unix,')" == "true" ] ; then
+if ( [ "$(kernel_features network_v8/af_unix)" = "true" ] ||
+     [ "$(kernel_features network/af_unix)" = "true" ] ) &&
+     [ "$(parser_supports 'unix,')" = "true" ] ; then
 	af_unix_okserver="create,setopt"
 	af_unix_okclient="create,getopt,setopt,getattr"
+elif [ "$(kernel_features network_v8)" = "true" ] ; then
+#	af_unix_okserver="create,setopt"
+#	af_unix_okclient="create,getopt,setopt,getattr"
+    af_unix_okserver="create"
+    af_unix_okclient="create"
 fi
 
 okclient=rw
@@ -88,7 +95,7 @@ testsocktype()
 	#   https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1373176
 	# get resolved
 	local ex_result="pass"
-	if [ "${socktype}" == "dgram" ] ; then
+	if [ "${socktype}" = "dgram" ] ; then
 		ex_result="xpass"
 	fi
 

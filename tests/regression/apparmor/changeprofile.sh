@@ -47,7 +47,7 @@ runchecktest "NO CHANGEPROFILE (access parent file)" pass nochange $file
 runchecktest "NO CHANGEPROFILE (access sub file)" fail nochange $subfile
 
 errno=EACCES
-if [ "$(kernel_features domain/stack)" == "true" ]; then
+if [ "$(kernel_features domain/stack)" = "true" ]; then
 	# The returned errno changed in the set of kernel patches that
 	# introduced AppArmor profile stacking
 	errno=ENOENT

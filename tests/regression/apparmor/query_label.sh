@@ -93,7 +93,7 @@ querytest()
 	runchecktest "$desc" "$pf" "$expect" "$label" "$perms" $*
 }
 
-if [ "$(kernel_features dbus)" == "true" ]; then
+if [ "$(kernel_features dbus)" = "true" ]; then
     # Check querying of a label that the kernel doesn't know about
     # aa_query_label() should return an error
     expect anything
@@ -217,7 +217,7 @@ fi
 genqueryprofile "file,"
 expect allow
 perms file exec,write,read,append,create,delete,setattr,getattr,chmod,chown,link,linksubset,lock,exec_mmap
-if [ "$(kernel_features query/label/multi_transaction)" == "true" ] ; then
+if [ "$(kernel_features query/label/multi_transaction)" = "true" ] ; then
     querytest "QUERY file (all base perms #1)" pass /anything
     querytest "QUERY file (all base perms #2)" pass /everything
 else

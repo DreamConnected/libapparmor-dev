@@ -56,8 +56,11 @@ static struct mnt_keyword_table mnt_opts_table[] = {
 	{ "nostrictatime", 0, MS_STRICTATIME }, /* kernel default atime */
 	{ "strictatime",   MS_STRICTATIME, 0 }, /* strict atime semantics */
 
+/* MS_LAZYTIME added in 4.0 kernel */
+#ifdef MS_LAZYTIME
 	{ "nolazytime", 0, MS_LAZYTIME },
 	{ "lazytime",   MS_LAZYTIME, 0 }, /* update {a,m,c}time on the in-memory inode only */
+#endif
 
 	{ "acl",   MS_POSIXACL, 0 },
 	{ "noacl", 0, MS_POSIXACL },
@@ -68,8 +71,11 @@ static struct mnt_keyword_table mnt_opts_table[] = {
 	{ "dirsync", MS_DIRSYNC, 0 }, /* synchronous directory modifications */
 	{ "nodirsync", 0, MS_DIRSYNC },
 
+/* MS_NOSYMFOLLOW added in 5.10 kernel */
+#ifdef MS_NOSYMFOLLOW
 	{ "nosymfollow", MS_NOSYMFOLLOW, 0 },
 	{ "symfollow",   0, MS_NOSYMFOLLOW },
+#endif
 
 	{ "bind",        MS_BIND,                0 }, /* remount part of the tree elsewhere */
 	{ "rbind",       MS_BIND | MS_REC,       0 }, /* idem, plus mounted subtrees */

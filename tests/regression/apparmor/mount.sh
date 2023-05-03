@@ -111,10 +111,14 @@ options=(
 	"noiversion,iversion"
 	"diratime,nodiratime"
 	"nostrictatime,strictatime"
-	"nolazytime,lazytime"
 	"norelatime,relatime"
 	"nodirsync,dirsync"
 	"noacl,acl"
+)
+
+# Options added in newer kernels
+new_options=(
+	"nolazytime,lazytime"
 	"symfollow,nosymfollow"
 )
 
@@ -269,6 +273,17 @@ remove_mnt
 setup_mnt
 runchecktest "UMOUNT (unconfined)" pass umount ${loop_device} ${mount_point}
 remove_mnt
+
+# Check mount options that may not be available on this kernel
+for i in "${new_options[@]}"; do
+	default="${i%,*}"
+	if "$bin/mount" mount ${loop_device} ${mount_point} -o $default > /dev/null 2>&1; then
+		remove_mnt
+		options+=($i)
+	else
+		echo "    not supported by kernel - skipping mount options=($i),"
+	fi
+done
 
 for i in "${options[@]}"; do
 	default="${i%,*}"

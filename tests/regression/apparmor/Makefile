@@ -328,6 +328,9 @@ unix_fd_client: unix_fd_client.c unix_fd_common.o
 attach_disconnected: attach_disconnected.c unix_fd_common.o
 	${CC} ${CFLAGS} ${LDFLAGS} $^ -o $@ ${LDLIBS}
 
+mount: mount.c
+	${CC} ${CFLAGS} -std=gnu99 ${LDFLAGS} $^ -o $@ ${LDLIBS}
+
 build-dep:
 	@if [ `whoami` = "root" ] ;\
 	then \

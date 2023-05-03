@@ -69,8 +69,8 @@ endif # USE_SYSTEM
 
 CFLAGS += -g -O0 -Wall -Wstrict-prototypes
 
-USE_SYSCTL:=$(shell echo "#include <sys/sysctl.h>" | cpp -dM >/dev/null 2>/dev/null && echo true)
-
+SYSCTL_INCLUDE="\#include <sys/sysctl.h>"
+USE_SYSCTL:=$(shell echo $(SYSCTL_INCLUDE) | cpp -dM >/dev/null 2>/dev/null && echo true)
 
 SRC=access.c \
     at_secure.c \

@@ -1,0 +1,7 @@
+#
+#=Description basic rules to test the "nolazytime" mount option in combination
+#=EXRESULT PASS
+/usr/bin/foo {
+  mount options=(rw,nolazytime) /c -> /3,
+  mount options in (ro,nolazytime) /e -> /5,
+}

@@ -104,6 +104,7 @@ test-profiles:
   script:
     - make -C profiles check-parser
     - make -C profiles check-abstractions.d
+    - make -C profiles check-extras
 
 shellcheck:
   stage: test

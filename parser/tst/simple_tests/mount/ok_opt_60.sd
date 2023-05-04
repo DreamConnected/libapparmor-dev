@@ -1,0 +1,7 @@
+#
+#=Description basic rules to test the "nostrictatime" mount option in combination
+#=EXRESULT PASS
+/usr/bin/foo {
+  mount options=(rw,nostrictatime) /c -> /3,
+  mount options in (ro,nostrictatime) /e -> /5,
+}

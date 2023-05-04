@@ -1,0 +1,7 @@
+#
+#=Description basic mount rule conflicting options with in
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  mount options in (lazytime, nolazytime) -> /foo,
+}

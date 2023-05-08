@@ -224,7 +224,7 @@ def hasher():
 
 
 def convert_regexp(regexp):
-    regex_paren = re.compile('^(.*){([^}]*)}(.*)$')
+    regex_paren = re.compile(r'^(.*)(?<!\\){([^}]*)(?<!\\)}(.*)$')
     regexp = regexp.strip()
 
     regexp = regexp.replace('(', '\\(').replace(')', '\\)')  # escape '(' and ')'
@@ -238,15 +238,15 @@ def convert_regexp(regexp):
         p1 = match[1].replace(',', '|')
         new_reg = prev + '(' + p1 + ')' + after
 
-    new_reg = new_reg.replace('?', '[^/\000]')
+    new_reg = re.sub(r'(?<!\\)\?', '[^/\000]', new_reg)
 
     multi_glob = '__KJHDKVZH_AAPROF_INTERNAL_GLOB_SVCUZDGZID__'
-    new_reg = new_reg.replace('**', multi_glob)
+    new_reg = re.sub(r'(?:(?<!\\)\*){2}', multi_glob, new_reg)
     # print(new_reg)
 
     # Match at least one character if * or ** after /
     # ?< is the negative lookback operator
-    new_reg = new_reg.replace('*', '(((?<=/)[^/\000]+)|((?<!/)[^/\000]*))')
+    new_reg = re.sub(r'(?<!\\)\*', '(((?<=/)[^/\000]+)|((?<!/)[^/\000]*))', new_reg)
     new_reg = new_reg.replace(multi_glob, '(((?<=/)[^\000]+)|((?<!/)[^\000]*))')
     if not regexp.startswith('^'):
         new_reg = '^' + new_reg

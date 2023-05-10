@@ -45,6 +45,9 @@ profile nscd /usr/{bin,sbin}/nscd {
   /{etc,run,run/host,/usr/lib}/userdb/ r,
   /{etc,run,run/host,/usr/lib}/userdb/*.{user,user-privileged,group,group-privileged} r,
 
+  # needed by unscd
+  @{run}/systemd/notify w,
+
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.sbin.nscd>
 }

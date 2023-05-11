@@ -152,7 +152,7 @@ parser_supports()
 # $@: rules to test
 requires_parser_support()
 {
-	local res=$(parser_supports $@)
+	local res=$(parser_supports "$@")
 	if [ "$res" != "true" ] ; then
 		echo "$res. Skipping tests ..."
 		exit 0

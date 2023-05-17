@@ -204,6 +204,7 @@ do {						\
 #endif
 
 
+#define list_first(LIST) (LIST)
 #define list_for_each(LIST, ENTRY) \
 	for ((ENTRY) = (LIST); (ENTRY); (ENTRY) = (ENTRY)->next)
 #define list_for_each_safe(LIST, ENTRY, TMP) \
@@ -235,6 +236,16 @@ do {						\
 		prev = tmp;		\
 	}				\
 	prev;				\
+})
+
+#define list_pop(LIST)				\
+({						\
+	typeof(LIST) _entry = (LIST);		\
+	if (LIST) {				\
+		(LIST) = (LIST)->next;		\
+		_entry->next = NULL;		\
+	}					\
+	_entry;					\
 })
 
 #define list_remove_at(LIST, PREV, ENTRY)			\

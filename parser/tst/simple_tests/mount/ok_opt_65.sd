@@ -1,0 +1,8 @@
+#
+#=Description basic rules to test the "nosymfollow" mount option
+#=EXRESULT PASS
+/usr/bin/foo {
+  mount options=nosymfollow /a -> /1,
+  mount options=(nosymfollow) /b -> /2,
+  mount options in (nosymfollow) /d -> /4,
+}

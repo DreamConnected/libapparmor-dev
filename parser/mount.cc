@@ -98,6 +98,9 @@
  *	nomand
  * #define MS_DIRSYNC	128		Directory modifications are synchronous
  *	dirsync
+ * #define MS_NOSYMFOLLOW	256 	Do not follow symlinks
+ *	symfollow
+ *	nosymfollow
  * #define MS_NOATIME	1024		Do not update access times
  *	noatime
  *	atime
@@ -139,6 +142,9 @@
  * #define MS_STRICTATIME	(1<<24)	Always perform atime updates
  *	strictatime
  *	nostrictatime
+ * #define MS_LAZYTIME (1<<25)	Update the on-disk [acm]times lazily
+ *	lazytime
+ *	nolazytime
  * #define MS_NOSEC	(1<<28)
  * #define MS_BORN		(1<<29)
  * #define MS_ACTIVE	(1<<30)
@@ -247,6 +253,8 @@ static struct mnt_keyword_table mnt_opts_table[] = {
 	{"mand",		MS_MAND, 0},
 	{"nomand",		0, MS_MAND},
 	{"dirsync",		MS_DIRSYNC, 0},
+	{"symfollow",		0, MS_NOSYMFOLLOW},
+	{"nosymfollow",		MS_NOSYMFOLLOW, 0},
 	{"atime",		0, MS_NOATIME},
 	{"noatime",		MS_NOATIME, 0},
 	{"diratime",		0, MS_NODIRATIME},
@@ -284,6 +292,9 @@ static struct mnt_keyword_table mnt_opts_table[] = {
 	{"iversion",		MS_IVERSION, 0},
 	{"noiversion",		0, MS_IVERSION},
 	{"strictatime",		MS_STRICTATIME, 0},
+	{"nostrictatime",	0, MS_STRICTATIME},
+	{"lazytime",		MS_LAZYTIME, 0},
+	{"nolazytime",		0, MS_LAZYTIME},
 	{"user",		0, (unsigned int) MS_NOUSER},
 	{"nouser",		(unsigned int) MS_NOUSER, 0},
 
@@ -373,9 +384,8 @@ static bool conflicting_flags(unsigned int flags, unsigned int inv)
 		for (int i = 0; i < 31; i++) {
 			unsigned int mask = 1 << i;
 			if ((flags & inv) & mask) {
-				cerr << "conflicting flag value = ";
-				cerr << make_pair(flags, inv);
-				cerr << "\n";
+				cerr << "conflicting flag values = "
+				     << flags << ", " << inv << "\n";
 			}
 		}
 		return true;

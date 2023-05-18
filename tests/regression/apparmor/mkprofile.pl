@@ -407,8 +407,8 @@ sub gen_from_args() {
     if ($rule =~ /^qual=([^:]*):(.*)/) {
       # Strip qualifiers from rule to pass as separate argument
       $qualifier = "$1 ";
-      $qualifier =~ s/,/ /g;
       $rule = $2;
+      $qualifier =~ s/,/ /g;
     }
 
     #($fn, @rules) = split (/:/, $rule);

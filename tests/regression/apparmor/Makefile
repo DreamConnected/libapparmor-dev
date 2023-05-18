@@ -307,6 +307,9 @@ unix_socket_client: unix_socket_client.c unix_socket_common.o
 unix_socket: unix_socket.c unix_socket_common.o unix_socket_client
 	${CC} ${CFLAGS} ${LDFLAGS} $(filter-out unix_socket_client, $^) -o $@ ${LDLIBS}
 
+mount: mount.c
+	${CC} ${CFLAGS} -std=gnu99 ${LDFLAGS} $^ -o $@ ${LDLIBS}
+
 tests: all
 	@if [ `whoami` = "root" ] ;\
 	then \

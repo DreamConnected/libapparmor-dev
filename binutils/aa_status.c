@@ -152,7 +152,6 @@ static int open_profiles(FILE **fp)
 		dfprintf(stderr, "apparmor not present.\n");
 		return AA_EXIT_DISABLED;
 	}
-	dprintf("apparmor module is loaded.\n");
 
 	ret = aa_find_mountpoint(&apparmorfs);
 	if (ret == -1) {
@@ -988,6 +987,8 @@ int main(int argc, char **argv)
 	ret = open_profiles(&fp);
 	if (ret != 0)
 		goto out;
+	if (!opt_json)
+		dfprintf(outf, "apparmor module is loaded.\n");
 
 	if (opt_pretty) {
 		outf_save = outf;

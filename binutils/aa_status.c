@@ -124,6 +124,7 @@ const char *opt_profiles = ".*";
 const char *opt_pid = ".*";
 const char *opt_exe = ".*";
 char *opt_test_profiles = NULL;
+char *opt_test_processes = NULL;
 
 const char *profile_statuses[] = {"enforce", "complain", "prompt", "kill", "unconfined"};
 const char *process_statuses[] = {"enforce", "complain", "prompt", "kill", "unconfined", "mixed"};
@@ -744,6 +745,7 @@ static int usage_tests(void)
 	 "Precanned test files and directories to check aa-status output"
 	 "against.\n"
 	 "  --test.profiles=file  file to use as profile set\n"
+	 "  --test.processes=dir  directory to use as proc tree\n"
 	 "\n"
 	);
 
@@ -802,6 +804,7 @@ static int print_usage(const char *command, bool error)
 #define ARG_EXE		143
 #define ARG_PROMPT	144
 #define ARG_TEST_PROFILES 145
+#define ARG_TEST_PROCESSES 146
 #define ARG_VERBOSE 'v'
 #define ARG_HELP 'h'
 
@@ -828,6 +831,7 @@ static int parse_args(int argc, char **argv)
 		{"filter.exe", 1, 0, ARG_EXE},
 		{"filter.mode", 1, 0, ARG_MODE},
 		{"test.profiles", 1, 0, ARG_TEST_PROFILES},
+		{"test.processes", 1, 0, ARG_TEST_PROCESSES},
 		{NULL, 0, 0, 0},
 	};
 
@@ -942,6 +946,9 @@ static int parse_args(int argc, char **argv)
 			break;
 		case ARG_TEST_PROFILES:
 			opt_test_profiles = optarg;
+			break;
+		case ARG_TEST_PROCESSES:
+			opt_test_processes = optarg;
 			break;
 			
 		default:

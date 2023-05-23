@@ -1,5 +1,5 @@
 #
-#=Description basic mount rule
+#=Description basic mount rule with incompatible options
 #=EXRESULT FAIL
 #
 /usr/bin/foo {

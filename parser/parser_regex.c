@@ -486,13 +486,18 @@ static int process_profile_name_xmatch(Profile *prof)
 					&prof->xmatch_len);
 	if (ptype == ePatternBasic)
 		prof->xmatch_len = strlen(name);
-	if (!prof->attachment)
-		free(name);
 
 	if (ptype == ePatternInvalid) {
 		PERROR(_("%s: Invalid profile name '%s' - bad regular expression\n"), progname, name);
+		if (!prof->attachment)
+			free(name);
 		return FALSE;
-	} else if (ptype == ePatternBasic && !(prof->altnames || prof->attachment || prof->xattrs.list)) {
+	}
+
+	if (!prof->attachment)
+		free(name);
+
+	if (ptype == ePatternBasic && !(prof->altnames || prof->attachment || prof->xattrs.list)) {
 		/* no regex so do not set xmatch */
 		prof->xmatch = NULL;
 		prof->xmatch_len = 0;

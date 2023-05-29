@@ -167,10 +167,10 @@ void include_filename(char *filename, int search, bool if_exists)
 		include_file = search_path(filename, &fullpath, &cached);
 		if (!include_file && cached) {
 			goto skip;
-		} else if (preprocess_only) {
-			fprintf(yyout, "\n\n##included <%s>\n", filename);
 		} else if (!include_file && preprocess_only) {
 			fprintf(yyout, "\n\n##failed include <%s>\n", filename);
+		} else if (preprocess_only) {
+			fprintf(yyout, "\n\n##included <%s>\n", filename);
 		}
 
 	} else if (g_includecache->find(filename)) {

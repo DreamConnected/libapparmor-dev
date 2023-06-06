@@ -548,7 +548,7 @@ static int detailed_output(FILE *json) {
 		if (need_finish > 0) {
 			fprintf(json, "]");
 		}
-		fprintf(json, "}\n");
+		fprintf(json, "}}\n");
 	}
 
 exit:

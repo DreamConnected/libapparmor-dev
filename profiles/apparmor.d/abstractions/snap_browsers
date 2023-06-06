@@ -38,5 +38,6 @@ profile snap_browsers {
   /snap/opera/[0-9]*/meta/{snap.yaml,hooks/} r,
 
   /var/lib/snapd/sequence/{chromium,firefox,opera}.json r,
+  /var/lib/snapd/inhibit/{chromium,firefox,opera}.lock rk,
   # add other browsers here
 }

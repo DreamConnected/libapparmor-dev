@@ -62,6 +62,7 @@
   @{etc_ro}/ld.so.conf                r,
   @{etc_ro}/ld.so.conf.d/{,*.conf}    r,
   @{etc_ro}/ld.so.preload             r,
+  @{etc_ro}/ld-musl-*.path            r,
   /{usr/,}lib{,32,64}/ld{,32,64}-*.so   mr,
   /{usr/,}lib/@{multiarch}/ld{,32,64}-*.so    mr,
   /{usr/,}lib/tls/i686/{cmov,nosegneg}/ld-*.so     mr,

@@ -831,15 +831,30 @@ int mnt_rule::gen_policy_change_mount_type(Profile &prof, int &count,
 	std::string optsbuf;
 	char class_mount_hdr[64];
 	const char *vec[5];
+	char *mountpoint = mnt_point;
 
 	sprintf(class_mount_hdr, "\\x%02x", AA_CLASS_MOUNT);
 
-	/* change type base rules can not be conditional on device,
-	 * device type or data
+	/* change type base rules can specify the mount point by using
+	 * the parser token position reserved to device. that's why if
+	 * the mount point is not specified, we use device in its
+	 * place. this is a deprecated behavior.
+	 *
+	 * change type base rules can not be conditional on device
+	 * (source), device type or data
 	 */
 	/* rule class single byte header */
 	mntbuf.assign(class_mount_hdr);
-	if (!convert_entry(mntbuf, mnt_point))
+	if (flags && flags != MS_ALL_FLAGS && device && mnt_point) {
+		PERROR("source and mount point cannot be used at the "
+		       "same time for propagation type flags");
+		goto fail;
+	} else if (device && !mnt_point) {
+		pwarn(WARN_DEPRECATED, _("The use of source as mount point for "
+					 "propagation type flags is deprecated.\n"));
+		mountpoint = device;
+	}
+	if (!convert_entry(mntbuf, mountpoint))
 		goto fail;
 	vec[0] = mntbuf.c_str();
 	/* skip device and type */
@@ -981,7 +996,7 @@ int mnt_rule::gen_flag_rules(Profile &prof, int &count, unsigned int flags,
 		if (!dev_type && !opts &&
 		    gen_policy_bind_mount(prof, count, flags, opt_flags) == RULE_ERROR)
 			return RULE_ERROR;
-		if (!device && !dev_type && !opts &&
+		if (!dev_type && !opts &&
 		    gen_policy_change_mount_type(prof, count, flags, opt_flags) == RULE_ERROR)
 			return RULE_ERROR;
 		if (!dev_type && !opts &&
@@ -997,7 +1012,7 @@ int mnt_rule::gen_flag_rules(Profile &prof, int &count, unsigned int flags,
 		return gen_policy_bind_mount(prof, count, flags, opt_flags);
 	} else if ((allow & AA_MAY_MOUNT) &&
 		   (flags & (MS_MAKE_CMDS))
-		   && !device && !dev_type && !opts) {
+		   && !dev_type && !opts) {
 		return gen_policy_change_mount_type(prof, count, flags, opt_flags);
 	} else if ((allow & AA_MAY_MOUNT) && (flags & MS_MOVE)
 		   && !dev_type && !opts) {

@@ -218,6 +218,10 @@ test_propagation_options() {
 	runchecktest "MOUNT (confined cap mount propagation setup $1)" pass mount ${loop_device} ${mount_point}
 	genprofile cap:sys_admin "mount:options=($1)"
 	runchecktest "MOUNT (confined cap mount propagation $1)" pass mount none ${mount_point} -o $1
+	genprofile cap:sys_admin "mount:options=($1):-> ${mount_point}/"
+	runchecktest "MOUNT (confined cap mount propagation $1 mountpoint)" pass mount none ${mount_point} -o $1
+	genprofile cap:sys_admin "mount:options=($1):${mount_point}/"
+	runchecktest "MOUNT (confined cap mount propagation $1 source as mountpoint - deprecated)" pass mount none ${mount_point} -o $1
 	remove_mnt
 
 	genprofile cap:sys_admin "mount:ALL" "qual=deny:mount:options=($1)"

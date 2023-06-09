@@ -30,6 +30,11 @@
   /{usr/,}lib/@{multiarch}/security/pam_*.so      mr,
   /{usr/,}lib/@{multiarch}/security/              r,
 
+  # gssapi
+  /etc/gss/mech               r,
+  /etc/gss/mech.d/            r,
+  /etc/gss/mech.d/*.conf      r,
+
   # kerberos
   #include <abstractions/kerberosclient>
   # SuSE's pwdutils are different:

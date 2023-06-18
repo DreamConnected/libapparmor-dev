@@ -996,7 +996,7 @@ int mnt_rule::gen_flag_rules(Profile &prof, int &count, unsigned int flags,
 		if (!dev_type && !opts &&
 		    gen_policy_bind_mount(prof, count, flags, opt_flags) == RULE_ERROR)
 			return RULE_ERROR;
-		if (!dev_type && !opts &&
+		if ((!device || !mnt_point) && !dev_type && !opts &&
 		    gen_policy_change_mount_type(prof, count, flags, opt_flags) == RULE_ERROR)
 			return RULE_ERROR;
 		if (!dev_type && !opts &&
@@ -1012,7 +1012,7 @@ int mnt_rule::gen_flag_rules(Profile &prof, int &count, unsigned int flags,
 		return gen_policy_bind_mount(prof, count, flags, opt_flags);
 	} else if ((allow & AA_MAY_MOUNT) &&
 		   (flags & (MS_MAKE_CMDS))
-		   && !dev_type && !opts) {
+		   && (!device || !mnt_point) && !dev_type && !opts) {
 		return gen_policy_change_mount_type(prof, count, flags, opt_flags);
 	} else if ((allow & AA_MAY_MOUNT) && (flags & MS_MOVE)
 		   && !dev_type && !opts) {

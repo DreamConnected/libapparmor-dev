@@ -398,6 +398,16 @@ else
 	runchecktest "UMOUNT (confined cap umount:ALL)" pass umount ${loop_device} ${mount_point}
 	remove_mnt
 
+	# MR:https://gitlab.com/apparmor/apparmor/-/merge_requests/1054
+	# https://bugs.launchpad.net/apparmor/+bug/2023814
+	# https://bugzilla.opensuse.org/show_bug.cgi?id=1211989
+	# based on rules from profile in bug that triggered issue
+	genprofile cap:sys_admin "qual=deny:mount:/snap/bin/:-> /**" \
+				 "mount:options=(rw,bind):-> ${mount_point}/"
+
+	runchecktest "MOUNT (confined cap bind mount with deny mount that doesn't overlap)" pass mount ${mount_point2} ${mount_point} -o bind
+	remove_mnt
+
 	test_options
 fi
 

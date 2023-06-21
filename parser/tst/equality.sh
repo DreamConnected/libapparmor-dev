@@ -563,6 +563,17 @@ verify_binary_equality "link rules slash filtering" \
                         @{BAR}=/mnt/
                            /t { link @{FOO}/foo -> @{BAR}/bar, }" \
 
+
+# This can potentially fail as ideally it requires a better dfa comparison
+# routine as it can generates hormomorphic dfas. The enumeration of the
+# dfas dumped will be different, even if the binary is the same
+# Note: this test in the future will require -O filter-deny and
+# -O minimize and -O remove-unreachable.
+verify_binary_equality "mount specific deny doesn't affect non-overlapping" \
+			"/t { mount options=bind /e/ -> /**, }" \
+			"/t { audit deny mount /s/** -> /**,
+			      mount options=bind /e/ -> /**, }"
+
 if [ $fails -ne 0 -o $errors -ne 0 ]
 then
 	printf "ERRORS: %d\nFAILS: %d\n" $errors $fails 2>&1

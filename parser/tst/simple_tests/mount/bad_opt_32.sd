@@ -1,0 +1,6 @@
+#
+#=Description test we fail make rules with source and mntpnt associated with MR 1054
+#=EXRESULT FAIL
+/usr/bin/foo {
+    mount options=(slave) /snap/bin/** -> /**,
+}

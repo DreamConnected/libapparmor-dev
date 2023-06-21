@@ -1,0 +1,8 @@
+#
+#=Description test we can parse rules associated with MR 1054
+#=EXRESULT PASS
+/usr/bin/foo {
+    mount options=(slave) /**,
+    mount options=(slave) -> /**,
+    mount /snap/bin/** -> /**,
+}

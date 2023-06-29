@@ -25,6 +25,9 @@
 /etc/kde4rc r,
 /etc/xdg/kdeglobals r,
 /etc/xdg/Trolltech.conf r,
+/usr/share/desktop-base/kf5-settings/baloofilerc r,
+/usr/share/desktop-base/kf5-settings/kdeglobals r,
+/usr/share/desktop-base/kf5-settings/kscreenlockerrc r,
 /usr/share/knotifications5/*.notifyrc r, # KNotification::sendEvent()
 /usr/share/kubuntu-default-settings/kf5-settings/* r,
 

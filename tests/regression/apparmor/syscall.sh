@@ -150,13 +150,19 @@ i386 | i486 | i586 | i686 | x86 | x86_64)
 # But don't run them on xen kernels
 if [ ! -d /proc/xen ] ; then
 
+# lockdown thwarts both ioperm and iopl
+expected=pass
+if [ -f /sys/kernel/security/lockdown ] && ! grep -q "\[none\]" /sys/kernel/security/lockdown; then
+  expected=fail
+fi
+
 ##
 ## F. IOPERM
 ##
 settest syscall_ioperm
 
 # TEST F1
-runchecktest "IOPERM (no confinement)" pass 0 0x3ff
+runchecktest "IOPERM (no confinement)" $expected 0 0x3ff
 
 # TEST F2. ioperm will fail
 genprofile
@@ -169,7 +175,7 @@ runchecktest "IOPERM (confinement)" fail 0 0x3ff
 settest syscall_iopl
 
 # TEST G1
-runchecktest "IOPL (no confinement)" pass 3
+runchecktest "IOPL (no confinement)" $expected 3
 
 # TEST G2. iopl will fail
 genprofile

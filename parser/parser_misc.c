@@ -127,6 +127,10 @@ static struct keyword_table keyword_table[] = {
 	{"io_uring",		TOK_IO_URING},
 	{"override_creds",	TOK_OVERRIDE_CREDS},
 	{"sqpoll",		TOK_SQPOLL},
+	{"module",		TOK_MODULE},
+	{"load_data",		TOK_LOADDATA},
+	{"load_file",		TOK_LOADFILE},
+	{"request",		TOK_REQUEST},
 
 	/* terminate */
 	{NULL, 0}

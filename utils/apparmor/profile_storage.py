@@ -30,6 +30,7 @@ from apparmor.rule.signal import SignalRule, SignalRuleset
 from apparmor.rule.userns import UserNamespaceRule, UserNamespaceRuleset
 from apparmor.rule.mqueue import MessageQueueRule, MessageQueueRuleset
 from apparmor.rule.io_uring import IOUringRule, IOUringRuleset
+from apparmor.rule.module import ModuleRule, ModuleRuleset
 from apparmor.translations import init_translation
 
 _ = init_translation()
@@ -48,6 +49,7 @@ ruletypes = {
     'userns':         {'rule': UserNamespaceRule, 'ruleset': UserNamespaceRuleset},
     'mqueue':         {'rule': MessageQueueRule,  'ruleset': MessageQueueRuleset},
     'io_uring':       {'rule': IOUringRule,       'ruleset': IOUringRuleset},
+    'module':         {'rule': ModuleRule,        'ruleset': ModuleRuleset},
 }
 
 
@@ -191,6 +193,7 @@ class ProfileStorage:
             'capability',
             'network',
             'dbus',
+            'module',
             'mount',
             'mqueue',
             'signal',

@@ -1,0 +1,11 @@
+#
+#=DESCRIPTION module misc rules
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  deny module load_file bar,
+  audit allow module load_data,
+  audit deny module request baz,
+  allow module request bar,
+  module load_file /path/to/target,
+}

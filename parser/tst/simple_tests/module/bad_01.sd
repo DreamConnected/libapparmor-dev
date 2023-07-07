@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION module multi-permissions
+#=EXRESULT FAIL
+#
+/usr/bin/foo {
+  module request,load_file bar,
+}

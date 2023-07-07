@@ -149,6 +149,10 @@ bool check_x_qualifier(struct cod_entry *entry, const char *&errror);
 %token TOK_IO_URING
 %token TOK_OVERRIDE_CREDS
 %token TOK_SQPOLL
+%token TOK_MODULE
+%token TOK_LOADDATA
+%token TOK_LOADFILE
+%token TOK_REQUEST
 
  /* rlimits */
 %token TOK_RLIMIT
@@ -187,6 +191,7 @@ bool check_x_qualifier(struct cod_entry *entry, const char *&errror);
 	#include "userns.h"
 	#include "mqueue.h"
 	#include "io_uring.h"
+	#include "module.h"
 }
 
 %union {
@@ -207,6 +212,7 @@ bool check_x_qualifier(struct cod_entry *entry, const char *&errror);
 	mqueue_rule *mqueue_entry;
 	io_uring_rule *io_uring_entry;
 	prefix_rule_t *prefix_entry;
+	module_rule *module_entry;
 
 	flagvals flags;
 	perms_t fperms;
@@ -302,6 +308,10 @@ bool check_x_qualifier(struct cod_entry *entry, const char *&errror);
 %type <fperms>	io_uring_perms
 %type <fperms>	opt_io_uring_perm
 %type <io_uring_entry>	io_uring_rule
+%type <fperms>	module_perm
+%type <fperms>	module_perms
+%type <fperms>	opt_module_perm
+%type <module_entry>	module_rule
 %%
 
 
@@ -794,6 +804,7 @@ prefix_rule : mnt_rule { $$ = $1; }
 	| userns_rule { $$ = $1; }
 	| mqueue_rule { $$ = $1; }
 	| io_uring_rule { $$ = $1; }
+	| module_rule { $$ = $1; }
 
 rules:  rules opt_prefix prefix_rule
 	{
@@ -1598,6 +1609,43 @@ io_uring_rule: TOK_IO_URING opt_io_uring_perm opt_conds opt_cond_list TOK_END_OF
 		ent = new io_uring_rule($2, $3, $4.list);
 		if (!ent)
 			yyerror(_("Memory allocation error."));
+		$$ = ent;
+	}
+
+module_perm: TOK_VALUE
+	{
+		if (strcmp($1, "load_data") == 0)
+			$$ = AA_MAY_LOAD_DATA;
+		else if (strcmp($1, "load_file") == 0)
+			$$ = AA_MAY_LOAD_FILE;
+		else if (strcmp($1, "request") == 0)
+			$$ = AA_MAY_REQUEST;
+		else
+			$$ = 0;
+
+		if ($1)
+			free($1);
+	}
+	| TOK_LOADDATA { $$ = AA_MAY_LOAD_DATA; }
+	| TOK_LOADFILE { $$ = AA_MAY_LOAD_FILE; }
+	| TOK_REQUEST { $$ = AA_MAY_REQUEST; }
+
+module_perms: { /* nothing */ $$ = 0; }
+	| module_perms module_perm { $$ = $1 | $2; }
+	| module_perms TOK_COMMA module_perm { $$ = $1 | $3; }
+
+opt_module_perm: { /* nothing */ $$ = 0; }
+	| module_perm { $$ = $1; }
+	| TOK_OPENPAREN module_perms TOK_CLOSEPAREN { $$ = $2; }
+
+module_rule: TOK_MODULE opt_module_perm opt_conds TOK_END_OF_RULE
+	{
+		module_rule *ent = new module_rule($2, $3, NULL);
+		$$ = ent;
+	}
+	| TOK_MODULE opt_module_perm opt_conds TOK_ID TOK_END_OF_RULE
+	{
+		module_rule *ent = new module_rule($2, $3, $4);
 		$$ = ent;
 	}
 

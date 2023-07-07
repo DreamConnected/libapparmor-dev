@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION module load_data rule
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  module load_data,
+}

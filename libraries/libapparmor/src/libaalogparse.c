@@ -105,6 +105,8 @@ void free_record(aa_log_record *record)
 			free(record->src_name);
 		if (record->class != NULL)
 			free(record->class);
+		if (record->kmod != NULL)
+			free(record->kmod);
 
 		free(record);
 	}

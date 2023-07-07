@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION module multiple targets
+#=EXRESULT FAIL
+#
+/usr/bin/foo {
+  module load_file bar baz,
+}

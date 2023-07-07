@@ -1,0 +1,6 @@
+#
+#=DESCRIPTION module rule outside of a profile
+#=EXRESULT FAIL
+#
+
+  module load_data,

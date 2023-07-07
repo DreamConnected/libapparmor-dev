@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION module with owner
+#=EXRESULT FAIL
+#
+/usr/bin/foo {
+  owner module load_data,
+}

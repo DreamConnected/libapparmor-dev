@@ -1,0 +1,9 @@
+#
+#=DESCRIPTION audit module rules
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  audit module load_data,
+  audit module load_file bar,
+  audit module request target,
+}

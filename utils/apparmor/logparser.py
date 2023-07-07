@@ -60,6 +60,7 @@ class ReadLog:
             'userns':       hasher(),
             'mqueue':       hasher(),
             'io_uring':     hasher(),
+            'module':       hasher(),
         }
 
     def prefetch_next_log_entry(self):
@@ -122,6 +123,9 @@ class ReadLog:
             ev['path'] = event.dbus_path
             ev['interface'] = event.dbus_interface
             ev['member'] = event.dbus_member
+        elif ev['operation'] and ev['operation'] == 'module':
+            if ev['denied_mask'] == 'request':
+                ev['kmod'] = event.kmod
 
         elif ev['operation'] and ev['operation'].startswith('uring_'):
             ev['peer_profile'] = event.peer_profile
@@ -275,6 +279,13 @@ class ReadLog:
         elif e['operation'] and e['operation'].startswith('dbus_'):
             self.hashlog[aamode][full_profile]['dbus'][e['denied_mask']][e['bus']][e['path']][e['name']][e['interface']][e['member']][e['peer_profile']] = True
             return
+
+        elif e['operation'] == 'module':
+            if e['denied_mask'] == 'request':
+                self.hashlog[aamode][full_profile]['module'][e['denied_mask']][e['kmod']] = True
+            else:
+                self.hashlog[aamode][full_profile]['module'][e['denied_mask']][e['name']] = True
+            return None
 
         else:
             self.debug_logger.debug('UNHANDLED: %s', e)

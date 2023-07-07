@@ -173,6 +173,7 @@ key_flags		"flags"
 key_srcname		"srcname"
 key_class		"class"
 key_tcontext		"tcontext"
+key_kmod		"kmod"
 audit			"audit"
 
 /* network addrs */
@@ -365,6 +366,7 @@ yy_flex_debug = 0;
 {key_flags}		{ BEGIN(safe_string); return(TOK_KEY_FLAGS); }
 {key_srcname}		{ BEGIN(safe_string); return(TOK_KEY_SRCNAME); }
 {key_class}		{ BEGIN(safe_string); return(TOK_KEY_CLASS); }
+{key_kmod}		{ BEGIN(safe_string); return(TOK_KEY_KMOD); }
 
 {socklogd_kernel}	{ BEGIN(dmesg_timestamp); return(TOK_SOCKLOGD_KERNEL); }
 {syslog_kernel}		{ BEGIN(dmesg_timestamp); return(TOK_SYSLOG_KERNEL); }

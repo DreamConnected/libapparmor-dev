@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION module request rule
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  module request target,
+}

@@ -224,6 +224,18 @@ sub gen_signal($@) {
     }
 }
 
+sub gen_module($@) {
+    my ($rule, $qualifier) = @_;
+    my @rules = split (/:/, $rule);
+    if (@rules == 2) {
+	push (@{$output_rules{$hat}}, "  ${qualifier}module $rules[1],\n");
+    } elsif (@rules == 3) {
+	push (@{$output_rules{$hat}}, "  ${qualifier}module $rules[1] $rules[2],\n");
+    } else {
+	(!$nowarn) && print STDERR "Warning: invalid module description '$rule', ignored\n";
+    }
+}
+
 sub gen_mount($@) {
     my ($rule, $qualifier) = @_;
     my @rules = split (/:/, $rule);
@@ -505,6 +517,8 @@ sub gen_from_args() {
       gen_ptrace($rule, $qualifier);
     } elsif ($rule =~ /^signal:/) {
       gen_signal($rule, $qualifier);
+    } elsif ($rule =~ /^module:/) {
+      gen_module($rule, $qualifier);
     } elsif ($rule =~ /^mount:/) {
       gen_mount($rule, $qualifier);
     } elsif ($rule =~ /^remount:/) {

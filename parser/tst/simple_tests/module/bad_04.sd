@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION module with invalid mode
+#=EXRESULT FAIL
+#
+/usr/bin/foo {
+  module bar baz,
+}

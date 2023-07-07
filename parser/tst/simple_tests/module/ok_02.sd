@@ -1,0 +1,8 @@
+#
+#=DESCRIPTION module load_file rule
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  module load_file /path/to/target,
+  module load_file target,
+}

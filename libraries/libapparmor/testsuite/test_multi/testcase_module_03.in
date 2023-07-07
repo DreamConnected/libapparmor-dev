@@ -1,0 +1,1 @@
+Jan 10 15:06:50 ubuntu kernel: audit: type=1400 audit(1641827210.519:240): apparmor="DENIED" operation="module" profile="/root/apparmor/tests/regression/apparmor/module" pid=5762 comm="module" kmod="module_test" requested_mask="request" denied_mask="request"

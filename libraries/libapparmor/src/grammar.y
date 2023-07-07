@@ -188,6 +188,7 @@ aa_record_event_type lookup_aa_event(unsigned int type)
 %token TOK_KEY_FLAGS
 %token TOK_KEY_SRCNAME
 %token TOK_KEY_CLASS
+%token TOK_KEY_KMOD
 
 %token TOK_SOCKLOGD_KERNEL
 %token TOK_SYSLOG_KERNEL
@@ -308,6 +309,8 @@ key: TOK_KEY_OPERATION TOK_EQUALS TOK_QUOTED_STRING
 	{ ret_record->namespace = $3;}
 	| TOK_KEY_NAME2 TOK_EQUALS safe_string
 	{ ret_record->name2 = $3;}
+	| TOK_KEY_KMOD TOK_EQUALS TOK_QUOTED_STRING
+	{ ret_record->kmod = $3; }
 	| TOK_KEY_MASK TOK_EQUALS TOK_QUOTED_STRING
 	{ ret_record->denied_mask = $3;}
 	| TOK_KEY_DENIED_MASK TOK_EQUALS TOK_QUOTED_STRING

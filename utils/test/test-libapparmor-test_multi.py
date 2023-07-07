@@ -71,6 +71,8 @@ class TestLibapparmorTestMulti(AATest):
                     pass  # XXX 'exec' + network? really?
                 elif parsed_items['operation'] == 'ptrace' and label == 'name2' and params.endswith('/ptrace_garbage_lp1689667_1'):
                     pass  # libapparmor would better qualify this case as invalid event
+                elif parsed_items['operation'] == 'module' and parsed_items['denied_mask'] == 'load_data' and not parsed_items['name']:
+                    pass # ignore empty name
                 elif not parsed_items.get(label, None):
                     raise Exception('parsed_items[{}] not set'.format(label))
                 elif not expected.get(label, None):

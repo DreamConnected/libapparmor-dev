@@ -58,6 +58,7 @@ parser/parser_yacc.o
 parser/policy_cache.o
 parser/profile.o
 parser/ptrace.o
+parser/module.o
 parser/rule.o
 parser/signal.o
 parser/userns.o
@@ -262,6 +263,13 @@ tests/regression/apparmor/link
 tests/regression/apparmor/link_subset
 tests/regression/apparmor/mkdir
 tests/regression/apparmor/mmap
+tests/regression/apparmor/module
+tests/regression/apparmor/module_test/*.o
+tests/regression/apparmor/module_test/*.ko
+tests/regression/apparmor/module_test/*.mod*
+tests/regression/apparmor/module_test/Module.symvers
+tests/regression/apparmor/module_test/modules.order
+tests/regression/apparmor/module_test/.*
 tests/regression/apparmor/mount
 tests/regression/apparmor/named_pipe
 tests/regression/apparmor/net_raw

@@ -1,6 +1,6 @@
 # ------------------------------------------------------------------
 #
-#    Copyright (C) 2018-2020 Christian Boltz
+#    Copyright (C) 2021 SUSE LLC
 #
 #    This program is free software; you can redistribute it and/or
 #    modify it under the terms of version 2 of the GNU General Public
@@ -9,23 +9,18 @@
 # ------------------------------------------------------------------
 # vim: ft=apparmor
 
-abi <abi/4.0>,
+abi <abi/3.0>,
 
 include <tunables/global>
+include <tunables/dovecot>
 
-profile dovecot-stats /usr/lib/dovecot/stats {
+profile dovecot-health-check /usr/lib/dovecot/health-check {
   include <abstractions/base>
   include <abstractions/dovecot-common>
 
-  capability setuid,
-  capability sys_chroot,
-
-  # for metrics end-point (Prometheus)
-  network inet stream,
-  network inet6 stream,
-
-  /usr/lib/dovecot/stats mr,
+  /usr/lib/dovecot/health-check.sh rm,
 
   # Site-specific additions and overrides. See local/README for details.
-  include if exists <local/usr.lib.dovecot.stats>
+  include if exists <local/usr.lib.dovecot.health-check.sh>
+  include if exists <local/dovecot-health-check>
 }

@@ -1,6 +1,6 @@
 # ------------------------------------------------------------------
 #
-#    Copyright (C) 2013-2020 Christian Boltz
+#    Copyright (C) 2020 SUSE LLC
 #
 #    This program is free software; you can redistribute it and/or
 #    modify it under the terms of version 2 of the GNU General Public
@@ -9,20 +9,15 @@
 # ------------------------------------------------------------------
 # vim: ft=apparmor
 
-abi <abi/4.0>,
-
 include <tunables/global>
 
-profile dovecot-ssl-params /usr/lib/dovecot/ssl-params {
+profile dovecot-doveadm-server /usr/lib/dovecot/doveadm-server flags=(attach_disconnected) {
   include <abstractions/base>
   include <abstractions/dovecot-common>
 
-  @{run}/dovecot/ssl-params rw,
-  @{run}/dovecot/login/ssl-params rw,
-  /usr/lib/dovecot/ssl-params mr,
-  /var/lib/dovecot/ssl-parameters.dat rw,
-  /var/lib/dovecot/ssl-parameters.dat.tmp rwk,
+  /usr/lib/dovecot/doveadm-server mr,
 
   # Site-specific additions and overrides. See local/README for details.
-  include if exists <local/usr.lib.dovecot.ssl-params>
+  include if exists <local/usr.lib.dovecot.doveadm-server>
+  include if exists <local/dovecot-doveadm-server>
 }

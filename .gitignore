@@ -311,3 +311,4 @@ tests/regression/apparmor/xattrs_profile
 tests/regression/apparmor/coredump
 **/__pycache__/
 *.orig
+*.code-workspace

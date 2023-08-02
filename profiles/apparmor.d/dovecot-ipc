@@ -1,6 +1,6 @@
 # ------------------------------------------------------------------
 #
-#    Copyright (C) 2013-2020 Christian Boltz
+#    Copyright (C) 2021 SUSE LLC
 #
 #    This program is free software; you can redistribute it and/or
 #    modify it under the terms of version 2 of the GNU General Public
@@ -9,16 +9,25 @@
 # ------------------------------------------------------------------
 # vim: ft=apparmor
 
-abi <abi/4.0>,
+abi <abi/3.0>,
 
 include <tunables/global>
+include <tunables/dovecot>
 
-profile dovecot-log /usr/lib/dovecot/log flags=(attach_disconnected) {
+profile dovecot-ipc /usr/lib/dovecot/ipc {
   include <abstractions/base>
   include <abstractions/dovecot-common>
 
-  /usr/lib/dovecot/log mr,
+  capability setuid,
+  capability sys_chroot,
+
+  network unix stream,
+
+  owner /tmp/dovecot.ipc.* rw,
+
+  /usr/lib/dovecot/ipc rm,
 
   # Site-specific additions and overrides. See local/README for details.
-  include if exists <local/usr.lib.dovecot.log>
+  include if exists <local/usr.lib.dovecot.ipc>
+  include if exists <local/dovecot-ipc>
 }

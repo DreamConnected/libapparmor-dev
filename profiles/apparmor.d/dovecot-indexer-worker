@@ -1,7 +1,6 @@
 # ------------------------------------------------------------------
 #
-#    Copyright (C) 2009-2011 Canonical Ltd.
-#    Copyright (C) 2013-2020 Christian Boltz
+#    Copyright (C) 2021 SUSE LLC
 #
 #    This program is free software; you can redistribute it and/or
 #    modify it under the terms of version 2 of the GNU General Public
@@ -10,28 +9,33 @@
 # ------------------------------------------------------------------
 # vim: ft=apparmor
 
-abi <abi/4.0>,
+abi <abi/3.0>,
 
 include <tunables/global>
+include <tunables/dovecot>
 
-profile dovecot-pop3-login /usr/lib/dovecot/pop3-login {
+profile dovecot-indexer-worker /usr/lib/dovecot/indexer-worker {
   include <abstractions/base>
+  include <abstractions/nameservice>
   include <abstractions/dovecot-common>
-  include <abstractions/openssl>
 
   capability setuid,
-  capability sys_chroot,
 
-  network inet stream,
-  network inet6 stream,
   network unix stream,
 
-  /usr/lib/dovecot/pop3-login mr,
-  @{run}/dovecot/anvil rw,
-  @{run}/dovecot/login-master-notify* rw,
-  @{run}/dovecot/login/ r,
-  @{run}/dovecot/login/* rw,
+  @{DOVECOT_MAILSTORE}/ rw,
+  @{DOVECOT_MAILSTORE}/** rwkl,
+
+  @{HOME} r, # ???
+
+  owner /tmp/dovecot.indexer-worker.* rw,
+
+  /usr/lib/dovecot/indexer-worker rm,
+  /usr/share/dovecot/** r,
+  /{,var/}run/dovecot/mounts r,
 
   # Site-specific additions and overrides. See local/README for details.
-  include if exists <local/usr.lib.dovecot.pop3-login>
+  include if exists <local/usr.lib.dovecot.indexer-worker>
+  include if exists <local/dovecot-indexer-worker>
 }
+

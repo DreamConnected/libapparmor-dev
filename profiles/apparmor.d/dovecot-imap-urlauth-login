@@ -1,6 +1,6 @@
 # ------------------------------------------------------------------
 #
-#    Copyright (C) 2020 SUSE LLC
+#    Copyright (C) 2021 SUSE LLC
 #
 #    This program is free software; you can redistribute it and/or
 #    modify it under the terms of version 2 of the GNU General Public
@@ -9,14 +9,24 @@
 # ------------------------------------------------------------------
 # vim: ft=apparmor
 
-include <tunables/global>
+abi <abi/3.0>,
 
-profile dovecot-doveadm-server /usr/lib/dovecot/doveadm-server flags=(attach_disconnected) {
+include <tunables/global>
+include <tunables/dovecot>
+
+profile dovecot-imap-urlauth-login /usr/lib/dovecot/imap-urlauth-login {
   include <abstractions/base>
   include <abstractions/dovecot-common>
 
-  /usr/lib/dovecot/doveadm-server mr,
+  capability setuid,
+
+  network unix stream,
+
+  owner /tmp/dovecot.imap-urlauth-login.* rw,
+
+  /usr/lib/dovecot/imap-urlauth-login rm,
 
   # Site-specific additions and overrides. See local/README for details.
-  include if exists <local/usr.lib.dovecot.doveadm-server>
+  include if exists <local/usr.lib.dovecot.imap-urlauth-login>
+  include if exists <local/dovecot-imap-urlauth-login>
 }

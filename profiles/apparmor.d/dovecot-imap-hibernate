@@ -1,6 +1,6 @@
 # ------------------------------------------------------------------
 #
-#    Copyright (C) 2013-2020 Christian Boltz
+#    Copyright (C) 2021 SUSE LLC
 #
 #    This program is free software; you can redistribute it and/or
 #    modify it under the terms of version 2 of the GNU General Public
@@ -9,23 +9,24 @@
 # ------------------------------------------------------------------
 # vim: ft=apparmor
 
-abi <abi/4.0>,
+abi <abi/3.0>,
 
 include <tunables/global>
+include <tunables/dovecot>
 
-profile dovecot-anvil /usr/lib/dovecot/anvil {
+profile dovecot-imap-hibernate /usr/lib/dovecot/imap-hibernate {
   include <abstractions/base>
   include <abstractions/dovecot-common>
 
   capability setuid,
-  capability sys_chroot,
 
-  unix (receive, send) type=stream peer=(label=dovecot),
+  network unix stream,
 
-  @{run}/dovecot/anvil rw,
-  @{run}/dovecot/anvil-auth-penalty rw,
-  /usr/lib/dovecot/anvil mr,
+  owner /tmp/dovecot.imap-hibernate.* rw,
+
+  /usr/lib/dovecot/imap-hibernate rm,
 
   # Site-specific additions and overrides. See local/README for details.
-  include if exists <local/usr.lib.dovecot.anvil>
+  include if exists <local/usr.lib.dovecot.imap-hibernate>
+  include if exists <local/dovecot-imap-hibernate>
 }

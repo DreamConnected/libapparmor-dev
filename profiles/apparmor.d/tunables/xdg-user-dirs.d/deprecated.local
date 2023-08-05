@@ -1,0 +1,1 @@
+@{user_share_dirs} = @{HOME}/.local{,/share/@{flatpak_exports_root}}/share

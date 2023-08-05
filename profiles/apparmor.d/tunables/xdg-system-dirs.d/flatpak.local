@@ -1,0 +1,1 @@
+@{XDG_DATA_SYSTEM_DIRS} += /var/lib/{flatpak/exports,flatpak/{app,runtime}/*/*/*/*/export}/share

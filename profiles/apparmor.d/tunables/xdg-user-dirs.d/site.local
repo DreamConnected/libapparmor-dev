@@ -8,14 +8,26 @@
 # ------------------------------------------------------------------
 
 # The following may be used to add additional entries such as for
-# translations. See tunables/xdg-user-dirs for details. Eg:
-#@{XDG_MUSIC_DIR}+="Musique"
+# translations. Absolute paths must be used.
+# See tunables/xdg-user-dirs for details. Eg:
+#@{XDG_MUSIC_DIRS}+="@{HOME}/Media/Music"
 
-#@{XDG_DESKTOP_DIR}+=""
-#@{XDG_DOWNLOAD_DIR}+=""
-#@{XDG_TEMPLATES_DIR}+=""
-#@{XDG_PUBLICSHARE_DIR}+=""
-#@{XDG_DOCUMENTS_DIR}+=""
-#@{XDG_MUSIC_DIR}+=""
-#@{XDG_PICTURES_DIR}+=""
-#@{XDG_VIDEOS_DIR}+=""
+#@{XDG_DESKTOP_DIRS}+=""
+#@{XDG_DOWNLOAD_DIRS}+=""
+#@{XDG_TEMPLATES_DIRS}+=""
+#@{XDG_PUBLICSHARE_DIRS}+=""
+#@{XDG_DOCUMENTS_DIRS}+=""
+#@{XDG_MUSIC_DIRS}+=""
+#@{XDG_PICTURES_DIRS}+=""
+#@{XDG_VIDEOS_DIRS}+=""
+
+# The following may be used to add additional entries such as for
+# symlinked dotfiles. Eg:
+#@{XDG_CONFIG_USER_DIRS}+=@{HOME}/.dotfiles/.config
+
+#@{XDG_DATA_USER_DIRS}+=""
+#@{XDG_CONFIG_USER_DIRS}+=""
+#@{XDG_CACHE_USER_DIRS}+=""
+#@{XDG_STATE_USER_DIRS}+=""
+#@{XDG_BIN_USER_DIRS}+=""
+#@{XDG_LIB_USER_DIRS}+=""

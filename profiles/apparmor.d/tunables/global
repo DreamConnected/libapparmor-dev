@@ -17,7 +17,8 @@ include <tunables/multiarch>
 include <tunables/proc>
 include <tunables/alias>
 include <tunables/kernelvars>
+include <tunables/xdg-system-dirs>
 include <tunables/xdg-user-dirs>
-include <tunables/share>
+include <tunables/xdg-dirs>
 include <tunables/etc>
 include <tunables/run>

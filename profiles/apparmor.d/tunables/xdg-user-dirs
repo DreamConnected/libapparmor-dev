@@ -19,6 +19,33 @@
 @{XDG_PICTURES_DIR}="Pictures"
 @{XDG_VIDEOS_DIR}="Videos"
 
+@{XDG_DESKTOP_DIRS}="@{HOME}/@{XDG_DESKTOP_DIR}"
+@{XDG_DOWNLOAD_DIRS}="@{HOME}/@{XDG_DOWNLOAD_DIR}"
+@{XDG_TEMPLATES_DIRS}="@{HOME}/@{XDG_TEMPLATES_DIR}"
+@{XDG_PUBLICSHARE_DIRS}="@{HOME}/@{XDG_PUBLICSHARE_DIR}"
+@{XDG_DOCUMENTS_DIRS}="@{HOME}/@{XDG_DOCUMENTS_DIR}"
+@{XDG_MUSIC_DIRS}="@{HOME}/@{XDG_MUSIC_DIR}"
+@{XDG_PICTURES_DIRS}="@{HOME}/@{XDG_PICTURES_DIR}"
+@{XDG_VIDEOS_DIRS}="@{HOME}/@{XDG_VIDEOS_DIR}"
+
+# Define the common set of XDG base directories
+@{XDG_DATA_HOME}=@{HOME}/.local/share
+@{XDG_CONFIG_HOME}=@{HOME}/.config
+@{XDG_STATE_HOME}=@{HOME}/.local/state
+@{XDG_CACHE_HOME}=@{HOME}/.cache
+
+@{XDG_DATA_USER_DIRS}=@{XDG_DATA_HOME}
+@{XDG_CONFIG_USER_DIRS}=@{XDG_CONFIG_HOME}
+@{XDG_CACHE_USER_DIRS}=@{XDG_CACHE_HOME}
+@{XDG_STATE_USER_DIRS}=@{XDG_STATE_HOME}
+
+# Not in Freedesktop specification yet but still widely used
+@{XDG_BIN_HOME}=@{HOME}/.local/bin
+@{XDG_LIB_HOME}=@{HOME}/.local/lib
+
+@{XDG_BIN_USER_DIRS}=@{XDG_BIN_HOME}
+@{XDG_LIB_USER_DIRS}=@{XDG_LIB_HOME}
+
 # Also, include files in tunables/xdg-user-dirs.d for site-specific adjustments
 # to the various XDG directories
 include <tunables/xdg-user-dirs.d>

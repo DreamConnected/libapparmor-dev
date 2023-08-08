@@ -19,6 +19,5 @@ include <tunables/alias>
 include <tunables/kernelvars>
 include <tunables/xdg-system-dirs>
 include <tunables/xdg-user-dirs>
-include <tunables/xdg-dirs>
 include <tunables/etc>
 include <tunables/run>

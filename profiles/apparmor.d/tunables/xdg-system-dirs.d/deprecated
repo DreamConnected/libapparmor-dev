@@ -1,0 +1,2 @@
+@{flatpak_exports_root} = {flatpak/exports,flatpak/{app,runtime}/*/*/*/*/export}
+@{system_share_dirs} = /{usr,usr/local,var/lib/@{flatpak_exports_root}}/share

@@ -1,0 +1,1 @@
+@{XDG_DATA_USER_DIRS}+=@{XDG_DATA_USER_DIRS}/{flatpak/exports,flatpak/{app,runtime}/*/*/*/*/export}/share

@@ -11,7 +11,7 @@
 
 include <tunables/global>
 
-profile dovecot-director /usr/lib/dovecot/director flags=(attach_disconnected) {
+profile dovecot-director /usr/lib*/dovecot/director flags=(attach_disconnected) {
   include <abstractions/base>
   include <abstractions/dovecot-common>
   include <abstractions/nameservice>
@@ -20,7 +20,7 @@ profile dovecot-director /usr/lib/dovecot/director flags=(attach_disconnected) {
   capability sys_chroot,
 
   /run/dovecot/login/proxy-notify rw,
-  /usr/lib/dovecot/director mr,
+  /usr/lib*/dovecot/director mr,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.lib.dovecot.director>

@@ -14,7 +14,7 @@ abi <abi/3.0>,
 
 include <tunables/global>
 
-profile dovecot-imap-login /usr/lib/dovecot/imap-login {
+profile dovecot-imap-login /usr/lib*/dovecot/imap-login {
   include <abstractions/base>
   include <abstractions/dovecot-common>
   include <abstractions/openssl>
@@ -26,7 +26,7 @@ profile dovecot-imap-login /usr/lib/dovecot/imap-login {
   network inet6 stream,
   network unix stream,
 
-  /usr/lib/dovecot/imap-login mr,
+  /usr/lib*/dovecot/imap-login mr,
   @{run}/dovecot/anvil rw,
   @{run}/dovecot/login-master-notify* rw,
   @{run}/dovecot/login/ r,

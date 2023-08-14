@@ -14,7 +14,7 @@ abi <abi/3.0>,
 include <tunables/global>
 include <tunables/dovecot>
 
-profile dovecot-lmtp /usr/lib/dovecot/lmtp {
+profile dovecot-lmtp /usr/lib*/dovecot/lmtp {
   include <abstractions/base>
   include <abstractions/nameservice>
   include <abstractions/dovecot-common>
@@ -35,7 +35,7 @@ profile dovecot-lmtp /usr/lib/dovecot/lmtp {
   owner @{PROC}/@{pid}/stat r,
   @{PROC}/*/mounts r,
   /tmp/dovecot.lmtp.* rw,
-  /usr/lib/dovecot/lmtp mr,
+  /usr/lib*/dovecot/lmtp mr,
   @{run}/dovecot/mounts r,
 
   # Site-specific additions and overrides. See local/README for details.

@@ -14,7 +14,7 @@ abi <abi/3.0>,
 include <tunables/global>
 include <tunables/dovecot>
 
-profile dovecot-dovecot-lda /usr/lib/dovecot/dovecot-lda flags=(attach_disconnected) {
+profile dovecot-dovecot-lda /usr/lib*/dovecot/dovecot-lda flags=(attach_disconnected) {
   include <abstractions/base>
   include <abstractions/nameservice>
   include <abstractions/dovecot-common>
@@ -30,7 +30,7 @@ profile dovecot-dovecot-lda /usr/lib/dovecot/dovecot-lda flags=(attach_disconnec
   @{run}/dovecot/mounts r,
   @{run}/dovecot/auth-userdb rw,
   /usr/bin/doveconf mrix,
-  /usr/lib/dovecot/dovecot-lda mrix,
+  /usr/lib*/dovecot/dovecot-lda mrix,
   /usr/{bin,sbin}/sendmail Cx -> sendmail,
   /usr/share/dovecot/protocols.d/ r,
   /usr/share/dovecot/protocols.d/** r,

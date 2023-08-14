@@ -15,7 +15,7 @@ abi <abi/3.0>,
 include <tunables/global>
 include <tunables/dovecot>
 
-profile dovecot-pop3 /usr/lib/dovecot/pop3 {
+profile dovecot-pop3 /usr/lib*/dovecot/pop3 {
   include <abstractions/base>
   include <abstractions/nameservice>
   include <abstractions/dovecot-common>
@@ -27,7 +27,7 @@ profile dovecot-pop3 /usr/lib/dovecot/pop3 {
 
   @{HOME} r, # ???
   @{PROC}/@{pid}/stat r,
-  /usr/lib/dovecot/pop3 mr,
+  /usr/lib*/dovecot/pop3 mr,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.lib.dovecot.pop3>

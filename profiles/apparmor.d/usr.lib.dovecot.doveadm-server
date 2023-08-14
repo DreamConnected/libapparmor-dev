@@ -11,11 +11,11 @@
 
 include <tunables/global>
 
-profile dovecot-doveadm-server /usr/lib/dovecot/doveadm-server flags=(attach_disconnected) {
+profile dovecot-doveadm-server /usr/lib*/dovecot/doveadm-server flags=(attach_disconnected) {
   include <abstractions/base>
   include <abstractions/dovecot-common>
 
-  /usr/lib/dovecot/doveadm-server mr,
+  /usr/lib*/dovecot/doveadm-server mr,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.lib.dovecot.doveadm-server>

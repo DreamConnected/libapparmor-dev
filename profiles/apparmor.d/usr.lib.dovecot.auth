@@ -14,7 +14,7 @@ abi <abi/3.0>,
 
 include <tunables/global>
 
-profile dovecot-auth /usr/lib/dovecot/auth {
+profile dovecot-auth /usr/lib*/dovecot/auth {
   include <abstractions/authentication>
   include <abstractions/base>
   include <abstractions/mysql>
@@ -34,7 +34,7 @@ profile dovecot-auth /usr/lib/dovecot/auth {
   /etc/my.cnf.d/*.cnf r,
 
   /etc/dovecot/* r,
-  /usr/lib/dovecot/auth mr,
+  /usr/lib*/dovecot/auth mr,
   /var/lib/dovecot/auth-chroot/* r,
 
   # kerberos replay cache

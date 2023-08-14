@@ -13,11 +13,11 @@ abi <abi/3.0>,
 
 include <tunables/global>
 
-profile dovecot-log /usr/lib/dovecot/log flags=(attach_disconnected) {
+profile dovecot-log /usr/lib*/dovecot/log flags=(attach_disconnected) {
   include <abstractions/base>
   include <abstractions/dovecot-common>
 
-  /usr/lib/dovecot/log mr,
+  /usr/lib*/dovecot/log mr,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.lib.dovecot.log>

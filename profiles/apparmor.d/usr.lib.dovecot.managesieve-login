@@ -16,7 +16,7 @@ abi <abi/3.0>,
 
 include <tunables/global>
 
-profile dovecot-managesieve-login /usr/lib/dovecot/managesieve-login {
+profile dovecot-managesieve-login /usr/lib*/dovecot/managesieve-login {
   include <abstractions/base>
   include <abstractions/dovecot-common>
   include <abstractions/openssl>
@@ -28,7 +28,7 @@ profile dovecot-managesieve-login /usr/lib/dovecot/managesieve-login {
   network inet6 stream,
   network unix stream,
 
-  /usr/lib/dovecot/managesieve-login mr,
+  /usr/lib*/dovecot/managesieve-login mr,
   @{run}/dovecot/login-master-notify* rw,
   @{run}/dovecot/login/ r,
   @{run}/dovecot/login/* rw,

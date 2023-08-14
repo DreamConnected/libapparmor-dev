@@ -15,7 +15,7 @@
 include <tunables/dovecot>
 include <tunables/global>
 
-profile dovecot-replicator /usr/lib/dovecot/replicator {
+profile dovecot-replicator /usr/lib*/dovecot/replicator {
   include <abstractions/base>
   include <abstractions/dovecot-common>
   include <abstractions/nameservice>
@@ -25,7 +25,7 @@ profile dovecot-replicator /usr/lib/dovecot/replicator {
   /etc/dovecot/conf.d/ r,
   /etc/dovecot/conf.d/** r,
   /etc/dovecot/dovecot.conf r,
-  /usr/lib/dovecot/replicator mr,
+  /usr/lib*/dovecot/replicator mr,
   /usr/share/dovecot/** r,
   /{,var/}run/dovecot/auth-master rw,
   @{DOVECOT_MAILSTORE}/ rw,

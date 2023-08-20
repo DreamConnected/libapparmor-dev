@@ -1645,16 +1645,16 @@ def collapse_log(hashlog, ignore_null_profiles=True):
         for full_profile in hashlog[aamode].keys():
             final_name = hashlog[aamode][full_profile]['final_name']
 
-            if hashlog[aamode][full_profile]['final_name'] == '':
+            if final_name == '':
                 continue  # user chose "deny" or "unconfined" for this target, therefore ignore log events
 
-            if '//null-' in hashlog[aamode][full_profile]['final_name'] and ignore_null_profiles:
+            if '//null-' in final_name and ignore_null_profiles:
                 # ignore null-* profiles (probably nested childs)
                 # otherwise we'd accidentally create a null-* hat in the profile which is worse
                 # XXX drop this once we support nested childs
                 continue
 
-            profile, hat = split_name(hashlog[aamode][full_profile]['final_name'])  # XXX limited to two levels to avoid an Exception on nested child profiles or nested null-*
+            profile, hat = split_name(final_name)  # XXX limited to two levels to avoid an Exception on nested child profiles or nested null-*
             # TODO: support nested child profiles
 
             # used to avoid to accidentally initialize aa[profile][hat] or calling is_known_rule() on events for a non-existing profile

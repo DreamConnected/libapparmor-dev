@@ -20,6 +20,7 @@
 #include <string>
 #include <sstream>
 #include <map>
+#include <arpa/inet.h>
 
 #include "lib.h"
 #include "parser.h"
@@ -298,6 +299,164 @@ const struct network_tuple *net_find_mapping(const struct network_tuple *map,
 	return NULL;
 }
 
+bool parse_ipv4_address(const char *input, struct ip_address *result)
+{
+	struct in_addr addr;
+	if (inet_pton(AF_INET, input, &addr) == 1) {
+		result->family = AF_INET;
+		result->address.address_v4 = addr.s_addr;
+		result->port = 0;
+		return true;
+	}
+	return false;
+}
+
+bool parse_ipv6_address(const char *input, struct ip_address *result)
+{
+	struct in6_addr addr;
+	if (inet_pton(AF_INET6, input, &addr) == 1) {
+		result->family = AF_INET6;
+		memcpy(result->address.address_v6, addr.s6_addr, 16);
+		result->port = 0;
+		return true;
+	}
+	return false;
+}
+
+bool parse_subnet_mask(const char *str, uint8_t *result, uint8_t max)
+{
+	char *eptr;
+	unsigned long mask = strtoul(str, &eptr, 10);
+	if (mask >= 0 && str != eptr &&
+	    *eptr == '\0' && mask <= max) {
+		*result = mask;
+		return true;
+	}
+	return false;
+}
+
+bool parse_ip(const char *ip, struct ip_address *result)
+{
+	return parse_ipv6_address(ip, result) ||
+		parse_ipv4_address(ip, result);
+}
+
+bool parse_range(const char *range, struct ip_address *from, struct ip_address *to)
+{
+	char *range_tmp = strdup(range);
+	char *dash = strchr(range_tmp, '-');
+	size_t sizecmp = sizeof(from->address.address_v6);
+	bool ret = false;
+	if (dash == NULL)
+		goto out;
+	*dash = '\0';
+
+	if (parse_ip(range_tmp, from)) {
+		if (parse_ip(dash + 1, to)) {
+			if (from->family != to->family) {
+				goto out;
+			}
+
+			if (from->family == AF_INET)
+				sizecmp = sizeof(from->address.address_v4);
+
+			if (memcmp(&from->address, &to->address, sizecmp) > 0) {
+				/* will never match */
+				goto out;
+			}
+			ret = true;
+			goto out;
+		}
+	}
+
+out:
+	free(range_tmp);
+	return ret;
+}
+
+bool parse_port_number(const char *port_entry, uint16_t *port) {
+	char *eptr;
+	unsigned long port_tmp = strtoul(port_entry, &eptr, 10);
+
+	if (port_tmp >= 0 && port_entry != eptr &&
+	    *eptr == '\0' && port_tmp <= UINT16_MAX) {
+		*port = port_tmp;
+		return true;
+	}
+	return false;
+}
+
+bool parse_range(const char *range, uint16_t *from, uint16_t *to)
+{
+	char *range_tmp = strdup(range);
+	char *dash = strchr(range_tmp, '-');
+	bool ret = false;
+	if (dash == NULL)
+		goto out;
+	*dash = '\0';
+
+	if (parse_port_number(range_tmp, from)) {
+		if (parse_port_number(dash + 1, to)) {
+			if (*from > *to) {
+				goto out;
+			}
+			ret = true;
+			goto out;
+		}
+	}
+
+out:
+	free(range_tmp);
+	return ret;
+}
+
+
+bool parse_subnet(const char *subnet_ip, struct ip_address *subnet)
+{
+	char *subnet_tmp = strdup(subnet_ip);
+	char *mask = strchr(subnet_tmp, '/');
+	bool ret = false;
+	if (mask == NULL)
+		goto out;
+
+	*mask = '\0';
+	if (parse_ip(subnet_tmp, subnet)) {
+		if(!parse_subnet_mask(mask + 1, &(subnet->subnet_mask),
+				      subnet->family == AF_INET ? 32 : 128)) {
+			goto out;
+		}
+		ret = true;
+		goto out;
+	}
+out:
+	free(subnet_tmp);
+	return ret;
+}
+
+bool network_rule::parse_port(const char *port_entry)
+{
+	if (parse_range(port_entry, &from_port, &to_port)) {
+		is_portrange = true;
+		return true;
+	}
+	is_port = true;
+	return parse_port_number(port_entry, &port);
+}
+
+bool network_rule::parse_address(const char *ip_entry)
+{
+	if (parse_range(ip_entry, &from_ip, &to_ip)) {
+		is_iprange = true;
+		return true;
+	} else if (parse_subnet(ip_entry, &subnet_ip)) {
+		is_subnet = true;
+		return true;
+	} else {
+		is_ip = true;
+		return parse_ip(ip_entry, &ip);
+	}
+}
+
 void network_rule::move_conditionals(struct cond_entry *conds)
 {
 	struct cond_entry *cond_ent;
@@ -306,10 +465,18 @@ void network_rule::move_conditionals(struct cond_entry *conds)
 		/* for now disallow keyword 'in' (list) */
 		if (!cond_ent->eq)
 			yyerror("keyword \"in\" is not allowed in network rules\n");
-
-		/* no valid conditionals atm */
-		yyerror("invalid network rule conditional \"%s\"\n",
-			cond_ent->name);
+		if (strcmp(cond_ent->name, "ip") == 0) {
+			move_conditional_value("network", &sip, cond_ent);
+			if (!parse_address(sip))
+				yyerror("network invalid ip='%s'\n", sip);
+		} else if (strcmp(cond_ent->name, "port") == 0) {
+			move_conditional_value("network", &sport, cond_ent);
+			if (!parse_port(sport))
+				yyerror("network invalid port='%s'\n", sport);
+		} else {
+			yyerror("invalid network rule conditional \"%s\"\n",
+				cond_ent->name);
+		}
 	}
 }
 
@@ -428,9 +595,37 @@ void network_rule::warn_once(const char *name)
 	rule_t::warn_once(name, "network rules not enforced");
 }
 
+std::string gen_ip_cond(const struct ip_address ip)
+{
+	std::ostringstream oss;
+	int i;
+	if (ip.family == AF_INET) {
+		u8 *byte = (u8 *) &ip.address.address_v4; /* in network byte order */
+		for (i = 0; i < 4; i++)
+			oss << "\\x" << std::setfill('0') << std::setw(2) << std::hex << static_cast<unsigned int>(byte[i]);
+	} else {
+		for (i = 0; i < 16; ++i)
+			oss << "\\x" << std::setfill('0') << std::setw(2) << std::hex << static_cast<unsigned int>(ip.address.address_v6[i]);
+	}
+	return oss.str();
+}
+
+std::string gen_port_cond(uint16_t port)
+{
+	std::ostringstream oss;
+	if (port > 0) {
+		oss << "\\x" << std::setfill('0') << std::setw(2) << std::hex << ((port & 0xff00) >> 8);
+		oss << "\\x" << std::setfill('0') << std::setw(2) << std::hex << (port & 0xff);
+	} else {
+		oss << "..";
+	}
+	return oss.str();
+}
+
 bool network_rule::gen_net_rule(Profile &prof, u16 family, unsigned int type_mask) {
 	std::ostringstream buffer;
 	std::string buf;
+	const char *vec[5];
 
 	buffer << "\\x" << std::setfill('0') << std::setw(2) << std::hex << AA_CLASS_NETV8;
 	buffer << "\\x" << std::setfill('0') << std::setw(2) << std::hex << ((family & 0xff00) >> 8);
@@ -442,6 +637,98 @@ bool network_rule::gen_net_rule(Profile &prof, u16 family, unsigned int type_mas
 		buffer << "\\x" << std::setfill('0') << std::setw(2) << std::hex << (type_mask & 0xff);
 	}
 	buf = buffer.str();
+	vec[0] = buf.c_str();
+
+	if (is_ip) {
+		std::string ip_buf = gen_ip_cond(ip);
+		std::string port_buf = gen_port_cond(ip.port);
+		vec[1] = ip_buf.c_str();
+		vec[2] = port_buf.c_str();
+		if (!prof.policy.rules->add_rule_vec(rule_mode == RULE_DENY, map_perms(AA_VALID_NET_PERMS),
+						     dedup_perms_rule_t::audit == AUDIT_FORCE ? map_perms(AA_VALID_NET_PERMS) : 0,
+						     3, vec, parseopts, false))
+			goto fail;
+	}
+
+	if (is_port) {
+		std::string ip_buf = "....";
+		std::string port_buf = gen_port_cond(port);
+		vec[1] = ip_buf.c_str();
+		vec[2] = port_buf.c_str();
+		if (!prof.policy.rules->add_rule_vec(rule_mode == RULE_DENY, map_perms(AA_VALID_NET_PERMS),
+						     dedup_perms_rule_t::audit == AUDIT_FORCE ? map_perms(AA_VALID_NET_PERMS) : 0,
+						     3, vec, parseopts, false))
+			goto fail;
+	}
+
+	if (is_iprange) {
+		std::string range_buf;
+		if (from_ip.family == AF_INET) {
+			if (!convert_range(range_buf, from_ip.address.address_v4, to_ip.address.address_v4))
+				goto fail;
+			vec[1] = range_buf.c_str();
+		} else if (from_ip.family == AF_INET6) {
+			if (!convert_range(range_buf, from_ip.address.address_v6, to_ip.address.address_v6))
+				goto fail;
+			vec[1] = range_buf.c_str();
+		}
+		if (!prof.policy.rules->add_rule_vec(rule_mode == RULE_DENY, map_perms(AA_VALID_NET_PERMS),
+						     dedup_perms_rule_t::audit == AUDIT_FORCE ? map_perms(AA_VALID_NET_PERMS) : 0,
+						     2, vec, parseopts, false))
+			goto fail;
+	}
+
+	if (is_portrange) {
+		std::string range_buf;
+		if (!convert_range(range_buf, from_port, to_port))
+			goto fail;
+		vec[1] = range_buf.c_str();
+
+		if (!prof.policy.rules->add_rule_vec(rule_mode == RULE_DENY, map_perms(AA_VALID_NET_PERMS),
+						     dedup_perms_rule_t::audit == AUDIT_FORCE ? map_perms(AA_VALID_NET_PERMS) : 0,
+						     2, vec, parseopts, false))
+			goto fail;
+	}
+
+	if (is_subnet) {
+		std::string subnet_range_buf;
+		if (subnet_ip.family == AF_INET) {
+			uint32_t mask = subnet_ip.subnet_mask ? UINT32_MAX << (32 - subnet_ip.subnet_mask) : 0;
+			mask = htonl(mask);
+			uint32_t start = subnet_ip.address.address_v4 & mask;
+			uint32_t end = start | ~mask;
+			if (!convert_range(subnet_range_buf, start, end))
+				goto fail;
+			vec[1] = subnet_range_buf.c_str();
+		} else {
+			uint8_t mask[16];
+			uint8_t start[16];
+			uint8_t end[16];
+			uint8_t subnet = subnet_ip.subnet_mask;
+
+			for (int i = 0; i < 16; i++) {
+				mask[i] = subnet ? UINT8_MAX << (8 - (subnet > 8 ? 8 : subnet)) : 0;
+				if (subnet < 8)
+					subnet = 0;
+				else
+					subnet -= 8;
+			}
+			for (int i = 0; i < 16; i++) {
+				start[i] = subnet_ip.address.address_v6[i] & mask[i];
+			}
+			for (int i = 0; i < 16; i++) {
+				end[i] = (subnet_ip.address.address_v6[i] & mask[i]) | ~mask[i];
+			}
+
+			if (!convert_range(subnet_range_buf, start, end))
+				goto fail;
+			vec[1] = subnet_range_buf.c_str();
+		}
+		if (!prof.policy.rules->add_rule_vec(rule_mode == RULE_DENY, map_perms(AA_VALID_NET_PERMS),
+						     dedup_perms_rule_t::audit == AUDIT_FORCE ? map_perms(AA_VALID_NET_PERMS) : 0,
+						     2, vec, parseopts, false))
+			goto fail;
+	}
 
 	if (!prof.policy.rules->add_rule(buf.c_str(), rule_mode == RULE_DENY, map_perms(AA_VALID_NET_PERMS),
 					 dedup_perms_rule_t::audit == AUDIT_FORCE ? map_perms(AA_VALID_NET_PERMS) : 0,
@@ -449,6 +736,8 @@ bool network_rule::gen_net_rule(Profile &prof, u16 family, unsigned int type_mas
 		return false;
 
 	return true;
+fail:
+	return false;
 }
 
 int network_rule::gen_policy_re(Profile &prof)

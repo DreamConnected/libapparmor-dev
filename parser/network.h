@@ -104,11 +104,41 @@ int net_find_type_val(const char *type);
 const char *net_find_type_name(int type);
 const char *net_find_af_name(unsigned int af);
 
+struct ip_address {
+	union {
+		uint8_t address_v6[16];
+		uint32_t address_v4;
+	} address;
+	uint16_t family;
+	uint16_t port;
+	uint8_t subnet_mask;
+};
+
 class network_rule: public dedup_perms_rule_t {
 	void move_conditionals(struct cond_entry *conds);
 public:
 	std::unordered_map<unsigned int, std::vector<struct aa_network_entry>> network_map;
 	std::unordered_map<unsigned int, perms_t> network_perms;
+	char *sip = NULL;
+	char *sport = NULL;
+
+	bool is_iprange = false;
+	bool is_portrange = false;
+	bool is_subnet = false;
+	bool is_ip = false;
+	bool is_port = false;
+	
+	uint16_t port;
+	uint16_t from_port;
+	uint16_t to_port;
+	struct ip_address ip;
+
+	/* range */
+	struct ip_address from_ip;
+	struct ip_address to_ip;
+
+	/* subnet */
+	struct ip_address subnet_ip;
 
 	/* empty constructor used only for the profile to access
 	 * static elements to maintain compatibility with
@@ -120,6 +150,10 @@ public:
 	network_rule(unsigned int family, unsigned int type);
 	virtual ~network_rule()
 	{
+		if (sip)
+			free(sip);
+		if (sport)
+			free(sport);
 		if (allow) {
 			free(allow);
 			allow = NULL;
@@ -141,6 +175,8 @@ public:
 	bool gen_net_rule(Profile &prof, u16 family, unsigned int type_mask);
 	void set_netperm(unsigned int family, unsigned int type);
 	void update_compat_net(void);
+	bool parse_address(const char *ip_entry);
+	bool parse_port(const char *port_entry);
 
 	virtual bool valid_prefix(const prefixes &p, const char *&error) {
 		if (p.owner) {

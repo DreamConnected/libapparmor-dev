@@ -1643,16 +1643,18 @@ def collapse_log(hashlog, ignore_null_profiles=True):
         log_dict[aamode] = {}
 
         for full_profile in hashlog[aamode].keys():
-            if hashlog[aamode][full_profile]['final_name'] == '':
+            final_name = hashlog[aamode][full_profile]['final_name']
+
+            if final_name == '':
                 continue  # user chose "deny" or "unconfined" for this target, therefore ignore log events
 
-            if '//null-' in hashlog[aamode][full_profile]['final_name'] and ignore_null_profiles:
+            if '//null-' in final_name and ignore_null_profiles:
                 # ignore null-* profiles (probably nested childs)
                 # otherwise we'd accidentally create a null-* hat in the profile which is worse
                 # XXX drop this once we support nested childs
                 continue
 
-            profile, hat = split_name(hashlog[aamode][full_profile]['final_name'])  # XXX limited to two levels to avoid an Exception on nested child profiles or nested null-*
+            profile, hat = split_name(final_name)  # XXX limited to two levels to avoid an Exception on nested child profiles or nested null-*
             # TODO: support nested child profiles
 
             # used to avoid to accidentally initialize aa[profile][hat] or calling is_known_rule() on events for a non-existing profile
@@ -1661,9 +1663,9 @@ def collapse_log(hashlog, ignore_null_profiles=True):
                 hat_exists = True
 
             if True:
-                if not log_dict[aamode].get(full_profile):
+                if not log_dict[aamode].get(final_name):
                     # with execs in ix mode, we already have ProfileStorage initialized and should keep the content it already has
-                    log_dict[aamode][full_profile] = ProfileStorage(profile, hat, 'collapse_log()')
+                    log_dict[aamode][final_name] = ProfileStorage(profile, hat, 'collapse_log()')
 
                 for path in hashlog[aamode][full_profile]['path'].keys():
                     for owner in hashlog[aamode][full_profile]['path'][path]:
@@ -1676,18 +1678,18 @@ def collapse_log(hashlog, ignore_null_profiles=True):
                         file_event = FileRule(path, mode, None, FileRule.ALL, owner=owner, log_event=True)
 
                         if not hat_exists or not is_known_rule(aa[profile][hat], 'file', file_event):
-                            log_dict[aamode][full_profile]['file'].add(file_event)
+                            log_dict[aamode][final_name]['file'].add(file_event)
                             # TODO: check for existing rules with this path, and merge them into one rule
 
                 for cap in hashlog[aamode][full_profile]['capability'].keys():
                     cap_event = CapabilityRule(cap, log_event=True)
                     if not hat_exists or not is_known_rule(aa[profile][hat], 'capability', cap_event):
-                        log_dict[aamode][full_profile]['capability'].add(cap_event)
+                        log_dict[aamode][final_name]['capability'].add(cap_event)
 
                 for cp in hashlog[aamode][full_profile]['change_profile'].keys():
                     cp_event = ChangeProfileRule(None, ChangeProfileRule.ALL, cp, log_event=True)
                     if not hat_exists or not is_known_rule(aa[profile][hat], 'change_profile', cp_event):
-                        log_dict[aamode][full_profile]['change_profile'].add(cp_event)
+                        log_dict[aamode][final_name]['change_profile'].add(cp_event)
 
                 dbus = hashlog[aamode][full_profile]['dbus']
                 for access in                               dbus:                                      # noqa: E271
@@ -1710,21 +1712,21 @@ def collapse_log(hashlog, ignore_null_profiles=True):
                                                 raise AppArmorBug('unexpected dbus access: {}'.format(access))
 
                                             if not hat_exists or not is_known_rule(aa[profile][hat], 'dbus', dbus_event):
-                                                log_dict[aamode][full_profile]['dbus'].add(dbus_event)
+                                                log_dict[aamode][final_name]['dbus'].add(dbus_event)
 
                 nd = hashlog[aamode][full_profile]['network']
                 for family in nd.keys():
                     for sock_type in nd[family].keys():
                         net_event = NetworkRule(family, sock_type, log_event=True)
                         if not hat_exists or not is_known_rule(aa[profile][hat], 'network', net_event):
-                            log_dict[aamode][full_profile]['network'].add(net_event)
+                            log_dict[aamode][final_name]['network'].add(net_event)
 
                 ptrace = hashlog[aamode][full_profile]['ptrace']
                 for peer in ptrace.keys():
                     for access in ptrace[peer].keys():
                         ptrace_event = PtraceRule(access, peer, log_event=True)
                         if not hat_exists or not is_known_rule(aa[profile][hat], 'ptrace', ptrace_event):
-                            log_dict[aamode][full_profile]['ptrace'].add(ptrace_event)
+                            log_dict[aamode][final_name]['ptrace'].add(ptrace_event)
 
                 sig = hashlog[aamode][full_profile]['signal']
                 for peer in sig.keys():
@@ -1732,7 +1734,7 @@ def collapse_log(hashlog, ignore_null_profiles=True):
                         for signal in sig[peer][access].keys():
                             signal_event = SignalRule(access, signal, peer, log_event=True)
                             if not hat_exists or not is_known_rule(aa[profile][hat], 'signal', signal_event):
-                                log_dict[aamode][full_profile]['signal'].add(signal_event)
+                                log_dict[aamode][final_name]['signal'].add(signal_event)
 
     return log_dict
 

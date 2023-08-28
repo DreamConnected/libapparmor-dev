@@ -352,13 +352,8 @@ tests: apparmor_parser ${TESTS}
 $(AAREOBJECT): FORCE
 	$(MAKE) -C $(AAREDIR) CFLAGS="$(EXTRA_CXXFLAGS)"
 
-.PHONY: install-rhel4
-install-rhel4: install-redhat
-
 .PHONY: install-redhat
-install-redhat:
-	install -m 755 -d $(DESTDIR)/etc/init.d
-	install -m 755 rc.apparmor.$(subst install-,,$@) $(DESTDIR)/etc/init.d/apparmor
+install-redhat: install-systemd
 
 .PHONY: install-suse
 install-suse: install-systemd
@@ -389,9 +384,9 @@ DISTRO=$(shell if [ -f /etc/slackware-version ] ; then \
 	         if [ "$$(rpm --eval '0%{?suse_version}')" != "0" ] ; then \
 	             echo suse ;\
 	         elif [ "$$(rpm --eval '%{_host_vendor}')" = redhat ] ; then \
-	            echo rhel4 ;\
+	            echo redhat ;\
 	         elif [ "$$(rpm --eval '0%{?fedora}')" != "0" ] ; then \
-	            echo rhel4 ;\
+	            echo redhat ;\
 	         else \
 	            echo unknown ;\
 	         fi ;\

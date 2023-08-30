@@ -447,6 +447,20 @@ syntax_failure = (
     'vars/vars_dbus_8.sd',  # Path doesn't start with / or variable: {/@{TLDS}/foo,/com/@{DOMAINS}}
     'vars/vars_simple_assignment_12.sd',  # Redefining existing variable @{BAR} ('\' not handled)
     'bare_include_tests/ok_2.sd',  # two #include<...> in one line
+
+    # fine grained net
+    'network/network_ok_8.sd',
+    'network/network_ok_9.sd',
+    'network/network_ok_10.sd',
+    'network/network_ok_11.sd',
+    'network/network_ok_12.sd',
+    'network/network_ok_13.sd',
+    'network/network_ok_14.sd',
+    'network/network_ok_15.sd',
+    'network/network_ok_16.sd',
+    'network/network_ok_17.sd',
+    'network/network_ok_18.sd',
+    'network/network_ok_19.sd',
 )
 
 

@@ -1,0 +1,8 @@
+#
+#=DESCRIPTION invalid network ip conditional test
+#=EXRESULT FAIL
+#
+/usr/bin/foo {
+  network peer=(ip=-1),
+
+}

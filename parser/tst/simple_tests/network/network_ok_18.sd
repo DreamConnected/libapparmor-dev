@@ -1,0 +1,10 @@
+#
+#=DESCRIPTION network ipv4 subnet conditional test
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  network peer=(ip=192.168.0.1/24),
+  network peer=(ip=192.168.0.1/0),
+  network peer=(ip=192.168.0.1/32),
+
+}

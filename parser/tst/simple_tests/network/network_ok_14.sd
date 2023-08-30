@@ -1,0 +1,10 @@
+#
+#=DESCRIPTION network port conditional test
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  network peer=(port=0),
+  network peer=(port=65535),
+  network peer=(port=443),
+
+}

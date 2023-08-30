@@ -1,0 +1,9 @@
+#
+#=DESCRIPTION network ipv6 conditional test
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  network inet peer=(ip=fe80::fc54:ff:fece:e21f),
+  network inet tcp peer=(ip=fe80::fc54:ff:fece:e21f),
+
+}

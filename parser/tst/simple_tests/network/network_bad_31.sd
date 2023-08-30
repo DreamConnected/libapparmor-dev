@@ -1,0 +1,8 @@
+#
+#=DESCRIPTION invalid network subnet test
+#=EXRESULT FAIL
+#
+/usr/bin/foo {
+  network peer=(ip=2001:1884:d02e:2759:d30:f166:71c9:288f/invalid),
+
+}

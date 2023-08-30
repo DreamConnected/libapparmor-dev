@@ -1,0 +1,8 @@
+#
+#=DESCRIPTION invalid network port range test
+#=EXRESULT FAIL
+#
+/usr/bin/foo {
+  network peer=(port=test),
+
+}

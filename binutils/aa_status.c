@@ -123,6 +123,8 @@ const char *opt_mode = ".*";
 const char *opt_profiles = ".*";
 const char *opt_pid = ".*";
 const char *opt_exe = ".*";
+char *opt_test_profiles = NULL;
+char *opt_test_processes = NULL;
 
 const char *profile_statuses[] = {"enforce", "complain", "prompt", "kill", "unconfined"};
 const char *process_statuses[] = {"enforce", "complain", "prompt", "kill", "unconfined", "mixed"};
@@ -152,7 +154,6 @@ static int open_profiles(FILE **fp)
 		dfprintf(stderr, "apparmor not present.\n");
 		return AA_EXIT_DISABLED;
 	}
-	dprintf("apparmor module is loaded.\n");
 
 	ret = aa_find_mountpoint(&apparmorfs);
 	if (ret == -1) {
@@ -742,6 +743,20 @@ static int usage_filters(void)
 	return 0;
 }
 
+static int usage_tests(void)
+{
+	printf("Usage of test\n"
+	 "Precanned test files and directories to check aa-status output"
+	 "against.\n"
+	 "  --test.profiles=file  file to use as profile set\n"
+	 "  --test.processes=dir  directory to use as proc tree\n"
+	 "\n"
+	);
+
+	exit(0);
+	return 0;
+}
+
 static int print_usage(const char *command, bool error)
 {
 	int status = EXIT_SUCCESS;
@@ -758,15 +773,16 @@ static int print_usage(const char *command, bool error)
 	 "  --enabled       returns error code if AppArmor not enabled\n"
 	 "  --show=X        What information to show. {profiles,processes,all}\n"
 	 "  --count         print the number of entries. Implies --quiet\n"
+	 "  --json          displays multiple data points in machine-readable JSON format\n"
+	 "  --pretty-json   same data as --json, formatted for human consumption as well\n"
+	 "  --verbose       (default) displays data points about loaded policy set\n"
 	 "  --filter.mode=filter      see filters\n"
 	 "  --filter.profiles=filter  see filters\n"
 	 "  --filter.pid=filter       see filters\n"
 	 "  --filter.exe=filter       see filters\n"
-	 "  --json          displays multiple data points in machine-readable JSON format\n"
-	 "  --pretty-json   same data as --json, formatted for human consumption as well\n"
-	 "  --verbose       (default) displays data points about loaded policy set\n"
-	 "  -h [(legacy|filter)]    this message, or info on the specified option\n"
-	 " --help[=(legacy|filter)] this message, or info on the specified option\n",
+	 "  --test.XXX                see --help=test\n"
+	       "  -h [(legacy|filter|test)] this message, or info on the specified option\n"
+	 " --help[=(legacy|filter|test)]    this message, or info on the specified option\n",
 	 command);
 
 	exit(status);
@@ -791,6 +807,8 @@ static int print_usage(const char *command, bool error)
 #define ARG_PID		142
 #define ARG_EXE		143
 #define ARG_PROMPT	144
+#define ARG_TEST_PROFILES 145
+#define ARG_TEST_PROCESSES 146
 #define ARG_VERBOSE 'v'
 #define ARG_HELP 'h'
 
@@ -816,6 +834,8 @@ static int parse_args(int argc, char **argv)
 		{"filter.pid", 1, 0, ARG_PID},
 		{"filter.exe", 1, 0, ARG_EXE},
 		{"filter.mode", 1, 0, ARG_MODE},
+		{"test.profiles", 1, 0, ARG_TEST_PROFILES},
+		{"test.processes", 1, 0, ARG_TEST_PROCESSES},
 		{NULL, 0, 0, 0},
 	};
 
@@ -837,6 +857,8 @@ static int parse_args(int argc, char **argv)
 				print_legacy(argv[0]);
 			} else if (strcmp(optarg, "filters") == 0) {
 				usage_filters();
+			} else if (strcmp(optarg, "test") == 0) {
+				usage_tests();
 			} else {
 				dfprintf(stderr, "Error: Invalid --help option '%s'.\n", optarg);
 				print_usage(argv[0], true);
@@ -926,6 +948,12 @@ static int parse_args(int argc, char **argv)
 			opt_exe = optarg;
 			/* default opt_mode */
 			break;
+		case ARG_TEST_PROFILES:
+			opt_test_profiles = optarg;
+			break;
+		case ARG_TEST_PROCESSES:
+			opt_test_processes = optarg;
+			break;
 			
 		default:
 			dfprintf(stderr, "Error: Invalid command.\n");
@@ -989,9 +1017,20 @@ int main(int argc, char **argv)
 	}
 
 	/* check apparmor is available and we have permissions */
-	ret = open_profiles(&fp);
-	if (ret != 0)
-		goto out;
+	if (opt_test_profiles) {
+		fp = fopen(opt_test_profiles, "r");
+		if (!fp) {
+			dfprintf(stderr, "Could not open test profiles file '%s'\n", opt_test_profiles);
+			ret = AA_EXIT_INTERNAL_ERROR;
+			goto out;
+		}
+	} else {
+		ret = open_profiles(&fp);
+		if (ret != 0)
+			goto out;
+	}
+	if (!opt_json)
+		dfprintf(outf, "apparmor module is loaded.\n");
 
 	if (opt_pretty) {
 		outf_save = outf;

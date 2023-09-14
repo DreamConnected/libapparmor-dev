@@ -2025,6 +2025,9 @@ def collapse_log():
 
                 ptrace = prelog[aamode][profile][hat]['ptrace']
                 for peer in ptrace.keys():
+                    if '//null-' in peer:
+                        continue  # ignore null-* peers
+
                     for access in ptrace[peer].keys():
                         ptrace_event = PtraceRule(access, peer, log_event=True)
                         if not hat_exists or not is_known_rule(aa[profile][hat], 'ptrace', ptrace_event):
@@ -2032,6 +2035,9 @@ def collapse_log():
 
                 sig = prelog[aamode][profile][hat]['signal']
                 for peer in sig.keys():
+                    if '//null-' in peer:
+                        continue  # ignore null-* peers
+
                     for access in sig[peer].keys():
                         for signal in sig[peer][access].keys():
                             signal_event = SignalRule(access, signal, peer, log_event=True)

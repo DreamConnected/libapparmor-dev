@@ -35,14 +35,14 @@ class TestAdd_profile(AATest):
     def testAdd_profile_1(self):
         self.pl.add_profile('/etc/apparmor.d/bin.foo', 'foo', '/bin/foo')
         self.assertEqual(self.pl.profile_names, {'foo': '/etc/apparmor.d/bin.foo'})
-        self.assertEqual(self.pl.attachments, {'/bin/foo': '/etc/apparmor.d/bin.foo'})
+        self.assertEqual(self.pl.attachments, {'/bin/foo': {'f': '/etc/apparmor.d/bin.foo', 'p': 'foo'}})
         self.assertEqual(self.pl.profiles_in_file('/etc/apparmor.d/bin.foo'), ['foo'])
         self.assertEqual('%s' % self.pl, '\n<ProfileList>\n/etc/apparmor.d/bin.foo\n</ProfileList>\n')
 
     def testAdd_profile_2(self):
         self.pl.add_profile('/etc/apparmor.d/bin.foo', None, '/bin/foo')
         self.assertEqual(self.pl.profile_names, {})
-        self.assertEqual(self.pl.attachments, {'/bin/foo': '/etc/apparmor.d/bin.foo'})
+        self.assertEqual(self.pl.attachments, {'/bin/foo': {'f': '/etc/apparmor.d/bin.foo', 'p': '/bin/foo'}})
         self.assertEqual(self.pl.profiles_in_file('/etc/apparmor.d/bin.foo'), ['/bin/foo'])
         self.assertEqual('%s' % self.pl, '\n<ProfileList>\n/etc/apparmor.d/bin.foo\n</ProfileList>\n')
 
@@ -124,7 +124,11 @@ class TestFilename_from_attachment(AATest):
         self.pl.add_profile('/etc/apparmor.d/bin.foo', 'foo', '/bin/foo')
         self.pl.add_profile('/etc/apparmor.d/bin.baz', 'baz', '/bin/ba*')
         self.pl.add_profile('/etc/apparmor.d/bin.foobar', 'foobar', '/bin/foo{bar,baz}')
-        self.pl.add_profile('/etc/apparmor.d/usr.bin.wine', '/usr{,{/lib,/lib32,/lib64}/wine}/bin/wine{,-preloader,server}{,-staging-*,-vanilla-*}', '/usr{,{/lib,/lib32,/lib64}/wine}/bin/wine{,-preloader,server}{,-staging-*,-vanilla-*}')
+        self.pl.add_profile('/etc/apparmor.d/bin.asdf', None, '/bin/asdf')
+        self.pl.add_profile(
+            '/etc/apparmor.d/usr.bin.wine',
+            'wine',
+            '/usr{,{/lib,/lib32,/lib64}/wine}/bin/wine{,-preloader,server}{,-staging-*,-vanilla-*}')
 
     def _run_test(self, params, expected):
         self.assertEqual(self.pl.filename_from_attachment(params), expected)
@@ -132,6 +136,27 @@ class TestFilename_from_attachment(AATest):
     def test_non_path_attachment(self):
         with self.assertRaises(AppArmorBug):
             self.pl.filename_from_attachment('foo')
+
+class TestProfile_from_attachment(TestFilename_from_attachment):
+    # uses AASetup from TestFilename_from_attachment
+    tests = (
+        ('/bin/foo',    'foo'),
+        ('/bin/baz',    'baz'),
+        ('/bin/foobar', 'foobar'),
+        ('/bin/asdf',   '/bin/asdf'),
+        ('@{foo}',      None),  # XXX variables not supported yet (and @{foo} isn't defined in this test)
+        ('/bin/404',    None),
+        ('/usr{,{/lib,/lib32,/lib64}/wine}/bin/wine{,-preloader,server}{,-staging-*,-vanilla-*}', 'wine'),  # XXX should this really match, or should attachment matching only use AARE?
+        ('/usr/lib/wine/bin/wine-preloader-staging-foo',                                          'wine'),  # AARE match
+    )
+
+    def _run_test(self, params, expected):
+        self.assertEqual(self.pl.profile_from_attachment(params), expected)
+
+    def test_non_path_attachment(self):
+        with self.assertRaises(AppArmorBug):
+            self.pl.profile_from_attachment('foo')
+
 
 class TestAdd_inc_ie(AATest):
     def AASetup(self):

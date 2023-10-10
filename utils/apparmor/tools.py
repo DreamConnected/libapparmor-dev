@@ -60,15 +60,27 @@ class aa_tools:
                     profile = fq_path
                 else:
                     program = fq_path
-                    profile = apparmor.get_profile_filename_from_attachment(fq_path, True)
+                    if self.name == 'cleanprof':
+                        profile = apparmor.active_profiles.profile_from_attachment(fq_path)
+                    else:
+                        profile = apparmor.get_profile_filename_from_attachment(fq_path, True)
             else:
                 which_ = which(p)
-                if which_ is not None:
+                if self.name == 'cleanprof' and p in apparmor.aa:
+                    program = p  # not really correct, but works
+                    profile = p
+                elif which_ is not None:
                     program = apparmor.get_full_path(which_)
-                    profile = apparmor.get_profile_filename_from_attachment(program, True)
+                    if self.name == 'cleanprof':
+                        profile = program
+                    else:
+                        profile = apparmor.get_profile_filename_from_attachment(program, True)
                 elif os.path.exists(os.path.join(apparmor.profile_dir, p)):
                     program = None
-                    profile = apparmor.get_full_path(os.path.join(apparmor.profile_dir, p)).strip()
+                    if self.name == 'cleanprof':
+                        profile = p
+                    else:
+                        profile = apparmor.get_full_path(os.path.join(apparmor.profile_dir, p)).strip()
                 else:
                     if '/' not in p:
                         aaui.UI_Info(_("Can't find %(program)s in the system path list. If the name of the application\nis correct, please run 'which %(program)s' as a user with correct PATH\nenvironment set up in order to find the fully-qualified path and\nuse the full path as parameter.")
@@ -87,15 +99,15 @@ class aa_tools:
             if program is None:
                 program = profile
 
-            if not program or not(os.path.exists(program) or apparmor.profile_exists(program)):
+            if not program or not(os.path.exists(program) or profile in apparmor.aa):
                 if program and not program.startswith('/'):
                     program = aaui.UI_GetString(_('The given program cannot be found, please try with the fully qualified path name of the program: '), '')
                 else:
                     aaui.UI_Info(_("%s does not exist, please double-check the path.") % program)
                     sys.exit(1)
 
-            if program and apparmor.profile_exists(program):
-                self.clean_profile(program)
+            if program and profile in apparmor.aa:
+                self.clean_profile(program, profile)
 
             else:
                 if '/' not in program:
@@ -194,14 +206,14 @@ class aa_tools:
                 if self.aa_mountpoint:
                     apparmor.reload(program)
 
-    def clean_profile(self, program):
-        filename = apparmor.get_profile_filename_from_attachment(program, True)
+    def clean_profile(self, program, profile):
+        filename = apparmor.get_profile_filename_from_profile_name(profile)
         import apparmor.cleanprofile as cleanprofile
         prof = cleanprofile.Prof(filename)
         cleanprof = cleanprofile.CleanProf(True, prof, prof)
-        deleted = cleanprof.remove_duplicate_rules(program)
+        deleted = cleanprof.remove_duplicate_rules(profile)
         aaui.UI_Info(_("\nDeleted %s rules.") % deleted)
-        apparmor.changed[program] = True
+        apparmor.changed[profile] = True
 
         if filename:
             if not self.silent:
@@ -217,14 +229,14 @@ class aa_tools:
                 while ans != 'CMD_SAVE_CHANGES':
                     ans, arg = q.promptUser()
                     if ans == 'CMD_SAVE_CHANGES':
-                        apparmor.write_profile_ui_feedback(program, True)
+                        apparmor.write_profile_ui_feedback(profile)
                         self.reload_profile(filename)
                     elif ans == 'CMD_VIEW_CHANGES':
-                        # oldprofile = apparmor.serialize_profile(apparmor.split_to_merged(apparmor.original_aa), program, {})
-                        newprofile = apparmor.serialize_profile(apparmor.split_to_merged(apparmor.aa), program, {'is_attachment': True})
+                        # oldprofile = apparmor.serialize_profile(apparmor.split_to_merged(apparmor.original_aa), profile, {})
+                        newprofile = apparmor.serialize_profile(apparmor.split_to_merged(apparmor.aa), profile, {})  # , {'is_attachment': True})
                         aaui.UI_Changes(filename, newprofile, comments=True)
             else:
-                apparmor.write_profile_ui_feedback(program, True)
+                apparmor.write_profile_ui_feedback(profile, True)
                 self.reload_profile(filename)
         else:
             raise AppArmorException(_('The profile for %s does not exists. Nothing to clean.') % program)

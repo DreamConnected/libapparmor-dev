@@ -44,8 +44,8 @@ class ProfileList:
 
     def __init__(self):
         self.profile_names = {}     # profile name -> filename
-        self.attachments = {}       # attachment -> filename
-        self.attachments_AARE = {}  # AARE(attachment) -> filename
+        self.attachments = {}       # attachment -> {'f': filename, 'p': profile}
+        self.attachments_AARE = {}  # attachment -> AARE(attachment)
         self.files = {}             # filename -> content - see init_file()
         self.profiles = {}          # profile_name -> ProfileStorage
 
@@ -89,7 +89,7 @@ class ProfileList:
             self.profile_names[profile_name] = filename
 
         if attachment:
-            self.attachments[attachment] = filename
+            self.attachments[attachment] = {'f': filename, 'p': profile_name or attachment}  # if a profile doesn't have a name, the attachment is stored as profile name
             self.attachments_AARE[attachment] = AARE(attachment, True)
 
         self.init_file(filename)
@@ -203,18 +203,28 @@ class ProfileList:
 
     def filename_from_attachment(self, attachment):
         """Return profile filename for the given attachment/executable path, or None"""
+        return self.thing_from_attachment(attachment, 'f')
+
+    def profile_from_attachment(self, attachment):
+        """Return profile filename for the given attachment/executable path, or None"""
+        return self.thing_from_attachment(attachment, 'p')
+
+    def thing_from_attachment(self, attachment, thing):
+        """Return thing for the given attachment/executable path, or None.
+
+           thing can be 'f' for filename or 'p' for profile name"""
 
         if not attachment.startswith(('/', '@', '{')):
             raise AppArmorBug('Called filename_from_attachment with non-path attachment: %s' % attachment)
 
         # plain path
         if self.attachments.get(attachment):
-            return self.attachments[attachment]
+            return self.attachments[attachment][thing]
 
         # try AARE matches to cover profile names with alternations and wildcards
         for path in self.attachments.keys():
             if self.attachments_AARE[path].match(attachment):
-                return self.attachments[path]  # XXX this returns the first match, not necessarily the best one
+                return self.attachments[path][thing]  # XXX this returns the first match, not necessarily the best one
 
         return None  # nothing found
 

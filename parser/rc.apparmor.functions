@@ -105,11 +105,12 @@ is_container_with_internal_policy() {
 		return 1
 	fi
 
-	# LXD and LXC set up AppArmor namespaces starting with "lxd-" and
-	# "lxc-", respectively. Return non-zero for all other namespace
-	# identifiers.
+	# LXD, Incus and LXC set up AppArmor namespaces starting with "lxd-",
+	# "incus-" and "lxc-", respectively. Return non-zero for all other
+	# namespace identifiers.
 	read -r ns_name < "$ns_name_path"
 	if [ "${ns_name#lxd-*}" = "$ns_name" ] && \
+	   [ "${ns_name#incus-*}" = "$ns_name" ] && \
 	   [ "${ns_name#lxc-*}" = "$ns_name" ]; then
 		return 1
 	fi

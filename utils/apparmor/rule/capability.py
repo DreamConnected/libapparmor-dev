@@ -97,11 +97,14 @@ class CapabilityRule(BaseRule):
         if self.all_caps:
             return ('%s%scapability,%s' % (space, self.modifiers_str(), self.comment))
         else:
-            caps = ' '.join(self.capability).strip()  # XXX return multiple lines, one for each capability, instead?
-            if caps:
-                return ('%s%scapability %s,%s' % (space, self.modifiers_str(), ' '.join(sorted(self.capability)), self.comment))
-            else:
+            lines = []
+            for cap in sorted(self.capability):
+                lines.append('%s%scapability %s,%s' % (space, self.modifiers_str(), cap, self.comment))
+
+            if not lines:
                 raise AppArmorBug("Empty capability rule")
+
+            return '\n'.join(lines)  # return multiple lines, one for each capability
 
     def _is_covered_localvars(self, other_rule):
         """check if other_rule is covered by this rule object"""

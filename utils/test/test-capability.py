@@ -303,12 +303,12 @@ class WriteCapabilityTest(AATest):
         self._check_write_rule('    audit     capability sys_admin,', 'audit capability sys_admin,')
 
     def test_write_sys_multi(self):
-        self._check_write_rule('   deny capability      sys_admin      audit_write,# foo bar', 'deny capability audit_write sys_admin, # foo bar')
+        self._check_write_rule('   deny capability      sys_admin      audit_write,# foo bar', 'deny capability audit_write, # foo bar\ndeny capability sys_admin, # foo bar')
 
     def test_write_manually(self):
         obj = CapabilityRule(['sys_ptrace', 'audit_write'], allow_keyword=True)
 
-        expected = '    allow capability audit_write sys_ptrace,'
+        expected = '    allow capability audit_write,\n    allow capability sys_ptrace,'
 
         self.assertEqual(expected, obj.get_clean(2), 'unexpected clean rule')
         self.assertEqual(expected, obj.get_raw(2), 'unexpected raw rule')

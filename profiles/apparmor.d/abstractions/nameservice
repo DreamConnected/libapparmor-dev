@@ -23,6 +23,9 @@
   @{etc_ro}/passwd         r,
   @{etc_ro}/protocols      r,
 
+  # On systems with authselect installed, /etc/nsswitch.conf is a symlink to /etc/authselect/nsswitch.conf
+  @{etc_ro}/authselect/nsswitch.conf r,
+
   # libtirpc (used for NIS/YP login) needs this
   @{etc_ro}/netconfig r,
 

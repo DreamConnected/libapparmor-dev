@@ -7,3 +7,6 @@
 
   include <abstractions/kde>
   /usr/bin/kde4-config Cx -> sanitized_helper,
+
+  # https://bugs.kde.org/show_bug.cgi?id=397399
+  /usr/bin/plasma-browser-integration-host Cx -> sanitized_helper,

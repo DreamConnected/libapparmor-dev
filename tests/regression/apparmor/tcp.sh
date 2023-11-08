@@ -14,8 +14,14 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
+# TODO:
+# need to update so we can run the test for ech supported
+# need to be able to modify the compile features to choose the
+# kernel feature supported
+# need to be able to query the parser if it supports the
+# kernel feature
 . $bin/prologue.inc
-requires_kernel_features network
+requires_any_of_kernel_features network network_v8
 
 port=34567
 ip="127.0.0.1"

@@ -18,5 +18,8 @@
   /var/log/btmp     rwk,
   @{run}/utmp       rwk,
 
+  # Some read the list of sessions from systemd
+  /run/systemd/sessions/ r,
+
   # Include additions to the abstraction
   include if exists <abstractions/wutmp.d>

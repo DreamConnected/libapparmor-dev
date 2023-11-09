@@ -1,0 +1,8 @@
+#
+#=DESCRIPTION invalid network range test
+#=EXRESULT FAIL
+#
+/usr/bin/foo {
+  network ip=192.168.0.39-invalid peer=(ip=192.168.0.39-invalid),
+
+}

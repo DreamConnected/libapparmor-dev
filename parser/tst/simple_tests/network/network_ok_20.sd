@@ -1,0 +1,10 @@
+#
+#=DESCRIPTION network ipv4 - port conditional test
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  network ip=127.0.0.1 port=8080,
+  network ip=127.0.0.1 port=0,
+  network ip=127.0.0.1 port=65535,
+
+}

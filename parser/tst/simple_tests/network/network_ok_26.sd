@@ -1,0 +1,13 @@
+#
+#=DESCRIPTION network ipv6 - port conditional test
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  network ip=::1 port=8080,
+  network ip=0000:0000:0000:0000:0000:0000:0000:0001 port=8080,
+  network ip=::1 port=0,
+  network ip=0000:0000:0000:0000:0000:0000:0000:0001 port=0,
+  network ip=::1 port=65535,
+  network ip=0000:0000:0000:0000:0000:0000:0000:0001 port=65535,
+
+}

@@ -1,0 +1,8 @@
+#
+#=DESCRIPTION invalid network port range test
+#=EXRESULT FAIL
+#
+/usr/bin/foo {
+  network ip=127.0.0.1 port=65536 peer=(ip=127.0.0.1 port=65536),
+
+}

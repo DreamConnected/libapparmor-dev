@@ -114,11 +114,8 @@ struct ip_address {
 	uint8_t subnet_mask;
 };
 
-class network_rule: public dedup_perms_rule_t {
-	void move_conditionals(struct cond_entry *conds);
+class ip_conds {
 public:
-	std::unordered_map<unsigned int, std::vector<struct aa_network_entry>> network_map;
-	std::unordered_map<unsigned int, perms_t> network_perms;
 	char *sip = NULL;
 	char *sport = NULL;
 
@@ -127,7 +124,7 @@ public:
 	bool is_subnet = false;
 	bool is_ip = false;
 	bool is_port = false;
-	
+
 	uint16_t port;
 	uint16_t from_port;
 	uint16_t to_port;
@@ -140,20 +137,39 @@ public:
 	/* subnet */
 	struct ip_address subnet_ip;
 
-	/* empty constructor used only for the profile to access
-	 * static elements to maintain compatibility with
-	 * AA_CLASS_NET */
-	network_rule(): dedup_perms_rule_t(AA_CLASS_NETV8) { }
-	network_rule(perms_t perms_p, struct cond_entry *conds);
-	network_rule(perms_t perms_p, const char *family, const char *type,
-		     const char *protocol, struct cond_entry *conds);
-	network_rule(perms_t perms_p, unsigned int family, unsigned int type);
-	virtual ~network_rule()
-	{
+	void free_conds() {
 		if (sip)
 			free(sip);
 		if (sport)
 			free(sport);
+	}
+};
+
+class network_rule: public dedup_perms_rule_t {
+	void move_conditionals(struct cond_entry *conds, ip_conds &ip_cond);
+public:
+	std::unordered_map<unsigned int, std::vector<struct aa_network_entry>> network_map;
+	std::unordered_map<unsigned int, perms_t> network_perms;
+
+	ip_conds peer;
+	ip_conds local;
+
+	bool has_local_conds(void) { return local.sip || local.sport; }
+	bool has_peer_conds(void) { return peer.sip || peer.sport; }
+	/* empty constructor used only for the profile to access
+	 * static elements to maintain compatibility with
+	 * AA_CLASS_NET */
+	network_rule(): dedup_perms_rule_t(AA_CLASS_NETV8) { }
+	network_rule(perms_t perms_p, struct cond_entry *conds,
+		     struct cond_entry *peer_conds);
+	network_rule(perms_t perms_p, const char *family, const char *type,
+		     const char *protocol, struct cond_entry *conds,
+		     struct cond_entry *peer_conds);
+	network_rule(perms_t perms_p, unsigned int family, unsigned int type);
+	virtual ~network_rule()
+	{
+		peer.free_conds();
+		local.free_conds();
 		if (allow) {
 			free(allow);
 			allow = NULL;
@@ -172,11 +188,12 @@ public:
 		}
 	};
 
+	bool gen_ip_conds(Profile &prof, const char *vec[5], ip_conds entry);
 	bool gen_net_rule(Profile &prof, u16 family, unsigned int type_mask);
 	void set_netperm(unsigned int family, unsigned int type);
 	void update_compat_net(void);
-	bool parse_address(const char *ip_entry);
-	bool parse_port(const char *port_entry);
+	bool parse_address(ip_conds &entry);
+	bool parse_port(ip_conds &entry);
 
 	virtual bool valid_prefix(const prefixes &p, const char *&error) {
 		if (p.owner) {

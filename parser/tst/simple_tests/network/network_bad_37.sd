@@ -1,0 +1,8 @@
+#
+#=DESCRIPTION invalid network ip - port conditional test
+#=EXRESULT FAIL
+#
+/usr/bin/foo {
+  network ip=[invalid] port=80,
+
+}

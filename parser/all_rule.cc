@@ -83,7 +83,7 @@ void all_rule::add_implied_rules(Profile &prof)
 	(void) rule->add_prefix(*prefix);
 	prof.rule_ents.push_back(rule);
 
-	rule = new network_rule(0, NULL);
+	rule = new network_rule(0, (struct cond_entry *)NULL, (struct cond_entry *)NULL);
 	(void) rule->add_prefix(*prefix);
 	prof.rule_ents.push_back(rule);
 	

@@ -1,0 +1,8 @@
+#
+#=DESCRIPTION network port range conditional test
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  network port=22-443,
+
+}

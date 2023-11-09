@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION simple network listen w/ip acceptance test
+#=EXRESULT PASS
+
+profile a_profile {
+  network listen ip=127.0.0.1,
+}

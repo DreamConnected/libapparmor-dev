@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION simple network setopt w/peer ip test
+#=EXRESULT FAIL
+
+profile a_profile {
+  network setopt peer=(ip=::1),
+}

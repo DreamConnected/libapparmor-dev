@@ -1,0 +1,5 @@
+#
+#=DESCRIPTION network accept rule outside of a profile
+#=EXRESULT FAIL
+
+  network accept,

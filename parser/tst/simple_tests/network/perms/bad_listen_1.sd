@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION simple network listen w/peer test
+#=EXRESULT FAIL
+
+profile a_profile {
+  network listen peer=(port=1234),
+}

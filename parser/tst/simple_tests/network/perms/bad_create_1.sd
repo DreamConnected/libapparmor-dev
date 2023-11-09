@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION simple network create w/peer acceptance test
+#=EXRESULT FAIL
+
+profile a_profile {
+  network create peer=(port=1234),
+}

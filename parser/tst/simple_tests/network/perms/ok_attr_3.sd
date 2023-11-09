@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION simple network setattr acceptance test
+#=EXRESULT PASS
+
+profile a_profile {
+  network setattr,
+}

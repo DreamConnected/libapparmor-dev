@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION simple network shutdown acceptance test
+#=EXRESULT FAIL
+
+profile a_profile {
+  network (shutdown) peer=(port=1234),
+}

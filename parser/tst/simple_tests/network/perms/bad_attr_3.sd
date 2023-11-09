@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION simple network setattr w/peer test
+#=EXRESULT FAIL
+
+profile a_profile {
+  network setattr peer=(port=1234),
+}

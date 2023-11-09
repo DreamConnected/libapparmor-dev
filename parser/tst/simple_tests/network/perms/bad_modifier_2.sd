@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION network entry with a repeated modifier
+#=EXRESULT FAIL
+
+profile foo {
+  network send ip=127.0.0.1 ip=::1,
+}

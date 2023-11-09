@@ -1,0 +1,8 @@
+#
+#=Description network rule with bad 'peer'
+#=EXRESULT FAIL
+#
+
+profile foo {
+  network send peer(ip=wat),
+}

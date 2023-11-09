@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION simple network setopt w/peer label test
+#=EXRESULT FAIL
+
+profile a_profile {
+  network (setopt) peer=(port=1234),
+}

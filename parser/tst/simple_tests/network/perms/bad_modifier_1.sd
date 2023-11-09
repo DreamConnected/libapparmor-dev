@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION network entry with a bad modifier
+#=EXRESULT FAIL
+
+profile foo {
+  network send type=dgram modifier=foo,
+}

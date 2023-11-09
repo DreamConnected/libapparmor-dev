@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION simple network shutdown w/ip acceptance test
+#=EXRESULT PASS
+
+profile a_profile {
+  network shutdown ip=127.0.0.1,
+}

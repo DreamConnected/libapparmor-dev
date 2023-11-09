@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION network entry with a bad 'in' keyword
+#=EXRESULT FAIL
+
+profile foo {
+  network send ip in (127.0.0.1, ::1),
+}

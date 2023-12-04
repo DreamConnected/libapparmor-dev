@@ -273,7 +273,7 @@ static inline void sd_write_aligned_blob(std::ostringstream &buf, void *b, int b
 	buf.write((const char *) b, b_size);
 }
 
-static void sd_write_strn(std::ostringstream &buf, char *b, int size, const char *name)
+static void sd_write_strn(std::ostringstream &buf, const char *b, int size, const char *name)
 {
 	sd_write_name(buf, name);
 	sd_write8(buf, SD_STRING);
@@ -281,7 +281,7 @@ static void sd_write_strn(std::ostringstream &buf, char *b, int size, const char
 	buf.write(b, size);
 }
 
-static inline void sd_write_string(std::ostringstream &buf, char *b, const char *name)
+static inline void sd_write_string(std::ostringstream &buf, const char *b, const char *name)
 {
 	sd_write_strn(buf, b, strlen(b) + 1, name);
 }
@@ -378,11 +378,7 @@ void sd_serialize_profile(std::ostringstream &buf, Profile *profile,
 	sd_write_struct(buf, "profile");
 	if (flattened) {
 		assert(profile->parent);
-		autofree char *name = (char *) malloc(3 + strlen(profile->name) + strlen(profile->parent->name));
-		if (!name)
-			return;
-		sprintf(name, "%s//%s", profile->parent->name, profile->name);
-		sd_write_string(buf, name, NULL);
+		sd_write_string(buf, profile->get_name(false).c_str(), NULL);
 	} else {
 		sd_write_string(buf, profile->name, NULL);
 	}

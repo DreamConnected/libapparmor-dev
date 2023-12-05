@@ -850,8 +850,6 @@ int mnt_rule::gen_policy_change_mount_type(Profile &prof, int &count,
 		       "same time for propagation type flags");
 		goto fail;
 	} else if (device && !mnt_point) {
-		pwarn(_("The use of source as mount point for "
-			"propagation type flags is deprecated.\n"));
 		mountpoint = device;
 	}
 	if (!convert_entry(mntbuf, mountpoint))

@@ -299,11 +299,11 @@ Enable various warnings during policy compilation. A single warn flag
 can be specified per --warn option, but the --warn flag can be passed
 multiple times.
 
-  apparmor_parser --warn=rules-not-enforced ...
+  apparmor_parser --warn=rule-not-enforced ...
 
 A specific warning can be disabled by prepending I<no>- to the flag
 
-  apparmor_parser --warn=no-rules-not-enforced ...
+  apparmor_parser --warn=no-rule-not-enforced ...
 
 Use --help=warn to see a full list of which warn flags are supported.
 

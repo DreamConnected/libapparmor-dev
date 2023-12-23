@@ -37,10 +37,10 @@ RE_NETWORK_TYPE = '(' + '|'.join(network_type_keywords) + ')'
 RE_NETWORK_PROTOCOL = '(' + '|'.join(network_protocol_keywords) + ')'
 
 RE_NETWORK_DETAILS = re.compile(
-    '^\s*'
+    r'^\s*'
     + '(?P<domain>' + RE_NETWORK_DOMAIN + ')?'  # optional domain
-    + '(\s+(?P<type_or_protocol>' + RE_NETWORK_TYPE + '|' + RE_NETWORK_PROTOCOL + '))?'  # optional type or protocol
-    + '\s*$')
+    + r'(\s+(?P<type_or_protocol>' + RE_NETWORK_TYPE + '|' + RE_NETWORK_PROTOCOL + '))?'  # optional type or protocol
+    + r'\s*$')
 
 
 class NetworkRule(BaseRule):

@@ -162,9 +162,9 @@ type=AVC msg=audit(1348982148.195:2933): apparmor="DENIED" operation="file_lock"
         self._run_file_test(content, expected_strings)
 
     def test_simple_embedded_backslash_carat(self):
-        """test simple decoding of embedded \^ in files"""
+        r"""test simple decoding of embedded \^ in files"""
 
-        expected_strings = ('name="/home/steve/tmp/my test \^file"',)
+        expected_strings = (r'name="/home/steve/tmp/my test \^file"',)
         content = \
 '''type=AVC msg=audit(1349805073.402:6857): apparmor="DENIED" operation="mknod" parent=5890 profile="/usr/bin/test_profile" name=2F686F6D652F73746576652F746D702F6D792074657374205C5E66696C65 pid=5891 comm="touch" requested_mask="c" denied_mask="c" fsuid=1000 ouid=1000
 '''

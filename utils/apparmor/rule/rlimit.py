@@ -29,9 +29,9 @@ rlimit_nice = ['nice']  # a number between -20 and 19.
 
 rlimit_all = rlimit_size + rlimit_number + rlimit_time + rlimit_nice
 
-RE_NUMBER_UNIT = re.compile('^(?P<number>[0-9]+)\s*(?P<unit>[a-zA-Z]*)$')
+RE_NUMBER_UNIT = re.compile(r'^(?P<number>[0-9]+)\s*(?P<unit>[a-zA-Z]*)$')
 RE_NUMBER = re.compile('^[0-9]+$')
-RE_UNIT_SIZE = re.compile('^[0-9]+\s*([KMG]B?)?$')
+RE_UNIT_SIZE = re.compile(r'^[0-9]+\s*([KMG]B?)?$')
 RE_NICE = re.compile('^(-20|-[01]?[0-9]|[01]?[0-9])$')
 
 

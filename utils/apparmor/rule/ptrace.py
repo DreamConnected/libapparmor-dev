@@ -26,17 +26,17 @@ _ = init_translation()
 access_keywords = ['r', 'w', 'rw', 'wr', 'read', 'write', 'readby', 'trace', 'tracedby']  # XXX 'wr' and 'write' accepted by the parser, but not documented in apparmor.d.pod
 
 # XXX joint_access_keyword and RE_ACCESS_KEYWORDS exactly as in PtraceRule - move to function!
-joint_access_keyword = '\s*(' + '|'.join(access_keywords) + ')\s*'
+joint_access_keyword = r'\s*(' + '|'.join(access_keywords) + r')\s*'
 RE_ACCESS_KEYWORDS = (joint_access_keyword  # one of the access_keyword
                       + '|'  # or
-                      + '\(' + joint_access_keyword + '(' + '(\s|,)+' + joint_access_keyword + ')*' + '\)')  # one or more access_keyword in (...)
+                      + r'\(' + joint_access_keyword + '(' + r'(\s|,)+' + joint_access_keyword + ')*' + r'\)')  # one or more access_keyword in (...)
 
 
 RE_PTRACE_DETAILS = re.compile(
     '^'
-    + '(\s+(?P<access>' + RE_ACCESS_KEYWORDS + '))?'  # optional access keyword(s)
-    + '(\s+(peer=' + RE_PROFILE_NAME % 'peer' + '))?'  # optional peer
-    + '\s*$')
+    + r'(\s+(?P<access>' + RE_ACCESS_KEYWORDS + '))?'  # optional access keyword(s)
+    + r'(\s+(peer=' + RE_PROFILE_NAME % 'peer' + '))?'  # optional peer
+    + r'\s*$')
 
 
 class PtraceRule(BaseRule):

@@ -156,7 +156,7 @@ def valid_path(path, relative_ok=False):
 
 def _is_safe(s):
     """Known safe regex"""
-    if re.search(r'^[a-zA-Z_0-9\-\.]+$', s):
+    if re.search(r'^[a-zA-Z_0-9\-.]+$', s):
         return True
     return False
 
@@ -201,7 +201,7 @@ def valid_profile_name(s):
 
     # profile name does not specify path
     # alphanumeric and Debian version, plus '_'
-    if re.search(r'^[a-zA-Z0-9][a-zA-Z0-9_\+\-\.:~]+$', s):
+    if re.search(r'^[a-zA-Z0-9][a-zA-Z0-9_+\-.:~]+$', s):
         return True
     return False
 
@@ -374,10 +374,10 @@ class AppArmorEasyProfile:
                 if not pat.search(line):
                     continue
                 if line.startswith("POLICYGROUPS_DIR="):
-                    d = re.split(r'=', line.strip())[1].strip('["\']')
+                    d = re.split('=', line.strip())[1].strip('["\']')
                     self.dirs['policygroups'] = d
                 elif line.startswith("TEMPLATES_DIR="):
-                    d = re.split(r'=', line.strip())[1].strip('["\']')
+                    d = re.split('=', line.strip())[1].strip('["\']')
                     self.dirs['templates'] = d
 
         keys = self.dirs.keys()
@@ -1170,7 +1170,7 @@ def verify_manifest(params, args=None):
                 if a not in safe_abstractions:
                     err_str += "\nfound '%s' abstraction" % a
         elif k == "template_var":
-            pat = re.compile(r'[*/\{\}\[\]]')
+            pat = re.compile(r'[*/{}\[\]]')
             for tv in params['template_var']:
                 if not fake_easyp.gen_variable_declaration(tv):
                     err_str += "\n%s" % tv

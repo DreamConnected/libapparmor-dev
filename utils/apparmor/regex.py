@@ -21,67 +21,67 @@ from apparmor.translations import init_translation
 _ = init_translation()
 
 # Profile parsing Regex
-RE_AUDIT_DENY = '^\s*(?P<audit>audit\s+)?(?P<allow>allow\s+|deny\s+)?'  # line start, optionally: leading whitespace, <audit> and <allow>/deny
-RE_EOL = '\s*(?P<comment>#.*?)?\s*$'  # optional whitespace, optional <comment>, optional whitespace, end of the line
-RE_COMMA_EOL = '\s*,' + RE_EOL  # optional whitespace, comma + RE_EOL
+RE_AUDIT_DENY = r'^\s*(?P<audit>audit\s+)?(?P<allow>allow\s+|deny\s+)?'  # line start, optionally: leading whitespace, <audit> and <allow>/deny
+RE_EOL = r'\s*(?P<comment>#.*?)?\s*$'  # optional whitespace, optional <comment>, optional whitespace, end of the line
+RE_COMMA_EOL = r'\s*,' + RE_EOL  # optional whitespace, comma + RE_EOL
 
-RE_PROFILE_NAME = '(?P<%s>(\S+|"[^"]+"))'    # string without spaces, or quoted string. %s is the match group name
-RE_PATH = '/\S*|"/[^"]*"'  # filename (starting with '/') without spaces, or quoted filename.
+RE_PROFILE_NAME = r'(?P<%s>(\S+|"[^"]+"))'  # string without spaces, or quoted string. %s is the match group name
+RE_PATH = r'/\S*|"/[^"]*"'  # filename (starting with '/') without spaces, or quoted filename.
 RE_PROFILE_PATH = '(?P<%s>(' + RE_PATH + '))'  # quoted or unquoted filename. %s is the match group name
-RE_PROFILE_PATH_OR_VAR = '(?P<%s>(' + RE_PATH + '|@{\S+}\S*|"@{\S+}[^"]*"))'  # quoted or unquoted filename or variable. %s is the match group name
+RE_PROFILE_PATH_OR_VAR = '(?P<%s>(' + RE_PATH + r'|@{\S+}\S*|"@{\S+}[^"]*"))'  # quoted or unquoted filename or variable. %s is the match group name
 RE_SAFE_OR_UNSAFE = '(?P<execmode>(safe|unsafe))'
-RE_XATTRS = '(\s+xattrs\s*=\s*\((?P<xattrs>([^)=]+(=[^)=]+)?\s?)+)\)\s*)?'
-RE_FLAGS = '(\s+(flags\s*=\s*)?\((?P<flags>[^)]+)\))?'
+RE_XATTRS = r'(\s+xattrs\s*=\s*\((?P<xattrs>([^)=]+(=[^)=]+)?\s?)+)\)\s*)?'
+RE_FLAGS = r'(\s+(flags\s*=\s*)?\((?P<flags>[^)]+)\))?'
 
-RE_PROFILE_END = re.compile('^\s*\}' + RE_EOL)
-RE_PROFILE_CAP = re.compile(RE_AUDIT_DENY + 'capability(?P<capability>(\s+\S+)+)?' + RE_COMMA_EOL)
-RE_PROFILE_ALIAS = re.compile('^\s*alias\s+(?P<orig_path>"??.+?"??)\s+->\s*(?P<target>"??.+?"??)' + RE_COMMA_EOL)
-RE_PROFILE_RLIMIT = re.compile('^\s*set\s+rlimit\s+(?P<rlimit>[a-z]+)\s*<=\s*(?P<value>[^ ]+(\s+[a-zA-Z]+)?)' + RE_COMMA_EOL)
-RE_PROFILE_BOOLEAN = re.compile('^\s*(?P<varname>\$\{?\w*\}?)\s*=\s*(?P<value>true|false)\s*,?' + RE_EOL, flags=re.IGNORECASE)
-RE_PROFILE_VARIABLE = re.compile('^\s*(?P<varname>@\{?\w+\}?)\s*(?P<mode>\+?=)\s*(?P<values>@*.+?)' + RE_EOL)
-RE_PROFILE_CONDITIONAL = re.compile('^\s*if\s+(not\s+)?(\$\{?\w*\}?)\s*\{' + RE_EOL)
-RE_PROFILE_CONDITIONAL_VARIABLE = re.compile('^\s*if\s+(not\s+)?defined\s+(@\{?\w+\}?)\s*\{\s*(#.*)?$')
-RE_PROFILE_CONDITIONAL_BOOLEAN = re.compile('^\s*if\s+(not\s+)?defined\s+(\$\{?\w+\}?)\s*\{\s*(#.*)?$')
-RE_PROFILE_NETWORK = re.compile(RE_AUDIT_DENY + 'network(?P<details>\s+.*)?' + RE_COMMA_EOL)
-RE_PROFILE_CHANGE_HAT = re.compile('^\s*\^(\"??.+?\"??)' + RE_COMMA_EOL)
-RE_PROFILE_HAT_DEF = re.compile('^(?P<leadingspace>\s*)(?P<hat_keyword>\^|hat\s+)(?P<hat>\"??[^)]+?\"??)' + RE_FLAGS + '\s*\{' + RE_EOL)
-RE_PROFILE_DBUS = re.compile(RE_AUDIT_DENY + '(dbus\s*,|dbus(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
-RE_PROFILE_MOUNT = re.compile(RE_AUDIT_DENY + '((mount|remount|umount|unmount)(\s+[^#]*)?\s*,)' + RE_EOL)
-RE_PROFILE_SIGNAL = re.compile(RE_AUDIT_DENY + '(signal\s*,|signal(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
-RE_PROFILE_PTRACE = re.compile(RE_AUDIT_DENY + '(ptrace\s*,|ptrace(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
-RE_PROFILE_PIVOT_ROOT = re.compile(RE_AUDIT_DENY + '(pivot_root\s*,|pivot_root\s+[^#]*\s*,)' + RE_EOL)
-RE_PROFILE_UNIX = re.compile(RE_AUDIT_DENY + '(unix\s*,|unix\s+[^#]*\s*,)' + RE_EOL)
+RE_PROFILE_END = re.compile(r'^\s*\}' + RE_EOL)
+RE_PROFILE_CAP = re.compile(RE_AUDIT_DENY + r'capability(?P<capability>(\s+\S+)+)?' + RE_COMMA_EOL)
+RE_PROFILE_ALIAS = re.compile(r'^\s*alias\s+(?P<orig_path>"??.+?"??)\s+->\s*(?P<target>"??.+?"??)' + RE_COMMA_EOL)
+RE_PROFILE_RLIMIT = re.compile(r'^\s*set\s+rlimit\s+(?P<rlimit>[a-z]+)\s*<=\s*(?P<value>[^ ]+(\s+[a-zA-Z]+)?)' + RE_COMMA_EOL)
+RE_PROFILE_BOOLEAN = re.compile(r'^\s*(?P<varname>\$\{?\w*\}?)\s*=\s*(?P<value>true|false)\s*,?' + RE_EOL, flags=re.IGNORECASE)
+RE_PROFILE_VARIABLE = re.compile(r'^\s*(?P<varname>@\{?\w+\}?)\s*(?P<mode>\+?=)\s*(?P<values>@*.+?)' + RE_EOL)
+RE_PROFILE_CONDITIONAL = re.compile(r'^\s*if\s+(not\s+)?(\$\{?\w*\}?)\s*\{' + RE_EOL)
+RE_PROFILE_CONDITIONAL_VARIABLE = re.compile(r'^\s*if\s+(not\s+)?defined\s+(@\{?\w+\}?)\s*\{\s*(#.*)?$')
+RE_PROFILE_CONDITIONAL_BOOLEAN = re.compile(r'^\s*if\s+(not\s+)?defined\s+(\$\{?\w+\}?)\s*\{\s*(#.*)?$')
+RE_PROFILE_NETWORK = re.compile(RE_AUDIT_DENY + r'network(?P<details>\s+.*)?' + RE_COMMA_EOL)
+RE_PROFILE_CHANGE_HAT = re.compile(r'^\s*\^("??.+?"??)' + RE_COMMA_EOL)
+RE_PROFILE_HAT_DEF = re.compile(r'^(?P<leadingspace>\s*)(?P<hat_keyword>\^|hat\s+)(?P<hat>"??[^)]+?"??)' + RE_FLAGS + r'\s*\{' + RE_EOL)
+RE_PROFILE_DBUS = re.compile(RE_AUDIT_DENY + r'(dbus\s*,|dbus(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
+RE_PROFILE_MOUNT = re.compile(RE_AUDIT_DENY + r'((mount|remount|umount|unmount)(\s+[^#]*)?\s*,)' + RE_EOL)
+RE_PROFILE_SIGNAL = re.compile(RE_AUDIT_DENY + r'(signal\s*,|signal(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
+RE_PROFILE_PTRACE = re.compile(RE_AUDIT_DENY + r'(ptrace\s*,|ptrace(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
+RE_PROFILE_PIVOT_ROOT = re.compile(RE_AUDIT_DENY + r'(pivot_root\s*,|pivot_root\s+[^#]*\s*,)' + RE_EOL)
+RE_PROFILE_UNIX = re.compile(RE_AUDIT_DENY + r'(unix\s*,|unix\s+[^#]*\s*,)' + RE_EOL)
 
 # match anything that's not " or #, or matching quotes with anything except quotes inside
 __re_no_or_quoted_hash = '([^#"]|"[^"]*")*'
 
 RE_RULE_HAS_COMMA = re.compile(
     '^' + __re_no_or_quoted_hash
-    + ',\s*(#.*)?$')  # match comma plus any trailing comment
+    + r',\s*(#.*)?$')  # match comma plus any trailing comment
 RE_HAS_COMMENT_SPLIT = re.compile(
     '^(?P<not_comment>' + __re_no_or_quoted_hash + ')'  # store in 'not_comment' group
     + '(?P<comment>#.*)$')  # match trailing comment and store in 'comment' group
 
 
 RE_PROFILE_START = re.compile(
-    '^(?P<leadingspace>\s*)'
+    r'^(?P<leadingspace>\s*)'
     + '('
         + RE_PROFILE_PATH_OR_VAR % 'plainprofile'  # just a path
         + '|'  # or
-        + '(' + 'profile' + '\s+' + RE_PROFILE_NAME % 'namedprofile' + '(\s+' + RE_PROFILE_PATH_OR_VAR % 'attachment' + ')?' + ')'  # 'profile', profile name, optionally attachment
+        + '(' + 'profile' + r'\s+' + RE_PROFILE_NAME % 'namedprofile' + r'(\s+' + RE_PROFILE_PATH_OR_VAR % 'attachment' + ')?' + ')'  # 'profile', profile name, optionally attachment
     + ')'
     + RE_XATTRS
     + RE_FLAGS
-    + '\s*\{'
+    + r'\s*\{'
     + RE_EOL)
 
 
 RE_PROFILE_CHANGE_PROFILE = re.compile(
     RE_AUDIT_DENY
     + 'change_profile'
-    + '(\s+' + RE_SAFE_OR_UNSAFE + ')?'  # optionally exec mode
-    + '(\s+' + RE_PROFILE_PATH_OR_VAR % 'execcond' + ')?'  # optionally exec condition
-    + '(\s+->\s*' + RE_PROFILE_NAME % 'targetprofile' + ')?'  # optionally '->' target profile
+    + r'(\s+' + RE_SAFE_OR_UNSAFE + ')?'  # optionally exec mode
+    + r'(\s+' + RE_PROFILE_PATH_OR_VAR % 'execcond' + ')?'  # optionally exec condition
+    + r'(\s+->\s*' + RE_PROFILE_NAME % 'targetprofile' + ')?'  # optionally '->' target profile
     + RE_COMMA_EOL)
 
 
@@ -91,22 +91,22 @@ RE_PATH_PERMS = '(?P<%s>[mrwalkPUCpucix]+)'
 
 RE_PROFILE_FILE_ENTRY = re.compile(
     RE_AUDIT_DENY
-    + '(?P<owner>owner\s+)?'  # optionally: <owner>
+    + r'(?P<owner>owner\s+)?'  # optionally: <owner>
     + '('
         + '(?P<bare_file>file)'  # bare 'file,'
     + '|'  # or
-        + '(?P<file_keyword>file\s+)?'  # optional 'file' keyword
+        + r'(?P<file_keyword>file\s+)?'  # optional 'file' keyword
         + '('
-           + RE_PROFILE_PATH_OR_VAR % 'path' + '\s+' + RE_PATH_PERMS % 'perms'  # path and perms
+           + RE_PROFILE_PATH_OR_VAR % 'path' + r'\s+' + RE_PATH_PERMS % 'perms'  # path and perms
         + '|'  # or
-           + RE_PATH_PERMS % 'perms2' + '\s+' + RE_PROFILE_PATH_OR_VAR % 'path2'  # perms and path
+           + RE_PATH_PERMS % 'perms2' + r'\s+' + RE_PROFILE_PATH_OR_VAR % 'path2'  # perms and path
         + ')'
-        + '(\s+->\s*' + RE_PROFILE_NAME % 'target' + ')?'
+        + r'(\s+->\s*' + RE_PROFILE_NAME % 'target' + ')?'
     + '|'  # or
-        + '(?P<link_keyword>link\s+)'  # 'link' keyword
-        + '(?P<subset_keyword>subset\s+)?'  # optional 'subset' keyword
+        + r'(?P<link_keyword>link\s+)'  # 'link' keyword
+        + r'(?P<subset_keyword>subset\s+)?'  # optional 'subset' keyword
         + RE_PROFILE_PATH_OR_VAR % 'link_path'  # path
-        + '\s+' + '->' + '\s+'  # ' -> '
+        + r'\s+' + '->' + r'\s+'  # ' -> '
         + RE_PROFILE_PATH_OR_VAR % 'link_target'  # path
     + ')'
     + RE_COMMA_EOL)
@@ -163,8 +163,8 @@ def parse_profile_start_line(line, filename):
 
 
 RE_MAGIC_OR_QUOTED_PATH = '(<(?P<magicpath>.*)>|"(?P<quotedpath>.*)"|(?P<unquotedpath>[^<>"]*))'
-RE_ABI = re.compile('^\s*#?abi\s*' + RE_MAGIC_OR_QUOTED_PATH + RE_COMMA_EOL)
-RE_INCLUDE = re.compile('^\s*#?include(?P<ifexists>\s+if\s+exists)?\s*' + RE_MAGIC_OR_QUOTED_PATH + RE_EOL)
+RE_ABI = re.compile(r'^\s*#?abi\s*' + RE_MAGIC_OR_QUOTED_PATH + RE_COMMA_EOL)
+RE_INCLUDE = re.compile(r'^\s*#?include(?P<ifexists>\s+if\s+exists)?\s*' + RE_MAGIC_OR_QUOTED_PATH + RE_EOL)
 
 
 def re_match_include_parse(line, rule_name):
@@ -195,7 +195,7 @@ def re_match_include_parse(line, rule_name):
         ismagic = True
     elif matches.group('unquotedpath'):
         path = matches.group('unquotedpath').strip()
-        if re.search('\s', path):
+        if re.search(r'\s', path):
             raise AppArmorException(_('Syntax error: %s must use quoted path or <...>') % rule_name)
         # LP: #1738879 - parser doesn't handle unquoted paths everywhere
         if rule_name == 'include':
@@ -211,7 +211,7 @@ def re_match_include_parse(line, rule_name):
         raise AppArmorException(_('Syntax error: %s rule with empty filename') % rule_name)
 
     # LP: #1738877 - parser doesn't handle files with spaces in the name
-    if rule_name == 'include' and re.search('\s', path):
+    if rule_name == 'include' and re.search(r'\s', path):
         raise AppArmorException(_('Syntax error: %s rule filename cannot contain spaces') % rule_name)
 
     ifexists = False

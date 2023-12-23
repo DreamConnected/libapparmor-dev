@@ -27,43 +27,43 @@ message_keywords = ['send', 'receive', 'r', 'read', 'w', 'write', 'rw']
 access_keywords = ['bind', 'eavesdrop'] + message_keywords
 
 # XXX joint_access_keyword and RE_ACCESS_KEYWORDS exactly as in SignalRule - move to function?
-joint_access_keyword = '(' + '(\s|,)*' + '(' + '|'.join(access_keywords) + ')(\s|,)*' + ')'
+joint_access_keyword = '(' + r'(\s|,)*' + '(' + '|'.join(access_keywords) + r')(\s|,)*' + ')'
 RE_ACCESS_KEYWORDS = (
     joint_access_keyword  # one of the access_keyword
     + '|'  # or
-    + '\(' + '(\s|,)*' + joint_access_keyword + '?' + '(' + '(\s|,)+' + joint_access_keyword + ')*' + '\)'  # one or more access_keyword in (...)
+    + r'\(' + r'(\s|,)*' + joint_access_keyword + '?' + '(' + r'(\s|,)+' + joint_access_keyword + ')*' + r'\)'  # one or more access_keyword in (...)
 )
 
 
-RE_FLAG = '(?P<%s>(\S+|"[^"]+"|\(\s*\S+\s*\)|\(\s*"[^"]+"\)\s*))'  # string without spaces, or quoted string, optionally wrapped in (...). %s is the match group name
+RE_FLAG = r'(?P<%s>(\S+|"[^"]+"|\(\s*\S+\s*\)|\(\s*"[^"]+"\)\s*))'  # string without spaces, or quoted string, optionally wrapped in (...). %s is the match group name
 # plaintext version:      | * | "* "  | (    *    ) | (  " *   " )    |
 
 # XXX this regex will allow repeated parameters, last one wins
 # XXX (the parser will reject such rules)
 RE_DBUS_DETAILS = re.compile(
     '^'
-    + '(\s+(?P<access>'       + RE_ACCESS_KEYWORDS + '))?'  # optional access keyword(s)
+    + r'(\s+(?P<access>' + RE_ACCESS_KEYWORDS + '))?'  # optional access keyword(s)
         + '('
-            + '(\s+(bus\s*=\s*'      + RE_FLAG % 'bus'       + '))?|'  # optional bus= system | session | AARE, (...) optional
-            + '(\s+(path\s*=\s*'      + RE_FLAG % 'path'      + '))?|'  # optional path=AARE, (...) optional
-            + '(\s+(name\s*=\s*'      + RE_FLAG % 'name'      + '))?|'  # optional name=AARE, (...) optional
-            + '(\s+(interface\s*=\s*' + RE_FLAG % 'interface' + '))?|'  # optional interface=AARE, (...) optional
-            + '(\s+(member\s*=\s*'    + RE_FLAG % 'member'    + '))?|'  # optional member=AARE, (...) optional
-            + '(\s+(peer\s*=\s*\((,|\s)*'  # optional peer=(name=AARE and/or label=AARE), (...) required
+            + r'(\s+(bus\s*=\s*'       + RE_FLAG % 'bus'       + '))?|'  # optional bus= system | session | AARE, (...) optional
+            + r'(\s+(path\s*=\s*'      + RE_FLAG % 'path'      + '))?|'  # optional path=AARE, (...) optional
+            + r'(\s+(name\s*=\s*'      + RE_FLAG % 'name'      + '))?|'  # optional name=AARE, (...) optional
+            + r'(\s+(interface\s*=\s*' + RE_FLAG % 'interface' + '))?|'  # optional interface=AARE, (...) optional
+            + r'(\s+(member\s*=\s*'    + RE_FLAG % 'member'    + '))?|'  # optional member=AARE, (...) optional
+            + r'(\s+(peer\s*=\s*\((,|\s)*'  # optional peer=(name=AARE and/or label=AARE), (...) required
                 + '('
-                    + '(' + '(,|\s)*' + ')'  # empty peer=()
+                    + '(' + r'(,|\s)*' + ')'  # empty peer=()
                     + '|'  # or
-                    + '(' + 'name\s*=\s*' + RE_PROFILE_NAME % 'peername1' + ')'  # only peer name (match group peername1)
+                    + '(' + r'name\s*=\s*' + RE_PROFILE_NAME % 'peername1' + ')'  # only peer name (match group peername1)
                     + '|'  # or
-                    + '(' 'label\s*=\s*' + RE_PROFILE_NAME % 'peerlabel1' + ')'  # only peer label (match group peerlabel1)
+                    + '(' r'label\s*=\s*' + RE_PROFILE_NAME % 'peerlabel1' + ')'  # only peer label (match group peerlabel1)
                     + '|'  # or
-                    + '(' + 'name\s*=\s*'  + RE_PROFILE_NAME % 'peername2'  + '(,|\s)+' + 'label\s*=\s*' + RE_PROFILE_NAME % 'peerlabel2' + ')'  # peer name + label (match name peername2/peerlabel2)
+                    + '(' + r'name\s*=\s*'  + RE_PROFILE_NAME % 'peername2'  + r'(,|\s)+' + r'label\s*=\s*' + RE_PROFILE_NAME % 'peerlabel2' + ')'  # peer name + label (match name peername2/peerlabel2)
                     + '|'  # or
-                    + '(' + 'label\s*=\s*' + RE_PROFILE_NAME % 'peerlabel3' + '(,|\s)+' + 'name\s*=\s*'  + RE_PROFILE_NAME % 'peername3'  + ')'  # peer label + name (match name peername3/peerlabel3)
+                    + '(' + r'label\s*=\s*' + RE_PROFILE_NAME % 'peerlabel3' + r'(,|\s)+' + r'name\s*=\s*'  + RE_PROFILE_NAME % 'peername3'  + ')'  # peer label + name (match name peername3/peerlabel3)
                 + ')'
-            + '(,|\s)*\)))?'
+            + r'(,|\s)*\)))?'
         + '){0,6}'
-    + '\s*$')
+    + r'\s*$')
 
 
 class DbusRule(BaseRule):
@@ -79,7 +79,7 @@ class DbusRule(BaseRule):
     rule_name = 'dbus'
 
     def __init__(self, access, bus, path, name, interface, member, peername, peerlabel,
-                audit=False, deny=False, allow_keyword=False, comment='', log_event=None):
+                 audit=False, deny=False, allow_keyword=False, comment='', log_event=None):
 
         super().__init__(audit=audit, deny=deny, allow_keyword=allow_keyword,
                          comment=comment, log_event=log_event)

@@ -21,17 +21,17 @@ from common_test import AATest, setup_all_loops
 
 class TestConvert_regexp(AATest):
     tests = (
-        ('/foo',          '^/foo$'),
-        ('/{foo,bar}',    '^/(foo|bar)$'),
-        # ('/\{foo,bar}',   '^/\{foo,bar}$'), # XXX gets converted to ^/\(foo|bar)$
-        ('/fo[abc]',      '^/fo[abc]$'),
-        ('/foo bar',      '^/foo bar$'),
-        ('/x\y',          '^/x\y$'),
-        ('/x\[y',         '^/x\[y$'),
-        ('/x\\y',         '^/x\\y$'),
-        ('/fo?',          '^/fo[^/\000]$'),
-        ('/foo/*',        '^/foo/(((?<=/)[^/\000]+)|((?<!/)[^/\000]*))$'),
-        ('/foo/**.bar',   '^/foo/(((?<=/)[^\000]+)|((?<!/)[^\000]*))\.bar$'),
+        ('/foo',        '^/foo$'),
+        ('/{foo,bar}',  '^/(foo|bar)$'),
+        # ('/\{foo,bar}', '^/\{foo,bar}$'),  # XXX gets converted to ^/\(foo|bar)$
+        ('/fo[abc]',    '^/fo[abc]$'),
+        ('/foo bar',    '^/foo bar$'),
+        (r'/x\y',       r'^/x\y$'),
+        (r'/x\[y',      r'^/x\[y$'),
+        ('/x\\y',       '^/x\\y$'),
+        ('/fo?',        '^/fo[^/\000]$'),
+        ('/foo/*',      '^/foo/(((?<=/)[^/\000]+)|((?<!/)[^/\000]*))$'),
+        ('/foo/**.bar', '^/foo/(((?<=/)[^\000]+)|((?<!/)[^\000]*))\\.bar$'),
     )
 
     def _run_test(self, params, expected):

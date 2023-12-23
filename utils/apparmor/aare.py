@@ -92,25 +92,25 @@ class AARE:
         if self.regex.endswith('/'):
             if self.regex.endswith(('/**/', '/*/')):
                 # /foo/**/ and /foo/*/ => /**/
-                newpath = re.sub('/[^/]+/\*{1,2}/$', '/**/', self.regex)  # re.sub('/[^/]+/\*{1,2}$/', '/\*\*/', self.regex)
-            elif re.search('/[^/]+\*\*[^/]*/$', self.regex):
+                newpath = re.sub(r'/[^/]+/\*{1,2}/$', '/**/', self.regex)
+            elif re.search(r'/[^/]+\*\*[^/]*/$', self.regex):
                 # /foo**/ and /foo**bar/ => /**/
-                newpath = re.sub('/[^/]+\*\*[^/]*/$', '/**/', self.regex)
-            elif re.search('/\*\*[^/]+/$', self.regex):
+                newpath = re.sub(r'/[^/]+\*\*[^/]*/$', '/**/', self.regex)
+            elif re.search(r'/\*\*[^/]+/$', self.regex):
                 # /**bar/ => /**/
-                newpath = re.sub('/\*\*[^/]+/$', '/**/', self.regex)
+                newpath = re.sub(r'/\*\*[^/]+/$', '/**/', self.regex)
             else:
                 newpath = re.sub('/[^/]+/$', '/*/', self.regex)
         else:
             if self.regex.endswith(('/**', '/*')):
                 # /foo/** and /foo/* => /**
-                newpath = re.sub('/[^/]+/\*{1,2}$', '/**', self.regex)
-            elif re.search('/[^/]*\*\*[^/]+$', self.regex):
+                newpath = re.sub(r'/[^/]+/\*{1,2}$', '/**', self.regex)
+            elif re.search(r'/[^/]*\*\*[^/]+$', self.regex):
                 # /**foo and /foor**bar => /**
-                newpath = re.sub('/[^/]*\*\*[^/]+$', '/**', self.regex)
-            elif re.search('/[^/]+\*\*$', self.regex):
+                newpath = re.sub(r'/[^/]*\*\*[^/]+$', '/**', self.regex)
+            elif re.search(r'/[^/]+\*\*$', self.regex):
                 # /foo** => /**
-                newpath = re.sub('/[^/]+\*\*$', '/**', self.regex)
+                newpath = re.sub(r'/[^/]+\*\*$', '/**', self.regex)
             else:
                 newpath = re.sub('/[^/]+$', '/*', self.regex)
         return AARE(newpath, False)
@@ -119,24 +119,24 @@ class AARE:
         """Glob given file path with extension
            Files without extensions and directories won't be changed"""
         # match /**.ext and /*.ext
-        match = re.search('/\*{1,2}(\.[^/]+)$', self.regex)
+        match = re.search(r'/\*{1,2}(\.[^/]+)$', self.regex)
         if match:
             # /foo/**.ext and /foo/*.ext => /**.ext
-            newpath = re.sub('/[^/]+/\*{1,2}\.[^/]+$', '/**' + match.groups()[0], self.regex)
-        elif re.search('/[^/]+\*\*[^/]*\.[^/]+$', self.regex):
+            newpath = re.sub(r'/[^/]+/\*{1,2}\.[^/]+$', '/**' + match.groups()[0], self.regex)
+        elif re.search(r'/[^/]+\*\*[^/]*\.[^/]+$', self.regex):
             # /foo**.ext and /foo**bar.ext => /**.ext
-            match = re.search('/[^/]+\*\*[^/]*(\.[^/]+)$', self.regex)
-            newpath = re.sub('/[^/]+\*\*[^/]*\.[^/]+$', '/**' + match.groups()[0], self.regex)
-        elif re.search('/\*\*[^/]+\.[^/]+$', self.regex):
+            match = re.search(r'/[^/]+\*\*[^/]*(\.[^/]+)$', self.regex)
+            newpath = re.sub(r'/[^/]+\*\*[^/]*\.[^/]+$', '/**' + match.groups()[0], self.regex)
+        elif re.search(r'/\*\*[^/]+\.[^/]+$', self.regex):
             # /**foo.ext => /**.ext
-            match = re.search('/\*\*[^/]+(\.[^/]+)$', self.regex)
-            newpath = re.sub('/\*\*[^/]+\.[^/]+$', '/**' + match.groups()[0], self.regex)
+            match = re.search(r'/\*\*[^/]+(\.[^/]+)$', self.regex)
+            newpath = re.sub(r'/\*\*[^/]+\.[^/]+$', '/**' + match.groups()[0], self.regex)
         else:
             newpath = self.regex
-            match = re.search('(\.[^/]+)$', self.regex)
+            match = re.search(r'(\.[^/]+)$', self.regex)
             if match:
-                newpath = re.sub('/[^/]+(\.[^/]+)$', '/*' + match.groups()[0], self.regex)
-        return AARE(newpath, False)
+                newpath = re.sub(r'/[^/]+(\.[^/]+)$', '/*' + match.groups()[0], self.regex)
+        return type(self)(newpath, False)
 
 
 def convert_expression_to_aare(expression):

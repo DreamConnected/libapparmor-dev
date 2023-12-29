@@ -775,8 +775,17 @@ int mnt_rule::gen_policy_remount(Profile &prof, int &count,
 			goto fail;
 		vec[0] = mntbuf.c_str();
 	} else {
-		if (!convert_entry(mntbuf, device))
+		if (device && strcmp(device, "detached") == 0) {
+			/* if (features_supports_detached_mount) ...
+			 * not needed because this is equiv to ""
+			 * which was preivously supported
+			 *
+			 * match nothing
+			 */
+			devbuf.clear();
+		} else if (!clear_and_convert_entry(devbuf, device)) {
 			goto fail;
+		}
 		vec[0] = mntbuf.c_str();
 	}
 	/* skip device */
@@ -847,8 +856,12 @@ int mnt_rule::gen_policy_bind_mount(Profile &prof, int &count,
 	if (!convert_entry(mntbuf, mnt_point))
 		goto fail;
 	vec[0] = mntbuf.c_str();
-	if (!clear_and_convert_entry(devbuf, device))
+	if (device && strcmp(device, "detached") == 0) {
+		/* see note in move_mount. match nothing */
+		devbuf.clear();
+	} else if (!clear_and_convert_entry(devbuf, device)) {
 		goto fail;
+	}
 	vec[1] = devbuf.c_str();
 	/* skip type */
 	vec[2] = default_match_pattern;
@@ -949,8 +962,12 @@ int mnt_rule::gen_policy_move_mount(Profile &prof, int &count,
 	if (!convert_entry(mntbuf, mnt_point))
 		goto fail;
 	vec[0] = mntbuf.c_str();
-	if (!clear_and_convert_entry(devbuf, device))
+	if (device && strcmp(device, "detached") == 0) {
+		/* see note in move_mount. match nothing */
+		devbuf.clear();
+	} else if (!clear_and_convert_entry(devbuf, device)) {
 		goto fail;
+	}
 	vec[1] = devbuf.c_str();
 	/* skip type */
 	vec[2] = default_match_pattern;
@@ -990,8 +1007,12 @@ int mnt_rule::gen_policy_new_mount(Profile &prof, int &count,
 	if (!convert_entry(mntbuf, mnt_point))
 		goto fail;
 	vec[0] = mntbuf.c_str();
-	if (!clear_and_convert_entry(devbuf, device))
+	if (device && strcmp(device, "detached") == 0) {
+		/* see note in move mount. match nothing */
+		devbuf.clear();
+	} else if (!clear_and_convert_entry(devbuf, device)) {
 		goto fail;
+	}
 	vec[1] = devbuf.c_str();
 	typebuf.clear();
 	if (!build_list_val_expr(typebuf, dev_type))

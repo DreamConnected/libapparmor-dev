@@ -144,10 +144,10 @@ public:
 	 * static elements to maintain compatibility with
 	 * AA_CLASS_NET */
 	network_rule(): dedup_perms_rule_t(AA_CLASS_NETV8) { }
-	network_rule(struct cond_entry *conds);
-	network_rule(const char *family, const char *type,
+	network_rule(perms_t perms_p, struct cond_entry *conds);
+	network_rule(perms_t perms_p, const char *family, const char *type,
 		     const char *protocol, struct cond_entry *conds);
-	network_rule(unsigned int family, unsigned int type);
+	network_rule(perms_t perms_p, unsigned int family, unsigned int type);
 	virtual ~network_rule()
 	{
 		if (sip)

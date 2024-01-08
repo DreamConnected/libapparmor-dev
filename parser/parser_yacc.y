@@ -1083,20 +1083,7 @@ link_rule: TOK_LINK opt_subset_flag id_or_var TOK_ARROW id_or_var TOK_END_OF_RUL
 		$$ = entry;
 	};
 
-network_rule: TOK_NETWORK opt_cond_list TOK_END_OF_RULE
-	{
-		network_rule *entry;
-
-		if ($2.name) {
-			if (strcmp($2.name, "peer") != 0)
-				yyerror(_("network rule: invalid conditional group %s=()"), $2.name);
-			free($2.name);
-		}
-		entry = new network_rule($2.list);
-		$$ = entry;
-	}
-
-network_rule: TOK_NETWORK TOK_ID opt_cond_list TOK_END_OF_RULE
+network_rule: TOK_NETWORK opt_net_perm opt_cond_list TOK_END_OF_RULE
 	{
 		network_rule *entry;
 
@@ -1105,12 +1092,11 @@ network_rule: TOK_NETWORK TOK_ID opt_cond_list TOK_END_OF_RULE
 				yyerror(_("network rule: invalid conditional group %s=()"), $3.name);
 			free($3.name);
 		}
-		entry = new network_rule($2, NULL, NULL, $3.list);
-		free($2);
+		entry = new network_rule($2, $3.list);
 		$$ = entry;
 	}
 
-network_rule: TOK_NETWORK TOK_ID TOK_ID opt_cond_list TOK_END_OF_RULE
+network_rule: TOK_NETWORK opt_net_perm TOK_ID opt_cond_list TOK_END_OF_RULE
 	{
 		network_rule *entry;
 
@@ -1119,9 +1105,23 @@ network_rule: TOK_NETWORK TOK_ID TOK_ID opt_cond_list TOK_END_OF_RULE
 				yyerror(_("network rule: invalid conditional group %s=()"), $4.name);
 			free($4.name);
 		}
-		entry = new network_rule($2, $3, NULL, $4.list);
-		free($2);
+		entry = new network_rule($2, $3, NULL, NULL, $4.list);
 		free($3);
+		$$ = entry;
+	}
+
+network_rule: TOK_NETWORK opt_net_perm TOK_ID TOK_ID opt_cond_list TOK_END_OF_RULE
+	{
+		network_rule *entry;
+
+		if ($5.name) {
+			if (strcmp($5.name, "peer") != 0)
+				yyerror(_("network rule: invalid conditional group %s=()"), $5.name);
+			free($5.name);
+		}
+		entry = new network_rule($2, $3, $4, NULL, $5.list);
+		free($3);
+		free($4);
 		$$ = entry;
 	}
 

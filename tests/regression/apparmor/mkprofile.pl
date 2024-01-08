@@ -164,7 +164,7 @@ sub gen_netdomain($@) {
 
 sub gen_network($@) {
   my ($rule, $qualifier) = @_;
-  my @rules = split (/:/, $rule);
+  my @rules = split (/;/, $rule);
   push (@{$output_rules{$hat}}, "  ${qualifier}@rules,\n");
 }
 
@@ -495,7 +495,7 @@ sub gen_from_args() {
     if ($rule =~ /^(tcp|udp)/) {
       # netdomain rules
       gen_netdomain($rule, $qualifier);
-    } elsif ($rule =~ /^network:/) {
+    } elsif ($rule =~ /^network(:|;)/) {
       gen_network($rule, $qualifier);
     } elsif ($rule =~ /^unix:/) {
       gen_unix($rule, $qualifier);

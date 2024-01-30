@@ -116,6 +116,14 @@ The specified I<file/task> does not exist or is not visible.
 
 The confinement data is too large to fit in the supplied buffer.
 
+=item B<ENOPROTOOPT>
+
+The kernel doesn't support the SO_PEERLABEL option in sockets. This happens
+mainly when the kernel lacks 'fine grained unix mediation' support. It also
+can happen on LSM stacking kernels where another LSM has claimed this
+interface and decides to return this error, although this is really a
+corner case.
+
 =back
 
 =head1 NOTES

@@ -99,6 +99,15 @@ def get_pids_netstat(netstat='netstat'):
     return pids
 
 
+def escape_special_chars(data):
+    """escape special characters in program names so that they can't mess up the terminal"""
+    data = repr(data)
+    if len(data) > 1 and data.startswith("'") and data.endswith("'"):
+        return data[1:-1]
+    else:
+        return data
+
+
 pids = set()
 if paranoid:
     pids = get_all_pids()
@@ -110,6 +119,7 @@ else:
 for pid in sorted(map(int, pids)):
     try:
         prog = os.readlink("/proc/%s/exe" % pid)
+        prog = escape_special_chars(prog)
     except OSError:
         continue
     attr = None
@@ -127,6 +137,7 @@ for pid in sorted(map(int, pids)):
         pname = cmdline.split("\0")[0]
     if '/' in pname and pname != prog:
         pname = "(%s)" % pname
+        pname = escape_special_chars(pname)
     else:
         pname = ""
     regex_interpreter = re.compile(r"^(/usr)?/bin/(python|perl|bash|dash|sh)$")
@@ -134,6 +145,7 @@ for pid in sorted(map(int, pids)):
         if regex_interpreter.search(prog):
             cmdline = re.sub(r"\x00", " ", cmdline)
             cmdline = re.sub(r"\s+$", "", cmdline).strip()
+            cmdline = escape_special_chars(cmdline)
 
             ui.UI_Info(_("%(pid)s %(program)s (%(commandline)s) not confined") % {'pid': pid, 'program': prog, 'commandline': cmdline})
         else:
@@ -144,6 +156,7 @@ for pid in sorted(map(int, pids)):
         if regex_interpreter.search(prog):
             cmdline = re.sub(r"\0", " ", cmdline)
             cmdline = re.sub(r"\s+$", "", cmdline).strip()
+            cmdline = escape_special_chars(cmdline)
             ui.UI_Info(_("%(pid)s %(program)s (%(commandline)s) confined by '%(attribute)s'") % {'pid': pid, 'program': prog, 'commandline': cmdline, 'attribute': attr})
         else:
             if pname and pname[-1] == ')':

@@ -109,12 +109,12 @@ To immediately stack a profile named "profile_a", as performed with
 aa_stack_profile("profile_a"), the equivalent of this shell command can be
 used:
 
- $ echo -n "stackprofile profile_a" > /proc/self/attr/current
+ $ echo -n "stack profile_a" > /proc/self/attr/current
 
 To stack a profile named "profile_a" at the next exec, as performed with
 aa_stack_onexec("profile_a"), the equivalent of this shell command can be used:
 
- $ echo -n "stackexec profile_a" > /proc/self/attr/exec
+ $ echo -n "stack profile_a" > /proc/self/attr/exec
 
 These raw AppArmor filesystem operations must only be used when using
 libapparmor is not a viable option.
@@ -184,6 +184,7 @@ with apparmor_parser(8):
      /etc/passwd               r,
 
      # Needed for aa_stack_profile()
+     change-profile -> &i_cant_be_trusted_anymore,
      /usr/lib/libapparmor*.so* mr,
      /proc/[0-9]*/attr/current w,
  }

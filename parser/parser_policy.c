@@ -72,12 +72,12 @@ void add_hat_to_policy(Profile *prof, Profile *hat)
 }
 
 int load_policy_list(ProfileList &list, int option,
-		     aa_kernel_interface *kernel_interface, int cache_fd)
+		     aa_kernel_interface *kernel_interface, int cache_fd, int compr_cache_fd)
 {
 	int res = 0;
 
 	for (ProfileList::iterator i = list.begin(); i != list.end(); i++) {
-		res = load_profile(option, kernel_interface, *i, cache_fd);
+		res = load_profile(option, kernel_interface, *i, cache_fd, compr_cache_fd);
 		if (res != 0)
 			break;
 	}
@@ -86,15 +86,15 @@ int load_policy_list(ProfileList &list, int option,
 }
 
 int load_flattened_hats(Profile *prof, int option,
-			aa_kernel_interface *kernel_interface, int cache_fd)
+			aa_kernel_interface *kernel_interface, int cache_fd, int compr_cache_fd)
 {
 	return load_policy_list(prof->hat_table, option, kernel_interface,
-				cache_fd);
+				cache_fd, compr_cache_fd);
 }
 
-int load_policy(int option, aa_kernel_interface *kernel_interface, int cache_fd)
+int load_policy(int option, aa_kernel_interface *kernel_interface, int cache_fd, int compr_cache_fd)
 {
-	return load_policy_list(policy_list, option, kernel_interface, cache_fd);
+	return load_policy_list(policy_list, option, kernel_interface, cache_fd, compr_cache_fd);
 }
 
 int load_hats(std::ostringstream &buf, Profile *prof)

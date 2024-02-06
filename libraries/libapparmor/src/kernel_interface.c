@@ -133,8 +133,10 @@ static int write_policy_buffer(int fd, int atomic,
 }
 
 #define AA_IFACE_FILE_LOAD	".load"
+#define AA_IFACE_FILE_LOAD_COMPRESSED	".load_compressed"
 #define AA_IFACE_FILE_REMOVE	".remove"
 #define AA_IFACE_FILE_REPLACE	".replace"
+#define AA_IFACE_FILE_REPLACE_COMPRESSED	".replace_compressed"
 
 static int write_policy_buffer_to_iface(aa_kernel_interface *kernel_interface,
 					const char *iface_file,
@@ -194,6 +196,10 @@ static int write_policy_file_to_iface(aa_kernel_interface *kernel_interface,
 
 	return write_policy_fd_to_iface(kernel_interface, iface_file, fd);
 }
+
+#define COMPRESS_NONE           0
+#define COMPRESS_POLICY         1
+#define COMPRESS_PRECOMPRESSED  2
 
 /**
  * aa_kernel_interface_new - create a new aa_kernel_interface object from an optional path
@@ -291,27 +297,33 @@ void aa_kernel_interface_unref(aa_kernel_interface *kernel_interface)
  * @kernel_interface: valid aa_kernel_interface
  * @buffer: a buffer containing a policy
  * @size: the size of the buffer
+ * @compr_st The type of compression used for the policy
  *
  * Returns: 0 on success, -1 on error with errno set
  */
 int aa_kernel_interface_load_policy(aa_kernel_interface *kernel_interface,
-				    const char *buffer, size_t size)
+				    const char *buffer, size_t size, int compr_st)
 {
 	return write_policy_buffer_to_iface(kernel_interface,
-					    AA_IFACE_FILE_LOAD, buffer, size);
+                                            compr_st != COMPRESS_NONE ?
+					    AA_IFACE_FILE_LOAD_COMPRESSED : AA_IFACE_FILE_LOAD,
+					    buffer, size);
 }
 
 /**
  * aa_kernel_interface_load_policy_from_file - load a policy from a file into the kernel
  * @kernel_interface: valid aa_kernel_interface
  * @path: path to a policy binary
+ * @compr_st The type of compression used for the policy
  *
  * Returns: 0 on success, -1 on error with errno set
  */
 int aa_kernel_interface_load_policy_from_file(aa_kernel_interface *kernel_interface,
-					      int dirfd, const char *path)
+					      int dirfd, const char *path, int compr_st)
 {
-	return write_policy_file_to_iface(kernel_interface, AA_IFACE_FILE_LOAD,
+	return write_policy_file_to_iface(kernel_interface,
+                                          compr_st != COMPRESS_NONE ?
+					  AA_IFACE_FILE_LOAD_COMPRESSED : AA_IFACE_FILE_LOAD,
 					  dirfd, path);
 }
 
@@ -319,13 +331,15 @@ int aa_kernel_interface_load_policy_from_file(aa_kernel_interface *kernel_interf
  * aa_kernel_interface_load_policy_from_fd - load a policy from a file descriptor into the kernel
  * @kernel_interface: valid aa_kernel_interface
  * @fd: a pre-opened, readable file descriptor at the correct offset
- *
+ * @compr_st The type of compression used for the policy
  * Returns: 0 on success, -1 on error with errno set
  */
 int aa_kernel_interface_load_policy_from_fd(aa_kernel_interface *kernel_interface,
-					    int fd)
+					    int fd, int compr_st)
 {
-	return write_policy_fd_to_iface(kernel_interface, AA_IFACE_FILE_LOAD,
+	return write_policy_fd_to_iface(kernel_interface,
+					compr_st != COMPRESS_NONE ?
+					AA_IFACE_FILE_LOAD_COMPRESSED : AA_IFACE_FILE_LOAD,
 					fd);
 }
 
@@ -334,14 +348,16 @@ int aa_kernel_interface_load_policy_from_fd(aa_kernel_interface *kernel_interfac
  * @kernel_interface: valid aa_kernel_interface
  * @buffer: a buffer containing a policy
  * @size: the size of the buffer
+ * @compr_st The type of compression used for the policy
  *
  * Returns: 0 on success, -1 on error with errno set
  */
 int aa_kernel_interface_replace_policy(aa_kernel_interface *kernel_interface,
-				       const char *buffer, size_t size)
+				       const char *buffer, size_t size, int compr_st)
 {
 	return write_policy_buffer_to_iface(kernel_interface,
-					    AA_IFACE_FILE_REPLACE,
+					    compr_st != COMPRESS_NONE ?
+					    AA_IFACE_FILE_REPLACE_COMPRESSED : AA_IFACE_FILE_REPLACE,
 					    buffer, size);
 }
 
@@ -349,27 +365,33 @@ int aa_kernel_interface_replace_policy(aa_kernel_interface *kernel_interface,
  * aa_kernel_interface_replace_policy_from_file - replace a policy in the kernel with a policy from a file
  * @kernel_interface: valid aa_kernel_interface
  * @path: path to a policy binary
+ * @compr_st The type of compression used for the policy
  *
  * Returns: 0 on success, -1 on error with errno set
  */
 int aa_kernel_interface_replace_policy_from_file(aa_kernel_interface *kernel_interface,
-						 int dirfd, const char *path)
+						 int dirfd, const char *path, int compr_st)
 {
 	return write_policy_file_to_iface(kernel_interface,
-					  AA_IFACE_FILE_REPLACE, dirfd, path);
+					  compr_st != COMPRESS_NONE ?
+					  AA_IFACE_FILE_REPLACE_COMPRESSED : AA_IFACE_FILE_REPLACE,
+					  dirfd, path);
 }
 
 /**
  * aa_kernel_interface_replace_policy_from_fd - replace a policy in the kernel with a policy from a file descriptor
  * @kernel_interface: valid aa_kernel_interface
  * @fd: a pre-opened, readable file descriptor at the correct offset
+ * @compr_st The type of compression used for the policy
  *
  * Returns: 0 on success, -1 on error with errno set
  */
 int aa_kernel_interface_replace_policy_from_fd(aa_kernel_interface *kernel_interface,
-					       int fd)
+					       int fd, int compr_st)
 {
-	return write_policy_fd_to_iface(kernel_interface, AA_IFACE_FILE_REPLACE,
+	return write_policy_fd_to_iface(kernel_interface,
+					compr_st != COMPRESS_NONE ?
+					AA_IFACE_FILE_REPLACE_COMPRESSED : AA_IFACE_FILE_REPLACE,
 					fd);
 }
 

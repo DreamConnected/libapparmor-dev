@@ -84,6 +84,10 @@ extern int parser_token;
 		  WARN_OVERRIDE | WARN_INCLUDE)
 
 
+#define COMPRESS_NONE		0
+#define COMPRESS_POLICY		1
+#define COMPRESS_PRECOMPRESSED	2
+
 typedef enum pattern_t pattern_t;
 
 
@@ -370,6 +374,11 @@ extern FILE *ofile;
 extern int read_implies_exec;
 extern IncludeCache_t *g_includecache;
 
+extern int compress_policy;
+extern int compress_level;
+
+
+
 extern void pwarnf(bool werr, const char *fmt, ...) __attribute__((__format__(__printf__, 2, 3)));
 extern void common_warn_once(const char *name, const char *msg, const char **warned_name);
 
@@ -495,10 +504,13 @@ extern int profile_merge_rules(Profile *prof);
 
 /* parser_interface.c */
 extern int load_profile(int option, aa_kernel_interface *kernel_interface,
-			Profile *prof, int cache_fd);
+			Profile *prof, int cache_fd, int compr_cache_fd);
 extern void sd_serialize_profile(std::ostringstream &buf, Profile *prof,
 				int flatten);
 extern int sd_load_buffer(int option, char *buffer, int size);
+extern size_t compress_policy_zstd(const char* raw_data_str,
+				   size_t raw_data_size,
+				   char** compressed_buffer);
 extern int cache_fd;
 
 
@@ -515,11 +527,11 @@ extern int post_merge_rules(void);
 extern int merge_hat_rules(Profile *prof);
 extern Profile *merge_policy(Profile *a, Profile *b);
 extern int load_policy(int option, aa_kernel_interface *kernel_interface,
-		       int cache_fd);
+		       int cache_fd, int compr_cache_fd);
 extern int load_hats(std::ostringstream &buf, Profile *prof);
 extern int load_flattened_hats(Profile *prof, int option,
 			       aa_kernel_interface *kernel_interface,
-			       int cache_fd);
+			       int cache_fd, int compr_cache_fd);
 extern void dump_policy_hats(Profile *prof);
 extern void dump_policy_names(void);
 void dump_policy(void);

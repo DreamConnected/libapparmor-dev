@@ -108,7 +108,7 @@ static int load_policy_file(const char *file)
 	}
 	if (!opt_dryrun &&
 	    aa_kernel_interface_replace_policy_from_file(kernel_interface,
-							 AT_FDCWD, file)) {
+							 AT_FDCWD, file, 0)) { // FIXME make aa-load support compression
 		rc = -errno;
 		error("Failed to load policy into kernel '%s': %m", file);
 	}

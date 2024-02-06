@@ -91,6 +91,9 @@ int names_only = 0;
 int current_lineno = 1;
 int option = OPTION_ADD;
 
+int compress_policy = 0;
+int compress_level = 0;
+
 
 const char *progname = __FILE__;
 char *profile_ns = NULL;

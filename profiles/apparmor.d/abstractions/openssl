@@ -10,8 +10,8 @@
 
   /etc/ssl/openssl.cnf r,
   /etc/ssl/openssl-*.cnf r,
-  /etc/ssl/{engdef,engines}.d/ r,
-  /etc/ssl/{engdef,engines}.d/*.cnf r,
+  /etc/ssl/{engdef*,engines*}.d/ r,
+  /etc/ssl/{engdef*,engines*}.d/*.cnf r,
   /usr/share/ssl/openssl.cnf r,
   @{PROC}/sys/crypto/fips_enabled r,
 

@@ -42,6 +42,8 @@ import time
 import notify2
 import psutil
 
+from systemd import journal
+
 import apparmor.aa as aa
 import apparmor.ui as aaui
 import apparmor.config as aaconfig
@@ -75,6 +77,10 @@ def format_event(event, logsource):
     if 'message_body' in config['']:
         output += [config['']['message_body']]
 
+    debug_logger.info(event)
+
+    # @TODO: files here with
+    #  AttributeError: 'generator' object has no attribute 'profile'
     if event.profile:
         output += ['Profile: {}'.format(event.profile)]
     if event.operation:
@@ -103,12 +109,37 @@ def notify_about_new_entries(logfile, wait=0):
 
     # Spawn/fork into the background and stay running
     newpid = os.fork()
-    if newpid == 0:
+    if newpid == 0 and logfile == 'SYSTEMD_JOURNAL':
+
+        # Start a new systemd journal reader
+        j = journal.Reader()
+
+        # Set the reader's default log level
+        j.log_level(journal.LOG_INFO)
+
+        # Only include entries since the current box has booted.
+        j.this_boot()
+        j.this_machine()
+
+        # Only read kernel events
+        j.add_match(SYSLOG_IDENTIFIER="kernel")
+
+        j.seek_tail()
+        # Important! - Discard old journal entries
+        j.get_previous()
+
+        while j.wait():
+            for event in j:
+                debug_logger.info(event['MESSAGE'])
+                yield(format_event(parse_logdata(event['MESSAGE']), logfile))
+
+    elif newpid == 0:
 
         # Follow the logfile and stream notifications
         # Rate limit to not show too many notifications
         try:
             for event in follow_apparmor_events(logfile, wait):
+                debug_logger.info(event)
                 debug_logger.info(format_event(event, logfile))
                 yield (format_event(event, logfile))
         except PermissionError:
@@ -259,7 +290,8 @@ def get_apparmor_events(logfile, since=0):
                 if event.epoch > since:
                     yield event
     except PermissionError:
-        sys.exit(_("ERROR: Cannot read {}. Please check permissions.".format(logfile)))
+        sys.exit(_("ERROR: Cannot read {}. Please check permissions.".
+                 format(logfile)))
 
 
 def parse_logdata(logsource):
@@ -390,6 +422,7 @@ def main():
     parser.add_argument('-p', '--poll', action='store_true', help=_('poll AppArmor logs and display notifications'))
     parser.add_argument('--display', type=str, help=_('set the DISPLAY environment variable (might be needed if sudo resets $DISPLAY)'))
     parser.add_argument('-f', '--file', type=str, help=_('search FILE for AppArmor messages'))
+    parser.add_argument('-j', '--journal', action='store_true', help=_('search systemd journal for AppArmor messages'))
     parser.add_argument('-l', '--since-last', action='store_true', help=_('display stats since last login'))
     parser.add_argument('-s', '--since-days', type=int, metavar=('NUM'), help=_('show stats for last NUM days (can be used alone or with -p)'))
     parser.add_argument('-v', '--verbose', action='store_true', help=_('show messages with stats'))
@@ -500,7 +533,9 @@ def main():
             # @TODO: Extend UI lib to have warning and error functions that
             # can be used in an uniform way with both text and JSON output.
 
-    if args.file:
+    if args.journal:
+        logfile = 'SYSTEMD_JOURNAL'
+    elif args.file:
         logfile = args.file
     elif os.path.isfile('/var/run/auditd.pid') and os.path.isfile('/var/log/audit/audit.log'):
         # If auditd is running, look at /var/log/audit/audit.log

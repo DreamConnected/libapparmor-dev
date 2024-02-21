@@ -171,19 +171,19 @@ extern aa_kernel_interface *aa_kernel_interface_ref(aa_kernel_interface *kernel_
 extern void aa_kernel_interface_unref(aa_kernel_interface *kernel_interface);
 
 extern int aa_kernel_interface_load_policy(aa_kernel_interface *kernel_interface,
-					   const char *buffer, size_t size);
+					   const char *buffer, size_t size, int compression_state);
 extern int aa_kernel_interface_load_policy_from_file(aa_kernel_interface *kernel_interface,
 						     int dirfd,
-						     const char *path);
+						     const char *path, int compression_state);
 extern int aa_kernel_interface_load_policy_from_fd(aa_kernel_interface *kernel_interface,
-						   int fd);
+						   int fd, int compression_state);
 extern int aa_kernel_interface_replace_policy(aa_kernel_interface *kernel_interface,
-					      const char *buffer, size_t size);
+					      const char *buffer, size_t size, int compression_state);
 extern int aa_kernel_interface_replace_policy_from_file(aa_kernel_interface *kernel_interface,
 							int dirfd,
-							const char *path);
+							const char *path, int compression_state);
 extern int aa_kernel_interface_replace_policy_from_fd(aa_kernel_interface *kernel_interface,
-						      int fd);
+						      int fd, int compression_state);
 extern int aa_kernel_interface_remove_policy(aa_kernel_interface *kernel_interface,
 					     const char *fqname);
 extern int aa_kernel_interface_write_policy(int fd, const char *buffer,

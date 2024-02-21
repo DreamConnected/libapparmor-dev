@@ -122,7 +122,7 @@ AAREDIR= libapparmor_re
 AAREOBJECT = ${AAREDIR}/libapparmor_re.a
 AAREOBJECTS = $(AAREOBJECT)
 AARE_LDFLAGS = -static-libgcc -static-libstdc++ -L. $(LDFLAGS)
-AALIB = -Wl,-Bstatic -lapparmor -Wl,-Bdynamic -lpthread
+AALIB = -Wl,-Bstatic -lapparmor -Wl,-Bdynamic -lpthread -lzstd
 
 ifdef WITH_LIBINTL
 	AALIB += -lintl

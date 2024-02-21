@@ -28,6 +28,7 @@
 #include <string>
 #include <sstream>
 #include <sys/apparmor.h>
+#include <zstd.h>
 
 #include "lib.h"
 #include "parser.h"
@@ -43,7 +44,7 @@
 
 
 int __sd_serialize_profile(int option, aa_kernel_interface *kernel_interface,
-			   Profile *prof, int cache_fd);
+			   Profile *prof, int cache_fd, int compr_cache_fd);
 
 static void print_error(int error)
 {
@@ -87,13 +88,13 @@ static void print_error(int error)
 }
 
 int load_profile(int option, aa_kernel_interface *kernel_interface,
-		 Profile *prof, int cache_fd)
+		 Profile *prof, int cache_fd, int compr_cache_fd)
 {
 	int retval = 0;
 	int error = 0;
 
 	PDEBUG("Serializing policy for %s.\n", prof->name);
-	retval = __sd_serialize_profile(option, kernel_interface, prof, cache_fd);
+	retval = __sd_serialize_profile(option, kernel_interface, prof, cache_fd, compr_cache_fd);
 
 	if (retval < 0) {
 		error = retval;	/* yeah, we'll just report the last error */
@@ -496,6 +497,24 @@ void sd_serialize_profile(std::ostringstream &buf, Profile *profile,
 	sd_write_structend(buf);
 }
 
+size_t compress_policy_zstd(const char* raw_data_str, size_t raw_data_size, char** compressed_buffer)
+{
+	size_t compressed_size = ZSTD_compressBound(raw_data_size);
+	*compressed_buffer = (char*) malloc(compressed_size + sizeof(u32));
+
+	((u32*)(*compressed_buffer))[0] = raw_data_size; // The header is only the size of the uncompressed sz
+
+
+	compressed_size = ZSTD_compress(*compressed_buffer+sizeof(u32), compressed_size, raw_data_str, raw_data_size, compress_level);
+	if (ZSTD_isError(compressed_size)) {
+		PERROR(_("Compression error: %s\n"),  ZSTD_getErrorName(compressed_size));
+		exit(1);
+	}
+	compressed_size += sizeof(u32);
+
+
+	return compressed_size;
+}
 void sd_serialize_top_profile(std::ostringstream &buf, Profile *profile)
 {
 	uint32_t version;
@@ -507,14 +526,13 @@ void sd_serialize_top_profile(std::ostringstream &buf, Profile *profile)
 	sd_write_uint32(buf, version);
 
 	if (profile->ns) {
-		sd_write_string(buf, profile->ns, "namespace");
+		sd_write_string(buf , profile->ns, "namespace");
 	}
-
-	sd_serialize_profile(buf, profile, profile->parent ? 1 : 0);
+		sd_serialize_profile(buf, profile, profile->parent ? 1 : 0);
 }
 
 int __sd_serialize_profile(int option, aa_kernel_interface *kernel_interface,
-			   Profile *prof, int cache_fd)
+			   Profile *prof, int cache_fd, int compr_cache_fd)
 {
 	autoclose int fd = -1;
 	int error, size, wsize;
@@ -558,41 +576,67 @@ int __sd_serialize_profile(int option, aa_kernel_interface *kernel_interface,
 				error = -errno;
 		}
 	} else {
-		std::string tmp;
 
-		sd_serialize_top_profile(work_area, prof);
+		std::string tmpstring;
+		char* policy = NULL;
+		int compressed_raw_size=0;
 
-		tmp = work_area.str();
-		size = (long) work_area.tellp();
+		if(compress_policy == COMPRESS_POLICY) {
+			sd_serialize_top_profile(work_area, prof);
+			compressed_raw_size = work_area.tellp();
+			size = compress_policy_zstd(work_area.str().c_str(),
+					     compressed_raw_size,
+					     &policy);
+		} else {
+
+			sd_serialize_top_profile(work_area, prof);
+
+			tmpstring= work_area.str();
+			policy = (char*) tmpstring.c_str();
+			size = (long) work_area.tellp();
+		}
 		if (kernel_load) {
 			if (option == OPTION_ADD &&
 			    aa_kernel_interface_load_policy(kernel_interface,
-							    tmp.c_str(), size) == -1) {
+							    policy, size, compress_policy) == -1) {
 				error = -errno;
 			} else if (option == OPTION_REPLACE &&
 				   aa_kernel_interface_replace_policy(kernel_interface,
-								      tmp.c_str(), size) == -1) {
+								      policy, size, compress_policy) == -1) {
 				error = -errno;
 			}
 		} else if ((option == OPTION_STDOUT || option == OPTION_OFILE) &&
-			   aa_kernel_interface_write_policy(fd, tmp.c_str(), size) == -1) {
+			   aa_kernel_interface_write_policy(fd, policy, size) == -1) {
 			error = -errno;
 		}
 
 		if (cache_fd != -1) {
-			wsize = write(cache_fd, tmp.c_str(), size);
-			if (wsize < 0) {
-				error = -errno;
-			} else if (wsize < size) {
-				PERROR(_("%s: Unable to write entire profile entry to cache\n"),
-				       progname);
-				error = -EIO;
+
+
+			if(compress_policy) {
+
+				wsize = write(cache_fd, work_area.str().c_str(), compressed_raw_size);
+				if (wsize < 0) {
+					error = -errno;
+				} else if (wsize < compressed_raw_size) {
+						PERROR(_("%s: Unable to write entire profile entry to cache\n"),
+						       progname);
+				}
+			}
+			else {
+				wsize = write(cache_fd, policy, size);
+				if (wsize < 0) {
+					error = -errno;
+					} else if (wsize < size) {
+						PERROR(_("%s: Unable to write entire profile entry to cache\n"),
+						       progname);
+						error = -EIO;
+					}
+				}
 			}
 		}
-	}
-
-	if (!prof->hat_table.empty() && option != OPTION_REMOVE) {
-		if (load_flattened_hats(prof, option, kernel_interface, cache_fd) == 0)
+		if (!prof->hat_table.empty() && option != OPTION_REMOVE) {
+		if (load_flattened_hats(prof, option, kernel_interface, cache_fd, compr_cache_fd) == 0)
 			return 0;
 	}
 

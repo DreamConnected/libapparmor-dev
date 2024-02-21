@@ -92,7 +92,8 @@ static int replace_all_cb(int dirfd, const char *name, struct stat *st,
 		data = (struct replace_all_cb_data *) cb_data;
 		retval = aa_kernel_interface_replace_policy_from_file(data->kernel_interface,
 								      dirfd,
-								      name);
+								      name,
+								      0); // TODO: Enable compression in aa_load
 	}
 
 	return retval;

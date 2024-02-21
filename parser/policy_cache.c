@@ -105,6 +105,54 @@ char *cache_filename(aa_policy_cache *pc, int dir, const char *basename)
 	return cachename;
 }
 
+const char zstd_header_str[] = "\x28\xb5\x2f\xfd";
+
+bool valid_compressed_version(const char *cachename)
+{
+	char buffer[8];
+	autofclose FILE *f;
+	if (!(f = fopen(cachename, "r"))) {
+		PERROR("Error: Could not read cache file '%s', skipping...\n", cachename);
+		return false;
+	}
+	size_t res = fread(buffer, 1, 8, f);
+	if (res < 8) {
+		pwarn(WARN_DEBUG_CACHE, "%s: cache file '%s' invalid size\n", progname, cachename);
+		return false;
+	}
+	if( ((u32*) buffer)[0] == 0) {
+		pwarn(WARN_DEBUG_CACHE, "invalid compressed cache");
+		return false;
+				}
+	if (memcmp(buffer + 4, zstd_header_str, 4) != 0) {
+		pwarn(WARN_DEBUG_CACHE, "%s: compressed cache file '%s' has wrong header\n", progname, cachename);
+		return false;
+	}
+
+	return true;
+}
+
+bool valid_compressed_cache(const char *cachename)
+{
+	struct stat stat_bin;
+	/* Load a binary cache if it exists and is newest */
+	if (!skip_read_cache) {
+		if (stat(cachename, &stat_bin) == 0 &&
+		    stat_bin.st_size > 0) {
+			if (valid_compressed_version(cachename))
+				set_cache_tstamp(stat_bin.st_mtim);
+			else if (!cond_clear_cache)
+				return false;
+		} else {
+			if (!cond_clear_cache)
+				return false;
+			pwarn(WARN_DEBUG_CACHE, "%s: Invalid or missing cache file '%s' (%s)\n", progname, cachename, strerror(errno));
+		}
+		return true;
+	}
+	return false;
+}
+
 void valid_read_cache(const char *cachename)
 {
 	struct stat stat_bin;

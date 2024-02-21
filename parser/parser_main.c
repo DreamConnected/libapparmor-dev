@@ -81,6 +81,8 @@ int skip_mode_force = 0;
 int abort_on_error = 0;			/* stop processing profiles if error */
 int skip_bad_cache_rebuild = 0;
 int mru_skip_cache = 1;
+//int compress_policy = 0;
+//int compress_level = 0;
 
 bool O_rule_merge = true;
 bool D_rule_merge = false;
@@ -139,7 +141,7 @@ static const char *config_file = "/etc/apparmor/parser.conf";
 #define ARG_ESTIMATED_COMPILE_SIZE	144
 
 /* Make sure to update BOTH the short and long_options */
-static const char *short_options = "ad::f:h::rRVvI:b:BCD:NSm:M:qQn:XKTWkL:O:po:j:";
+static const char *short_options = "ad::f:h::rRVvI:b:BCD:NSm:M:qQn:XKTWkL:O:po:j:c::";
 struct option long_options[] = {
 	{"add", 		0, 0, 'a'},
 	{"binary",		0, 0, 'B'},
@@ -175,6 +177,7 @@ struct option long_options[] = {
 	{"Optimize",		1, 0, 'O'},
 	{"preprocess",		0, 0, 'p'},
 	{"jobs",		1, 0, 'j'},
+	{"compress",		2, 0, 'c'},
 	{"skip-bad-cache",	0, 0, ARG_SKIP_BAD_CACHE},/* no short option */
 	{"purge-cache",		0, 0, ARG_PURGE_CACHE},	/* no short option */
 	{"create-cache-dir",	0, 0, ARG_CREATE_CACHE_DIR},/* no short option */
@@ -247,6 +250,7 @@ static void display_usage(const char *command)
 	       "-O [n], --Optimize	Control dfa optimizations\n"
 	       "-h [cmd], --help[=cmd]  Display this text or info about cmd\n"
 	       "-j n, --jobs n		Set the number of compile threads\n"
+	       "-c [l], --compress [l]	Compress the profile in userspace at level l. Default 3\n"
 	       "--max-jobs n		Hard cap on --jobs. Default 8*cpus\n"
 	       "--abort-on-error	Abort processing of profiles on first error\n"
 	       "--skip-bad-cache-rebuild Do not try rebuilding the cache if it is rejected by the kernel\n"
@@ -693,6 +697,30 @@ static int process_arg(int c, char *optarg)
 	case 'T':
 		skip_read_cache = 1;
 		break;
+	case 'c':
+		compress_policy = COMPRESS_POLICY;
+		if (!optarg) {
+			compress_level = 5;
+			skip_read_cache = 1;
+		} else if (( compress_level = (int)strtol(optarg, (char **)NULL, 10))) {
+			if(errno) {
+				perror("Incorrect compression level");
+				exit(1);
+			}
+			if(compress_level < 0) {
+				fprintf(stderr, "Compression level < 0. Using 0\n");
+				compress_level = 0;
+			}
+			if(compress_level > 22) {
+				fprintf(stderr, "Compression level > 22. Using 22\n");
+				compress_level = 22;
+			}
+		} else {
+			PERROR("%s: Invalid compression level '%s'\n",
+			       progname, optarg);
+			exit(1);
+		}
+		break;
 	case ARG_SKIP_BAD_CACHE:
 		cond_clear_cache = 0;
 		break;
@@ -986,8 +1014,32 @@ static bool do_print_cache_dirs(aa_features *features, const char **cacheloc,
 	return true;
 }
 
+
+static char* read_policy_file(const char* path, size_t* file_size) {
+    FILE* file = path ? fopen(path, "rb"): stdin;
+
+    fseek(file, 0, SEEK_END);
+    *file_size = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    char* buffer = (char*) malloc(*file_size);
+    if (!buffer) {
+        if (file != stdin) fclose(file);
+        return NULL;
+    }
+
+    if (fread(buffer, 1, *file_size, file) != *file_size) {
+        free(buffer);
+        if (file != stdin) fclose(file);
+        return NULL;
+    }
+
+    if (file != stdin) fclose(file);
+    return buffer;
+}
+
 int process_binary(int option, aa_kernel_interface *kernel_interface,
-		   const char *profilename)
+		   const char *profilename, int compr_st)
 {
 	const char *printed_name;
 	int retval;
@@ -995,30 +1047,65 @@ int process_binary(int option, aa_kernel_interface *kernel_interface,
 	printed_name = profilename ? profilename : "stdin";
 
 	if (kernel_load) {
-		if (option == OPTION_ADD) {
-			retval = profilename ?
-				 aa_kernel_interface_load_policy_from_file(kernel_interface, AT_FDCWD, profilename) :
-				 aa_kernel_interface_load_policy_from_fd(kernel_interface, 0);
-			if (retval == -1) {
-				retval = errno;
-				PERROR(_("Error: Could not load profile %s: %s\n"),
+		if(compr_st != COMPRESS_NONE) {
+			size_t buffer_size;
+			char* tmp;
+			char* buffer = read_policy_file(profilename, &buffer_size);
+
+			if(!buffer) {
+				PERROR(_("Cannot read profile from file %s"), printed_name);
+			}
+			if(compr_st == COMPRESS_POLICY) {
+				buffer_size = compress_policy_zstd(buffer, buffer_size, &tmp);
+			}
+			else {
+				tmp = buffer;
+			}
+
+			if(option == OPTION_ADD)
+				retval = aa_kernel_interface_load_policy(kernel_interface,
+                                                           tmp, buffer_size, compr_st);
+			else if(option == OPTION_REPLACE)
+				retval = aa_kernel_interface_replace_policy(kernel_interface,
+                                                            tmp, buffer_size, compr_st);
+			else{
+				PERROR(_("Error: Invalid load option specified: %d\n"),
+				       option);
+				return EINVAL;
+			}
+			if(retval == -1) {
+				PERROR(_("Could not %s profile %s : %s\n"),
+				       option == OPTION_ADD ? "load":"replace",
 				       printed_name, strerror(retval));
 				return retval;
 			}
-		} else if (option == OPTION_REPLACE) {
-			retval = profilename ?
-				 aa_kernel_interface_replace_policy_from_file(kernel_interface, AT_FDCWD, profilename) :
-				 aa_kernel_interface_replace_policy_from_fd(kernel_interface, 0);
-			if (retval == -1) {
-				retval = errno;
-				PERROR(_("Error: Could not replace profile %s: %s\n"),
-				       printed_name, strerror(retval));
-				return retval;
+		}
+		else {
+			if (option == OPTION_ADD) {
+				retval = profilename ?
+					 aa_kernel_interface_load_policy_from_file(kernel_interface, AT_FDCWD, profilename, compr_st) :
+					 aa_kernel_interface_load_policy_from_fd(kernel_interface, 0, compr_st);
+				if (retval == -1) {
+					retval = errno;
+					PERROR(_("Error: Could not load profile %s: %s\n"),
+					       printed_name, strerror(retval));
+					return retval;
+				}
+			} else if (option == OPTION_REPLACE) {
+				retval = profilename ?
+					 aa_kernel_interface_replace_policy_from_file(kernel_interface, AT_FDCWD, profilename, compr_st) :
+					 aa_kernel_interface_replace_policy_from_fd(kernel_interface, 0, compr_st);
+				if (retval == -1) {
+					retval = errno;
+					PERROR(_("Error: Could not replace profile %s: %s\n"),
+					       printed_name, strerror(retval));
+					return retval;
+				}
+			} else {
+				PERROR(_("Error: Invalid load option specified: %d\n"),
+				       option);
+				return EINVAL;
 			}
-		} else {
-			PERROR(_("Error: Invalid load option specified: %d\n"),
-			       option);
-			return EINVAL;
 		}
 	}
 
@@ -1080,10 +1167,16 @@ int process_profile(int option, aa_kernel_interface *kernel_interface,
 {
 	int retval = 0;
 	autofree const char *cachename = NULL;
+	autofree char *compr_cachename = NULL;
 	autofree const char *writecachename = NULL;
+	autofree const char *compr_writecachename = NULL;
+
 	autofree const char *cachetmpname = NULL;
-	autoclose int cachetmp = -1;
+	autofree const char *compr_cachetmpname = NULL;
+
+	autoclose int cachetmp = -1, compr_cachetmp = -1;
 	const char *basename = NULL;
+	char *compr_basename = NULL;
 
 	/* per-profile states */
 	force_complain = opt_force_complain;
@@ -1133,8 +1226,27 @@ int process_profile(int option, aa_kernel_interface *kernel_interface,
 			} else {
 				valid_read_cache(cachename);
 			}
-		}
+			if(compress_policy) {
+				if (asprintf(&compr_basename, "compressed/%s", basename) < 0) {
+					perror("asprintf");
+					exit(1);
+				}
 
+				compr_cachename = aa_policy_cache_filename(pc, compr_basename);
+				if (!compr_cachename) {
+					autoclose int fd = aa_policy_cache_open(pc,
+									compr_basename,
+									O_RDONLY);
+					if (fd != -1)
+						pwarn(WARN_CACHE, _("Could not get cachename for '%s'\n"), basename);
+				} else {
+					if(valid_compressed_cache(compr_cachename))
+						compress_policy = COMPRESS_PRECOMPRESSED;
+					else
+						compr_cachename = NULL;
+				}
+			}
+		}
 	}
 
 	if (yyin) {
@@ -1157,10 +1269,10 @@ int process_profile(int option, aa_kernel_interface *kernel_interface,
 		skip_cache = 1;
 
 	if (cachename) {
-		/* Load a binary cache if it exists and is newest */
-		if (cache_hit(cachename)) {
+		if(cache_hit(compr_cachename ? compr_cachename : cachename)) {
 			retval = process_binary(option, kernel_interface,
-						cachename);
+						compr_cachename ? compr_cachename : cachename,
+						compress_policy);
 			if (!retval || skip_bad_cache_rebuild)
 				goto out;
 		}
@@ -1210,18 +1322,58 @@ int process_profile(int option, aa_kernel_interface *kernel_interface,
 			pwarn(WARN_CACHE, "Cache write disabled: Cannot create setup tmp cache file '%s': %m\n", writecachename);
 			write_cache = 0;
 		}
+		else if(compress_policy != COMPRESS_NONE) {
+			compr_writecachename = cache_filename(pc, 0, compr_basename);
+			if (!compr_writecachename)
+				pwarn(WARN_CACHE, "Cache write disabled: Cannot create compressed cache file name '%s': %m\n", basename);
+			compr_cachetmp = setup_cache_tmp(&compr_cachetmpname, compr_writecachename);
+
+		}
 	}
 	/* cache file generated by load_policy */
-	retval = load_policy(option, kernel_interface, cachetmp);
+	retval = load_policy(option, kernel_interface, cachetmp, compr_cachetmp);
 	if (retval == 0 && write_cache) {
 		if (force_complain) {
 			pwarn(WARN_CACHE, "Caching disabled for: '%s' due to force complain\n", basename);
 		} else if (cachetmp == -1) {
 			unlink(cachetmpname);
+			if(compr_cachetmpname)
+				unlink(compr_cachetmpname);
 			pwarn(WARN_CACHE, "Failed to create cache: %s\n",
 			       basename);
 		} else {
-			install_cache(cachetmpname, writecachename);
+			if(compr_cachetmp == -1)
+				install_cache(cachetmpname, writecachename);
+			else {
+				/* Compressed cache must be generated there instead of __sd_serialize_profile
+				 * because else we need to generate a single compressed file. That wouldn't be
+				 * the case for caches containing several subprofiles in __sd_serialize_profile.
+				 */
+				size_t uncompressed_size = 0, compressed_buffer_size = 0;
+				char* uncompressed_buffer = read_policy_file(writecachename, &uncompressed_size);
+				char* compressed_buffer = NULL;
+				size_t wsize;
+
+				if(!uncompressed_buffer) {
+					PERROR(_("Cannot read cache uncompressed_cache"));
+					goto out;
+				}
+				compressed_buffer_size = compress_policy_zstd(uncompressed_buffer, uncompressed_size, &compressed_buffer);
+
+				wsize = write(compr_cachetmp, compressed_buffer , compressed_buffer_size);
+				if (wsize < 0) {
+					perror("error compressing policy:");
+				} else if (wsize < compressed_buffer_size) {
+					PERROR(_("%s: Unable to write entire compressed profile entry to cache\n"),
+						 progname);
+	                        }
+				else
+				{
+					install_cache(cachetmpname, writecachename);
+					install_cache(compr_cachetmpname, compr_writecachename);
+				}
+
+			}
 		}
 	}
 out:
@@ -1504,7 +1656,7 @@ static int binary_dir_cb(int dirfd unused, const char *name, struct stat *st,
 		}
 		rc = work_spawn(process_binary(option,
 					       cb_data->kernel_interface,
-					       path),
+					       path, compress_policy),
 				handle_work_result);
 	}
 	return rc;
@@ -1694,7 +1846,7 @@ int main(int argc, char *argv[])
 		} else if (binary_input) {
 			/* ignore return as error is handled in work_spawn */
 			work_spawn(process_binary(option, kernel_interface,
-						  profilename),
+						  profilename, compress_policy), // TODO Handle this case
 				   handle_work_result);
 		} else {
 			/* ignore return as error is handled in work_spawn */

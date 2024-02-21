@@ -24,6 +24,10 @@ extern aa_log_record *_parse_yacc(char *str);
 extern char *hex_to_string(char *str);
 extern char *ipproto_to_string(unsigned int proto);
 
+#define COMPRESS_NONE		0
+#define COMPRESS_POLICY		1
+#define COMPRESS_PRECOMPRESSED	2
+
 /* FIXME: this ought to be pulled from <linux/audit.h> but there's no
  * guarantee these will exist there. */
 #define AUDIT_APPARMOR_AUDIT    1501    /* AppArmor audited grants */

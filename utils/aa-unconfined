@@ -102,13 +102,18 @@ def get_pids_netstat(netstat='netstat'):
 def read_proc_current(filename):
     attr = None
 
-    if os.path.exists(filename):
+    try:
+        # don't bother with if os.path.exists(filename): there is always a race
         with apparmor.common.open_file_read(filename) as current:
             for line in current:
                 line = line.strip()
                 if line.endswith(' (complain)', 1) or line.endswith(' (enforce)', 1) or line.endswith(' (kill)', 1):  # enforce at least one char as profile name
                     # intentionally not checking for '(unconfined)', because   $binary confined by $profile (unconfined)   would look very confusing
                     attr = line
+    except OSError:
+        # just ignore errors atm
+        # print("Error trying to open {filename}")
+        return None
 
     return attr
 

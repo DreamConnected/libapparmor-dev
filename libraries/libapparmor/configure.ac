@@ -92,6 +92,13 @@ if test "$ac_cv_prog_cc_c99" = "no"; then
   AC_MSG_ERROR([C99 mode is required to build libapparmor])
 fi
 
+EXTRA_CFLAGS="-Wall $(EXTRA_WARNINGS) -fPIC"
+AX_CHECK_COMPILE_FLAG([-flto-partition=none], , , [-Werror])
+AS_VAR_IF([ax_cv_check_cflags__Werror__flto_partition_none], [yes],
+	[EXTRA_CFLAGS="$EXTRA_CFLAGS -flto-partition=none"]
+	,)
+AC_SUBST([AM_CFLAGS], ["$EXTRA_CFLAGS"])
+
 AC_OUTPUT(
 Makefile
 doc/Makefile

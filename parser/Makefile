@@ -70,7 +70,10 @@ CFLAGS = -g -pg -fprofile-arcs -ftest-coverage
 endif
 endif #CFLAGS
 
-CFLAGS	+= -flto-partition=none
+HAVE_FLTO_PARTITION_NONE:=$(shell ${CC} -E -flto-partition=none /dev/null 1>/dev/null 2>&1 && echo true)
+ifeq ($(HAVE_FLTO_PARTITION_NONE),true)
+	CFLAGS += -flto-partition=none
+endif
 
 EXTRA_CXXFLAGS = ${CFLAGS} ${CPPFLAGS} ${CXX_WARNINGS} -std=gnu++0x
 EXTRA_CFLAGS = ${EXTRA_CXXFLAGS} ${CPP_WARNINGS}

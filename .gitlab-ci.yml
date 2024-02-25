@@ -17,7 +17,7 @@ stages:
     - uname -a
 
 .install-c-build-deps: &install-c-build-deps
-  - apt-get install --no-install-recommends -y build-essential apache2-dev autoconf automake bison dejagnu flex libpam-dev libtool pkg-config python3-all-dev python3-setuptools ruby-dev swig zlib1g-dev
+  - apt-get install --no-install-recommends -y build-essential apache2-dev autoconf autoconf-archive automake bison dejagnu flex libpam-dev libtool pkg-config python3-all-dev python3-setuptools ruby-dev swig zlib1g-dev
 
 build-all:
   stage: build

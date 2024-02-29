@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION simple network bind acceptance test
+#=EXRESULT PASS
+
+profile a_profile {
+  network (bind),
+}

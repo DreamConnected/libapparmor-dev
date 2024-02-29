@@ -1,0 +1,13 @@
+#
+#=DESCRIPTION network ipv6 subnet conditional test
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  network peer=(ip=::578d/64),
+  network peer=(ip=2001:1884:d02e:2759:d30:f166:71c9:288f/64),
+  network peer=(ip=::578d/0),
+  network peer=(ip=2001:1884:d02e:2759:d30:f166:71c9:288f/0),
+  network peer=(ip=::578d/128),
+  network peer=(ip=2001:1884:d02e:2759:d30:f166:71c9:288f/128),
+
+}

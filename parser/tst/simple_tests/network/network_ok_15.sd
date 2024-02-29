@@ -1,0 +1,8 @@
+#
+#=DESCRIPTION network ipv4 range conditional test
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  network peer=(ip=192.168.0.4-192.168.0.39),
+
+}

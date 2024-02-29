@@ -1,0 +1,10 @@
+#
+#=DESCRIPTION network port conditional test
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  network port=0,
+  network port=65535,
+  network port=443,
+
+}

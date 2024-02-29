@@ -12,8 +12,7 @@
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
- *   along with this program; if not, contact Novell, Inc. or Canonical
- *   Ltd.
+ *   along with this program; if not, contact Canonical Ltd.
  */
 
 #ifndef __AA_BIGNUM_H
@@ -29,10 +28,9 @@ class bignum
 {
 public:
 	std::vector<uint8_t> data;
-	uint64_t sad = 543;
 	uint8_t base;
 	bool negative = false;
-	bignum () {}
+	bignum () : base(0) {}
 
 	bignum (unsigned long val) {
 		if (val == 0)

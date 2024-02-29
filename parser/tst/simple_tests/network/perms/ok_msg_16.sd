@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION simple network msg test
+#=EXRESULT PASS
+
+profile a_profile {
+  network w,
+}

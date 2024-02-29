@@ -1,0 +1,8 @@
+#
+#=DESCRIPTION network bind with non-bind interface modifier
+#=EXRESULT FAIL
+#
+
+profile foo {
+  network bind peer=(port=1234),
+}

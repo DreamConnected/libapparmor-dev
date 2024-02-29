@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION simple network setopt w/ip acceptance test
+#=EXRESULT PASS
+
+profile a_profile {
+  network setopt ip=127.0.0.1,
+}

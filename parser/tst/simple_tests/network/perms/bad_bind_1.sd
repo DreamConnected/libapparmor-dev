@@ -1,0 +1,8 @@
+#
+#=DESCRIPTION network bind with non-bind member modifier
+#=EXRESULT FAIL
+#
+
+profile foo {
+  network bind peer=(ip=127.0.0.1),
+}

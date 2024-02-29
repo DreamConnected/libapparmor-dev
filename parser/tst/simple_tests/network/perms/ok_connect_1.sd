@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION simple network connect acceptance test
+#=EXRESULT PASS
+
+profile a_profile {
+  network connect,
+}

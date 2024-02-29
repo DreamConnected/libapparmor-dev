@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION simple network create w/ip acceptance test
+#=EXRESULT PASS
+
+profile a_profile {
+  network create ip=::1,
+}

@@ -1,0 +1,8 @@
+#
+#=DESCRIPTION network port range conditional test
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  network peer=(port=22-443),
+
+}

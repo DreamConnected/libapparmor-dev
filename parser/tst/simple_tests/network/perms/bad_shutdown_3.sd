@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION simple network shutdown w/peer test
+#=EXRESULT FAIL
+
+profile a_profile {
+  network shutdown peer=(ip=::1),
+}

@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION simple network getopt w/ip acceptance test
+#=EXRESULT PASS
+
+profile a_profile {
+  network getopt ip=127.0.0.1,
+}

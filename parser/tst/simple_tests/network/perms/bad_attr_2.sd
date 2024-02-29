@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION simple network getattr acceptance test
+#=EXRESULT FAIL
+
+profile a_profile {
+  network (getattr) peer=(port=1234),
+}

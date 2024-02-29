@@ -882,7 +882,7 @@ static std::string generate_regex_range(bignum start, bignum end)
 	std::ostringstream result;
 	std::vector<std::pair<bignum, bignum>> regex_range;
 	int j;
-	regex_range = regex_range_generator(start, end);
+	regex_range = regex_range_generator(std::move(start), std::move(end));
 	for (auto &i: regex_range) {
 		bignum sstart = i.first;
 		bignum send = i.second;
@@ -942,7 +942,7 @@ int convert_range(std::string& buffer, bignum start, bignum end)
 	pattern_t ptype;
 	int pos;
 
-	std::string regex_range = generate_regex_range(start, end);
+	std::string regex_range = generate_regex_range(std::move(start), std::move(end));
 
 	if (!regex_range.empty()) {
 		ptype = convert_aaregex_to_pcre(regex_range.c_str(), 0, glob_default, buffer, &pos);

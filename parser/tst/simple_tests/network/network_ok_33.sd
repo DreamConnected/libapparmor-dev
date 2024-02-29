@@ -1,0 +1,9 @@
+#
+#=DESCRIPTION network ipv6 range conditional test
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  network ip=::578d-::94ab peer=(ip=::578d-::94ab),
+  network ip=2001:1884:d02e:2759:d30:f166:71c9:288f-4001:1884:d02e:2759:d30:f166:71c9:288f peer=(ip=2001:1884:d02e:2759:d30:f166:71c9:288f-4001:1884:d02e:2759:d30:f166:71c9:288f),
+
+}

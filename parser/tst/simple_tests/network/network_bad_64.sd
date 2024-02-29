@@ -1,0 +1,8 @@
+#
+#=DESCRIPTION invalid network range test
+#=EXRESULT FAIL
+#
+/usr/bin/foo {
+  network port=443-80 peer=(port=443-80),
+
+}

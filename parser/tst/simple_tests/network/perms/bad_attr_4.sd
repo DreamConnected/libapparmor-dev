@@ -1,0 +1,7 @@
+#
+#=DESCRIPTION simple network setattr w/peer ip test
+#=EXRESULT FAIL
+
+profile a_profile {
+  network (setattr) peer=(ip=127.0.0.1),
+}

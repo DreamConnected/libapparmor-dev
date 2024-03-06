@@ -11,11 +11,13 @@
 # ------------------------------------------------------------------
 
 import os
+import pwd
 import signal
 import subprocess
 import tempfile
 import time
 import unittest
+from datetime import datetime
 
 from common_test import AATest, setup_all_loops, setup_aa
 import apparmor.aa as aa
@@ -64,8 +66,8 @@ def cmd(command):
 
 class AANotifyTest(AATest):
 
-    def AASetup(self):
-        '''Create temporary log file with 30 enties of different age'''
+    def create_logfile_contents(self, _time):
+        '''Create temporary log file with 30 entries of different age'''
 
         test_logfile_contents_999_days_old = \
 '''Feb  4 13:40:38 XPS-13-9370 kernel: [128552.834382] audit: type=1400 audit({epoch}:113): apparmor="ALLOWED" operation="exec" profile="libreoffice-soffice" name="/bin/uname" pid=4097 comm="sh" requested_mask="x" denied_mask="x" fsuid=1001 ouid=0 target="libreoffice-soffice//null-/bin/uname"
@@ -78,7 +80,7 @@ Feb  4 13:40:38 XPS-13-9370 kernel: [128552.835421] audit: type=1400 audit({epoc
 Feb  4 13:40:38 XPS-13-9370 kernel: [128552.835696] audit: type=1400 audit({epoch}:120): apparmor="ALLOWED" operation="open" profile="libreoffice-soffice//null-/bin/uname" name="/usr/lib/locale/locale-archive" pid=4097 comm="uname" requested_mask="r" denied_mask="r" fsuid=1001 ouid=0
 Feb  4 13:40:38 XPS-13-9370 kernel: [128552.875891] audit: type=1400 audit({epoch}:121): apparmor="ALLOWED" operation="exec" profile="libreoffice-soffice" name="/usr/bin/file" pid=4111 comm="soffice.bin" requested_mask="x" denied_mask="x" fsuid=1001 ouid=0 target="libreoffice-soffice//null-/usr/bin/file"
 Feb  4 13:40:38 XPS-13-9370 kernel: [128552.880347] audit: type=1400 audit({epoch}:122): apparmor="ALLOWED" operation="file_mmap" profile="libreoffice-soffice//null-/usr/bin/file" name="/usr/bin/file" pid=4111 comm="file" requested_mask="rm" denied_mask="rm" fsuid=1001 ouid=0
-'''.format(epoch=round(time.time(), 3) - 60*60*24*999)
+'''.format(epoch=round(_time, 3) - 60 * 60 * 24 * 999)
 
         test_logfile_contents_30_days_old = \
 '''Feb  4 13:40:38 XPS-13-9370 kernel: [128552.834382] audit: type=1400 audit({epoch}:113): apparmor="ALLOWED" operation="exec" profile="libreoffice-soffice" name="/bin/uname" pid=4097 comm="sh" requested_mask="x" denied_mask="x" fsuid=1001 ouid=0 target="libreoffice-soffice//null-/bin/uname"
@@ -91,7 +93,7 @@ Feb  4 13:40:38 XPS-13-9370 kernel: [128552.835421] audit: type=1400 audit({epoc
 Feb  4 13:40:38 XPS-13-9370 kernel: [128552.835696] audit: type=1400 audit({epoch}:120): apparmor="ALLOWED" operation="open" profile="libreoffice-soffice//null-/bin/uname" name="/usr/lib/locale/locale-archive" pid=4097 comm="uname" requested_mask="r" denied_mask="r" fsuid=1001 ouid=0
 Feb  4 13:40:38 XPS-13-9370 kernel: [128552.875891] audit: type=1400 audit({epoch}:121): apparmor="ALLOWED" operation="exec" profile="libreoffice-soffice" name="/usr/bin/file" pid=4111 comm="soffice.bin" requested_mask="x" denied_mask="x" fsuid=1001 ouid=0 target="libreoffice-soffice//null-/usr/bin/file"
 Feb  4 13:40:38 XPS-13-9370 kernel: [128552.880347] audit: type=1400 audit({epoch}:122): apparmor="ALLOWED" operation="file_mmap" profile="libreoffice-soffice//null-/usr/bin/file" name="/usr/bin/file" pid=4111 comm="file" requested_mask="rm" denied_mask="rm" fsuid=1001 ouid=0
-'''.format(epoch=round(time.time(), 3) - 60*60*24*30)
+'''.format(epoch=round(_time, 3) - 60 * 60 * 24 * 30)
 
         test_logfile_contents_unrelevant_entries = \
 '''Feb  1 19:35:44 XPS-13-9370 kernel: [99848.048761] audit: type=1400 audit(1549042544.968:72): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/snap/core/6350/usr/lib/snapd/snap-confine" pid=12871 comm="apparmor_parser"
@@ -110,24 +112,54 @@ Feb  4 13:40:38 XPS-13-9370 kernel: [128552.835421] audit: type=1400 audit({epoc
 Feb  4 13:40:38 XPS-13-9370 kernel: [128552.835696] audit: type=1400 audit({epoch}:120): apparmor="ALLOWED" operation="open" profile="libreoffice-soffice//null-/bin/uname" name="/usr/lib/locale/locale-archive" pid=4097 comm="uname" requested_mask="r" denied_mask="r" fsuid=1001 ouid=0
 Feb  4 13:40:38 XPS-13-9370 kernel: [128552.875891] audit: type=1400 audit({epoch}:121): apparmor="ALLOWED" operation="exec" profile="libreoffice-soffice" name="/usr/bin/file" pid=4111 comm="soffice.bin" requested_mask="x" denied_mask="x" fsuid=1001 ouid=0 target="libreoffice-soffice//null-/usr/bin/file"
 Feb  4 13:40:38 XPS-13-9370 kernel: [128552.880347] audit: type=1400 audit({epoch}:122): apparmor="ALLOWED" operation="file_mmap" profile="libreoffice-soffice//null-/usr/bin/file" name="/usr/bin/file" pid=4111 comm="file" requested_mask="rm" denied_mask="rm" fsuid=1001 ouid=0
-'''.format(epoch=round(time.time(), 3))
+'''.format(epoch=round(_time, 3))
 
-        handle, self.test_logfile = tempfile.mkstemp(prefix='test-aa-notify-')
-        os.close(handle)
-        handle = open(self.test_logfile, "w+")
-        handle.write(
-            test_logfile_contents_999_days_old +
-            test_logfile_contents_30_days_old +
-            test_logfile_contents_unrelevant_entries +
-            test_logfile_contents_0_seconds_old
-        )
-        handle.close()
+        return test_logfile_contents_999_days_old \
+            + test_logfile_contents_30_days_old \
+            + test_logfile_contents_unrelevant_entries \
+            + test_logfile_contents_0_seconds_old
+
+    def AASetup(self):
+        file_current, self.test_logfile_current = tempfile.mkstemp(prefix='test-aa-notify-')
+        os.close(file_current)
+        file_current = open(self.test_logfile_current, "w+")
+
+        file_last_login, self.test_logfile_last_login = tempfile.mkstemp(prefix='test-aa-notify-')
+        os.close(file_last_login)
+        file_last_login = open(self.test_logfile_last_login, "w+")
+
+        current_time_contents = self.create_logfile_contents(time.time())
+        file_current.write(current_time_contents)
+        file_current.close()
+
+        if os.path.isfile('/var/log/wtmp'):
+            if os.name == "posix":
+                username = pwd.getpwuid(os.geteuid()).pw_name
+            else:
+                username = os.environ.get('USER')
+                if not username and hasattr(os, 'getlogin'):
+                    username = os.getlogin()
+            if 'SUDO_USER' in os.environ:
+                username = os.environ.get('SUDO_USER')
+
+            return_code, output = cmd(['last', '-1', username, '--time-format', 'iso'])
+            # example of output:
+            # ubuntu  tty7         :0               2024-01-05T14:29:11-03:00   gone - no logout
+            if output.startswith(username):
+                last_login = output.split()[3]
+                last_login_epoch = datetime.fromisoformat(last_login).timestamp()
+                # add 60 seconds to the epoch so that the time in the logs are AFTER login time
+                last_login_contents = self.create_logfile_contents(last_login_epoch + 60)
+                file_last_login.write(last_login_contents)
+                file_last_login.close()
 
     def AATeardown(self):
         '''Remove temporary log file after tests ended'''
 
-        if self.test_logfile and os.path.exists(self.test_logfile):
-            os.remove(self.test_logfile)
+        if self.test_logfile_current and os.path.exists(self.test_logfile_current):
+            os.remove(self.test_logfile_current)
+        if self.test_logfile_last_login and os.path.exists(self.test_logfile_last_login):
+            os.remove(self.test_logfile_last_login)
 
     # The Perl aa-notify script was written so, that it will checked for kern.log
     # before printing help when invoked without arguments (sic!).
@@ -186,7 +218,7 @@ Display AppArmor notifications or messages for DENIED entries.
         expected_return_code = 0
         expected_output_has = 'AppArmor denials: 20 (since'
 
-        return_code, output = cmd([aanotify_bin, '-f', self.test_logfile, '-s', '100'])
+        return_code, output = cmd([aanotify_bin, '-f', self.test_logfile_current, '-s', '100'])
         result = 'Got return code %d, expected %d\n' % (return_code, expected_return_code)
         self.assertEqual(expected_return_code, return_code, result + output)
         result = 'Got output "%s", expected "%s"\n' % (output, expected_output_has)
@@ -199,7 +231,7 @@ Display AppArmor notifications or messages for DENIED entries.
         expected_return_code = 0
         expected_output_has = 'AppArmor denials: 10 (since'
 
-        return_code, output = cmd([aanotify_bin, '-f', self.test_logfile, '-l'])
+        return_code, output = cmd([aanotify_bin, '-f', self.test_logfile_last_login, '-l'])
         if "ERROR: Could not find last login" in output:
             self.skipTest('Could not find last login')
         result = 'Got return code %d, expected %d\n' % (return_code, expected_return_code)
@@ -273,9 +305,9 @@ Name: /usr/bin/file
 Denied: rm
 Logfile: {logfile}
 
-AppArmor denials: 10 (since'''.format(logfile=self.test_logfile)
+AppArmor denials: 10 (since'''.format(logfile=self.test_logfile_last_login)
 
-        return_code, output = cmd([aanotify_bin, '-f', self.test_logfile, '-l', '-v'])
+        return_code, output = cmd([aanotify_bin, '-f', self.test_logfile_last_login, '-l', '-v'])
         if "ERROR: Could not find last login" in output:
             self.skipTest('Could not find last login')
         result = 'Got return code %d, expected %d\n' % (return_code, expected_return_code)

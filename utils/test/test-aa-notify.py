@@ -142,7 +142,8 @@ Feb  4 13:40:38 XPS-13-9370 kernel: [128552.880347] audit: type=1400 audit({epoc
             if 'SUDO_USER' in os.environ:
                 username = os.environ.get('SUDO_USER')
 
-            return_code, output = cmd(['last', '-1', username, '--time-format', 'iso'])
+            return_code, output = cmd(['last', username, '--time-format', 'iso'])
+            output = output.split('\n')[0]  # the first line is enough
             # example of output:
             # ubuntu  tty7         :0               2024-01-05T14:29:11-03:00   gone - no logout
             if output.startswith(username):

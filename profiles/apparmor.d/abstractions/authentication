@@ -31,6 +31,10 @@
   /{usr/,}lib/@{multiarch}/security/pam_*.so      mr,
   /{usr/,}lib/@{multiarch}/security/              r,
 
+  # pam_unix
+  owner /proc/@{pid}/loginuid r,
+  /{,usr/}{,s}bin/unix_chkpwd Px,
+
   # gssapi
   @{etc_ro}/gss/mech               r,
   @{etc_ro}/gss/mech.d/            r,

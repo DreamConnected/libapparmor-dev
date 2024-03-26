@@ -15,7 +15,7 @@ import re
 
 from apparmor.common import AppArmorBug, AppArmorException
 
-from apparmor.regex import RE_PROFILE_MOUNT, RE_PROFILE_PATH_OR_VAR, strip_parenthesis
+from apparmor.regex import RE_PROFILE_MOUNT, strip_parenthesis
 from apparmor.rule import AARE
 from apparmor.rule import BaseRule, BaseRuleset, parse_modifiers, logprof_value_or_all, check_and_split_list
 
@@ -34,7 +34,7 @@ valid_fs = [
     'securityfs', 'sockfs', 'bpf', 'npipefs', 'ramfs', 'hugetlbfs', 'devpts', 'ext3', 'ext2', 'ext4', 'squashfs',
     'vfat', 'ecryptfs', 'fuseblk', 'fuse', 'fusectl', 'efivarfs', 'mqueue', 'store', 'autofs', 'binfmt_misc', 'overlay',
     'none', 'bdev', 'proc', 'pipefs', 'pstore', 'btrfs', 'xfs', '9p', 'resctrl', 'zfs', 'iso9660', 'udf', 'ntfs3',
-    'nfs', 'cifs',
+    'nfs', 'cifs', 'overlayfs', 'aufs', 'rpc_pipefs', 'msdos', 'nfs4',
 ]
 
 flags_keywords = [
@@ -72,9 +72,13 @@ mount_condition_pattern = rf'({fs_type_pattern})?\s*({option_pattern})?'
 # - A filesystem    : sysfs         (sudo mount -t tmpfs tmpfs /tmp/bar)
 # - Any label       : mntlabel      (sudo mount -t tmpfs mntlabel /tmp/bar)
 # Thus we cannot use directly RE_PROFILE_PATH_OR_VAR
+# Destination can also be
+# - A path          : /foo
+# - A globbed Path  : **
 
-source_fileglob_pattern = r'(\s*(?P<source_file>([/{]\S*|"[/{][^"]*"|@{\S+}\S*|"@{\S+}[^"]*")|\w+))'
-dest_fileglob_pattern = r'(\s*' + RE_PROFILE_PATH_OR_VAR % 'dest_file' + r')'
+glob_pattern = r'(\s*(?P<%s>(([/{]|\*\*)\S*|"([/{]|\*\*)[^"]*"|@{\S+}\S*|"@{\S+}[^"]*")|\w+))'
+source_fileglob_pattern = glob_pattern % 'source_file'
+dest_fileglob_pattern = glob_pattern % 'dest_file'
 
 RE_MOUNT_DETAILS = re.compile(r'^\s*' + mount_condition_pattern + rf'(\s+{source_fileglob_pattern})?' + rf'(\s+->\s+{dest_fileglob_pattern})?\s*' + r'$')
 RE_UMOUNT_DETAILS = re.compile(r'^\s*' + mount_condition_pattern + rf'(\s+{dest_fileglob_pattern})?\s*' + r'$')
@@ -142,7 +146,7 @@ class MountRule(BaseRule):
         if self.operation == 'mount' and not self.all_source and not self.all_options and flags_forbidden_with_source & self.options != set():
             raise AppArmorException(f'Operation {flags_forbidden_with_source & self.options} cannot have a source. Source = {self.source}')
 
-        self.dest, self.all_dest = self._aare_or_all(dest, 'dest', is_path=True, log_event=log_event)
+        self.dest, self.all_dest = self._aare_or_all(dest, 'dest', is_path=False, log_event=log_event)
 
         self.can_glob = not self.all_source and not self.all_dest and not self.all_options
 

@@ -29,6 +29,8 @@ class MountTestParse(AATest):
 
     tests = (
         #                   Rule                                                     Operation   Filesystem                Options                  Source          Destination     Audit  Deny   Allow  Comment
+        ('mount -> **,',                                                    MountRule('mount',   MountRule.ALL,            MountRule.ALL,           MountRule.ALL,  '**',           False, False, False, ''     )),
+        ('mount options=(rw, shared) -> **,',                               MountRule('mount',   MountRule.ALL,            ('=', ('rw', 'shared')), MountRule.ALL,  '**',           False, False, False, ''     )),
         ('mount fstype=bpf options=rw bpf -> /sys/fs/bpf/,',                MountRule('mount',   ('=', ('bpf')),           ('=', ('rw')),           'bpf',          '/sys/fs/bpf/', False, False, False, ''     )),
         ('mount fstype=fuse.obex* options=rw bpf -> /sys/fs/bpf/,',         MountRule('mount',   ('=', ('fuse.obex*')),    ('=', ('rw')),           'bpf',          '/sys/fs/bpf/', False, False, False, ''     )),
         ('mount fstype=fuse.* options=rw bpf -> /sys/fs/bpf/,',             MountRule('mount',   ('=', ('fuse.*')),        ('=', ('rw')),           'bpf',          '/sys/fs/bpf/', False, False, False, ''     )),

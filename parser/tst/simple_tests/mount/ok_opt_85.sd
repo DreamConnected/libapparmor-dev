@@ -1,0 +1,9 @@
+#
+#=Description test globbed destination MR 1195
+#=EXRESULT PASS
+/usr/bin/foo {
+  mount options=(rw, make-slave) -> **,
+  mount options=(rw) foo -> **,
+  mount fstype=tmpfs options=(rw) foo -> **,
+  mount -> **,
+}

@@ -110,7 +110,7 @@ I<Turn off deny audit quieting> if this is a problem).
 
 Complain mode can be used to develop profiles incrementally as an
 application is exercised. The logged accesses can be added to the
-profile and then can the application further excercised to discover further
+profile and then can the application further exercised to discover further
 additions that are needed. Because AppArmor allows the accesses the
 application will behave as it would if AppArmor was not confining it.
 
@@ -147,9 +147,9 @@ or to set it on boot add:
 
 	apparmor.mode=complain
 
-as a kernel boot paramenter.
+as a kernel boot parameter.
 
-B<Warning> Setting complain mode gloabally disables all apparmor
+B<Warning> Setting complain mode globally disables all apparmor
 security protections. It can be useful during debugging or profile
 development, but setting it selectively on a per profile basis is
 safer.
@@ -218,7 +218,7 @@ or to set it on boot add:
 
 	apparmor.debug=1
 
-as a kernel boot paramenter.
+as a kernel boot parameter.
 
 =head2 Turn off deny audit quieting
 
@@ -233,7 +233,7 @@ or to set it on boot add:
 
 	apparmor.audit=noquiet
 
-as a kernel boot paramenter.
+as a kernel boot parameter.
 
 =head2 Force audit mode
 
@@ -255,7 +255,7 @@ or to set it on boot add:
 
 	apparmor.audit=all
 
-as a kernel boot paramenter.
+as a kernel boot parameter.
 
 B<Audit Rate Limiting>
 

@@ -397,7 +397,7 @@ failure, instead the parser continues on with processing the remaining
 profiles.
 
 =item --estimated-compile-size
-Adjust the internal parameter used to estimate how agressive the parser
+Adjust the internal parameter used to estimate how aggressive the parser
 can be when compiling policy. This may include changes to how or when
 caches are dropped or how many compile units (jobs) are launched. The
 value should slightly larger than the largest Resident Set Size (RSS)
@@ -451,7 +451,7 @@ Eg.
 
 would result in Optimize=minimize being set.
 
-The Include, Dump, and Optimize options accululate except for the inversion
+The Include, Dump, and Optimize options accumulate except for the inversion
 option (no-X vs. X), and a couple options that work by setting/clearing
 multiple options (compress-small).  In that case the option will override
 the flags it sets but will may accumulate with others.

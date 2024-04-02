@@ -1,0 +1,37 @@
+# Author: Felix Geyer <debfx@ubuntu.com>
+
+#include <tunables/global>
+
+/usr/sbin/ejabberd{,ctl} {
+  #include <abstractions/base>
+  #include <abstractions/user-tmp>
+  #include <abstractions/nameservice>
+  #include <abstractions/ssl_certs>
+
+  /etc/default/ejabberd r,
+  /etc/ejabberd/* r,
+  /usr/sbin/ejabberd r,
+  /usr/sbin/ejabberdctl r,
+  /var/log/ejabberd/* rw,
+  /{,var/}run/ejabberd/ejabberd.pid rw,
+  /var/lib/ejabberd/ r,
+  /var/lib/ejabberd/* rw,
+
+  /sys/devices/system/cpu/ r,
+  /sys/devices/system/node/ r,
+  /sys/devices/system/node/node*/ r,
+  /sys/devices/system/cpu/cpu*/topology/physical_package_id r,
+  /sys/devices/system/cpu/cpu*/topology/core_id r,
+
+  /usr/lib/erlang/lib/**/*.so mr,
+  /usr/lib/ejabberd/**/*.so mr,
+
+  /usr/lib/erlang/bin/erl ixr,
+  /usr/lib/erlang/erts-*/bin/* ixr,
+
+  /{usr/,}bin/dash ixr,
+  /{usr/,}bin/sed ixr,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.sbin.ejabberd>
+}

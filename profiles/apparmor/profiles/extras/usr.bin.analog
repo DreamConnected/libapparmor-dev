@@ -1,0 +1,36 @@
+# vim:syntax=apparmor
+# Last Modified: Mon Mar  9 18:35:59 2009
+# Author: Jamie Strandboge <jamie@strandboge.com>
+
+#include <tunables/global>
+/usr/bin/analog {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/user-tmp>
+
+  /etc/analog*.cfg r,
+  /etc/analog/* r,
+  /usr/bin/analog ixr,
+  /usr/share/analog/** r,
+  /var/cache/analog/** rw,
+
+  # allow read to all of /var/log for now
+  /var/log/ r,
+  /var/log/** r,
+
+  #/var/log/apache2/ r,
+  #/var/log/apache2/** r,
+  #/var/log/lighttpd/ r,
+  #/var/log/lighttpd/** r,
+
+  audit deny @{HOME}/.* mrwkl,
+  audit deny @{HOME}/.*/ rw,
+  audit deny @{HOME}/.*/** mrwkl,
+  audit deny @{HOME}/bin/ rw,
+  audit deny @{HOME}/bin/** mrwkl,
+  @{HOME}/ r,
+  @{HOME}/** rw,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.bin.analog>
+}

@@ -1,0 +1,67 @@
+# Last Modified: Thu Jan 26 08:04:01 2012
+#include <tunables/global>
+
+/usr/bin/gwibber-service {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/gnome>
+  #include <abstractions/p11-kit>
+  #include <abstractions/python>
+
+  # This is needed when gwibber-service is autostarted and the indicator asks
+  # it to start the gwibber gui
+  #include <abstractions/ubuntu-helpers>
+  /usr/bin/gwibber Cxr -> sanitized_helper,
+
+  /usr/bin/gwibber-service r,
+  /usr/share/gwibber/** r,
+  /usr/share/accounts/services/ r,
+  /usr/share/accounts/services/** r,
+
+  owner /{,var/}run/shm/sem.* rwkl,
+
+  owner @{HOME}/.cache/gwibber/ rw,
+  owner @{HOME}/.cache/gwibber/** rw,
+  owner @{HOME}/.config/gwibber/ rw,
+  owner @{HOME}/.config/gwibber/** rwk,
+  owner @{HOME}/.config/libaccounts-glib/accounts.db{,-shm,-wal} rwk,
+
+  # maybe in an abstraction?
+  owner @{HOME}/.cache/sso/sso-client.log rw,
+  owner @{HOME}/.cache/sso/sso-client-gui.log rw,
+  deny @{HOME}/.local/lib/python*/site-packages/ r,
+
+  /usr/bin/ r,
+  /usr/bin/python2.7 ix,
+  /{usr/,}bin/dash rix,
+  /{usr/,}bin/uname rix,
+  /usr/sbin/uuidd Cxr -> uuidd,
+
+  /{usr/,}sbin/ldconfig rix,
+  /{usr/,}sbin/ldconfig.real rix,
+
+  owner @{HOME}/.Xauthority r,
+  owner @{HOME}/.config/dconf/user r,
+  owner @{HOME}/.cache/dconf/user rw,
+
+  owner @{PROC}/[0-9]*/auxv r,
+  owner @{PROC}/[0-9]*/mounts r,
+
+  # noisy
+  deny /usr/share/gwibber/** w,
+  deny /var/lib/libuuid/clock.txt w,
+  deny /usr/lib/python2.[4567]/dist-packages/ubuntuone-storage-protocol/ubuntuone/__init__.pyc w,
+
+
+  # Not required for launchpad-integration to work within gwibber itself
+  deny /etc/default/apport r,
+  deny /etc/apt/apt.conf.d/ r,
+
+  profile uuidd {
+    #include <abstractions/base>
+    /usr/sbin/uuidd mr,
+  }
+
+  # Site-specific additions and overrides. See local/README for details.
+  #include <local/usr.bin.gwibber-service>
+}

@@ -1,0 +1,96 @@
+# vim:syntax=apparmor
+# Author: Jamie Strandboge <jamie@canonical.com>
+# TODO:
+# - file transfers
+# - dbus mediation for (at least) /usr/lib/telepathy/mission-control-5
+
+#include <tunables/global>
+/usr/bin/empathy {
+  #include <abstractions/nameservice>
+  #include <abstractions/audio>
+  #include <abstractions/enchant>
+  #include <abstractions/gnome>
+  #include <abstractions/ibus>
+  #include <abstractions/launchpad-integration>
+
+  # Helper applications
+  /usr/bin/empathy-accounts ix,
+  /usr/lib/empathy/empathy-auth-client ix,
+  /usr/lib/empathy/empathy-av ix,
+  /usr/bin/empathy-debugger Cx -> empathy_debugger,
+
+  # For opening URLs
+  #include <abstractions/ubuntu-browsers>
+  deny @{PROC}/[0-9]*/fd/ r,  # investigate
+  deny @{PROC}/[0-9]*/auxv r, # investigate
+
+  /usr/share/adium/** r,
+  /usr/share/empathy/** r,
+  /usr/share/GConf/gsettings/empathy.convert r,
+  /usr/share/telepathy/** r,
+  /usr/share/xml/iso-codes/*.xml r,
+
+  # This doesn't seem to actually be needed
+  deny /var/lib/dbus/machine-id r,
+
+  # For new online accounts integration
+  #include <abstractions/ubuntu-helpers>
+  /usr/bin/gnome-control-center Cx -> sanitized_helper,
+
+  # Help browser
+  /usr/bin/yelp Cx -> sanitized_helper,
+
+  owner @{HOME}/ r,
+  owner @{HOME}/.cache/telepathy/ rw,
+  owner @{HOME}/.cache/telepathy/** rwkl,
+  owner @{HOME}/.config/Empathy/ rw,
+  owner @{HOME}/.config/Empathy/** rwkl,
+  owner @{HOME}/.local/share/Empathy/ rw,
+  owner @{HOME}/.local/share/Empathy/** rwkl,
+  owner @{HOME}/.local/share/TpLogger/ rw,
+  owner @{HOME}/.local/share/TpLogger/** rwkl,
+  owner @{HOME}/.local/share/folks/ r,
+  owner @{HOME}/.local/share/folks/relationships.ini r,
+  owner @{HOME}/Pictures/ r,
+  owner @{HOME}/Pictures/** r,
+
+  # Possibly in abstractions?
+  owner @{HOME}/.gstreamer-0.10/registry.x86_64.bin* rw,
+  /sys/devices/system/cpu/online r,
+
+  owner @{HOME}/.local/share/webkit/icondatabase/ r,
+  owner @{HOME}/.local/share/webkit/icondatabase/*.db{,-journal} rwk,
+
+  owner @{HOME}/.cache/dconf/user rw,
+  owner @{HOME}/.config/dconf/user r,
+
+  /usr/share/notify-osd/icons/ r,
+  /usr/share/notify-osd/icons/** r,
+
+  # Site-specific additions and overrides. See local/README for details.
+  #include <local/usr.bin.empathy>
+
+  profile empathy_debugger {
+    #include <abstractions/base>
+    #include <abstractions/nameservice>
+    #include <abstractions/fonts>
+    #include <abstractions/freedesktop.org>
+    #include <abstractions/gnome>
+    #include <abstractions/X>
+
+    /usr/bin/empathy-debugger r,
+    /usr/share/empathy/** r,
+
+    # This doesn't seem to actually be needed
+    deny /var/lib/dbus/machine-id r,
+    /tmp/.X[0-9]*-lock r,
+
+    owner @{HOME}/.config/Empathy/ r,
+    owner @{HOME}/.config/Empathy/** rwkl,
+
+    # For saved logs
+    owner @{HOME}/*.log w,
+    owner @{HOME}/{Desktop,Public,tmp}/*.log w,
+    owner /tmp/*.log w,
+  }
+}

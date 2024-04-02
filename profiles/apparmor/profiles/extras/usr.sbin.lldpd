@@ -1,0 +1,42 @@
+# Author: James Troup <james.troup@canonical.com>
+
+#include <tunables/global>
+
+/usr/sbin/lldpd {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+
+  capability chown,
+  capability dac_override,
+  capability fowner,
+  capability fsetid,
+  capability kill,
+  capability net_admin,
+  capability net_raw,
+  capability setgid,
+  capability setuid,
+  capability sys_chroot,
+  capability sys_module,
+
+  network packet raw,
+
+  /usr/sbin/lldpcli rix,
+  /usr/sbin/lldpd mr,
+
+  /run/lldpd.pid rw,
+  /run/lldpd.socket rw,
+
+  /run/lldpd/var/ rw,
+  /run/lldpd/var/** rw,
+
+  /etc/os-release r,
+
+  /proc/sys/net/ipv4/ip_forward r,
+
+  /sys/devices/virtual/dmi/** r,
+  /sys/devices/virtual/net/** r,
+  /sys/devices/pci**/net/*/ifalias r,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.sbin.lldpd>
+}

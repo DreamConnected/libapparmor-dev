@@ -1,0 +1,38 @@
+# Author: Mariusz Fik
+# Last Modified: Fri Feb 28 20:21:49 2014
+#include <tunables/global>
+
+/usr/sbin/hiawatha {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+
+  capability chown,
+  capability dac_override,
+  capability fowner,
+  capability fsetid,
+  capability net_bind_service,
+  capability setgid,
+  capability setuid,
+  capability sys_chroot,
+
+  network inet tcp,
+
+  /etc/hiawatha/** r,
+
+  @{HOME}/public_html/ r,
+  @{HOME}/public_html/** r,
+
+  /srv/www/hiawatha/** r,
+
+  /usr/sbin/cgi-wrapper mr,
+  /usr/sbin/hiawatha mr,
+
+  /var/lib/hiawatha/ rw,
+  /var/lib/hiawatha/** rw,
+  /var/log/hiawatha/* rw,
+
+  /{,var/}run/hiawatha.pid w,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.sbin.hiawatha>
+}

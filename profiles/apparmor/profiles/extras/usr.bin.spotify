@@ -1,0 +1,28 @@
+# Last Modified: Sat Oct 29 20:38:29 2011
+#include <tunables/global>
+
+/usr/bin/spotify {
+  #include <abstractions/base>
+  #include <abstractions/fonts>
+  #include <abstractions/kde>
+  #include <abstractions/nameservice>
+
+  /etc/xdg/Trolltech.conf rk,
+  /etc/xdg/sni-qt.conf r,
+
+  /usr/share/icons/*.theme k,
+  /usr/share/spotify/theme/**.{png,ico} r,
+  /usr/share/spotify/theme/**.{splang,xml} r,
+
+  owner @{PROC}/[0-9]*/task/ r,
+
+  owner @{HOME}/.cache/spotify/ rw,
+  owner @{HOME}/.cache/spotify/** rw,
+  owner @{HOME}/.config/Trolltech.conf rw,
+  owner @{HOME}/.config/spotify/ w,
+
+  owner @{HOME}/Music/** r,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.bin.spotify>
+}

@@ -1,0 +1,45 @@
+# vim:syntax=apparmor
+# Author: James Troup <james.troup@canonical.com>
+
+#include <tunables/global>
+
+/opt/WorldOfGoo/WorldOfGoo {
+  #include <abstractions/base>
+  #include <abstractions/X>
+  #include <abstractions/audio>
+  #include <abstractions/dbus-session>
+
+  # For the wrapper script
+  /{usr/,}bin/dash ix,
+  /{usr/,}bin/readlink rix,
+  /{usr/,}bin/uname rix,
+  /usr/bin/dirname rix,
+
+  # The game itself
+  /opt/WorldOfGoo/** r,
+  /opt/WorldOfGoo/WorldOfGoo.bin32 rix,
+  /opt/WorldOfGoo/WorldOfGoo.bin64 rix,
+
+  /usr/bin/gnome-screensaver-command rix,
+
+  owner @{HOME}/.WorldOfGoo/ rw,
+  owner @{HOME}/.WorldOfGoo/** rw,
+
+  /etc/timidity/freepats.cfg r,
+
+  owner @{PROC}/[0-9]*/cmdline r,
+  owner @{PROC}/[0-9]*/statm r,
+  @{PROC}/filesystems r,
+
+  # World of Goo seems to like to mmap files more than some of the
+  # abstractions allow for...
+  owner /run/shm/pulse-shm-* mr,
+  /usr/share/locale-langpack/** mr,
+  /dev/dri/card0 mrw,
+
+  # https://bugs.launchpad.net/ubuntu/+source/apparmor/+bug/904548
+  /usr/lib/@{multiarch}/gconv/gconv-modules* mr,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/opt.WorldOfGoo.WorldOfGoo>
+}

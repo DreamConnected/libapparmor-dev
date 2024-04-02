@@ -1,0 +1,18 @@
+# Author: Felix Geyer <debfx@ubuntu.com>
+
+#include <tunables/global>
+
+/usr/sbin/ssmtp {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/p11-kit>
+  #include <abstractions/ssl_certs>
+
+  /etc/ssmtp/* r,
+
+  owner @{HOME}/dead.letter rw,
+  owner /var/lib/*/dead.letter rw,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.sbin.ssmtp>
+}

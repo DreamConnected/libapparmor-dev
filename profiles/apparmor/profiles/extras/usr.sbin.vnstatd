@@ -1,0 +1,18 @@
+# Author: Felix Geyer <debfx@ubuntu.com>
+
+#include <tunables/global>
+
+/usr/sbin/vnstatd {
+  #include <abstractions/base>
+
+  /etc/vnstat.conf r,
+  /var/lib/vnstat/ r,
+  /var/lib/vnstat/** rwk,
+  /{,var/}run/vnstat.pid rwk,
+
+  @{PROC}/[0-9]*/net/dev r,
+  @{PROC}/[0-9]*/mounts r,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.sbin.vnstatd>
+}

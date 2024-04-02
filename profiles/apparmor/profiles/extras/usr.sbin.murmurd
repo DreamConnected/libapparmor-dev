@@ -1,0 +1,29 @@
+# Author: Felix Geyer <debfx@ubuntu.com>
+
+#include <tunables/global>
+
+/usr/sbin/murmurd {
+  #include <abstractions/base>
+  #include <abstractions/user-tmp>
+  #include <abstractions/nameservice>
+  #include <abstractions/ssl_certs>
+
+  # required for MURMUR_USE_CAPABILITIES=1
+  capability setgid,
+  capability setuid,
+  capability sys_resource,
+
+  /etc/xdg/Trolltech.conf r,
+  deny /etc/xdg/Trolltech.conf k,
+
+  /usr/bin/lsb_release Pxr -> lsb_release,
+
+  /etc/mumble-server.ini rk,
+  /var/lib/mumble-server/ r,
+  /var/lib/mumble-server/** rwk,
+  /{,var/}run/mumble-server/mumble-server.pid rw,
+  /var/log/mumble-server/* rw,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/usr.sbin.murmurd>
+}

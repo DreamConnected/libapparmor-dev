@@ -1,0 +1,28 @@
+#include <tunables/global>
+
+/usr/bin/weechat {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  #include <abstractions/aspell>
+  #include <abstractions/perl>
+  #include <abstractions/python>
+  #include <abstractions/ssl_certs>
+
+  network inet stream,
+  network inet6 stream,
+
+  @{PROC}/@{pid}/statm r,
+
+  # Plugins and scripts
+  /usr/lib/weechat/plugins/** rm,
+  /usr/share/weechat/** r,
+
+  # Configuration files and logs
+  owner @{HOME}/.weechat/ rw,
+  owner @{HOME}/.weechat/** rw,
+  owner @{HOME}/.weechat/weechat.log rwk,
+  
+  # Site-specific additions and overrides. See local/README for details.
+  #include <local/usr.bin.weechat>
+}
+

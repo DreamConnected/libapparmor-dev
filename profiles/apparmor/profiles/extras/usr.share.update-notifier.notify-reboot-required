@@ -2,11 +2,11 @@
 # Last Modified: Thu Jun 30 11:40:45 2016
 # Author: Steve Beattie <steve@nxnw.org>
 
-#include <tunables/global>
+include <tunables/global>
 
 profile notify-reboot-required /usr/share/{update,reboot}-notifier/notify-reboot-required {
 
-  #include <abstractions/base>
+  include <abstractions/base>
 
   /usr/bin/gettext Pix,
 

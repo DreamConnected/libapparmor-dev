@@ -1,12 +1,12 @@
 # Author: Felix Geyer <debfx@ubuntu.com>
 
-#include <tunables/global>
+include <tunables/global>
 
 profile ssmtp /usr/sbin/ssmtp {
-  #include <abstractions/base>
-  #include <abstractions/nameservice>
-  #include <abstractions/p11-kit>
-  #include <abstractions/ssl_certs>
+  include <abstractions/base>
+  include <abstractions/nameservice>
+  include <abstractions/p11-kit>
+  include <abstractions/ssl_certs>
 
   /etc/ssmtp/* r,
 

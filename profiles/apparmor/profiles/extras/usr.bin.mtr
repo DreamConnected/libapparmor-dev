@@ -1,11 +1,11 @@
 # Author: Kaan Özdinçer <kaanozdincer@gmail.com>
 # Modified-by: Steve Beattie <steve@nxnw.org>
 
-#include <tunables/global>
+include <tunables/global>
 
 profile mtr /usr/{s,}bin/mtr {
-  #include <abstractions/base>
-  #include <abstractions/nameservice>
+  include <abstractions/base>
+  include <abstractions/nameservice>
 
   capability net_raw,
   capability setgid,

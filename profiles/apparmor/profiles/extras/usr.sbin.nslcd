@@ -9,12 +9,12 @@
 #
 # ------------------------------------------------------------------
 
-#include <tunables/global>
+include <tunables/global>
 
 profile nslcd /usr/sbin/nslcd {
-  #include <abstractions/base>
-  #include <abstractions/consoles>
-  #include <abstractions/nameservice>
+  include <abstractions/base>
+  include <abstractions/consoles>
+  include <abstractions/nameservice>
 
   deny capability block_suspend,
   capability dac_override,
@@ -32,5 +32,5 @@ profile nslcd /usr/sbin/nslcd {
   @{PROC}/@{pid}/oom_score_adj rw,
 
   # Site-specific additions and overrides. See local/README for details.
-  #include <local/usr.sbin.nslcd>
+  include if exists <local/usr.sbin.nslcd>
 }

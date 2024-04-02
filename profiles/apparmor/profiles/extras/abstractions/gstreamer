@@ -1,8 +1,8 @@
 # vim:syntax=apparmor
 
-  #include <abstractions/base>
-  #include <abstractions/p11-kit>
-  #include <abstractions/X>
+  include <abstractions/base>
+  include <abstractions/p11-kit>
+  include <abstractions/X>
 
   # TODO: adjust when support finer-grained netlink rules
   network netlink raw,
@@ -47,3 +47,6 @@
   owner @{HOME}/{.cache/,.}gstreamer-[0-9]*.[0-9]*/ rw,
   owner @{HOME}/{.cache/,.}gstreamer-[0-9]*.[0-9]*/registry.*.bin rw,
   owner @{HOME}/{.cache/,.}gstreamer-[0-9]*.[0-9]*/registry.*.bin.tmp* rw,
+
+  # Include additions to the abstraction
+  include if exists <abstractions/gstreamer.d>

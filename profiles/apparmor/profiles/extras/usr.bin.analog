@@ -2,12 +2,12 @@
 # Last Modified: Mon Mar  9 18:35:59 2009
 # Author: Jamie Strandboge <jamie@strandboge.com>
 
-#include <tunables/global>
+include <tunables/global>
 
 profile analog /usr/bin/analog {
-  #include <abstractions/base>
-  #include <abstractions/nameservice>
-  #include <abstractions/user-tmp>
+  include <abstractions/base>
+  include <abstractions/nameservice>
+  include <abstractions/user-tmp>
 
   /etc/analog*.cfg r,
   /etc/analog/* r,

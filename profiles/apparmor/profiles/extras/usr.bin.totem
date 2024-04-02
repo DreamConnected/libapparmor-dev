@@ -1,18 +1,18 @@
 # vim:syntax=apparmor
 # Author: Jamie Strandboge <jamie@canonical.com>
 
-#include <tunables/global>
+include <tunables/global>
 
 profile totem /usr/bin/totem {
-  #include <abstractions/audio>
-  #include <abstractions/dconf>
-  #include <abstractions/ibus>
-  #include <abstractions/mesa>
-  #include <abstractions/nvidia>
-  #include <abstractions/openssl>
-  #include <abstractions/python>
-  #include <abstractions/totem>
-  #include <abstractions/ubuntu-helpers>
+  include <abstractions/audio>
+  include <abstractions/dconf>
+  include <abstractions/ibus>
+  include <abstractions/mesa>
+  include <abstractions/nvidia>
+  include <abstractions/openssl>
+  include <abstractions/python>
+  include <abstractions/totem>
+  include <abstractions/ubuntu-helpers>
 
   signal (send) set=("kill") peer=unconfined,
 
@@ -44,7 +44,7 @@ profile totem /usr/bin/totem {
 
   # Allow read and write on almost anything in @{HOME}. Lenient, but
   # private-files-strict is in effect.
-  #include <abstractions/private-files-strict>
+  include <abstractions/private-files-strict>
   owner @{HOME}/[^.]*    rw,
   owner @{HOME}/[^.]*/** rw,
 

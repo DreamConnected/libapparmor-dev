@@ -1,13 +1,13 @@
 # vim:syntax=apparmor
 # Author: James Troup <james.troup@canonical.com>
 
-#include <tunables/global>
+include <tunables/global>
 
 profile WorldOfGoo /opt/WorldOfGoo/WorldOfGoo {
-  #include <abstractions/base>
-  #include <abstractions/X>
-  #include <abstractions/audio>
-  #include <abstractions/dbus-session>
+  include <abstractions/base>
+  include <abstractions/X>
+  include <abstractions/audio>
+  include <abstractions/dbus-session>
 
   # For the wrapper script
   /{usr/,}bin/dash ix,

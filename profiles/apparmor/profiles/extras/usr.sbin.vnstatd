@@ -1,9 +1,9 @@
 # Author: Felix Geyer <debfx@ubuntu.com>
 
-#include <tunables/global>
+include <tunables/global>
 
 profile vnstatd /usr/sbin/vnstatd {
-  #include <abstractions/base>
+  include <abstractions/base>
 
   /etc/vnstat.conf r,
   /var/lib/vnstat/ r,

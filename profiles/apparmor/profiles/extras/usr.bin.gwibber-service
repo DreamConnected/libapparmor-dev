@@ -1,16 +1,16 @@
 # Last Modified: Thu Jan 26 08:04:01 2012
-#include <tunables/global>
+include <tunables/global>
 
 profile gwibber-service /usr/bin/gwibber-service {
-  #include <abstractions/base>
-  #include <abstractions/nameservice>
-  #include <abstractions/gnome>
-  #include <abstractions/p11-kit>
-  #include <abstractions/python>
+  include <abstractions/base>
+  include <abstractions/nameservice>
+  include <abstractions/gnome>
+  include <abstractions/p11-kit>
+  include <abstractions/python>
 
   # This is needed when gwibber-service is autostarted and the indicator asks
   # it to start the gwibber gui
-  #include <abstractions/ubuntu-helpers>
+  include <abstractions/ubuntu-helpers>
   /usr/bin/gwibber Cxr -> sanitized_helper,
 
   /usr/bin/gwibber-service r,
@@ -58,10 +58,10 @@ profile gwibber-service /usr/bin/gwibber-service {
   deny /etc/apt/apt.conf.d/ r,
 
   profile uuidd {
-    #include <abstractions/base>
+    include <abstractions/base>
     /usr/sbin/uuidd mr,
   }
 
   # Site-specific additions and overrides. See local/README for details.
-  #include <local/usr.bin.gwibber-service>
+  include if exists <local/usr.bin.gwibber-service>
 }

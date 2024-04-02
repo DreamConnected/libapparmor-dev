@@ -1,12 +1,12 @@
 # Author: Felix Geyer <debfx@ubuntu.com>
 
-#include <tunables/global>
+include <tunables/global>
 
 profile ejabberd /usr/sbin/ejabberd{,ctl} {
-  #include <abstractions/base>
-  #include <abstractions/user-tmp>
-  #include <abstractions/nameservice>
-  #include <abstractions/ssl_certs>
+  include <abstractions/base>
+  include <abstractions/user-tmp>
+  include <abstractions/nameservice>
+  include <abstractions/ssl_certs>
 
   /etc/default/ejabberd r,
   /etc/ejabberd/* r,

@@ -1,12 +1,12 @@
 # Author: Jamie Strandboge
 #         For use with irssi within screen
-#include <tunables/global>
+include <tunables/global>
 
 profile irssi /usr/bin/irssi {
-  #include <abstractions/base>
-  #include <abstractions/nameservice>
-  #include <abstractions/perl>
-  #include <abstractions/ssl_certs>
+  include <abstractions/base>
+  include <abstractions/nameservice>
+  include <abstractions/perl>
+  include <abstractions/ssl_certs>
 
   /usr/share/irssi/themes/*.theme r,
   /usr/share/irssi/help/* r,
@@ -17,7 +17,7 @@ profile irssi /usr/bin/irssi {
   /{usr/,}bin/dash ix,
 
   # for screen_away
-  #include <abstractions/wutmp>
+  include <abstractions/wutmp>
   /usr/bin/screen ix,
   owner /{,var/}run/screen/** r,
   owner /{,var/}run/screen/S-[a-zA-Z0-9]*/[0-9]* w,

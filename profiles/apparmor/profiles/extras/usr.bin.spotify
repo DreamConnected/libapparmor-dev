@@ -1,11 +1,11 @@
 # Last Modified: Sat Oct 29 20:38:29 2011
-#include <tunables/global>
+include <tunables/global>
 
 profile spotify /usr/bin/spotify {
-  #include <abstractions/base>
-  #include <abstractions/fonts>
-  #include <abstractions/kde>
-  #include <abstractions/nameservice>
+  include <abstractions/base>
+  include <abstractions/fonts>
+  include <abstractions/kde>
+  include <abstractions/nameservice>
 
   /etc/xdg/Trolltech.conf rk,
   /etc/xdg/sni-qt.conf r,

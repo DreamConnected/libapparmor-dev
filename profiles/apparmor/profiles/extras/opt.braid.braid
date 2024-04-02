@@ -1,13 +1,13 @@
 # vim:syntax=apparmor
 # Author: James Troup <james.troup@canonical.com>
 
-#include <tunables/global>
+include <tunables/global>
 
 profile braid /opt/braid/braid {
-  #include <abstractions/base>
-  #include <abstractions/X>
-  #include <abstractions/audio>
-  #include <abstractions/dbus-session>
+  include <abstractions/base>
+  include <abstractions/X>
+  include <abstractions/audio>
+  include <abstractions/dbus-session>
 
   /opt/braid/** r,
 

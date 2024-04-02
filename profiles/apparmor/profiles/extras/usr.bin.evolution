@@ -7,20 +7,20 @@
 # - dbus mediation for evolution-data-server
 # - lot's more (evolution is huge)
 
-#include <tunables/global>
+include <tunables/global>
 
 profile evolution /usr/bin/evolution {
-  #include <abstractions/audio>
-  #include <abstractions/dbus-session>
-  #include <abstractions/gnome>
-  #include <abstractions/nameservice>
-  #include <abstractions/python>
-  #include <abstractions/ibus>
-  #include <abstractions/enchant>
-  #include <abstractions/ssl_certs>
+  include <abstractions/audio>
+  include <abstractions/dbus-session>
+  include <abstractions/gnome>
+  include <abstractions/nameservice>
+  include <abstractions/python>
+  include <abstractions/ibus>
+  include <abstractions/enchant>
+  include <abstractions/ssl_certs>
 
-  #include <abstractions/ubuntu-helpers>
-  #include <abstractions/ubuntu-browsers>
+  include <abstractions/ubuntu-helpers>
+  include <abstractions/ubuntu-browsers>
 
   / r,
   deny /boot/{vmlinuz,initrd}* r,
@@ -105,12 +105,12 @@ profile evolution /usr/bin/evolution {
   deny @{HOME}/.config/gtk-3.0/bookmarks rw,
 
   # Site-specific additions and overrides. See local/README for details.
-  #include <local/usr.bin.evolution>
+  include if exists <local/usr.bin.evolution>
 
   profile killev {
-    #include <abstractions/base>
-    #include <abstractions/gnome>
-    #include <abstractions/nameservice>
+    include <abstractions/base>
+    include <abstractions/gnome>
+    include <abstractions/nameservice>
 
     capability sys_ptrace,
 
@@ -127,7 +127,7 @@ profile evolution /usr/bin/evolution {
   }
 
   profile gpg {
-    #include <abstractions/base>
+    include <abstractions/base>
     /usr/bin/gpg mr,
     owner @{HOME}/.gnupg r,
     owner @{HOME}/.gnupg/gpg.conf r,
@@ -142,9 +142,9 @@ profile evolution /usr/bin/evolution {
   }
 
   profile evohelper {
-    #include <abstractions/base>
-    #include <abstractions/gnome>
-    #include <abstractions/nameservice>
+    include <abstractions/base>
+    include <abstractions/gnome>
+    include <abstractions/nameservice>
 
     owner @{PROC}/[0-9]*/auxv r, # investigate
 
@@ -182,11 +182,11 @@ profile evolution /usr/bin/evolution {
   }
 
   profile gedit {
-    #include <abstractions/dbus-session>
-    #include <abstractions/gnome>
-    #include <abstractions/enchant>
-    #include <abstractions/ibus>
-    #include <abstractions/private-files-strict>
+    include <abstractions/dbus-session>
+    include <abstractions/gnome>
+    include <abstractions/enchant>
+    include <abstractions/ibus>
+    include <abstractions/private-files-strict>
 
     /usr/bin/gedit r,
 

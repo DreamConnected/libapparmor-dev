@@ -1,11 +1,11 @@
 # Author: Felix Geyer <debfx@ubuntu.com>
 
-#include <tunables/global>
+include <tunables/global>
 
 profile postgres /usr/lib/postgresql/[0-9.]*/bin/postgres {
-  #include <abstractions/base>
-  #include <abstractions/nameservice>
-  #include <abstractions/ssl_keys>
+  include <abstractions/base>
+  include <abstractions/nameservice>
+  include <abstractions/ssl_keys>
 
   /etc/postgresql/** r,
   /usr/share/postgresql/** r,

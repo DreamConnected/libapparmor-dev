@@ -1,11 +1,11 @@
 # Author: Simon Deziel
 # vim:syntax=apparmor
-#include <tunables/global>
+include <tunables/global>
 
 profile unbound /usr/sbin/unbound {
-  #include <abstractions/base>
-  #include <abstractions/nameservice>
-  #include <abstractions/openssl>
+  include <abstractions/base>
+  include <abstractions/nameservice>
+  include <abstractions/openssl>
 
   # needlessly chown'ing the PID
   deny capability chown,

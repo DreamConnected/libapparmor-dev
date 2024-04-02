@@ -1,12 +1,12 @@
 # Author: Felix Geyer <debfx@ubuntu.com>
 
-#include <tunables/global>
+include <tunables/global>
 
 profile murmurd /usr/sbin/murmurd {
-  #include <abstractions/base>
-  #include <abstractions/user-tmp>
-  #include <abstractions/nameservice>
-  #include <abstractions/ssl_certs>
+  include <abstractions/base>
+  include <abstractions/user-tmp>
+  include <abstractions/nameservice>
+  include <abstractions/ssl_certs>
 
   # required for MURMUR_USE_CAPABILITIES=1
   capability setgid,

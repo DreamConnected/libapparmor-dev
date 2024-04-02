@@ -6,15 +6,15 @@
 #   1) recording
 #   2) command execution via hooks
 
-#include <tunables/global>
+include <tunables/global>
 
 profile sflphone-client-gnome /usr/bin/sflphone-client-gnome {
-  #include <abstractions/X>
-  #include <abstractions/base>
-  #include <abstractions/dbus-session>
-  #include <abstractions/fonts>
-  #include <abstractions/freedesktop.org>
-  #include <abstractions/gnome>
+  include <abstractions/X>
+  include <abstractions/base>
+  include <abstractions/dbus-session>
+  include <abstractions/fonts>
+  include <abstractions/freedesktop.org>
+  include <abstractions/gnome>
 
   network inet dgram,
 

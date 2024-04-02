@@ -7,29 +7,29 @@
 @{MOZ_LIBDIR}=/usr/lib/thunderbird
 @{THUNDERBIRD_USER_DIR} = @{HOME}/.{icedove,thunderbird,mozilla-thunderbird}
 
-#include <tunables/global>
+include <tunables/global>
 
 profile thunderbird /usr/lib/thunderbird/thunderbird{,-bin} {
-  #include <abstractions/audio>
-  #include <abstractions/aspell>
-  #include <abstractions/cups-client>
+  include <abstractions/audio>
+  include <abstractions/aspell>
+  include <abstractions/cups-client>
   # TODO: finetune this for required accesses
-  #include <abstractions/dbus>
-  #include <abstractions/dbus-accessibility>
-  #include <abstractions/dbus-session>
-  #include <abstractions/dconf>
-  #include <abstractions/dri-enumerate>
-  #include <abstractions/gnome>
-  #include <abstractions/ibus>
-  #include <abstractions/mesa>
-  #include <abstractions/nameservice>
-  #include <abstractions/nvidia>
-  #include <abstractions/p11-kit>
-  #include <abstractions/private-files>
-  #include <abstractions/ssl_certs>
-  #include <abstractions/ubuntu-browsers>
-  #include <abstractions/ubuntu-browsers.d/java>
-  #include <abstractions/ubuntu-helpers>
+  include <abstractions/dbus>
+  include <abstractions/dbus-accessibility>
+  include <abstractions/dbus-session>
+  include <abstractions/dconf>
+  include <abstractions/dri-enumerate>
+  include <abstractions/gnome>
+  include <abstractions/ibus>
+  include <abstractions/mesa>
+  include <abstractions/nameservice>
+  include <abstractions/nvidia>
+  include <abstractions/p11-kit>
+  include <abstractions/private-files>
+  include <abstractions/ssl_certs>
+  include <abstractions/ubuntu-browsers>
+  include <abstractions/ubuntu-browsers.d/java>
+  include <abstractions/ubuntu-helpers>
 
   # Backported from the mesa abstraction, available in AppArmor >2.13
   # System files
@@ -345,11 +345,11 @@ profile thunderbird /usr/lib/thunderbird/thunderbird{,-bin} {
   owner /dev/shm/wayland.mozilla.ipc.[0-9]* rw,
 
   profile gpg {
-    #include <abstractions/base>
+    include <abstractions/base>
 
     # Required to import keys from keyservers
-    #include <abstractions/nameservice>
-    #include <abstractions/p11-kit>
+    include <abstractions/nameservice>
+    include <abstractions/p11-kit>
 
     /usr/share/xul-ext/enigmail/chrome/** r,
 
@@ -440,5 +440,5 @@ profile thunderbird /usr/lib/thunderbird/thunderbird{,-bin} {
   }
 
   # Site-specific additions and overrides. See local/README for details.
-  #include <local/usr.bin.thunderbird>
+  include if exists <local/usr.bin.thunderbird>
 }

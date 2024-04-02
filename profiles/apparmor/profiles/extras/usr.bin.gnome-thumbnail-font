@@ -1,14 +1,14 @@
 # vim:syntax=apparmor
 # Author: Jamie Strandboge <jamie@canonical.com>
 
-#include <tunables/global>
+include <tunables/global>
 
 # http://gfontview.sourceforge.net/features.html
 # need truetype, type1, type42, opentype
 
 profile gnome-thumbnail-font /usr/bin/gnome-thumbnail-font {
-  #include <abstractions/gnome>
-  #include <abstractions/nameservice>
+  include <abstractions/gnome>
+  include <abstractions/nameservice>
 
   /**/ r,
 
@@ -19,7 +19,7 @@ profile gnome-thumbnail-font /usr/bin/gnome-thumbnail-font {
   /**.[pP][sS]{,.gz} r,
 
   # Not needed by nautilus, but maybe other applications
-  #include <abstractions/private-files-strict>
+  include <abstractions/private-files-strict>
   owner /**.[pP][nN][gG] w,
 
   # Site-specific additions and overrides. See local/README for details.

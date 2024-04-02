@@ -1,10 +1,10 @@
 # Author: Mariusz Fik
 # Last Modified: Fri Feb 28 20:21:49 2014
-#include <tunables/global>
+include <tunables/global>
 
 profile hiawatha /usr/sbin/hiawatha {
-  #include <abstractions/base>
-  #include <abstractions/nameservice>
+  include <abstractions/base>
+  include <abstractions/nameservice>
 
   capability chown,
   capability dac_override,

@@ -1,9 +1,9 @@
 # vim:syntax=apparmor
 # Author: Chris Holcombe <xfactor973 at gmail_com>
-#include <tunables/global>
+include <tunables/global>
 
 profile ceph-mon /usr/bin/ceph-mon {
-  #include <abstractions/base>
+  include <abstractions/base>
 
   /usr/bin/ceph-mon mr,
 
@@ -24,5 +24,5 @@ profile ceph-mon /usr/bin/ceph-mon {
   /var/run/ceph/* rwk,
   /var/tmp/ r,
   # Site-specific additions and overrides.
-  #include <local/usr.bin.ceph-mon>
+  include if exists <local/usr.bin.ceph-mon>
 }

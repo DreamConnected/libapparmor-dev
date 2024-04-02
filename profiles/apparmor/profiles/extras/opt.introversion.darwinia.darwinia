@@ -1,13 +1,13 @@
 # vim:syntax=apparmor
 # Author: James Troup <james.troup@canonical.com>
 
-#include <tunables/global>
+include <tunables/global>
 
 profile darwinia /opt/introversion/darwinia/darwinia {
-  #include <abstractions/X>
-  #include <abstractions/audio>
-  #include <abstractions/base>
-  #include <abstractions/dbus-session>
+  include <abstractions/X>
+  include <abstractions/audio>
+  include <abstractions/base>
+  include <abstractions/dbus-session>
 
   # The wrapper script
   /{usr/,}bin/dash ix,

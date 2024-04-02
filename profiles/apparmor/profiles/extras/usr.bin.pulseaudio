@@ -1,13 +1,13 @@
 # Last Modified: Mon Dec 31 16:52:55 2012
-#include <tunables/global>
+include <tunables/global>
 
 profile pulseaudio /usr/bin/pulseaudio {
-  #include <abstractions/base>
-  #include <abstractions/audio>
-  #include <abstractions/dbus-session>
-  #include <abstractions/dbus-strict>
-  #include <abstractions/nameservice>
-  #include <abstractions/X>
+  include <abstractions/base>
+  include <abstractions/audio>
+  include <abstractions/dbus-session>
+  include <abstractions/dbus-strict>
+  include <abstractions/nameservice>
+  include <abstractions/X>
 
   dbus send
        bus=system
@@ -108,8 +108,8 @@ profile pulseaudio /usr/bin/pulseaudio {
   owner /tmp/.esd-@{pid}*/socket rw,
 
   profile /usr/lib/pulseaudio/pulse/gconf-helper {
-    #include <abstractions/base>
-    #include <abstractions/dbus-session-strict>
+    include <abstractions/base>
+    include <abstractions/dbus-session-strict>
 
     signal receive set=term peer=/usr/bin/pulseaudio,
 
@@ -117,5 +117,5 @@ profile pulseaudio /usr/bin/pulseaudio {
   }
 
   # Site-specific additions and overrides. See local/README for details.
-  #include <local/usr.bin.pulseaudio>
+  include if exists <local/usr.bin.pulseaudio>
 }

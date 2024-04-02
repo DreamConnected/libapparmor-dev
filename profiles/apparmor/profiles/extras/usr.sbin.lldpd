@@ -1,10 +1,10 @@
 # Author: James Troup <james.troup@canonical.com>
 
-#include <tunables/global>
+include <tunables/global>
 
 profile lldpd /usr/sbin/lldpd {
-  #include <abstractions/base>
-  #include <abstractions/nameservice>
+  include <abstractions/base>
+  include <abstractions/nameservice>
 
   capability chown,
   capability dac_override,

@@ -2,14 +2,14 @@
 # Author: Serge Hallyn <serge.hallyn@ubuntu.com>
 # Author: Steve Beattie <steve@nxnw.org>
 
-#include <tunables/global>
+include <tunables/global>
 
 profile ttytter /usr/bin/ttytter {
-  #include <abstractions/base>
-  #include <abstractions/dbus-session-strict>
-  #include <abstractions/fonts>
-  #include <abstractions/nameservice>
-  #include <abstractions/perl>
+  include <abstractions/base>
+  include <abstractions/dbus-session-strict>
+  include <abstractions/fonts>
+  include <abstractions/nameservice>
+  include <abstractions/perl>
 
   dbus (send)
        bus=session

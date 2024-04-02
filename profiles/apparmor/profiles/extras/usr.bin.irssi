@@ -2,7 +2,7 @@
 #         For use with irssi within screen
 #include <tunables/global>
 
-/usr/bin/irssi {
+profile irssi /usr/bin/irssi {
   #include <abstractions/base>
   #include <abstractions/nameservice>
   #include <abstractions/perl>

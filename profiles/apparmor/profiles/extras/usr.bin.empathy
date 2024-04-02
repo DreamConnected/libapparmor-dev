@@ -5,7 +5,8 @@
 # - dbus mediation for (at least) /usr/lib/telepathy/mission-control-5
 
 #include <tunables/global>
-/usr/bin/empathy {
+
+profile empathy /usr/bin/empathy {
   #include <abstractions/nameservice>
   #include <abstractions/audio>
   #include <abstractions/enchant>

@@ -3,7 +3,7 @@
 
 #include <tunables/global>
 
-/opt/introversion/darwinia/darwinia {
+profile darwinia /opt/introversion/darwinia/darwinia {
   #include <abstractions/X>
   #include <abstractions/audio>
   #include <abstractions/base>

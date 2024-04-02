@@ -2,7 +2,7 @@
 # Author: Chris Holcombe <xfactor973 at gmail_com>
 #include <tunables/global>
 
-/usr/bin/ceph-mon {
+profile ceph-mon /usr/bin/ceph-mon {
   #include <abstractions/base>
 
   /usr/bin/ceph-mon mr,

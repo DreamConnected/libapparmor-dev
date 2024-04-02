@@ -3,7 +3,7 @@
 
 #include <tunables/global>
 
-/usr/bin/totem-video-thumbnailer flags=(attach_disconnected) {
+profile totem-video-thumbnailer /usr/bin/totem-video-thumbnailer flags=(attach_disconnected) {
   #include <abstractions/totem>
 
   # Probably needed due to this program being run with bwrap
@@ -29,7 +29,7 @@
   include if exists <local/usr.bin.totem-video-thumbnailer>
 }
 
-/usr/bin/totem-audio-preview flags=(attach_disconnected) {
+profile totem-audio-preview /usr/bin/totem-audio-preview flags=(attach_disconnected) {
   #include <abstractions/totem>
   #include <abstractions/audio>
 

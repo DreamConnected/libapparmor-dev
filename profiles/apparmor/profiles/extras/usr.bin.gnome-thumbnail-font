@@ -6,7 +6,7 @@
 # http://gfontview.sourceforge.net/features.html
 # need truetype, type1, type42, opentype
 
-/usr/bin/gnome-thumbnail-font {
+profile gnome-thumbnail-font /usr/bin/gnome-thumbnail-font {
   #include <abstractions/gnome>
   #include <abstractions/nameservice>
 

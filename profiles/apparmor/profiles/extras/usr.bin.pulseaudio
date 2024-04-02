@@ -1,7 +1,7 @@
 # Last Modified: Mon Dec 31 16:52:55 2012
 #include <tunables/global>
 
-/usr/bin/pulseaudio {
+profile pulseaudio /usr/bin/pulseaudio {
   #include <abstractions/base>
   #include <abstractions/audio>
   #include <abstractions/dbus-session>
@@ -110,7 +110,7 @@
   profile /usr/lib/pulseaudio/pulse/gconf-helper {
     #include <abstractions/base>
     #include <abstractions/dbus-session-strict>
-    
+
     signal receive set=term peer=/usr/bin/pulseaudio,
 
     /usr/lib/pulseaudio/pulse/gconf-helper mr,

@@ -2,7 +2,7 @@
 
 #include <tunables/global>
 
-/usr/sbin/vnstatd {
+profile vnstatd /usr/sbin/vnstatd {
   #include <abstractions/base>
 
   /etc/vnstat.conf r,

@@ -2,7 +2,7 @@
 
 #include <tunables/global>
 
-/usr/sbin/ejabberd{,ctl} {
+profile ejabberd /usr/sbin/ejabberd{,ctl} {
   #include <abstractions/base>
   #include <abstractions/user-tmp>
   #include <abstractions/nameservice>

@@ -3,7 +3,7 @@
 
 #include <tunables/global>
 
-/opt/WorldOfGoo/WorldOfGoo {
+profile WorldOfGoo /opt/WorldOfGoo/WorldOfGoo {
   #include <abstractions/base>
   #include <abstractions/X>
   #include <abstractions/audio>

@@ -10,7 +10,8 @@
 # ------------------------------------------------------------------
 
 #include <tunables/global>
-/usr/sbin/nslcd {
+
+profile nslcd /usr/sbin/nslcd {
   #include <abstractions/base>
   #include <abstractions/consoles>
   #include <abstractions/nameservice>

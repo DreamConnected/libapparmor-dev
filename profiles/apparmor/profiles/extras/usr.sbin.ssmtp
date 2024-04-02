@@ -2,7 +2,7 @@
 
 #include <tunables/global>
 
-/usr/sbin/ssmtp {
+profile ssmtp /usr/sbin/ssmtp {
   #include <abstractions/base>
   #include <abstractions/nameservice>
   #include <abstractions/p11-kit>

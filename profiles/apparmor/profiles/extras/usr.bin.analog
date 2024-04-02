@@ -3,7 +3,8 @@
 # Author: Jamie Strandboge <jamie@strandboge.com>
 
 #include <tunables/global>
-/usr/bin/analog {
+
+profile analog /usr/bin/analog {
   #include <abstractions/base>
   #include <abstractions/nameservice>
   #include <abstractions/user-tmp>

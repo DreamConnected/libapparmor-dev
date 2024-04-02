@@ -1,7 +1,7 @@
 # Last Modified: Thu Jan 26 08:04:01 2012
 #include <tunables/global>
 
-/usr/bin/gwibber-service {
+profile gwibber-service /usr/bin/gwibber-service {
   #include <abstractions/base>
   #include <abstractions/nameservice>
   #include <abstractions/gnome>

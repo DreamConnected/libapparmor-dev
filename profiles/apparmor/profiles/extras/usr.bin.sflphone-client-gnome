@@ -8,7 +8,7 @@
 
 #include <tunables/global>
 
-/usr/bin/sflphone-client-gnome {
+profile sflphone-client-gnome /usr/bin/sflphone-client-gnome {
   #include <abstractions/X>
   #include <abstractions/base>
   #include <abstractions/dbus-session>

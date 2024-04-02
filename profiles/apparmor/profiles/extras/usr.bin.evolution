@@ -9,7 +9,7 @@
 
 #include <tunables/global>
 
-/usr/bin/evolution {
+profile evolution /usr/bin/evolution {
   #include <abstractions/audio>
   #include <abstractions/dbus-session>
   #include <abstractions/gnome>

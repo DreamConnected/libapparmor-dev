@@ -2,7 +2,7 @@
 
 #include <tunables/global>
 
-/usr/sbin/murmurd {
+profile murmurd /usr/sbin/murmurd {
   #include <abstractions/base>
   #include <abstractions/user-tmp>
   #include <abstractions/nameservice>

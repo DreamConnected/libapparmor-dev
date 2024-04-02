@@ -3,7 +3,7 @@
 
 #include <tunables/global>
 
-/usr/bin/totem {
+profile totem /usr/bin/totem {
   #include <abstractions/audio>
   #include <abstractions/dconf>
   #include <abstractions/ibus>

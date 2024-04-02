@@ -2,7 +2,7 @@
 
 #include <tunables/global>
 
-/usr/bin/pidgin {
+profile pidgin /usr/bin/pidgin {
   #include <abstractions/audio>
   #include <abstractions/base>
   #include <abstractions/bash>

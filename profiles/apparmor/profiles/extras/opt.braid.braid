@@ -3,7 +3,7 @@
 
 #include <tunables/global>
 
-/opt/braid/braid {
+profile braid /opt/braid/braid {
   #include <abstractions/base>
   #include <abstractions/X>
   #include <abstractions/audio>

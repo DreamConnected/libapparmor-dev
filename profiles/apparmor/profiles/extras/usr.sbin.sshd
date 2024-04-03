@@ -50,6 +50,15 @@ include <tunables/global>
   # needed when /proc is mounted with hidepid>=1
   ptrace (read,trace) peer="unconfined",
 
+  unix (bind) type=stream addr="@*/bus/sshd/system",
+
+  dbus (send)
+       bus=system
+       path=/org/freedesktop/login1
+       interface=org.freedesktop.login1.Manager
+       member=CreateSessionWithPIDFD
+       peer=(label=unconfined),
+
   /dev/ptmx rw,
   /dev/pts/[0-9]* rw,
   /dev/urandom r,

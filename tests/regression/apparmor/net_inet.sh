@@ -6,9 +6,9 @@
 #published by the Free Software Foundation, version 2 of the
 #License.
 
-#=NAME posix_mq
+#=NAME net_inet
 #=DESCRIPTION
-# This test verifies if mediation of posix message queues is working
+# This test verifies if finegrained inet mediation is working
 #=END
 
 pwd=`dirname $0`
@@ -18,13 +18,13 @@ bin=$pwd
 
 . $bin/prologue.inc
 
-#requires_kernel_features network_v8/finegrained
+requires_kernel_features network_v8/af_inet
 requires_parser_support "network ip=::1,"
 
-settest net_finegrained_rcv
+settest net_inet_rcv
 
-sender="$bin/net_finegrained_snd"
-receiver="$bin/net_finegrained_rcv"
+sender="$bin/net_inet_snd"
+receiver="$bin/net_inet_rcv"
 
 # local ipv6 address generated according to https://www.rfc-editor.org/rfc/rfc4193.html
 #ipv6_subnet=fd74:1820:b03a:b361::/64
@@ -47,7 +47,7 @@ do_onexit="cleanup"
 
 do_test()
 {
-	local desc="FINEGRAINED NETWORK ($1)"
+	local desc="NETWORK INET ($1)"
 	shift
 	runchecktest "$desc" "$@"
 }
@@ -65,12 +65,11 @@ do_tests()
 	protocol=$8
 	generate_profile=$9
 
-	settest net_finegrained_rcv
+	settest net_inet_rcv
 	$generate_profile
 	do_test "$prefix - root" $expect_rcv --bind_ip $bind_ip --bind_port $bind_port --remote_ip $remote_ip --remote_port $remote_port --protocol $protocol --timeout 5 --sender $sender
 
-
-	settest -u "foo" net_finegrained_rcv
+	settest -u "foo" net_inet_rcv
 	$generate_profile
 	do_test "$prefix - user" $expect_rcv --bind_ip $bind_ip --bind_port $bind_port --remote_ip $remote_ip --remote_port $remote_port --protocol $protocol --timeout 5 --sender $sender
 
@@ -97,7 +96,7 @@ do_tests "ipv4 udp no conds" pass pass $bind_ipv4 $bind_port $remote_ipv4 $remot
 generate_profile="genprofile network $sender:px -- image=$sender network"
 do_tests "ipv4 tcp no conds" pass pass $bind_ipv4 $bind_port $remote_ipv4 $remote_port tcp "$generate_profile"
 
-setsockopt_rules="network;(setopt,getopt);ip=0.0.0.0;port=0"
+setsockopt_rules="network;(setopt,getopt);ip=0.0.0.0;port=0" # INADDR_ANY
 rcv_rules="network;ip=$bind_ipv4;peer=(ip=anon)"
 snd_rules="network;ip=$remote_ipv4;peer=(ip=anon)"
 
@@ -126,7 +125,7 @@ do_tests "ipv6 udp no conds" pass pass $bind_ipv6 $bind_port $remote_ipv6 $remot
 generate_profile="genprofile network $sender:px -- image=$sender network"
 do_tests "ipv6 tcp no conds" pass pass $bind_ipv6 $bind_port $remote_ipv6 $remote_port tcp "$generate_profile"
 
-setsockopt_rules="network;(setopt,getopt);ip=::0;port=0"
+setsockopt_rules="network;(setopt,getopt);ip=::0;port=0" # IN6ADDR_ANY_INIT
 rcv_rules="network;ip=$bind_ipv6;peer=(ip=anon)"
 snd_rules="network;ip=$remote_ipv6;peer=(ip=anon)"
 
@@ -135,5 +134,3 @@ do_tests "ipv6 udp generic perms" pass pass $bind_ipv6 $bind_port $remote_ipv6 $
 
 generate_profile="genprofile network;ip=$bind_ipv6;port=$bind_port;peer=(ip=$remote_ipv6,port=$remote_port) $setsockopt_rules $rcv_rules $sender:px -- image=$sender network;ip=$remote_ipv6;port=$remote_port;peer=(ip=$bind_ipv6,port=$bind_port) $setsockopt_rules $snd_rules"
 do_tests "ipv6 tcp generic perms" pass pass $bind_ipv6 $bind_port $remote_ipv6 $remote_port tcp "$generate_profile"
-
-

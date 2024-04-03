@@ -12,7 +12,7 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <string.h>
-#include "net_finegrained.h"
+#include "net_inet.h"
 
 struct connection_info {
 	char *bind_ip;
@@ -40,8 +40,7 @@ int send_udp(char *message)
 		return -1;
 	}
 
-	if ((sock = socket(bind_addr.family, SOCK_DGRAM, 0)) < 0)
-	{
+	if ((sock = socket(bind_addr.family, SOCK_DGRAM, 0)) < 0) {
 		perror("FAIL SND - Could not open socket: ");
 		return(-1);
 	}
@@ -53,15 +52,13 @@ int send_udp(char *message)
 
 	if (bind_addr.family == AF_INET) {
 		local = convert_to_sockaddr_in(bind_addr);
-		if (bind(sock, (struct sockaddr *) &local, sizeof(local)) < 0)
-		{
+		if (bind(sock, (struct sockaddr *) &local, sizeof(local)) < 0) {
 			perror("FAIL SND - Bind error: ");
 			return(-1);
 		}
 	} else {
 		local6 = convert_to_sockaddr_in6(bind_addr);
-		if (bind(sock, (struct sockaddr *) &local6, sizeof(local6)) < 0)
-		{
+		if (bind(sock, (struct sockaddr *) &local6, sizeof(local6)) < 0) {
 			perror("FAIL SND - Bind error: ");
 			return(-1);
 		}
@@ -70,21 +67,18 @@ int send_udp(char *message)
 	if (remote_addr.family == AF_INET) {
 		remote = convert_to_sockaddr_in(remote_addr);
 		//printf("Sending \"%s\"\n", message);
-		if (sendto(sock, message, strlen(message), 0, (struct sockaddr *) &remote, sizeof(remote)) <= 0)
-		{
+		if (sendto(sock, message, strlen(message), 0, (struct sockaddr *) &remote, sizeof(remote)) <= 0) {
 			perror("FAIL SND - Send failed: ");
 			return(-1);
 		}
 	} else {
 		remote6 = convert_to_sockaddr_in6(remote_addr);
 		//printf("Sending \"%s\"\n", message);
-		if (sendto(sock, message, strlen(message), 0, (struct sockaddr *) &remote6, sizeof(remote6)) <= 0)
-		{
+		if (sendto(sock, message, strlen(message), 0, (struct sockaddr *) &remote6, sizeof(remote6)) <= 0) {
 			perror("FAIL SND - Send failed: ");
 			return(-1);
 		}
 	}
-
 
 	close(sock);
 	return(0);
@@ -121,15 +115,13 @@ int send_tcp(char *message)
 
 	if (bind_addr.family == AF_INET) {
 		local = convert_to_sockaddr_in(bind_addr);
-		if (bind(sock, (struct sockaddr *) &local, sizeof(local)) < 0)
-		{
+		if (bind(sock, (struct sockaddr *) &local, sizeof(local)) < 0) {
 			perror("FAIL SND - Bind error: ");
 			return(-1);
 		}
 	} else {
 		local6 = convert_to_sockaddr_in6(bind_addr);
-		if (bind(sock, (struct sockaddr *) &local6, sizeof(local6)) < 0)
-		{
+		if (bind(sock, (struct sockaddr *) &local6, sizeof(local6)) < 0) {
 			perror("FAIL SND - Bind error: ");
 			return(-1);
 		}
@@ -138,24 +130,21 @@ int send_tcp(char *message)
 	if (remote_addr.family == AF_INET) {
 		remote = convert_to_sockaddr_in(remote_addr);
 		//printf("Sending \"%s\"\n", message);
-		if (connect(sock, (struct sockaddr *) &remote, sizeof(remote)) < 0)
-		{
+		if (connect(sock, (struct sockaddr *) &remote, sizeof(remote)) < 0) {
 			perror("FAIL SND - Could not connect: ");
 			return(-1);
 		}
 	} else {
 		remote6 = convert_to_sockaddr_in6(remote_addr);
 		//printf("Sending \"%s\"\n", message);
-		if (connect(sock, (struct sockaddr *) &remote6, sizeof(remote6)) < 0)
-		{
+		if (connect(sock, (struct sockaddr *) &remote6, sizeof(remote6)) < 0) {
 			perror("FAIL SND - Could not connect: ");
 			return(-1);
 		}
 	}
 
 	//printf("Sending \"%s\"\n", message);
-	if (send(sock, message, strlen(message), 0) <= 0)
-	{
+	if (send(sock, message, strlen(message), 0) <= 0) {
 		perror("FAIL SND - Send failed: ");
 		return(-1);
 	}
@@ -171,8 +160,7 @@ int send_icmp(char *message)
 	char packetdata[sizeof(icmp_hdr) + 4];
 
 
-	if ((sock = socket(AF_INET | AF_INET6, SOCK_DGRAM, IPPROTO_ICMP)) < 0)
-	{
+	if ((sock = socket(AF_INET | AF_INET6, SOCK_DGRAM, IPPROTO_ICMP)) < 0) {
 		perror("FAIL SND - Could not open socket: ");
 		return(-1);
 	}
@@ -199,8 +187,7 @@ int send_icmp(char *message)
 	memcpy(packetdata, &icmp_hdr, sizeof(icmp_hdr));
 	memcpy(packetdata + sizeof(icmp_hdr), message, strlen(message));
 
-	if (bind(sock, (struct sockaddr *) &local, sizeof(local)) < 0)
-	{
+	if (bind(sock, (struct sockaddr *) &local, sizeof(local)) < 0) {
 		perror("FAIL SND - Could not bind: ");
 		return(-1);
 	}
@@ -208,8 +195,7 @@ int send_icmp(char *message)
 	//printf("Sending \"%s\"\n", message);
 
 	// Send the packet
-	if(sendto(sock, packetdata, sizeof(packetdata), 0, (struct sockaddr*) &remote, sizeof(remote)) < 0)
-	{
+	if(sendto(sock, packetdata, sizeof(packetdata), 0, (struct sockaddr*) &remote, sizeof(remote)) < 0) {
 		perror("FAIL SND - Send failed: ");
 		close(sock);
 		return(-1);
@@ -231,8 +217,7 @@ int main(int argc, char *argv[])
 {
 	int send_ret;
 
-	if (argc < 6)
-	{
+	if (argc < 6) {
 		printf("Usage: %s bind_ip bind_port remote_ip remote_port proto\n", argv[0]);
 		exit(1);
 	}
@@ -253,8 +238,7 @@ int main(int argc, char *argv[])
 	else
 		printf("FAIL SND - Unknown protocol.\n");
 
-	if (send_ret == -1)
-	{
+	if (send_ret == -1) {
 		printf("FAIL SND - Send message failed.\n");
 		exit(1);
 	}

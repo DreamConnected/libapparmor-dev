@@ -111,8 +111,8 @@ SRC=access.c \
     mount.c \
     move_mount.c \
     named_pipe.c \
-    net_finegrained_rcv.c \
-    net_finegrained_snd.c \
+    net_inet_rcv.c \
+    net_inet_snd.c \
     net_raw.c \
     open.c \
     openat.c \

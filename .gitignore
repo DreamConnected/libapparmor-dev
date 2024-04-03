@@ -266,8 +266,8 @@ tests/regression/apparmor/mmap
 tests/regression/apparmor/mount
 tests/regression/apparmor/move_mount
 tests/regression/apparmor/named_pipe
-tests/regression/apparmor/net_finegrained_rcv
-tests/regression/apparmor/net_finegrained_snd
+tests/regression/apparmor/net_inet_rcv
+tests/regression/apparmor/net_inet_snd
 tests/regression/apparmor/net_raw
 tests/regression/apparmor/open
 tests/regression/apparmor/openat

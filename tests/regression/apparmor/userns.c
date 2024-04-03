@@ -23,7 +23,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <linux/limits.h>
-#include "userns.h"
+#include "pipe_helper.h"
 
 static void usage(char *pname)
 {

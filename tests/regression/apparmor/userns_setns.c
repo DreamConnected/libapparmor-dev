@@ -6,7 +6,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "userns.h"
+#include "pipe_helper.h"
 
 int main(int argc, char *argv[])
 {

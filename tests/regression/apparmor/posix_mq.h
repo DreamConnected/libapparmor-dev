@@ -12,6 +12,7 @@
 #define QNAME "/testmq"
 #define SHM_PATH "/unnamedsemtest"
 #define SEM_PATH "/namedsemtest"
+#define PIPENAME "/tmp/mqueuepipe";
 #define OBJ_PERMS (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH)
 
 #define BUF_SIZE 1024

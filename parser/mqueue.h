@@ -52,13 +52,13 @@
  * kernel doesn't allow for us to control
  * - posix
  *   - notify
- *   - getattr/setattr
  *   - labels at anything other than mqueue label, via mqueue inode.
  */
 
 #define AA_VALID_POSIX_MQ_PERMS (AA_MQUEUE_WRITE | AA_MQUEUE_READ |    \
 				 AA_MQUEUE_CREATE | AA_MQUEUE_DELETE | \
-				 AA_MQUEUE_OPEN)
+				 AA_MQUEUE_OPEN |		       \
+				 AA_MQUEUE_SETATTR | AA_MQUEUE_GETATTR)
 
  /* TBD - for now make it wider than posix */
 #define AA_VALID_SYSV_MQ_PERMS (AA_MQUEUE_WRITE | AA_MQUEUE_READ |    \
@@ -78,6 +78,11 @@ typedef enum mqueue_type {
 	mqueue_sysv
 } mqueue_type;
 
+static inline uint32_t map_mqueue_perms(uint32_t mask)
+{
+	return (mask & 0x7f) |
+		((mask & (AA_MQUEUE_GETATTR | AA_MQUEUE_SETATTR)) << (AA_OTHER_SHIFT - 8));
+}
 
 int parse_mqueue_perms(const char *str_perms, perms_t *perms, int fail);
 

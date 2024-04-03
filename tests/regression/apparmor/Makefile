@@ -364,10 +364,10 @@ unix_fd_client: unix_fd_client.c unix_fd_common.o
 attach_disconnected: attach_disconnected.c unix_fd_common.o
 	${CC} ${CFLAGS} ${LDFLAGS} $^ -o $@ ${LDLIBS}
 
-userns: userns.c userns.h
+userns: userns.c pipe_helper.h
 	${CC} ${CFLAGS} ${LDFLAGS} $^ -o $@ ${LDLIBS}
 
-userns_setns: userns_setns.c userns.h
+userns_setns: userns_setns.c pipe_helper.h
 	${CC} ${CFLAGS} ${LDFLAGS} $^ -o $@ ${LDLIBS}
 
 mount: mount.c

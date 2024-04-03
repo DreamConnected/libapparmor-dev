@@ -231,10 +231,10 @@ int mqueue_rule::gen_policy_re(Profile &prof)
 			/* store perms at name match so label doesn't need
 			 * to be checked
 			 */
-			if (!label && !prof.policy.rules->add_rule_vec(rule_mode == RULE_DENY, perms, audit == AUDIT_FORCE ? perms : 0, 1, vec, parseopts, false))
+			if (!label && !prof.policy.rules->add_rule_vec(rule_mode == RULE_DENY, map_mqueue_perms(perms), audit == AUDIT_FORCE ? map_mqueue_perms(perms) : 0, 1, vec, parseopts, false))
 				goto fail;
 			/* also provide label match with perm */
-			if (!prof.policy.rules->add_rule_vec(rule_mode == RULE_DENY, perms, audit == AUDIT_FORCE ? perms : 0, size, vec, parseopts, false))
+			if (!prof.policy.rules->add_rule_vec(rule_mode == RULE_DENY, map_mqueue_perms(perms), audit == AUDIT_FORCE ? map_mqueue_perms(perms) : 0, size, vec, parseopts, false))
 				goto fail;
 		}
 	}
@@ -266,10 +266,10 @@ int mqueue_rule::gen_policy_re(Profile &prof)
 		}
 
 		if (perms & AA_VALID_SYSV_MQ_PERMS) {
-			if (!label && !prof.policy.rules->add_rule_vec(rule_mode == RULE_DENY, perms, audit == AUDIT_FORCE ? perms : 0, 1, vec, parseopts, false))
+			if (!label && !prof.policy.rules->add_rule_vec(rule_mode == RULE_DENY, map_mqueue_perms(perms), audit == AUDIT_FORCE ? map_mqueue_perms(perms) : 0, 1, vec, parseopts, false))
 				goto fail;
 			/* also provide label match with perm */
-			if (!prof.policy.rules->add_rule_vec(rule_mode == RULE_DENY, perms, audit == AUDIT_FORCE ? perms : 0, size, vec, parseopts, false))
+			if (!prof.policy.rules->add_rule_vec(rule_mode == RULE_DENY, map_mqueue_perms(perms), audit == AUDIT_FORCE ? map_mqueue_perms(perms) : 0, size, vec, parseopts, false))
 				goto fail;
 		}
 	}

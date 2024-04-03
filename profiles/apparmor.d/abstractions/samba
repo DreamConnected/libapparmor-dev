@@ -12,6 +12,7 @@
   abi <abi/3.0>,
 
   /etc/samba/* r,
+  /etc/gnutls/config r,
   /usr/lib*/ldb/*.so mr,
   /usr/lib*/ldb2/*.so mr,
   /usr/lib*/ldb2/modules/ldb/*.so mr,

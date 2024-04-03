@@ -35,6 +35,13 @@
   owner /proc/@{pid}/loginuid r,
   /{,usr/}{,s}bin/unix_chkpwd Px,
 
+  # pam_env
+  @{etc_ro}/environment r,
+
+  # pam_limit
+  @{etc_ro}/security/limits.d/ r,
+  @{etc_ro}/security/limits.d/*.conf  r,
+
   # gssapi
   @{etc_ro}/gss/mech               r,
   @{etc_ro}/gss/mech.d/            r,

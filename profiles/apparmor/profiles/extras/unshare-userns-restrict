@@ -1,0 +1,65 @@
+# This profile allows almost everything and only exists to allow
+# unshare to work on a system with user namespace restrictions
+# being enforced.
+# unshare is allowed access to user namespaces and capabilities
+# within the user namespace, but its children do not have
+# capabilities, blocking unshare from being able to be used to
+# arbitrarily by-pass the user namespace restrictions.
+# We restrict x mapping of any code that is unknown while unshare
+# has privilige within the namespace. To help ensure unshare can't
+# be used to attack the kernel.
+#
+# disabled by default as it can break some use cases on a system that
+# doesn't have or has disable user namespace restrictions for unconfined
+# use aa-enforce to enable it
+
+abi <abi/4.0>,
+
+include <tunables/global>
+
+profile unshare /usr/bin/unshare flags=(attach_disconnected) {
+  # not allow all, to allow for cix transition
+  # and to limit executable mapping to just unshare
+  allow capability,
+  allow file rwlk /{**,},
+  allow network,
+  allow unix,
+  allow ptrace,
+  allow signal,
+  allow mqueue,
+  allow io_uring,
+  allow userns,
+  allow mount,
+  allow umount,
+  allow pivot_root,
+  allow dbus,
+  audit allow cx /** -> unpriv,
+
+  allow file m /usr/lib/@{multiarch}/libc.so.6,
+  allow file m /usr/bin/unshare,
+
+  # the local include should not be used without understanding the userns
+  # restriction.
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/unshare-userns-restrict>
+
+  profile unpriv flags=(attach_disconnected) {
+    # not allow all, to allow for pix stack
+    allow file rwlkm /{**,},
+    allow network,
+    allow unix,
+    allow ptrace,
+    allow signal,
+    allow mqueue,
+    allow io_uring,
+    allow userns,
+    allow mount,
+    allow umount,
+    allow pivot_root,
+    allow dbus,
+
+    allow pix /** -> &unshare//unpriv,
+
+    audit deny capability,
+  }
+}

@@ -405,16 +405,30 @@ network_rule::network_rule(perms_t perms_p, struct cond_entry *conds,
 			   struct cond_entry *peer_conds):
 	dedup_perms_rule_t(AA_CLASS_NETV8), label(NULL)
 {
-	size_t family_index;
-	for (family_index = AF_UNSPEC; family_index < get_af_max(); family_index++) {
-		network_map[family_index].push_back({ family_index, 0xFFFFFFFF, 0xFFFFFFFF });
-		set_netperm(family_index, 0xFFFFFFFF, 0xFFFFFFFF);
-	}
+	size_t family_index, i;
 
 	move_conditionals(conds, local);
 	move_conditionals(peer_conds, peer);
 	free_cond_list(conds);
 	free_cond_list(peer_conds);
+
+	if (has_local_conds() || has_peer_conds()) {
+		const char *family[] = { "inet", "inet6" };
+		for (i = 0; i < sizeof(family)/sizeof(family[0]); i++) {
+			const struct network_tuple *mapping = NULL;
+			while ((mapping = net_find_mapping(mapping, family[i], NULL, NULL))) {
+				network_map[mapping->family].push_back({ mapping->family, mapping->type, mapping->protocol });
+				set_netperm(mapping->family, mapping->type, mapping->protocol);
+			}
+		}
+	} else {
+		for (family_index = AF_UNSPEC; family_index < get_af_max(); family_index++) {
+			network_map[family_index].push_back({ family_index, 0xFFFFFFFF, 0xFFFFFFFF });
+			set_netperm(family_index, 0xFFFFFFFF, 0xFFFFFFFF);
+		}
+	}
+
+
 
 	if (perms_p) {
 		perms = perms_p;
@@ -433,13 +447,34 @@ network_rule::network_rule(perms_t perms_p, const char *family, const char *type
 	dedup_perms_rule_t(AA_CLASS_NETV8), label(NULL)
 {
 	const struct network_tuple *mapping = NULL;
+
+	move_conditionals(conds, local);
+	move_conditionals(peer_conds, peer);
+	free_cond_list(conds);
+	free_cond_list(peer_conds);
+
 	while ((mapping = net_find_mapping(mapping, family, type, protocol))) {
+		/* if inet conds and family are specified, fail if
+		 * family is not af_inet or af_inet6
+		 */
+		if ((has_local_conds() || has_peer_conds()) &&
+		    mapping->family != AF_INET && mapping->family != AF_INET6) {
+			yyerror("network family does not support local or peer conditionals\n");
+		}
 		network_map[mapping->family].push_back({ mapping->family, mapping->type, mapping->protocol });
 		set_netperm(mapping->family, mapping->type, mapping->protocol);
 	}
 
 	if (type == NULL && network_map.empty()) {
 		while ((mapping = net_find_mapping(mapping, type, family, protocol))) {
+			/* if inet conds and type/protocol are
+			 * specified, only add rules for af_inet and
+			 * af_inet6
+			 */
+			if ((has_local_conds() || has_peer_conds()) &&
+			    mapping->family != AF_INET && mapping->family != AF_INET6)
+				continue;
+
 			network_map[mapping->family].push_back({ mapping->family, mapping->type, mapping->protocol });
 			set_netperm(mapping->family, mapping->type, mapping->protocol);
 		}
@@ -447,11 +482,6 @@ network_rule::network_rule(perms_t perms_p, const char *family, const char *type
 
 	if (network_map.empty())
 		yyerror(_("Invalid network entry."));
-
-	move_conditionals(conds, local);
-	move_conditionals(peer_conds, peer);
-	free_cond_list(conds);
-	free_cond_list(peer_conds);
 
 	if (perms_p) {
 		perms = perms_p;

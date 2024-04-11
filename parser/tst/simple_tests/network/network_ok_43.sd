@@ -5,5 +5,7 @@
 /usr/bin/foo {
   network inet ip=10.0.2.1 peer=(ip=10.0.2.1),
   network inet tcp ip=192.168.2.254 peer=(ip=192.168.2.254),
+  network stream ip=192.168.2.254 peer=(ip=192.168.2.254),
+  network raw ip=10.0.2.1 peer=(ip=10.0.2.1),
 
 }

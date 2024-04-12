@@ -1,0 +1,11 @@
+#
+#=DESCRIPTION network none ip conditional test
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  network ip=none,
+  network peer=(ip=none),
+  network inet ip=none peer=(ip=none),
+  network inet tcp ip=none peer=(ip=none),
+
+}

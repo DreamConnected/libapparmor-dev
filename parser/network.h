@@ -80,7 +80,7 @@
 #define CMD_LISTEN	2
 #define CMD_OPT		4
 
-#define ANON_SIZE	0
+#define NONE_SIZE	0
 #define IPV4_SIZE	1
 #define IPV6_SIZE	2
 
@@ -132,7 +132,7 @@ public:
 	uint16_t port;
 	struct ip_address ip;
 
-	bool is_anonymous = false;
+	bool is_none = false;
 
 	void free_conds() {
 		if (sip)

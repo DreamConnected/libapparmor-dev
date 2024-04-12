@@ -492,6 +492,7 @@ syntax_failure = (
     'network/network_ok_41.sd',
     'network/network_ok_42.sd',
     'network/network_ok_43.sd',
+    'network/network_ok_44.sd',
     'network/perms/ok_accept_1.sd',
     'network/perms/ok_accept_2.sd',
     'network/perms/ok_attr_1.sd',

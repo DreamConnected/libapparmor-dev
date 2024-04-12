@@ -148,13 +148,36 @@ B<CAPABILITY LIST> = ( I<CAPABILITY> )+
 B<CAPABILITY> = (lowercase capability name without 'CAP_' prefix; see
 capabilities(7))
 
-B<NETWORK RULE> = [ I<QUALIFIERS> ] 'network' [ I<DOMAIN> ] [ I<TYPE> | I<PROTOCOL> ]
+B<NETWORK RULE> = [ I<QUALIFIERS> ] 'network' [ I<NETWORK ACCESS EXPR> ] [ I<DOMAIN> ] [ I<TYPE> | I<PROTOCOL> ] [ I<NETWORK LOCAL EXPR> ] [ I<NETWORK PEER EXPR> ]
+
+B<NETWORK ACCESS EXPR> = ( I<NETWORK ACCESS> | I<NETWORK ACCESS LIST> )
+
+B<NETWORK ACCESS> = ( 'create' | 'bind' | 'listen' | 'accept' | 'connect' | 'shutdown' | 'getattr' | 'setattr' | 'getopt' | 'setopt' | 'send' | 'receive' | 'r' | 'w' | 'rw' )
+  Some access modes are incompatible with some rules.
+
+B<NETWORK ACCESS LIST> = '(' I<NETWORK ACCESS> ( [','] I<NETWORK ACCESS> )* ')'
 
 B<DOMAIN> = ( 'unix' | 'inet' | 'ax25' | 'ipx' | 'appletalk' | 'netrom' | 'bridge' | 'atmpvc' | 'x25' | 'inet6' | 'rose' | 'netbeui' | 'security' | 'key' | 'netlink' | 'packet' | 'ash' | 'econet' | 'atmsvc' | 'rds' | 'sna' | 'irda' | 'pppox' | 'wanpipe' | 'llc' | 'ib' | 'mpls' | 'can' | 'tipc' | 'bluetooth' | 'iucv' | 'rxrpc' | 'isdn' | 'phonet' | 'ieee802154' | 'caif' | 'alg' | 'nfc' | 'vsock' | 'kcm' | 'qipcrtr' | 'smc' | 'xdp' | 'mctp' ) ','
 
 B<TYPE> = ( 'stream' | 'dgram' | 'seqpacket' |  'rdm' | 'raw' | 'packet' )
 
 B<PROTOCOL> = ( 'tcp' | 'udp' | 'icmp' )
+
+B<NETWORK LOCAL EXPR> = ( I<NETWORK IP COND> | I<NETWORK PORT COND> )*
+  Each cond can appear at most once.
+
+B<NETWORK PEER EXPR> = 'peer' '=' '(' ( I<NETWORK IP COND> | I<NETWORK PORT COND> )+ ')'
+  Each cond can appear at most once.
+
+B<NETWORK IP COND> = 'ip' '=' ( 'none' | I<NETWORK IPV4> | I<NETWORK IPV6> )
+
+B<NETWORK PORT COND> = 'port' '=' ( I<NETWORK PORT> )
+
+B<NETWORK IPV4> = IPv4, represented by four 8-bit decimal numbers separated by '.'
+
+B<NETWORK IPV6> = IPv6, represented by eight groups of four hexadecimal numbers separated by ':'. Shortened representation of contiguous zeros is allowed by using '::'
+
+B<NETWORK PORT> = 16-bit number ranging from 0 to 65535
 
 B<MOUNT RULE> = ( I<MOUNT> | I<REMOUNT> | I<UMOUNT> )
 
@@ -912,11 +935,10 @@ and other operations that are typically reserved for the root user.
 
 =head2 Network Rules
 
-AppArmor supports simple coarse grained network mediation.  The network
-rule restrict all socket(2) based operations.  The mediation done is
-a coarse-grained check on whether a socket of a given type and family
-can be created, read, or written.  There is no mediation based of port
-number or protocol beyond tcp, udp, and raw.  Network netlink(7) rules may
+AppArmor supports simple coarse grained network mediation.  The
+network rule restrict all socket(2) based operations.  The mediation
+done is a coarse-grained check on whether a socket of a given type and
+family can be created, read, or written. Network netlink(7) rules may
 only specify type 'dgram' and 'raw'.
 
 AppArmor network rules are accumulated so that the granted network
@@ -932,6 +954,48 @@ eg.
  network inet tcp,	#allow access to tcp only for inet4 addresses
  network inet6 tcp,	#allow access to tcp only for inet6 addresses
  network netlink raw,	#allow access to AF_NETLINK SOCK_RAW
+
+=head3 Network permissions
+
+Network rule permissions are implied when a rule does not explicitly
+state an access list. By default if a rule does not have an access
+list all permissions that are compatible with the specified set of
+local and peer conditionals are implied.
+
+The create, bind, listen, shutdown, getattr, setattr, getopt, and
+setopt permissions are local socket permissions. They are only applied
+to the local socket and can't be specified in rules that have a peer
+conditional. The accept permission applies to the combination of a
+local and peer socket. The connect, send, and receive permissions are
+peer socket permissions.
+
+=head3 Mediation of inet/inet6 family
+
+AppArmor supports fine grained mediation of the inet and inet6
+families by using the ip and port conditionals. The ip conditional
+accepts both IPv4 and IPv6 using the regular representation of four
+octets separated by '.' for IPv4 and eight groups of four hexadecimal
+numbers separated by ':' for IPv6. Contiguous leading zeros can be
+replaced by '::' once. On a connected socket, the sender and receiver
+don't need to be specified in the recvfrom and sendto system calls. In
+that case, and with unbounded sockets, the IP address is none, or
+unknown. Unknown or Unbound IP addresses are represented in policy by the
+'none' keyword. When the ip conditional is omitted, then all IP
+addresses will be allowed: IPv4, IPv6 and none. If INADDR_ANY or
+in6addr_any is used, then the ip conditional can be omitted or they
+can be represented by:
+
+ network ip=::,		#allow in6addr_any
+ network ip=0.0.0.0;	#allow INADDR_ANY
+
+The network rules support the specification of local and remote IP
+addresses and ports.
+
+ network ip=127.0.0.1 port=8080,
+ network peer=(ip=10.139.15.23 port=8081),
+ network ip=fd74:1820:b03a:b361::cf32 peer=(ip=fd74:1820:b03a:b361::a0f9),
+ network port=8080 peer=(port=8081),
+ network ip=127.0.0.1 port=8080 peer=(ip=10.139.15.23 port=8081),
 
 =head2 Mount Rules
 

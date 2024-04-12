@@ -360,8 +360,8 @@ bool network_rule::parse_port(ip_conds &entry)
 
 bool network_rule::parse_address(ip_conds &entry)
 {
-	if (strcmp(entry.sip, "anon") == 0) {
-		entry.is_anonymous = true;
+	if (strcmp(entry.sip, "none") == 0) {
+		entry.is_none = true;
 		return true;
 	}
 	entry.is_ip = true;
@@ -615,13 +615,13 @@ std::string gen_port_cond(uint16_t port)
 std::list<std::ostringstream> gen_all_ip_options(std::ostringstream &oss) {
 
 	std::list<std::ostringstream> all_streams;
-	std::ostringstream anon, ipv4, ipv6;
+	std::ostringstream none, ipv4, ipv6;
 	int i;
-	anon << oss.str();
+	none << oss.str();
 	ipv4 << oss.str();
 	ipv6 << oss.str();
 
-	anon << "\\x" << std::setfill('0') << std::setw(2) << std::hex << ANON_SIZE;
+	none << "\\x" << std::setfill('0') << std::setw(2) << std::hex << NONE_SIZE;
 
 	/* add a byte containing the size of the following ip */
 	ipv4 << "\\x" << std::setfill('0') << std::setw(2) << std::hex << IPV4_SIZE;
@@ -633,7 +633,7 @@ std::list<std::ostringstream> gen_all_ip_options(std::ostringstream &oss) {
 	for (i = 0; i < 16; ++i)
 		ipv6 << ".";
 
-	all_streams.push_back(std::move(anon));
+	all_streams.push_back(std::move(none));
 	all_streams.push_back(std::move(ipv4));
 	all_streams.push_back(std::move(ipv6));
 
@@ -657,7 +657,7 @@ bool network_rule::gen_ip_conds(Profile &prof, std::list<std::ostringstream> &st
 	std::list<std::ostringstream> ip_streams;
 
 	for (auto &oss : streams) {
-		if (entry.is_port && !(entry.is_ip && entry.is_anonymous)) {
+		if (entry.is_port && !(entry.is_ip && entry.is_none)) {
 			/* encode port type (privileged - 1, remote - 2, unprivileged - 0) */
 			if (!is_peer && perms & AA_NET_BIND && entry.port < IPPORT_RESERVED)
 				oss << "\\x01";
@@ -680,8 +680,8 @@ bool network_rule::gen_ip_conds(Profile &prof, std::list<std::ostringstream> &st
 		if (entry.is_ip) {
 			oss << gen_ip_cond(entry.ip);
 			streams.push_back(std::move(oss));
-		} else if (entry.is_anonymous) {
-			oss << "\\x" << std::setfill('0') << std::setw(2) << std::hex << ANON_SIZE;
+		} else if (entry.is_none) {
+			oss << "\\x" << std::setfill('0') << std::setw(2) << std::hex << NONE_SIZE;
 			streams.push_back(std::move(oss));
 		} else {
 			streams.splice(streams.end(), gen_all_ip_options(oss));
@@ -928,7 +928,7 @@ static int cmp_ip_conds(ip_conds const &lhs, ip_conds const &rhs)
 	res = null_strcmp(lhs.sport, rhs.sport);
 	if (res)
 		return res;
-	return lhs.is_anonymous - rhs.is_anonymous;
+	return lhs.is_none - rhs.is_none;
 }
 
 static int cmp_network_map(std::unordered_map<unsigned int, std::pair<unsigned int, unsigned int>> lhs,

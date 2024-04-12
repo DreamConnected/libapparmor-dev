@@ -547,6 +547,12 @@ else
 	runchecktest "UMOUNT (confined cap umount:ALL)" pass umount ${loop_device} ${mount_point}
 	remove_mnt
 
+	# https://bugs.launchpad.net/ubuntu/+source/apparmor/+bug/1597017
+	# CVE-2016-1585
+	genprofile cap:sys_admin "mount:options=(rw,make-slave) -> **"
+	runchecktest "MOUNT (confined cap mount  -> mntpnt, CVE-2016-1585)" fail mount -t proc proc  ${mount_point}
+	remove_mnt
+
 	# MR:https://gitlab.com/apparmor/apparmor/-/merge_requests/1054
 	# https://bugs.launchpad.net/apparmor/+bug/2023814
 	# https://bugzilla.opensuse.org/show_bug.cgi?id=1211989

@@ -114,6 +114,7 @@ static void usage(char *prog_name)
 	fprintf(stderr, "Options are:\n");
 	fprintf(stderr, "-o        flags sent to the mount syscall\n");
 	fprintf(stderr, "-d        data sent to the mount syscall\n");
+	fprintf(stderr, "-t        type of synthetic filesystem (e.g. proc) for mount syscall\n");
 	exit(1);
 }
 
@@ -121,12 +122,13 @@ int main(int argc, char *argv[])
 {
 	char *options = NULL;
 	char *data = NULL;
+	char *type = NULL;
 	int index;
 	int c;
 	char *op, *source, *target, *token;
 	unsigned long flags = 0;
 
-	while ((c = getopt (argc, argv, "o:d:h")) != -1) {
+	while ((c = getopt (argc, argv, "o:d:t:h")) != -1) {
 		switch (c)
 		{
 		case 'o':
@@ -134,6 +136,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'd':
 			data = optarg;
+			break;
+		case 't':
+			type = optarg;
 			break;
 		case 'h':
 			usage(argv[0]);
@@ -162,10 +167,18 @@ int main(int argc, char *argv[])
 	}
 
 	if (strcmp(op, "mount") == 0) {
-		if (mount(source, target, "ext2", flags, data) == -1) {
-			fprintf(stderr, "FAIL: mount %s on %s failed - %s\n",
-				source, target,	strerror(errno));
-			return errno;
+		if (!type) {
+			if (mount(source, target, "ext2", flags, data) == -1) {
+				fprintf(stderr, "FAIL: mount %s on %s failed - %s\n",
+					source, target,	strerror(errno));
+				return errno;
+			}
+		} else {
+			if (mount(source, target, type, flags, data) == -1) {
+				fprintf(stderr, "FAIL: mount %s on %s failed - %s\n",
+					source, target,	strerror(errno));
+				return errno;
+			}
 		}
 	} else if (strcmp(op, "umount") == 0) {
 		if (umount(target) == -1) {

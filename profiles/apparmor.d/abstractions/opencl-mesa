@@ -8,8 +8,7 @@
 
   # Additional libraries
 
-  /usr/lib/@{multiarch}/gallium-pipe/*.so mr, # libMesaOpenCL.so
-  /usr/lib{,64}/gallium-pipe/*.so mr, # libMesaOpenCL.so on openSUSE
+  @{lib}/gallium-pipe/*.so mr, # libMesaOpenCL.so
 
   # System files
 

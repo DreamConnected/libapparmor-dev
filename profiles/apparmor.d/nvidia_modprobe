@@ -16,11 +16,11 @@ profile nvidia_modprobe {
 
   # Main executable
 
-  /usr/bin/nvidia-modprobe mr,
+  @{bin}/nvidia-modprobe mr,
 
   # Other executables
 
-  /usr/bin/kmod Cx -> kmod,
+  @{bin}/kmod Cx -> kmod,
 
   # System files
 
@@ -45,11 +45,11 @@ profile nvidia_modprobe {
 
     # Main executable
 
-    /usr/bin/kmod mrix,
+    @{bin}/kmod mrix,
 
     # Other executables
 
-    /{,usr/}bin/{,ba,da}sh ix,
+    @{bin}/{,ba,da}sh ix,
 
     # System files
 

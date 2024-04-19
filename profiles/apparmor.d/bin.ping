@@ -12,7 +12,7 @@
 abi <abi/4.0>,
 
 include <tunables/global>
-profile ping /{usr/,}bin/{,iputils-}ping {
+profile ping /{usr/,}{s,}bin/{,iputils-}ping {
   include <abstractions/base>
   include <abstractions/consoles>
   include <abstractions/nameservice>
@@ -22,7 +22,7 @@ profile ping /{usr/,}bin/{,iputils-}ping {
   network inet raw,
   network inet6 raw,
 
-  /{,usr/}bin/{,iputils-}ping mixr,
+  @{bin}/{,iputils-}ping mixr,
   /etc/modules.conf r,
 
   # Site-specific additions and overrides. See local/README for details.

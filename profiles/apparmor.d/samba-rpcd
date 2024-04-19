@@ -15,7 +15,7 @@ include <tunables/global>
 
 profile samba-rpcd /usr/lib*/samba/{,samba/}rpcd_{mdssvc,epmapper,rpcecho,fsrvp,lsad,winreg} {
   include <abstractions/samba-rpcd>
-  /usr/lib*/samba/{,samba/}rpcd_{mdssvc,epmapper,rpcecho,fsrvp,lsad,winreg} mr,
+  @{lib}/samba/{,samba/}rpcd_{mdssvc,epmapper,rpcecho,fsrvp,lsad,winreg} mr,
 
   @{run}/samba/ncalrpc/np/winreg wr,
 

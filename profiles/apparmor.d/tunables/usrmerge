@@ -1,0 +1,2 @@
+@{bin}=/usr/bin/ /usr/sbin/ /bin/ /sbin/
+@{lib}=/usr/lib/ /usr/lib32/ /usr/lib64/ /usr/lib/@{multiarch}/ /lib/ /lib32/ /lib64/ /lib/@{multiarch}/

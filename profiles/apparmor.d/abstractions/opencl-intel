@@ -16,7 +16,7 @@
 
   /dev/dri/card[0-9]* rw, # beignet/libcl.so
   @{sys}/devices/pci[0-9]*/**/{class,config,resource,revision} r, # libcl.so -> libdrm_intel.so -> libpciaccess.so (move to dri-enumerate ?)
-  /usr/lib/@{multiarch}/beignet/** r,
+  @{lib}/beignet/** r,
 
 
   # Include additions to the abstraction

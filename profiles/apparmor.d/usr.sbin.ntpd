@@ -13,7 +13,7 @@ abi <abi/4.0>,
 
 include <tunables/global>
 include <tunables/ntpd>
-profile ntpd /usr/{bin,sbin}/{,open}ntpd flags=(attach_disconnected) {
+profile ntpd /{usr/,}{s,}bin/{,open}ntpd flags=(attach_disconnected) {
   include <abstractions/base>
   include <abstractions/nameservice>
   include <abstractions/ssl_certs>
@@ -41,8 +41,9 @@ profile ntpd /usr/{bin,sbin}/{,open}ntpd flags=(attach_disconnected) {
   /etc/ntpd.conf.tmp r,
 
   /tmp/ntp* rwl,
-  /{usr/,usr/local/,}{s,}bin/ r,
-  /usr/{bin,sbin}/{,open}ntpd rmix,
+  @{bin} r,
+  /usr/local/{s,}bin/ r,
+  @{bin}/{,open}ntpd rmix,
   /var/db/ r,
   /var/db/ntpd.drift rwl,
   /var/lib/ntp/drift rwl,

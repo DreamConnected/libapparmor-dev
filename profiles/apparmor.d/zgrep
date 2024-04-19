@@ -17,23 +17,23 @@ profile zgrep /usr/bin/{x,}zgrep {
   include <abstractions/bash>
 
   /dev/tty rw,
-  /usr/bin/{ba,da,}sh ix,
-  /usr/bin/bzip2 Cx -> helper,
-  /usr/bin/cat ix,
-  /usr/bin/egrep Cx -> helper,
-  /usr/bin/expr ix,
-  /usr/bin/fgrep Cx -> helper,
-  /usr/bin/grep Cx -> helper,
-  /usr/bin/gzip Cx -> helper,
-  /usr/bin/mktemp ix,
-  /usr/bin/rm ix,
-  /usr/bin/sed Cx -> sed,
-  /usr/bin/xz Cx -> helper,
-  /usr/bin/xzgrep r,
-  /usr/bin/zgrep Cx -> helper,
-  /usr/bin/zstd Cx -> helper,
+  @{bin}/{ba,da,}sh ix,
+  @{bin}/bzip2 Cx -> helper,
+  @{bin}/cat ix,
+  @{bin}/egrep Cx -> helper,
+  @{bin}/expr ix,
+  @{bin}/fgrep Cx -> helper,
+  @{bin}/grep Cx -> helper,
+  @{bin}/gzip Cx -> helper,
+  @{bin}/mktemp ix,
+  @{bin}/rm ix,
+  @{bin}/sed Cx -> sed,
+  @{bin}/xz Cx -> helper,
+  @{bin}/xzgrep r,
+  @{bin}/zgrep Cx -> helper,
+  @{bin}/zstd Cx -> helper,
   owner /tmp/zgrep* rw,
-  /usr/bin/zgrep r,
+  @{bin}/zgrep r,
 
   include if exists <local/zgrep>
 
@@ -45,12 +45,12 @@ profile zgrep /usr/bin/{x,}zgrep {
 
     /dev/tty w,
 
-    /usr/bin/{ba,da,}sh ix,
-    /usr/bin/bzip2 mr,
-    /usr/bin/grep mrix,
-    /usr/bin/gzip mr,
-    /usr/bin/xz mr,
-    /usr/bin/zstd mr,
+    @{bin}/{ba,da,}sh ix,
+    @{bin}/bzip2 mr,
+    @{bin}/grep mrix,
+    @{bin}/gzip mr,
+    @{bin}/xz mr,
+    @{bin}/zstd mr,
     /{,**} r,
 
   }
@@ -59,8 +59,8 @@ profile zgrep /usr/bin/{x,}zgrep {
     include <abstractions/base>
 
     /dev/tty rw,
-    /usr/bin/{ba,da,}sh ix,
-    /usr/bin/sed mr,
+    @{bin}/{ba,da,}sh ix,
+    @{bin}/sed mr,
 
   }
 }

@@ -21,6 +21,7 @@ include <tunables/xdg-user-dirs>
 include <tunables/share>
 include <tunables/etc>
 include <tunables/run>
+include <tunables/usrmerge>
 
 # Also, include files in tunables/global.d for site-specific adjustments
 include if exists <tunables/global.d>

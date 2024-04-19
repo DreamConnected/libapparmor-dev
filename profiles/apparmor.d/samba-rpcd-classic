@@ -17,7 +17,7 @@ profile samba-rpcd-classic /usr/lib*/samba/{,samba/}rpcd_classic {
   include <abstractions/samba-rpcd>
   include <abstractions/wutmp>
 
-  /usr/lib*/samba/{,samba/}rpcd_classic mr,
+  @{lib}/samba/{,samba/}rpcd_classic mr,
 
   @{HOMEDIRS}/** lrwk,
 

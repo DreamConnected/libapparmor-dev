@@ -13,7 +13,7 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile mdnsd /usr/{bin,sbin}/mdnsd {
+profile mdnsd /{usr/,}{s,}bin/mdnsd {
   include <abstractions/base>
   include <abstractions/consoles>
   include <abstractions/nameservice>
@@ -26,7 +26,7 @@ profile mdnsd /usr/{bin,sbin}/mdnsd {
 
   network netlink dgram,
 
-  /usr/{bin,sbin}/mdnsd rmix,
+  @{bin}/mdnsd rmix,
 
   @{PROC}/net/ r,
   @{PROC}/net/unix r,

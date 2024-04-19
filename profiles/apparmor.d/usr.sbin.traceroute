@@ -12,7 +12,7 @@
 abi <abi/4.0>,
 
 include <tunables/global>
-profile traceroute /usr/{{bin,sbin}/traceroute,bin/linux-traceroute,bin/traceroute.db} {
+profile traceroute /{usr/,}{s,}bin/{traceroute,linux-traceroute,traceroute.db} {
   include <abstractions/base>
   include <abstractions/consoles>
   include <abstractions/nameservice>
@@ -23,7 +23,7 @@ profile traceroute /usr/{{bin,sbin}/traceroute,bin/linux-traceroute,bin/tracerou
   network inet raw,
   network inet6 raw,
 
-  /usr/{{bin,sbin}/traceroute,bin/linux-traceroute,bin/traceroute.db} mrix,
+  @{bin}/{traceroute,linux-traceroute,traceroute.db} mrix,
   @{PROC}/net/route r,
   @{PROC}/sys/net/ipv4/{tcp_ecn,tcp_sack,tcp_timestamps,tcp_window_scaling} r,
 

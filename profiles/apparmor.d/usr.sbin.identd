@@ -13,7 +13,7 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile identd /usr/{bin,sbin}/identd {
+profile identd /{usr/,}{s,}bin/identd {
   include <abstractions/base>
   include <abstractions/nameservice>
   capability net_bind_service,
@@ -23,7 +23,7 @@ profile identd /usr/{bin,sbin}/identd {
   /etc/identd.conf         r,
   /etc/identd.key          r,
   /etc/identd.pid          w,
-  /usr/{bin,sbin}/identd   rmix,
+  @{bin}/identd            rmix,
   @{PROC}/net/tcp          r,
   @{PROC}/net/tcp6         r,
   @{run}/identd.pid   w,

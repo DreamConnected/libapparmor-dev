@@ -7,9 +7,9 @@
   owner @{HOME}/.aspell.*.{pws,prepl} rwk,
 
   # system libraries and dictionaries
-  /usr/lib/aspell/ r,
-  /usr/lib/aspell/* r,
-  /usr/lib/aspell/*.so m,
+  @{lib}/aspell/ r,
+  @{lib}/aspell/* r,
+  @{lib}/aspell/*.so m,
   /usr/share/aspell/ r,
   /usr/share/aspell/* r,
   /var/lib/aspell/* r,

@@ -2,7 +2,7 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile nmbd /usr/{bin,sbin}/nmbd {
+profile nmbd /{usr/,}{s,}bin/nmbd {
   include <abstractions/base>
   include <abstractions/nameservice>
   include <abstractions/samba>
@@ -11,7 +11,7 @@ profile nmbd /usr/{bin,sbin}/nmbd {
 
   @{PROC}/sys/kernel/core_pattern r,
 
-  /usr/{bin,sbin}/nmbd mr,
+  @{bin}/nmbd mr,
 
   /var/{cache,lib}/samba/browse.dat* rw,
   /var/{cache,lib}/samba/gencache.dat rw,

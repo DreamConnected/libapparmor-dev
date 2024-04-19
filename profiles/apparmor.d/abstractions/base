@@ -49,11 +49,9 @@
   # anything when reading so this is ok.
   @{run}/systemd/journal/stdout  rw,
 
-  /usr/lib{,32,64}/locale/**             mr,
-  /usr/lib{,32,64}/gconv/*.so            mr,
-  /usr/lib{,32,64}/gconv/gconv-modules*  mr,
-  /usr/lib/@{multiarch}/gconv/*.so           mr,
-  /usr/lib/@{multiarch}/gconv/gconv-modules* mr,
+  @{lib}/locale/**              mr,
+  @{lib}/gconv/*.so             mr,
+  @{lib}/gconv/gconv-modules*   mr,
 
   # used by glibc when binding to ephemeral ports
   @{etc_ro}/bindresvport.blacklist    r,
@@ -65,19 +63,14 @@
   @{etc_ro}/ld.so.conf.d/{,*.conf}    r,
   @{etc_ro}/ld.so.preload             r,
   @{etc_ro}/ld-musl-*.path            r,
-  /{usr/,}lib{,32,64}/ld{,32,64}-*.so   mr,
-  /{usr/,}lib/@{multiarch}/ld{,32,64}-*.so    mr,
-  /{usr/,}lib/tls/i686/{cmov,nosegneg}/ld-*.so     mr,
-  /{usr/,}lib/i386-linux-gnu/tls/i686/{cmov,nosegneg}/ld-*.so     mr,
+  @{lib}/ld{,32,64}-*.so   mr,
+  @{lib}/tls/i686/{cmov,nosegneg}/ld-*.so     mr,
   /opt/*-linux-uclibc/lib/ld-uClibc*so* mr,
 
   # we might as well allow everything to use common libraries
-  /{usr/,}lib{,32,64}/**                r,
-  /{usr/,}lib{,32,64}/**.so*       mr,
-  /{usr/,}lib/@{multiarch}/**            r,
-  /{usr/,}lib/@{multiarch}/**.so*   mr,
-  /{usr/,}lib/tls/i686/{cmov,nosegneg}/*.so*    mr,
-  /{usr/,}lib/i386-linux-gnu/tls/i686/{cmov,nosegneg}/*.so*    mr,
+  @{lib}/**                      r,
+  @{lib}/**.so*                  mr,
+  @{lib}/tls/i686/{cmov,nosegneg}/*.so*    mr,
 
   # FIPS-140-2 versions of some crypto libraries need to access their
   # associated integrity verification file, or they will abort.

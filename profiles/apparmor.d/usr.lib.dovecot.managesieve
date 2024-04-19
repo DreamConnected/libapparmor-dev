@@ -28,8 +28,8 @@ profile dovecot-managesieve /usr/lib*/dovecot/managesieve {
   @{DOVECOT_MAILSTORE}/** rwkl,
 
   /etc/dovecot/** r,
-  /usr/bin/doveconf rix,
-  /usr/lib*/dovecot/managesieve mrix,
+  @{bin}/doveconf rix,
+  @{lib}/dovecot/managesieve mrix,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.lib.dovecot.managesieve>

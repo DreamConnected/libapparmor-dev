@@ -3,7 +3,7 @@
 abi <abi/4.0>,
 
 include <tunables/global>
-profile apache2 /usr/{bin,sbin}/apache2 flags=(attach_disconnected) {
+profile apache2 /{usr/,}{s,}bin/apache2 flags=(attach_disconnected) {
 
   # This profile is completely permissive.
   # It is designed to target specific applications using mod_apparmor,

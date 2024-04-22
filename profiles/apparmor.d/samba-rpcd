@@ -15,8 +15,13 @@ include <tunables/global>
 
 profile samba-rpcd /usr/lib*/samba/{,samba/}rpcd_{mdssvc,epmapper,rpcecho,fsrvp,lsad,winreg} {
   include <abstractions/samba-rpcd>
+
+  capability sys_resource,
+
   /usr/lib*/samba/{,samba/}rpcd_{mdssvc,epmapper,rpcecho,fsrvp,lsad,winreg} mr,
 
+  @{run}/samba/ncalrpc/np/lsarpc wr,
+  @{run}/samba/ncalrpc/np/mdssvc wr,
   @{run}/samba/ncalrpc/np/winreg wr,
 
   # Site-specific additions and overrides. See local/README for details.

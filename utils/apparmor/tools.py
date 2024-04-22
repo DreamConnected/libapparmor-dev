@@ -90,7 +90,7 @@ class aa_tools:
     def get_next_for_modechange(self):
         """common code for mode/flags changes"""
 
-        for (program, _, prof_filename) in self.get_next_to_profile():
+        for (program, _ignored, prof_filename) in self.get_next_to_profile():
             output_name = prof_filename if program is None else program
 
             if not os.path.isfile(prof_filename) or is_skippable_file(prof_filename):
@@ -162,7 +162,7 @@ class aa_tools:
     def cmd_autodep(self):
         apparmor.loadincludes()
 
-        for (program, _, prof_filename) in self.get_next_to_profile():
+        for (program, _ignored, prof_filename) in self.get_next_to_profile():
             if not program:
                 aaui.UI_Info(_('Please pass an application to generate a profile for, not a profile itself - skipping %s.') % prof_filename)
                 continue

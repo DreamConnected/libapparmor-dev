@@ -8,6 +8,7 @@ profile nmbd /usr/{bin,sbin}/nmbd {
   include <abstractions/samba>
 
   capability net_bind_service,
+  capability sys_resource,
 
   @{PROC}/sys/kernel/core_pattern r,
 

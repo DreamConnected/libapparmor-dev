@@ -17,7 +17,15 @@ profile samba-rpcd-classic /usr/lib*/samba/{,samba/}rpcd_classic {
   include <abstractions/samba-rpcd>
   include <abstractions/wutmp>
 
+  capability sys_resource,
+
   /usr/lib*/samba/{,samba/}rpcd_classic mr,
+
+  @{run}/samba/ncalrpc/np/srvsvc wr,
+  @{run}/samba/ncalrpc/np/winreg wr,
+  /dev/urandom rw,
+
+  /usr/lib*/samba/{,samba/}samba-dcerpcd Px -> samba-dcerpcd,
 
   @{HOMEDIRS}/** lrwk,
 

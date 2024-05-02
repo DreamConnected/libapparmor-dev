@@ -255,18 +255,18 @@ def get_apparmor_events(logfile, since=0):
 def parse_logdata(logsource):
     '''Traverse any iterable log source and extract relevant AppArmor events'''
 
-    RE_audit_time_id = '(msg=)?audit\([\d\.\:]+\):\s+'  # 'audit(1282626827.320:411): '
-    RE_kernel_time = '\[[\d\.\s]+\]'    # '[ 1612.746129]'
-    RE_type_num = '1[45][0-9][0-9]'     # 1400..1599
-    RE_aa_or_op = '(apparmor=|operation=)'
+    RE_audit_time_id = r'(msg=)?audit\([\d\.\:]+\):\s+'  # 'audit(1282626827.320:411): '
+    RE_kernel_time = r'\[[\d\.\s]+\]'    # '[ 1612.746129]'
+    RE_type_num = r'1[45][0-9][0-9]'     # 1400..1599
+    RE_aa_or_op = r'(apparmor=|operation=)'
 
     RE_log_parts = [
-        'kernel:\s+(' + RE_kernel_time + '\s+)?(audit:\s+)?type=' + RE_type_num + '\s+' + RE_audit_time_id + RE_aa_or_op,  # v2_6 syslog
-        'kernel:\s+(' + RE_kernel_time + '\s+)?' + RE_audit_time_id + 'type=' + RE_type_num + '\s+' + RE_aa_or_op,
-        'type=(AVC|APPARMOR[_A-Z]*|' + RE_type_num + ')\s+' + RE_audit_time_id + '(type=' + RE_type_num + '\s+)?' + RE_aa_or_op,  # v2_6 audit and dmesg
-        'type=USER_AVC\s+' + RE_audit_time_id + '.*apparmor=',  # dbus
-        'type=UNKNOWN\[' + RE_type_num + '\]\s+' + RE_audit_time_id + RE_aa_or_op,
-        'dbus\[[0-9]+\]:\s+apparmor=',  # dbus
+        r'kernel:\s+(' + RE_kernel_time + r'\s+)?(audit:\s+)?type=' + RE_type_num + r'\s+' + RE_audit_time_id + RE_aa_or_op,  # v2_6 syslog
+        r'kernel:\s+(' + RE_kernel_time + r'\s+)?' + RE_audit_time_id + r'type=' + RE_type_num + r'\s+' + RE_aa_or_op,
+        r'type=(AVC|APPARMOR[_A-Z]*|' + RE_type_num + r')\s+' + RE_audit_time_id + r'(type=' + RE_type_num + r'\s+)?' + RE_aa_or_op,  # v2_6 audit and dmesg
+        r'type=USER_AVC\s+' + RE_audit_time_id + r'.*apparmor=',  # dbus
+        r'type=UNKNOWN\[' + RE_type_num + r'\]\s+' + RE_audit_time_id + RE_aa_or_op,
+        r'dbus\[[0-9]+\]:\s+apparmor=',  # dbus
     ]
 
     # Pre-filter log lines so that we hand over only relevant lines to LibAppArmor parsing

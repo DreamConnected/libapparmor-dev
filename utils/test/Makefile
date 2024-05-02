@@ -61,7 +61,7 @@ ifndef USE_SYSTEM
 	fi
 endif
 
-COVERAGE_OMIT=test-*.py,common_test.py
+COVERAGE_OMIT=test-*.py,common_test.py,*/dist-packages/*
 ifneq ($(COVERAGE_OUT), )
 HTML_COVR_ARGS=-d $(COVERAGE_OUT)
 endif

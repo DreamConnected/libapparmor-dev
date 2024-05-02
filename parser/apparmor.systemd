@@ -17,6 +17,8 @@
 
 APPARMOR_FUNCTIONS=/lib/apparmor/rc.apparmor.functions
 
+# This function is used in rc.apparmor.functions
+# shellcheck disable=SC2317
 aa_action()
 {
     echo "$1"
@@ -25,36 +27,50 @@ aa_action()
     return $?
 }
 
+# This function is used in rc.apparmor.functions
+# shellcheck disable=SC2317
 aa_log_warning_msg()
 {
     echo "Warning: $*"
 }
 
+# This function is used in rc.apparmor.functions
+# shellcheck disable=SC2317
 aa_log_failure_msg()
 {
     echo "Error: $*"
 }
 
+# This function is used in rc.apparmor.functions
+# shellcheck disable=SC2317
 aa_log_action_start()
 {
     echo "$@"
 }
 
+# This function is used in rc.apparmor.functions
+# shellcheck disable=SC2317
 aa_log_action_end()
 {
     printf ""
 }
 
+# This function is used in rc.apparmor.functions
+# shellcheck disable=SC2317
 aa_log_daemon_msg()
 {
     echo "$@"
 }
 
+# This function is used in rc.apparmor.functions
+# shellcheck disable=SC2317
 aa_log_skipped_msg()
 {
     echo "Skipped: $*"
 }
 
+# This function is used in rc.apparmor.functions
+# shellcheck disable=SC2317
 aa_log_end_msg()
 {
     printf ""

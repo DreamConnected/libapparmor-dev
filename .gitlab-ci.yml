@@ -112,7 +112,7 @@ shellcheck:
   extends:
     - .ubuntu-before_script
   script:
-  - apt-get install --no-install-recommends -y file shellcheck xmlstarlet
+  - apt-get install --no-install-recommends -y python3-minimal file shellcheck xmlstarlet
   - shellcheck --version
   - './tests/bin/shellcheck-tree --format=checkstyle
        | xmlstarlet tr tests/checkstyle2junit.xslt

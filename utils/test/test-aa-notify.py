@@ -194,7 +194,6 @@ Display AppArmor notifications or messages for DENIED entries.
 
         expected_output_2 = \
 '''
-options:
   -h, --help            show this help message and exit
   -p, --poll            poll AppArmor logs and display notifications
   --display DISPLAY     set the DISPLAY environment variable (might be needed if

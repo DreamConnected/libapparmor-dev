@@ -23,19 +23,7 @@ from apparmor.translations import init_translation
 
 _ = init_translation()
 
-# TODO :
-#   - match correctly AARE on every field
-#   - Find the actual list of supported filesystems. This one comes from /proc/filesystems. We also blindly accept fuse.*
-#   - Support path that begin by { (e.g. {,/usr}/lib/...) This syntax is not a valid AARE but is used by usr.lib.snapd.snap-confine.real in Ubuntu and will currently raise an error in genprof if these lines are not modified.
-#   - Apparmor remount logs are displayed as mount (with remount flag). Profiles generated with aa-genprof are therefore mount rules. It could be interesting to make them remount rules.
-
-valid_fs = [
-    'sysfs', 'tmpfs', 'bdevfs', 'procfs', 'cgroup', 'cgroup2', 'cpuset', 'devtmpfs', 'configfs', 'debugfs', 'tracefs',
-    'securityfs', 'sockfs', 'bpf', 'npipefs', 'ramfs', 'hugetlbfs', 'devpts', 'ext3', 'ext2', 'ext4', 'squashfs',
-    'vfat', 'ecryptfs', 'fuseblk', 'fuse', 'fusectl', 'efivarfs', 'mqueue', 'store', 'autofs', 'binfmt_misc', 'overlay',
-    'none', 'bdev', 'proc', 'pipefs', 'pstore', 'btrfs', 'xfs', '9p', 'resctrl', 'zfs', 'iso9660', 'udf', 'ntfs3',
-    'nfs', 'cifs', 'overlayfs', 'aufs', 'rpc_pipefs', 'msdos', 'nfs4',
-]
+# TODO : Apparmor remount logs are displayed as mount (with remount flag). Profiles generated with aa-genprof are therefore mount rules. It could be interesting to make them remount rules.
 
 flags_keywords = [
     # keep in sync with parser/mount.cc mnt_opts_table!
@@ -48,7 +36,6 @@ flags_keywords = [
     '([A-Za-z0-9])',
 ]
 join_valid_flags = '|'.join(flags_keywords)
-join_valid_fs = '|'.join(valid_fs)
 
 sep = r'\s*[\s,]\s*'
 
@@ -106,27 +93,18 @@ class MountRule(BaseRule):
 
         self.operation = operation
 
-        self.fstype, self.all_fstype, unknown_items = check_and_split_list(fstype[1] if fstype != self.ALL else fstype, valid_fs, self.ALL, type(self).__name__, 'fstype')
-
-        if unknown_items:
-            for it in unknown_items:
-
-                # Several filesystems use fuse internally and are referred as fuse.<software_name> (e.g. fuse.jmtpfs, fuse.s3fs, fuse.obexfs).
-                # Since this list seems to evolve too fast for a fixed list to work in practice, we just accept fuse.*
-                # See https://github.com/libfuse/libfuse/wiki/Filesystems and, https://doc.ubuntu-fr.org/fuse
-                if it.startswith('fuse.') and len(it) > 5:
-                    continue
-
-                it = AARE(it, is_path=False)
-                found = False
-                for fs in valid_fs:
-                    if self._is_covered_aare(it, self.all_fstype, AARE(fs, False), self.all_fstype, 'fstype'):
-                        found = True
-                        break
-                if not found:
-                    raise AppArmorException(_('Passed unknown fstype keyword to %s: %s') % (type(self).__name__, ' '.join(unknown_items)))
-
-        self.is_fstype_equal = fstype[0] if not self.all_fstype else None
+        if fstype == self.ALL or fstype[1] == self.ALL:
+            self.all_fstype = True
+            self.fstype = None
+            self.is_fstype_equal = None
+        else:
+            self.all_fstype = False
+            for it in fstype[1]:
+                l, unused = parse_aare(it, 0, 'fstype')
+                if l != len(it):
+                    raise AppArmorException(f'Invalid aare : {it}')
+            self.fstype = fstype[1]
+            self.is_fstype_equal = fstype[0]
 
         self.options, self.all_options, unknown_items = check_and_split_list(options[1] if options != self.ALL else options, flags_keywords, self.ALL, type(self).__name__, 'options')
         if unknown_items:
@@ -173,7 +151,7 @@ class MountRule(BaseRule):
 
             if r['fstype'] is not None:
                 is_fstype_equal = r['fstype_equals_or_in']
-                fstype = strip_parenthesis(r['fstype']).replace(',', ' ').split()
+                fstype = parse_aare_list(strip_parenthesis(r['fstype']), 'fstype')
             else:
                 is_fstype_equal = None
                 fstype = cls.ALL
@@ -314,6 +292,38 @@ class MountRule(BaseRule):
 
 class MountRuleset(BaseRuleset):
     '''Class to handle and store a collection of Mount rules'''
+
+
+
+def parse_aare(s, offset, param):
+    parsed = ''
+    brace_count = 0
+    for i, c in enumerate(s[offset:], start=offset):
+        if c in [' ', ',', '\t'] and brace_count == 0:
+            break
+        parsed += c
+        if c == '{':
+            brace_count += 1
+        elif c == '}':
+            brace_count -= 1
+            if brace_count < 0:
+                raise AppArmorException(f"Unmatched closing brace in {param}: {s[offset:]}")
+        offset = i
+
+    if brace_count != 0:
+        raise AppArmorException(f"Unmatched opening brace in {param}: {s[offset:]}")
+
+    return offset + 1, parsed
+
+
+def parse_aare_list(s, param):
+    res = []
+    offset = 0
+    while offset <= len(s):
+        offset, part = parse_aare(s, offset, param)
+        if part.translate(' ,\t') != '':
+            res.append(part)
+    return res
 
 
 def wrap_in_with_spaces(value):

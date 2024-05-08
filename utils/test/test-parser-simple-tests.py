@@ -324,9 +324,6 @@ unknown_line = (
     'bare_include_tests/ok_85.sd',
     'bare_include_tests/ok_86.sd',
 
-    # mount with fstype using AARE
-    'mount/ok_12.sd',
-
     # Mount with flags in {remount, [r]unbindable, [r]shared, [r]private, [r]slave} does not support a source
     'mount/ok_opt_68.sd',
     'mount/ok_opt_69.sd',

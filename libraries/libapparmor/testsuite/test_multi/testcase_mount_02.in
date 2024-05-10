@@ -1,0 +1,1 @@
+type=AVC msg=audit(1715045678.914:344186): apparmor="ALLOWED" operation="mount" info="failed flags match" error=-13 profile="steam" name="/newroot/dev/" pid=26487 comm="srt-bwrap" flags="rw, nosuid, nodev, remount, bind, silent, relatime"

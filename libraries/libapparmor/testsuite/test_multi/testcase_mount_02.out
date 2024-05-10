@@ -1,0 +1,14 @@
+START
+File: testcase_mount_02.in
+Event type: AA_RECORD_ALLOWED
+Audit ID: 1715045678.914:344186
+Operation: mount
+Profile: steam
+Name: /newroot/dev/
+Command: srt-bwrap
+Info: failed flags match
+ErrorCode: 13
+PID: 26487
+Flags: rw, nosuid, nodev, remount, bind, silent, relatime
+Epoch: 1715045678
+Audit subid: 344186

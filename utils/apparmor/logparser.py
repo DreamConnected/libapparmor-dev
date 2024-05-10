@@ -212,7 +212,7 @@ class ReadLog:
             self.hashlog[aamode][full_profile]['io_uring'][e['denied_mask']][e['peer_profile']] = True
             return
 
-        elif e['class'] and e['class'] == 'mount':
+        elif e['class'] and e['class'] == 'mount' or e['operation'] == 'mount':
             if e['flags'] != None:
                 e['flags'] = ('=', e['flags'])
             if e['fs_type'] != None:

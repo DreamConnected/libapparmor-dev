@@ -43,12 +43,12 @@ class MountTestParse(AATest):
         ('mount @{mntpnt},',                                                MountRule('mount',   MountRule.ALL,            MountRule.ALL,           '@{mntpnt}',    MountRule.ALL,  False, False, False, ''     )),
         ('mount /a,',                                                       MountRule('mount',   MountRule.ALL,            MountRule.ALL,           '/a',           MountRule.ALL,  False, False, False, ''     )),
         ('mount fstype=(ext3, ext4) /a -> /b,',                             MountRule('mount',   ('=', ['ext3', 'ext4']),  MountRule.ALL,           '/a',           '/b',           False, False, False, ''     )),
-        ('mount fstype=(ext3, ext4) options=(ro, rbind) /a -> /b,',         MountRule('mount',   ('=', ['ext3', 'ext4']),  ('=', ('ro', 'rbind')),  '/a',           '/b',           False, False, False, ''     )),
-        ('mount fstype=(ext3, ext4) options=(ro, rbind) /a -> /b, #cmt',    MountRule('mount',   ('=', ['ext3', 'ext4']),  ('=', ('ro', 'rbind')),  '/a',           '/b',           False, False, False, ' #cmt')),
-        ('mount fstype=({ext3,ext4}) options in (ro, rbind) /a -> /b,',     MountRule('mount',   ('=', ['{ext3,ext4}']),   ('in', ('ro', 'rbind')), '/a',           '/b',           False, False, False, ''     )),
-        ('mount fstype in (ext3, ext4) options=(ro, rbind) /a -> /b, #cmt', MountRule('mount',   ('in', ['ext3', 'ext4']), ('=', ('ro', 'rbind')),  '/a',           '/b',           False, False, False, ' #cmt')),
-        ('mount fstype in (ext3, ext4) option in (ro, rbind) /a, #cmt',     MountRule('mount',   ('in', ['ext3', 'ext4']), ('in', ('ro', 'rbind')), '/a',           MountRule.ALL,  False, False, False, ' #cmt')),
-        ('mount fstype=(ext3, ext4) option=(ro, rbind) /a -> /b, #cmt',     MountRule('mount',   ('=', ['ext3', 'ext4']),  ('=', ('ro', 'rbind')),  '/a',           '/b',           False, False, False, ' #cmt')),
+        ('mount fstype=(ext3, ext4) options=(ro, sync) /a -> /b,',          MountRule('mount',   ('=', ['ext3', 'ext4']),  ('=', ('ro', 'sync')),   '/a',           '/b',           False, False, False, ''     )),
+        ('mount fstype=(ext3, ext4) options=(ro, sync) /a -> /b, #cmt',     MountRule('mount',   ('=', ['ext3', 'ext4']),  ('=', ('ro', 'sync')),   '/a',           '/b',           False, False, False, ' #cmt')),
+        ('mount fstype=({ext3,ext4}) options in (ro, sync) /a -> /b,',      MountRule('mount',   ('=', ['{ext3,ext4}']),   ('in', ('ro', 'sync')),  '/a',           '/b',           False, False, False, ''     )),
+        ('mount fstype in (ext3, ext4) options=(ro, sync) /a -> /b, #cmt',  MountRule('mount',   ('in', ['ext3', 'ext4']), ('=', ('ro', 'sync')),   '/a',           '/b',           False, False, False, ' #cmt')),
+        ('mount fstype in (ext3, ext4) option in (ro, sync) /a, #cmt',      MountRule('mount',   ('in', ['ext3', 'ext4']), ('in', ('ro', 'sync')),  '/a',           MountRule.ALL,  False, False, False, ' #cmt')),
+        ('mount fstype=(ext3, ext4) option=(ro, sync) /a -> /b, #cmt',      MountRule('mount',   ('=', ['ext3', 'ext4']),  ('=', ('ro', 'sync')),   '/a',           '/b',           False, False, False, ' #cmt')),
         ('mount options=(rw, rbind) {,/usr}/lib{,32,64,x32}/modules/ -> /tmp/snap.rootfs_*{,/usr}/lib/modules/,',
                                                                             MountRule('mount',   MountRule.ALL,            ('=', ('rw', 'rbind')),  '{,/usr}/lib{,32,64,x32}/modules/',
                                                                                                                                                                    '/tmp/snap.rootfs_*{,/usr}/lib/modules/',
@@ -67,6 +67,17 @@ class MountTestParse(AATest):
         obj = MountRule.create_instance(rawrule)
         expected.raw_rule = rawrule.strip()
         self.assertTrue(obj.is_equal(expected, True))
+
+    def test_valid_mount_changing_propagation(self):
+        # Rules changing propagation type can either specify a source or a dest (these are equivalent for apparmor_parser in this specific case) but not both.
+        MountRule('mount', MountRule.ALL, ('=', ('runbindable')), '/foo', MountRule.ALL)
+        MountRule('mount', MountRule.ALL, ('=', ('runbindable')), MountRule.ALL, '/foo')
+
+    def test_valid_bind_mount(self):
+        # Fstype must remain empty in bind rules
+        MountRule('mount', MountRule.ALL, ('=', ('bind')), '/foo', MountRule.ALL)
+        MountRule('mount', MountRule.ALL, ('=', ('bind')), MountRule.ALL, '/bar')
+        MountRule('mount', MountRule.ALL, ('=', ('bind')), '/foo', '/bar')
 
 
 class MountTestParseInvalid(AATest):
@@ -142,6 +153,20 @@ class MountTestParseInvalid(AATest):
     def test_invalid_remount_with_source(self):
         with self.assertRaises(AppArmorException):
             MountRule('remount', MountRule.ALL, MountRule.ALL, '/foo', MountRule.ALL)
+
+    def test_invalid_mount_changing_propagation(self):
+        # Rules changing propagation type can either specify a source or a dest (these are equivalent for apparmor_parser in this specific case) but not both.
+        with self.assertRaises(AppArmorException):
+            MountRule('mount', MountRule.ALL, ('=', ('runbindable')), '/foo', '/bar')
+
+        # Rules changing propagation type cannot specify a fstype.
+        with self.assertRaises(AppArmorException):
+            MountRule('mount', ('=', ('ext4')), ('=', ('runbindable')), MountRule.ALL, '/foo')
+
+    def test_invalid_bind_mount(self):
+        # Bind mount rules cannot specify a fstype.
+        with self.assertRaises(AppArmorException):
+            MountRule('mount', ('=', ('ext4')), ('=', ('bind')), MountRule.ALL, '/foo')
 
 
 class MountTestGlob(AATest):

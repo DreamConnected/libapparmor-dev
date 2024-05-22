@@ -85,16 +85,6 @@ exception_not_raised = (
     'mount/bad_1.sd',
     'mount/bad_2.sd',
 
-    # not checked/detected: "make-*" mount opt and an invalid src
-    'mount/bad_opt_17.sd',
-    'mount/bad_opt_18.sd',
-    'mount/bad_opt_19.sd',
-    'mount/bad_opt_20.sd',
-    'mount/bad_opt_21.sd',
-    'mount/bad_opt_22.sd',
-    'mount/bad_opt_23.sd',
-    'mount/bad_opt_24.sd',
-
     'profile/flags/flags_bad10.sd',
     'profile/flags/flags_bad11.sd',
     'profile/flags/flags_bad12.sd',
@@ -323,19 +313,6 @@ unknown_line = (
     'bare_include_tests/ok_84.sd',
     'bare_include_tests/ok_85.sd',
     'bare_include_tests/ok_86.sd',
-
-    # Mount with flags in {remount, [r]unbindable, [r]shared, [r]private, [r]slave} does not support a source
-    'mount/ok_opt_68.sd',
-    'mount/ok_opt_69.sd',
-    'mount/ok_opt_70.sd',
-    'mount/ok_opt_71.sd',
-    'mount/ok_opt_72.sd',
-    'mount/ok_opt_73.sd',
-    'mount/ok_opt_74.sd',
-    'mount/ok_opt_75.sd',
-
-    # options=slave with /** src (first rule in the test causes exception)
-    'mount/ok_opt_84.sd',
 
     # According to spec mount should be in the form fstype=... options=... and NOT in the form options=... fstype=...
     'mount/ok_opt_combo_3.sd',

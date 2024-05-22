@@ -25,15 +25,18 @@ _ = init_translation()
 
 # TODO : Apparmor remount logs are displayed as mount (with remount flag). Profiles generated with aa-genprof are therefore mount rules. It could be interesting to make them remount rules.
 
-flags_keywords = [
-    # keep in sync with parser/mount.cc mnt_opts_table!
-    'ro', 'r', 'read-only', 'rw', 'w', 'suid', 'nosuid', 'dev', 'nodev', 'exec', 'noexec', 'sync', 'async', 'remount',
-    'mand', 'nomand', 'dirsync', 'symfollow', 'nosymfollow', 'atime', 'noatime', 'diratime', 'nodiratime', 'bind', 'B',
-    'move', 'M', 'rbind', 'R', 'verbose', 'silent', 'loud', 'acl', 'noacl', 'unbindable', 'make-unbindable', 'runbindable',
-    'make-runbindable', 'private', 'make-private', 'rprivate', 'make-rprivate', 'slave', 'make-slave', 'rslave', 'make-rslave',
-    'shared', 'make-shared', 'rshared', 'make-rshared', 'relatime', 'norelatime', 'iversion', 'noiversion', 'strictatime',
-    'nostrictatime', 'lazytime', 'nolazytime', 'user', 'nouser',
-    '([A-Za-z0-9])',
+flags_bind_mount = {'B', 'bind', 'R', 'rbind'}
+flags_change_propagation = {
+    'remount', 'unbindable', 'shared', 'private', 'slave', 'runbindable', 'rshared', 'rprivate', 'rslave',
+    'make-unbindable', 'make-shared', 'make-private', 'make-slave', 'make-runbindable', 'make-rshared', 'make-rprivate',
+    'make-rslave'
+}
+# keep in sync with parser/mount.cc mnt_opts_table!
+flags_keywords = list(flags_bind_mount) + list(flags_change_propagation) + [
+    'ro', 'r', 'read-only', 'rw', 'w', 'suid', 'nosuid', 'dev', 'nodev', 'exec', 'noexec', 'sync', 'async', 'mand',
+    'nomand', 'dirsync', 'symfollow', 'nosymfollow', 'atime', 'noatime', 'diratime', 'nodiratime', 'move', 'M',
+    'verbose', 'silent', 'loud', 'acl', 'noacl', 'relatime', 'norelatime', 'iversion', 'noiversion', 'strictatime',
+    'nostrictatime', 'lazytime', 'nolazytime', 'user', 'nouser', '([A-Za-z0-9])',
 ]
 join_valid_flags = '|'.join(flags_keywords)
 
@@ -112,6 +115,7 @@ class MountRule(BaseRule):
         self.is_options_equal = options[0] if not self.all_options else None
 
         self.source, self.all_source = self._aare_or_all(source, 'source', is_path=False, log_event=log_event)
+        self.dest, self.all_dest = self._aare_or_all(dest, 'dest', is_path=False, log_event=log_event)
 
         if not self.all_fstype and self.is_fstype_equal not in ('=', 'in'):
             raise AppArmorBug(f'Invalid is_fstype_equal : {self.is_fstype_equal}')
@@ -120,11 +124,14 @@ class MountRule(BaseRule):
         if self.operation != 'mount' and not self.all_source:
             raise AppArmorException(f'Operation {self.operation} cannot have a source')
 
-        flags_forbidden_with_source = {'remount', 'unbindable', 'shared', 'private', 'slave', 'runbindable', 'rshared', 'rprivate', 'rslave'}
-        if self.operation == 'mount' and not self.all_source and not self.all_options and flags_forbidden_with_source & self.options != set():
-            raise AppArmorException(f'Operation {flags_forbidden_with_source & self.options} cannot have a source. Source = {self.source}')
+        if self.operation == 'mount' and not self.all_options and flags_change_propagation & self.options != set():
+            if not (self.all_source or self.all_dest):
+                raise AppArmorException(f'Operation {flags_change_propagation & self.options} cannot specify a source. Source = {self.source}')
+            elif not self.all_fstype:
+                raise AppArmorException(f'Operation {flags_change_propagation & self.options} cannot specify a fstype. Fstype = {self.fstype}')
 
-        self.dest, self.all_dest = self._aare_or_all(dest, 'dest', is_path=False, log_event=log_event)
+        if self.operation == 'mount' and not self.all_options and flags_bind_mount & self.options != set() and not self.all_fstype:
+            raise AppArmorException(f'Bind mount rules cannot specify a fstype. Fstype = {self.fstype}')
 
         self.can_glob = not self.all_source and not self.all_dest and not self.all_options
 

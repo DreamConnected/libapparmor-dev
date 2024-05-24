@@ -1,0 +1,1 @@
+[338728.513756] audit: type=1400 audit(1716575873.613:1160): apparmor="DENIED" operation="sendmsg" class="net" profile="/home/ubuntu/apparmor/tests/regression/apparmor/net_inet_snd" pid=31340 comm="net_inet_snd" laddr=127.187.243.54 lport=3457 saddr=127.187.243.54 src=3457 daddr=127.0.97.3 dest=3456 family="inet" sock_type="dgram" protocol=17 requested="send" denied="send"

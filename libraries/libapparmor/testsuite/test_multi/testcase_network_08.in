@@ -1,0 +1,1 @@
+[321557.117710] audit: type=1400 audit(1716558702.097:793): apparmor="DENIED" operation="setsockopt" class="net" info="failed cmd selection match" error=-13 profile="/home/ubuntu/apparmor/tests/regression/apparmor/net_inet_rcv" pid=26135 comm="net_inet_rcv" family="inet" sock_type="dgram" protocol=17 requested="setopt" denied="setopt"

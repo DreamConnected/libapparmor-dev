@@ -1,0 +1,18 @@
+START
+File: testcase_network_07.in
+Event type: AA_RECORD_DENIED
+Audit ID: 1716558411.518:583
+Operation: bind
+Mask: bind
+Denied Mask: bind
+Profile: /home/ubuntu/apparmor/tests/regression/apparmor/net_inet_rcv
+Command: net_inet_rcv
+PID: 23602
+Network family: inet
+Socket type: dgram
+Protocol: udp
+Local addr: 127.0.97.3
+Local port: 3456
+Class: net
+Epoch: 1716558411
+Audit subid: 583

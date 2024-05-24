@@ -157,9 +157,13 @@ key_capname		"capname"
 key_offset		"offset"
 key_target		"target"
 key_laddr		"laddr"
+key_saddr		"saddr"
 key_faddr		"faddr"
+key_daddr		"daddr"
 key_lport		"lport"
+key_srcport		"src"
 key_fport		"fport"
+key_destport		"dest"
 key_bus			"bus"
 key_dest		"dest"
 key_path		"path"
@@ -351,9 +355,13 @@ yy_flex_debug = 0;
 {key_offset}		{ return(TOK_KEY_OFFSET); }
 {key_target}		{ return(TOK_KEY_TARGET); }
 {key_laddr}		{ yy_push_state(ip_addr, yyscanner); return(TOK_KEY_LADDR); }
+{key_saddr}		{ yy_push_state(ip_addr, yyscanner); return(TOK_KEY_LADDR); }
 {key_faddr}		{ yy_push_state(ip_addr, yyscanner); return(TOK_KEY_FADDR); }
+{key_daddr}		{ yy_push_state(ip_addr, yyscanner); return(TOK_KEY_FADDR); }
 {key_lport}		{ return(TOK_KEY_LPORT); }
+{key_srcport}		{ return(TOK_KEY_LPORT); }
 {key_fport}		{ return(TOK_KEY_FPORT); }
+{key_destport}		{ return(TOK_KEY_FPORT); }
 {key_bus}		{ return(TOK_KEY_BUS); }
 {key_path}		{ return(TOK_KEY_PATH); }
 {key_interface}		{ return(TOK_KEY_INTERFACE); }

@@ -77,6 +77,7 @@ for af_pair in af_pairs:
 aa_network_types = r'\s+tcp|\s+udp|\s+icmp'
 
 aa_flags = ('complain',
+            'unconfined',
             'audit',
             'attach_disconnected',
             'no_attach_disconnected',

@@ -89,7 +89,7 @@ LOADED_PROFILES=$("$PARSER" -N $PROFILE_DIRS) || {
 echo "$LOADED_PROFILES" | awk '
 BEGIN {
   while (getline < "'${PROFILES}'" ) {
-    str = sub(/ \((enforce|complain)\)$/, "", $0);
+    str = sub(/ \((enforce|complain|unconfined)\)$/, "", $0);
     if (match($0, /^libvirt-[0-9a-f\-]+$/) == 0)
       arr[$str] = $str
   }

@@ -14,7 +14,7 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-@{chromium} = chromium{,-browser}
+@{chromium} = {,ungoogled-}chromium{,-browser}
 
 # We need 'flags=(attach_disconnected)' in newer chromium versions
 profile chromium_browser /usr/lib/@{chromium}/@{chromium} flags=(attach_disconnected) {

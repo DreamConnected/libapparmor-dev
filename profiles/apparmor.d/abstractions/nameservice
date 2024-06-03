@@ -116,6 +116,7 @@
   network netlink raw,
 
   # interface details
+  @{PROC}/@{pid}/net/ipv6_route r,
   @{PROC}/@{pid}/net/route r,
 
   # Include additions to the abstraction

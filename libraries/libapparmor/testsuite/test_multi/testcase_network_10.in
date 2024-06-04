@@ -1,1 +1,0 @@
-[341455.536270] audit: type=1400 audit(1716578600.733:1467): apparmor="DENIED" operation="bind" class="net" profile="/home/ubuntu/apparmor/tests/regression/apparmor/net_inet_rcv" pid=35013 comm="net_inet_rcv" saddr=fd74:1820:b03a:b361::cf32 src=3456 family="inet6" sock_type="dgram" protocol=17 requested="bind" denied="bind"

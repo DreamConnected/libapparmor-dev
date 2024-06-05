@@ -36,6 +36,9 @@ profile php-fpm /usr/sbin/php-fpm* flags=(attach_disconnected) {
   @{run}/php*-fpm.pid rw,
   @{run}/php{,-fpm}/php*-fpm.sock rwlk,
 
+  # LP: #2061113
+  owner @{run}/systemd/notify w,
+
   # to reload
   /usr/sbin/php-fpm* rix,
 

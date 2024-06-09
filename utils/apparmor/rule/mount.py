@@ -66,7 +66,7 @@ mount_condition_pattern = rf'({fs_type_pattern})?\s*({option_pattern})?'
 # - A path          : /foo
 # - A globbed Path  : **
 
-glob_pattern = r'(\s*(?P<%s>(([/{]|\*\*)\S*|"([/{]|\*\*)[^"]*"|@{\S+}\S*|"@{\S+}[^"]*")|\w+))'
+glob_pattern = r'(\s*(?P<%s>(([/{]|\*\*)\S*|"([/{]|\*\*)[^"]*"|@{\S+}\S*|"@{\S+}[^"]*"|"")|\w+))'
 source_fileglob_pattern = glob_pattern % 'source_file'
 dest_fileglob_pattern = glob_pattern % 'dest_file'
 
@@ -114,7 +114,7 @@ class MountRule(BaseRule):
             raise AppArmorException(_('Passed unknown options keyword to %s: %s') % (type(self).__name__, ' '.join(unknown_items)))
         self.is_options_equal = options[0] if not self.all_options else None
 
-        self.source, self.all_source = self._aare_or_all(source, 'source', is_path=False, log_event=log_event)
+        self.source, self.all_source = self._aare_or_all(source, 'source', is_path=False, log_event=log_event, empty_ok=True)
         self.dest, self.all_dest = self._aare_or_all(dest, 'dest', is_path=False, log_event=log_event)
 
         if not self.all_fstype and self.is_fstype_equal not in ('=', 'in'):

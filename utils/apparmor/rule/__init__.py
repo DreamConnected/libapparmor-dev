@@ -51,7 +51,7 @@ class BaseRule(metaclass=ABCMeta):
         # Set only in the parse() class method
         self.raw_rule = None
 
-    def _aare_or_all(self, rulepart, partname, is_path, log_event):
+    def _aare_or_all(self, rulepart, partname, is_path, log_event, empty_ok=False):
         """checks rulepart and returns
            - (AARE, False) if rulepart is a (non-empty) string
            - (None, True) if rulepart is all_obj (typically *Rule.ALL)
@@ -67,7 +67,7 @@ class BaseRule(metaclass=ABCMeta):
         if rulepart == self.ALL:
             return None, True
         elif isinstance(rulepart, str):
-            if not rulepart.strip():
+            if not rulepart.strip() and not empty_ok:
                 raise AppArmorBug(
                     'Passed empty %(partname)s to %(classname)s: %(rulepart)s'
                     % {'partname': partname, 'classname': self.__class__.__name__, 'rulepart': str(rulepart)})

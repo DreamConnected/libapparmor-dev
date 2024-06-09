@@ -15,7 +15,7 @@ import re
 
 from apparmor.common import AppArmorBug, AppArmorException
 
-from apparmor.regex import RE_PROFILE_MOUNT, strip_parenthesis
+from apparmor.regex import RE_PROFILE_MOUNT, strip_parenthesis, strip_quotes
 from apparmor.rule import AARE
 from apparmor.rule import BaseRule, BaseRuleset, parse_modifiers, logprof_value_or_all, check_and_split_list
 
@@ -171,12 +171,12 @@ class MountRule(BaseRule):
                 options = cls.ALL
 
             if operation == 'mount' and r['source_file'] is not None:  # Umount cannot have a source
-                source = r['source_file']
+                source = strip_quotes(r['source_file'])
             else:
                 source = cls.ALL
 
             if r['dest_file'] is not None:
-                dest = r['dest_file']
+                dest = strip_quotes(r['dest_file'])
             else:
                 dest = cls.ALL
 

@@ -260,6 +260,7 @@ remove_profiles() {
 			rc=$?
 			if [ "$rc" -ne 0 ] ; then
 				retval=$rc
+				aa_log_failure_msg "Unloading profile '$profile' failed"
 			fi
 		done
 		return "$retval"

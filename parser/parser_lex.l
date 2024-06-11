@@ -255,9 +255,11 @@ MODES		{MODE_CHARS}+
 WS		[[:blank:]]
 NUMBER		[[:digit:]]+
 
+ID_FIRST_CHARS	[^ \t\r\n"!,#]
+ID_FIRST	{ID_CHARS}|(,{ID_CHARS}|\\[ ]|\\\t|\\\"|\\!|\\,|\\#)
 ID_CHARS	[^ \t\r\n"!,]
 ID 		{ID_CHARS}|(,{ID_CHARS}|\\[ ]|\\\t|\\\"|\\!|\\,)
-IDS		{ID}+
+IDS		{ID_FIRST}{ID}*
 INC_ID 		[^ \t\r\n"!,<>]|(,[^ \t\r\n"!,<>]|\\[ ]|\\\t|\\\"|\\!|\\,)
 INC_IDS		{INC_ID}+
 POST_VAR_ID_CHARS	[^ \t\n"!,]{-}[=\+]
@@ -505,6 +507,12 @@ GT		>
 		yylval.id = strdup(yytext);
 		DUMP_PREPROCESS;
 		yyerror(_("Variable declarations do not accept trailing commas"));
+	}
+
+	#.*\r?\n	{ /* normal comment */
+		DUMP_AND_DEBUG("comment(%d): %s\n", current_lineno, yytext);
+		current_lineno++;
+		POP();
 	}
 
 	\\\n	{ DUMP_PREPROCESS; current_lineno++ ; }

@@ -643,6 +643,18 @@ verify_binary_equality "attachment slash filtering" \
                         @{FOO}=/foo
 			   /t @{BAR}/@{FOO} { }"
 
+# verify comment at end of variable assignment is not treated as a value
+verify_binary_equality "comment at end of set var" \
+                       "/t { /bin/ r, }" \
+                       "@{BAR}=/bin/   #a tail comment
+			   /t { @{BAR} r, }"
+
+verify_binary_equality "value like comment at end of set var" \
+                       "/t { /{bin/,#value} r, }" \
+                       "@{BAR}=bin/   \#value
+			   /t { /@{BAR} r, }"
+
+
 # This can potentially fail as ideally it requires a better dfa comparison
 # routine as it can generates hormomorphic dfas. The enumeration of the
 # dfas dumped will be different, even if the binary is the same

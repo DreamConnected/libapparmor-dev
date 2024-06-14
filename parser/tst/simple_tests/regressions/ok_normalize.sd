@@ -1,0 +1,25 @@
+#
+#=Description caused an infinite loop in expr normalization
+#=EXRESULT PASS
+
+# This test triggers an infinite loop bug in expr normalization
+# Note: this test might be able to be reduced more but, each element appears
+# to be required to trigger the bug.
+# that is the initial var assignment, += with the "comment" at the end
+# (which is a separate bug), the expansion in the 2nd variable and then
+# the use of the 2nd variable.
+# This seems to be due to difference in consistency check between expansion
+# at parse time and variable expansion.
+# eg. expanding @{exec_path} manually will result in a failure to parse
+# see: https://gitlab.com/apparmor/apparmor/-/issues/398
+
+@{var}=*-linux-gnu*
+@{var}+=*-suse-linux*  #aa:only opensuse
+
+@{exec_path} = /{,@{var}/}t
+
+profile test {
+
+
+  @{exec_path} mr,
+}

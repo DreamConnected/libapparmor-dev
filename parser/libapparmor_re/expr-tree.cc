@@ -189,6 +189,19 @@ void Node::dump_syntax_tree(ostream &os)
  *        a   b                    c   T
  *
  */
+
+
+static Node *simplify_eps_pair(Node *t)
+{
+	if (dynamic_cast<TwoChildNode *>(t) &&
+	    t->child[0] == &epsnode &&
+	    t->child[1] == &epsnode) {
+		t->release();
+		return &epsnode;
+	}
+	return t;
+}
+
 static void rotate_node(Node *t, int dir)
 {
 	// (a | b) | c -> a | (b | c)
@@ -197,7 +210,9 @@ static void rotate_node(Node *t, int dir)
 	t->child[dir] = left->child[dir];
 	left->child[dir] = left->child[!dir];
 	left->child[!dir] = t->child[!dir];
-	t->child[!dir] = left;
+
+        // check that rotation didn't create (E | E)
+	t->child[!dir] = simplify_eps_pair(left);
 }
 
 /* return False if no work done */
@@ -209,13 +224,7 @@ int TwoChildNode::normalize_eps(int dir)
 		// Ea -> aE
 		// Test for E | (E | E) and E . (E . E) which will
 		// result in an infinite loop
-		Node *c = child[!dir];
-		if (dynamic_cast<TwoChildNode *>(c) &&
-		    &epsnode == c->child[dir] &&
-		    &epsnode == c->child[!dir]) {
-			c->release();
-			c = &epsnode;
-		}
+		Node *c = simplify_eps_pair(child[!dir]);
 		child[!dir] = child[dir];
 		child[dir] = c;
 		return 1;

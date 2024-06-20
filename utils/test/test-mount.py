@@ -42,7 +42,9 @@ class MountTestParse(AATest):
         ('mount fstype=(ext3, ext4) options=(ro),',                         MountRule('mount',   ('=', ['ext3', 'ext4']),  ('=', ('ro')),           MountRule.ALL,  MountRule.ALL,  False, False, False, ''     )),
         ('mount @{mntpnt},',                                                MountRule('mount',   MountRule.ALL,            MountRule.ALL,           '@{mntpnt}',    MountRule.ALL,  False, False, False, ''     )),
         ('mount /a,',                                                       MountRule('mount',   MountRule.ALL,            MountRule.ALL,           '/a',           MountRule.ALL,  False, False, False, ''     )),
+        ('mount "/a space",',                                               MountRule('mount',   MountRule.ALL,            MountRule.ALL,           '/a space',     MountRule.ALL,  False, False, False, '')),
         ('mount fstype=(ext3, ext4) /a -> /b,',                             MountRule('mount',   ('=', ['ext3', 'ext4']),  MountRule.ALL,           '/a',           '/b',           False, False, False, ''     )),
+        ('mount fstype=(ext3, ext4) /a -> "/bar space",',                   MountRule('mount',   ('=', ['ext3', 'ext4']),  MountRule.ALL,           '/a',           '/bar space',   False, False, False, '')),
         ('mount fstype=(ext3, ext4) options=(ro, sync) /a -> /b,',          MountRule('mount',   ('=', ['ext3', 'ext4']),  ('=', ('ro', 'sync')),   '/a',           '/b',           False, False, False, ''     )),
         ('mount fstype=(ext3, ext4) options=(ro, sync) /a -> /b, #cmt',     MountRule('mount',   ('=', ['ext3', 'ext4']),  ('=', ('ro', 'sync')),   '/a',           '/b',           False, False, False, ' #cmt')),
         ('mount fstype=({ext3,ext4}) options in (ro, sync) /a -> /b,',      MountRule('mount',   ('=', ['{ext3,ext4}']),   ('in', ('ro', 'sync')),  '/a',           '/b',           False, False, False, ''     )),
@@ -53,6 +55,8 @@ class MountTestParse(AATest):
                                                                             MountRule('mount',   MountRule.ALL,            ('=', ('rw', 'rbind')),  '{,/usr}/lib{,32,64,x32}/modules/',
                                                                                                                                                                    '/tmp/snap.rootfs_*{,/usr}/lib/modules/',
                                                                                                                                                                                     False, False, False, ''     )),
+        ('mount options=(runbindable, rw) -> /,',                           MountRule('mount',   MountRule.ALL,            ('=', ['runbindable', 'rw']), MountRule.ALL, '/',        False, False, False, '')),
+        ('mount "" -> /,',                                                  MountRule('mount',   MountRule.ALL,            MountRule.ALL,           '',             '/',            False, False, False, '')),
         ('umount,',                                                         MountRule('umount',  MountRule.ALL,            MountRule.ALL,           MountRule.ALL,  MountRule.ALL,  False, False, False, ''     )),
         ('umount fstype=ext3,',                                             MountRule('umount',  ('=', ['ext3']),          MountRule.ALL,           MountRule.ALL,  MountRule.ALL,  False, False, False, ''     )),
         ('umount /a,',                                                      MountRule('umount',  MountRule.ALL,            MountRule.ALL,           MountRule.ALL,  '/a',           False, False, False, ''     )),
@@ -66,7 +70,7 @@ class MountTestParse(AATest):
         self.assertTrue(MountRule.match(rawrule))
         obj = MountRule.create_instance(rawrule)
         expected.raw_rule = rawrule.strip()
-        self.assertTrue(obj.is_equal(expected, True))
+        self.assertTrue(obj.is_equal(expected, True), f'\n  {rawrule}   expected,\n  {obj.get_clean()}   returned by obj.get_clean()\n  {expected.get_clean()}   returned by expected.get_clean()')
 
     def test_valid_mount_changing_propagation(self):
         # Rules changing propagation type can either specify a source or a dest (these are equivalent for apparmor_parser in this specific case) but not both.

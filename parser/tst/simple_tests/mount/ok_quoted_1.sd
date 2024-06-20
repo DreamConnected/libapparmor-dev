@@ -1,0 +1,9 @@
+#
+#=Description basic mount rules with quoted paths
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  mount    ""  -> "/",
+  mount    ""  -> "/tmp/",
+  umount "/",
+}

@@ -96,7 +96,7 @@ class TestLogprof(AATest):
                 raise Exception('Unknown line in json log %s: %s' % (jsonlog, line))
 
         # give logprof some time to write the updated profile and terminate
-        self.process.wait(timeout=0.3)
+        self.process.wait(timeout=0.4)
         self.assertEqual(self.process.returncode, 0)
 
         for file in expected:

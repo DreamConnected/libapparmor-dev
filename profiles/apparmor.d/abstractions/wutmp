@@ -13,6 +13,8 @@
 
   # some services update wtmp, utmp, and lastlog with per-user
   # connection information
+  /var/lib/wtmpdb/  r,
+  /var/lib/wtmpdb/wtmp.db{,-journal} rwlk,
   /var/log/lastlog  rwk,
   /var/log/wtmp     rwk,
   /var/log/btmp     rwk,

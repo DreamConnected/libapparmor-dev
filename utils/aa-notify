@@ -104,7 +104,7 @@ def notify_about_new_entries(logfile, wait=0):
                 debug_logger.info(format_event(event, logfile))
                 yield(format_event(event, logfile))
         except PermissionError:
-            sys.exit(_("ERROR: Cannot read {}. Please check permissions.".format(logfile)))
+            sys.exit(_("ERROR: Cannot read {}. Please check permissions.").format(logfile))
 
     else:
         print(_('Notification emitter started in the background'))

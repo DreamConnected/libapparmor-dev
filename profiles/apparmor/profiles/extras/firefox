@@ -139,7 +139,7 @@ profile firefox @{MOZ_LIBDIR}/@{MOZ_APP_NAME}{,*[^s][^h]} {
      interface=org.gtk.gio.DesktopAppInfo
      member=Launched,
 
-  /etc/timezone r,
+  /etc/{,writable/}timezone r,
   /etc/wildmidi/wildmidi.cfg r,
 
   # firefox specific
@@ -416,14 +416,17 @@ profile firefox @{MOZ_LIBDIR}/@{MOZ_APP_NAME}{,*[^s][^h]} {
        bus=system
        path=/org/freedesktop/UPower
        interface=org.freedesktop.UPower
-       member=EnumerateDevices
-       peer=(name=org.freedesktop.UPower),
+       member=EnumerateDevices,
+  dbus (send)
+       bus=system
+       path=/org/freedesktop/UPower
+       interface=org.freedesktop.DBus.Properties
+       member=GetAll,
   dbus (send)
        bus=system
        path=/org/freedesktop/UPower/devices/*
        interface=org.freedesktop.DBus.Properties
-       member=GetAll
-       peer=(name=org.freedesktop.UPower),
+       member=GetAll,
 
   # File browser
   dbus (send)

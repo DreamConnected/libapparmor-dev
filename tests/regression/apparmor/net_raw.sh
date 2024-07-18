@@ -29,3 +29,7 @@ runchecktest "RAW SOCKET (no cap)" fail
 genprofile cap:net_raw network:
 runchecktest "RAW SOCKET (cap net_raw)" pass
 
+if [ "$(parser_supports 'all,')" = "true" ]; then
+	genprofile "all"
+	runchecktest "RAW SOCKET (allow all)" pass
+fi

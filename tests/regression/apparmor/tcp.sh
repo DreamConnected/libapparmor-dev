@@ -35,6 +35,12 @@ runchecktest "TCP (no apparmor)" pass $port
 genprofile 
 runchecktest "TCP (accept, connect) no network rules" fail $port
 
+if [ "$(parser_supports 'all,')" = "true" ]; then
+	# PASS TEST - allow all
+	genprofile "all"
+	runchecktest "TCP (allow all)" pass $port
+fi
+
 # PASS TEST - allow tcp
 genprofile network:tcp
 runchecktest "TCP (accept, connect) allow tcp" pass $port

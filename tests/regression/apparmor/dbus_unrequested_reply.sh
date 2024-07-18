@@ -80,6 +80,14 @@ run_tests()
 	sendmethodreturn
 	ur_checktestbg
 
+	if [ "$(parser_supports 'all,')" = "true" ]; then
+		# All perms are granted so the logs should be equal
+		ur_gendbusprofile "all,"
+		ur_runtestbg "unrequested_reply (method_return, dbus allowed)" pass $confined_log
+		sendmethodreturn
+		ur_checktestbg "compare_logs $unconfined_log eq $confined_log"
+	fi
+
 	# All dbus perms are granted so the logs should be equal
 	ur_gendbusprofile "dbus,"
 	ur_runtestbg "unrequested_reply (method_return, dbus allowed)" pass $confined_log

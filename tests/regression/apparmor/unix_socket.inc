@@ -71,6 +71,11 @@ do_test()
 
 	desc+=" confined $test_prog"
 
+	if [ "$(parser_supports 'all,')" = "true" ]; then
+		$genprof "all"
+		runchecktest "$desc (allow all)" pass $args
+	fi
+
 	$genprof "unix:ALL"
 	runchecktest "$desc (implicit perms)" pass $args
 

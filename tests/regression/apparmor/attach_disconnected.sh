@@ -105,6 +105,15 @@ do_test "attach_disconnected" pass $file $att_dis_client $socket $loop_device $n
 
 # TODO: adding attach_disconnected.path to a replaced unconfined
 
+# ALLOW ALL does not include attach_disconnected
+if [ "$(parser_supports 'all,')" = "true" ]; then
+	genprofile "all" flag:attach_disconnected -- image=$att_dis_client "all"
+	do_test "attach_disconnected allow all" pass $file $att_dis_client $socket $loop_device $new_root $put_old
+
+	genprofile "all" -- image=$att_dis_client "all"
+	do_test "attach_disconnected allow all no flag" fail $file $att_dis_client $socket $loop_device $new_root $put_old
+fi
+
 genprofile $file_perm unix:create $socket_perm $att_dis_client:px -- image=$att_dis_client $file_perm unix:create $socket_perm $create_dir $cap "pivot_root:ALL" "mount:ALL" flag:attach_disconnected
 
 do_test "attach_disconnected" pass $file $att_dis_client $socket $loop_device $new_root $put_old

@@ -95,6 +95,10 @@ for username in "root" "$userid" ; do
     genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "deny:mqueue" "$sender:px" "$pipe:rw" -- image=$sender "deny mqueue" "$pipe:rw"
     do_tests "confined $username - deny perms" fail fail fail fail $usercmd
 
+    if [ "$(parser_supports 'all,')" = "true" ]; then
+	genprofile "all" -- image=$sender "all"
+	do_tests "confined $username - allow all" pass pass pass pass $usercmd
+    fi
 
     # generic mqueue
     # 2 Potential failures caused by missing other x permission in path

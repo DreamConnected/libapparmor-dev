@@ -120,6 +120,11 @@ if [ "$(kernel_features mount)" != "true" -o "$(parser_supports 'mount,')" != "t
 	exit
 fi
 
+if [ "$(parser_supports 'all,')" = "true" ]; then
+	genprofile "all"
+	do_test "allow all rule" pass "$put_old" "$new_root" "$test"
+fi
+
 # Ensure failure when no pivot_root perms are granted
 genprofile $cur $cap
 do_test "cap only" fail "$put_old" "$new_root" "$test"

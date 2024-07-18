@@ -60,6 +60,12 @@ run_tests()
 
 	# Make sure send is allowed when confined with appropriate permissions
 
+	if [ "$(parser_supports 'all,')" = "true" ]; then
+		message_gendbusprofile "all,"
+		runtestfg "message (allow all)" pass $confined_args
+		checktestfg "compare_logs $unconfined_log eq $confined_log"
+	fi
+
 	message_gendbusprofile "dbus,"
 	runtestfg "message (dbus allowed)" pass $confined_args
 	checktestfg "compare_logs $unconfined_log eq $confined_log"

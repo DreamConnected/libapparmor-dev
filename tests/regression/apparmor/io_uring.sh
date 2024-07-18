@@ -55,6 +55,11 @@ do_tests "no perms" fail fail
 genprofile $required_perms "qual=deny:io_uring"
 do_tests "deny perms" fail fail
 
+if [ "$(parser_supports 'all,')" = "true" ]; then
+	genprofile "all"
+	do_tests "allow all" pass pass
+fi
+
 genprofile $required_perms "io_uring"
 do_tests "generic perms" pass pass
 

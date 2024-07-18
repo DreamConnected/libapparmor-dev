@@ -97,8 +97,8 @@ generate_profile="genprofile network $sender:px -- image=$sender network"
 do_tests "ipv4 tcp no conds" pass pass $bind_ipv4 $bind_port $remote_ipv4 $remote_port tcp "$generate_profile"
 
 setsockopt_rules="network;(setopt,getopt);ip=0.0.0.0;port=0" # INADDR_ANY
-rcv_rules="network;ip=$bind_ipv4;peer=(ip=anon)"
-snd_rules="network;ip=$remote_ipv4;peer=(ip=anon)"
+rcv_rules="network;ip=$bind_ipv4;peer=(ip=none)"
+snd_rules="network;ip=$remote_ipv4;peer=(ip=none)"
 
 generate_profile="genprofile network;ip=$bind_ipv4;port=$bind_port;peer=(ip=$remote_ipv4,port=$remote_port) $setsockopt_rules $rcv_rules $sender:px -- image=$sender network;ip=$remote_ipv4;port=$remote_port;peer=(ip=$bind_ipv4,port=$bind_port) $setsockopt_rules $snd_rules"
 do_tests "ipv4 udp generic perms" pass pass $bind_ipv4 $bind_port $remote_ipv4 $remote_port udp "$generate_profile"
@@ -126,11 +126,26 @@ generate_profile="genprofile network $sender:px -- image=$sender network"
 do_tests "ipv6 tcp no conds" pass pass $bind_ipv6 $bind_port $remote_ipv6 $remote_port tcp "$generate_profile"
 
 setsockopt_rules="network;(setopt,getopt);ip=::0;port=0" # IN6ADDR_ANY_INIT
-rcv_rules="network;ip=$bind_ipv6;peer=(ip=anon)"
-snd_rules="network;ip=$remote_ipv6;peer=(ip=anon)"
+rcv_rules="network;ip=$bind_ipv6;peer=(ip=none)"
+snd_rules="network;ip=$remote_ipv6;peer=(ip=none)"
 
 generate_profile="genprofile network;ip=$bind_ipv6;port=$bind_port;peer=(ip=$remote_ipv6,port=$remote_port) $setsockopt_rules $rcv_rules $sender:px -- image=$sender network;ip=$remote_ipv6;port=$remote_port;peer=(ip=$bind_ipv6,port=$bind_port) $setsockopt_rules $snd_rules"
 do_tests "ipv6 udp generic perms" pass pass $bind_ipv6 $bind_port $remote_ipv6 $remote_port udp "$generate_profile"
 
 generate_profile="genprofile network;ip=$bind_ipv6;port=$bind_port;peer=(ip=$remote_ipv6,port=$remote_port) $setsockopt_rules $rcv_rules $sender:px -- image=$sender network;ip=$remote_ipv6;port=$remote_port;peer=(ip=$bind_ipv6,port=$bind_port) $setsockopt_rules $snd_rules"
 do_tests "ipv6 tcp generic perms" pass pass $bind_ipv6 $bind_port $remote_ipv6 $remote_port tcp "$generate_profile"
+
+
+if [ "$(parser_supports 'all,')" = "true" ]; then
+    generate_profile="genprofile all -- image=$sender all"
+    do_tests "ipv4 udp allow all" pass pass $bind_ipv4 $bind_port $remote_ipv4 $remote_port udp "$generate_profile"
+
+    generate_profile="genprofile all -- image=$sender all"
+    do_tests "ipv4 tcp allow all" pass pass $bind_ipv4 $bind_port $remote_ipv4 $remote_port tcp "$generate_profile"
+
+    generate_profile="genprofile all -- image=$sender all"
+    do_tests "ipv6 udp allow all" pass pass $bind_ipv6 $bind_port $remote_ipv6 $remote_port udp "$generate_profile"
+
+    generate_profile="genprofile all -- image=$sender all"
+    do_tests "ipv6 tcp allow all" pass pass $bind_ipv6 $bind_port $remote_ipv6 $remote_port tcp "$generate_profile"
+fi

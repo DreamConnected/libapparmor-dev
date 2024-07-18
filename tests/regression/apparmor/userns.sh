@@ -101,6 +101,11 @@ fi
 # confined tests should have the same results if apparmor_restrict_unprivileged_userns is enabled or not
 run_confined_tests()
 {
+	if [ "$(parser_supports 'all,')" = "true" ]; then
+		generate_profile="genprofile all"
+		do_test "confined allow all $1" pass pass pass pass "$generate_profile"
+	fi
+
 	generate_profile="genprofile userns"
 	do_test "confined all perms $1" pass pass fail fail "$generate_profile"
 

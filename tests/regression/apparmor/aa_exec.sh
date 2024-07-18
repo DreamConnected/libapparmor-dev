@@ -79,3 +79,16 @@ runchecktest "complain (--namespace=${ns})" pass "$aa_exec -n $ns -p $test" "$te
 
 genprofile_aa_exec "$test" 0
 runchecktest "negative test: bad ns (--namespace=${ns}XXX)" fail "$aa_exec -n ${ns}XXX -p $test" "$test (enforce)"
+
+if [ "$(parser_supports 'all,')" = "true" ]; then
+    genprofile --stdin <<EOF
+$test {
+  all,
+}
+
+:${ns}:${test} {
+  all,
+}
+EOF
+    runchecktest "allow all" pass "$aa_exec -p $test" "$test (enforce)"
+fi

@@ -45,6 +45,11 @@ run_tests()
 
 	# Make sure we're okay when confined with appropriate permissions
 
+	if [ "$(parser_supports 'all,')" = "true" ]; then
+		gendbusprofile "all,"
+		runchecktest "eavesdrop (allow all)" pass $args
+	fi
+
 	gendbusprofile "dbus,"
 	runchecktest "eavesdrop (dbus allowed)" pass $args
 

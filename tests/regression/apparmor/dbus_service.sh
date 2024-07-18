@@ -92,6 +92,14 @@ run_tests()
 
 	# Make sure we're okay when confined with appropriate permissions
 
+	if [ "$(parser_supports 'all,')" = "true" ]; then
+		service_gendbusprofile "all,"
+		service_runtestbg "service (allow all)" pass $unconfined_log
+		sendmethod
+		sendsignal
+		service_checktestbg "compare_logs $unconfined_log eq $confined_log"
+	fi
+
 	service_gendbusprofile "dbus,"
 	service_runtestbg "service (dbus allowed)" pass $unconfined_log
 	sendmethod

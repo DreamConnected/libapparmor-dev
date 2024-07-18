@@ -235,6 +235,15 @@ runchecktest "test 12p2 -hc" fail -h -c -n 100 $helper
 runchecktest "test 12p2 -h prog" fail -h -n 100 $helper ${bin_true}
 runchecktest "test 12p2 -hc prog" fail -h -c -n 100 $helper ${bin_true}
 
+if [ "$(parser_supports 'all,')" = "true" ]; then
+	genprofile "all"
+	runchecktest "test allow all" pass -n 100 ${bin_true}
+	runchecktest "test allow all -c" pass -c -n 100 ${bin_true}
+	runchecktest "test allow all -h" pass -h -n 100 $helper
+	runchecktest "test allow all -hc" pass -h -c -n 100 $helper
+	runchecktest "test allow all -h prog" pass -h -n 100 $helper ${bin_true}
+	runchecktest "test allow all -hc prog" pass -h -c -n 100 $helper ${bin_true}
+fi
 
 #ptraced confined app traced by profile can px
 genprofile ${bin_true}:rpx $helper:rix signal:ALL ptrace:peer=$test ptrace:peer=${bin_true} -- image=${bin_true} ${bin_true}:rix

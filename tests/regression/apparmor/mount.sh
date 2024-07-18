@@ -424,6 +424,34 @@ fsmount_tests() {
 	fsmount_test " fsmount deny att_dis" "qual=deny:" "flag:attach_disconnected" ${should_fail}
 }
 
+all_rule() {
+	if [ "$(parser_supports 'all,')" != "true" ]; then
+		echo "    not supported by parser - skipping allow all,"
+		return
+	fi
+
+	settest mount
+	genprofile "all"
+
+	runchecktest "MOUNT (confined allow all)" pass mount ${loop_device} ${mount_point}
+
+	runchecktest "UMOUNT (confined allow all)" pass umount ${loop_device} ${mount_point}
+
+	runchecktest "MOUNT (confined allow all remount setup)" pass mount ${loop_device} ${mount_point}
+	runchecktest "MOUNT (confined allow all remount)" pass mount ${loop_device} ${mount_point} -o remount
+	remove_mnt
+
+	settest move_mount
+	genprofile "all"
+
+	runchecktest "MOVE_MOUNT (confined fsmount: allow all)" pass fsmount ${loop_device} ${mount_point} ${fstype}
+	remove_mnt
+
+	mount ${loop_device} ${mnt_source}
+	runchecktest "MOVE_MOUNT (confined open_tree: allow all)" pass open_tree ${mount_point2} ${mount_point} ${fstype}
+	remove_mnt
+}
+
 # TEST 1.  Make sure can mount and umount unconfined
 runchecktest "MOUNT (unconfined)" pass mount ${loop_device} ${mount_point}
 remove_mnt
@@ -569,6 +597,8 @@ else
 	fsmount_tests tmpfs ${mount_point} tmpfs
 	fsmount_tests ${loop_device} ${mount_point} ${fstype}
 	open_tree_tests ${mount_point2} ${mount_point} ${fstype}
+
+	all_rule
 fi
 
 #need tests for chroot

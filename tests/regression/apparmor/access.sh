@@ -28,7 +28,14 @@ wxperm=wix
 touch $file
 chmod 777 $file	# full perms so discretionary access checks succeed
 
-# PASS TEST 
+# PASS TEST
+if [ "$(parser_supports 'all,')" = "true" ]; then
+    genprofile "all"
+    runchecktest "ACCESS allow all r (rwx)" pass $file r
+    runchecktest "ACCESS allow all rx (rwx)" pass $file rx
+    runchecktest "ACCESS allow all rwx (rwx)" pass $file rwx
+fi
+
 genprofile $file:$rwxperm
 runchecktest "ACCESS file r (rwx)" pass $file r
 runchecktest "ACCESS file rx (rwx)" pass $file rx

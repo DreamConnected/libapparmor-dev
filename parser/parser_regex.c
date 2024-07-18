@@ -1000,41 +1000,46 @@ int process_profile_policydb(Profile *prof)
 	 * to be supported
 	 */
 
-	/* note: this activates fs based unix domain sockets mediation on connect */
-	if (kernel_abi_version > 5 &&
-	    !prof->policy.rules->add_rule(mediates_file, 0, AA_MAY_READ, 0, parseopts))
-		goto out;
-	if (features_supports_mount &&
-	    !prof->policy.rules->add_rule(mediates_mount, 0, AA_MAY_READ, 0, parseopts))
-			goto out;
-	if (features_supports_dbus &&
-	    !prof->policy.rules->add_rule(mediates_dbus, 0, AA_MAY_READ, 0, parseopts))
-		goto out;
-	if (features_supports_signal &&
-	    !prof->policy.rules->add_rule(mediates_signal, 0, AA_MAY_READ, 0, parseopts))
-		goto out;
-	if (features_supports_ptrace &&
-	    !prof->policy.rules->add_rule(mediates_ptrace, 0, AA_MAY_READ, 0, parseopts))
-		goto out;
-	if (features_supports_networkv8 &&
-	    !prof->policy.rules->add_rule(mediates_netv8, 0, AA_MAY_READ, 0, parseopts))
-		goto out;
-	if (features_supports_unix &&
-	    (!prof->policy.rules->add_rule(mediates_extended_net, 0, AA_MAY_READ, 0, parseopts) ||
-	     !prof->policy.rules->add_rule(mediates_net_unix, 0, AA_MAY_READ, 0, parseopts)))
-		goto out;
 	if (features_supports_userns &&
 	    !prof->policy.rules->add_rule(mediates_ns, 0, AA_MAY_READ, 0, parseopts))
 		goto out;
-	if (features_supports_posix_mqueue &&
-	    !prof->policy.rules->add_rule(mediates_posix_mqueue, 0, AA_MAY_READ, 0, parseopts))
-		goto out;
-	if (features_supports_sysv_mqueue &&
-	    !prof->policy.rules->add_rule(mediates_sysv_mqueue, 0, AA_MAY_READ, 0, parseopts))
-		goto out;
-	if (features_supports_io_uring &&
-	    !prof->policy.rules->add_rule(mediates_io_uring, 0, AA_MAY_READ, 0, parseopts))
-		goto out;
+
+	/* don't add mediated classes to unconfined profiles */
+	if (prof->flags.mode != MODE_UNCONFINED &&
+	    prof->flags.mode != MODE_DEFAULT_ALLOW) {
+		/* note: this activates fs based unix domain sockets mediation on connect */
+		if (kernel_abi_version > 5 &&
+		    !prof->policy.rules->add_rule(mediates_file, 0, AA_MAY_READ, 0, parseopts))
+			goto out;
+		if (features_supports_mount &&
+		    !prof->policy.rules->add_rule(mediates_mount, 0, AA_MAY_READ, 0, parseopts))
+			goto out;
+		if (features_supports_dbus &&
+		    !prof->policy.rules->add_rule(mediates_dbus, 0, AA_MAY_READ, 0, parseopts))
+			goto out;
+		if (features_supports_signal &&
+		    !prof->policy.rules->add_rule(mediates_signal, 0, AA_MAY_READ, 0, parseopts))
+			goto out;
+		if (features_supports_ptrace &&
+		    !prof->policy.rules->add_rule(mediates_ptrace, 0, AA_MAY_READ, 0, parseopts))
+			goto out;
+		if (features_supports_networkv8 &&
+		    !prof->policy.rules->add_rule(mediates_netv8, 0, AA_MAY_READ, 0, parseopts))
+			goto out;
+		if (features_supports_unix &&
+		    (!prof->policy.rules->add_rule(mediates_extended_net, 0, AA_MAY_READ, 0, parseopts) ||
+		     !prof->policy.rules->add_rule(mediates_net_unix, 0, AA_MAY_READ, 0, parseopts)))
+			goto out;
+		if (features_supports_posix_mqueue &&
+		    !prof->policy.rules->add_rule(mediates_posix_mqueue, 0, AA_MAY_READ, 0, parseopts))
+			goto out;
+		if (features_supports_sysv_mqueue &&
+		    !prof->policy.rules->add_rule(mediates_sysv_mqueue, 0, AA_MAY_READ, 0, parseopts))
+			goto out;
+		if (features_supports_io_uring &&
+		    !prof->policy.rules->add_rule(mediates_io_uring, 0, AA_MAY_READ, 0, parseopts))
+			goto out;
+	}
 
 	if (prof->policy.rules->rule_count > 0) {
 		int xmatch_len = 0;

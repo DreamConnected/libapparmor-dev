@@ -192,14 +192,14 @@ int mqueue_rule::gen_policy_re(Profile &prof)
 		return RULE_NOT_SUPPORTED;
 	} else if (qtype == mqueue_sysv && !features_supports_sysv_mqueue) {
 		warn_once(prof.name);
-		//	return RULE_NOT_SUPPORTED;
+		return RULE_NOT_SUPPORTED;
 	} else if (qtype == mqueue_unspecified &&
 		   !(features_supports_posix_mqueue ||
 		     features_supports_sysv_mqueue)) {
 		warn_once(prof.name);
 		// should split into warning where posix and sysv can
 		// be separated from nothing being enforced
-		//	return RULE_NOT_SUPPORTED;
+		return RULE_NOT_SUPPORTED;
 	}
 
 	/* always generate a label and mqueue entry */

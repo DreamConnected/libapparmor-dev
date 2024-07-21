@@ -35,7 +35,7 @@ RE_ACCESS_KEYWORDS = (joint_access_keyword +  # one of the access_keyword or
                       r'\(' + joint_access_keyword + '(' + r'(\s|,)+' + joint_access_keyword + ')*' + r'\)'  # one or more access_keyword in (...)
                       )
 
-RE_MQUEUE_NAME = r'(?P<%s>(/\S+|\d*))'  # / + string for posix, or digits for sys
+RE_MQUEUE_NAME = r'(?P<%s>(/\S*|\d*))'  # / + string for posix, or digits for sys
 RE_MQUEUE_TYPE = r'(?P<%s>(sysv|posix))'  # type can be sysv or posix
 
 RE_MQUEUE_DETAILS = re.compile(

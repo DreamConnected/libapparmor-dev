@@ -45,6 +45,7 @@ class MessageQueueTestParse(AATest):
         ('mqueue type=sysv 1234,',                  MessageQueueRule(MessageQueueRule.ALL,          'sysv',                 MessageQueueRule.ALL,   '1234',                 False,  False,  False,  '')),
         ('mqueue type=posix /queue,',               MessageQueueRule(MessageQueueRule.ALL,          'posix',                MessageQueueRule.ALL,   '/queue',               False,  False,  False,  '')),
         ('mqueue open type=sysv label=foo 1234,',   MessageQueueRule(('open'),                      'sysv',                 'foo',                  '1234',                 False,  False,  False,  '')),
+        ('mqueue  r type=posix /,',                 MessageQueueRule(('r'),                         'posix',                MessageQueueRule.ALL,   '/',                    False,  False,  False,  '')),
     )
 
     def _run_test(self, rawrule, expected):

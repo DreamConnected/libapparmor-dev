@@ -79,7 +79,7 @@ AM_CONDITIONAL(HAVE_PERL, test x$with_perl = xyes)
 AM_CONDITIONAL(HAVE_RUBY, test x$with_ruby = xyes)
 
 AC_HEADER_STDC
-AC_CHECK_HEADERS(unistd.h stdint.h syslog.h)
+AC_CHECK_HEADERS(unistd.h stdint.h syslog.h linux/lsm.h)
 
 AC_CHECK_FUNCS([asprintf __secure_getenv secure_getenv reallocarray])
 

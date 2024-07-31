@@ -53,3 +53,5 @@
     file mr /{usr/,}lib{,32,64}/libnss_*.so*,
     file mr /{usr/,}lib/@{multiarch}/libnss_*.so*,
     file r @{etc_ro}/default/nss,
+
+    include if exists <abstractions/strict-nameservice.d>

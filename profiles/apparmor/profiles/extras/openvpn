@@ -1,5 +1,4 @@
 #------------------------------------------------------------------
-#    Copyright (C) 2024 Nishit Majithia (0xnishit)
 #    Copyright (C) 2024 Canonical Ltd.
 #
 #    This program is free software; you can redistribute it and/or
@@ -12,10 +11,10 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile openvpn /usr/sbin/openvpn {
+profile openvpn /usr/sbin/openvpn flags=(attach_disconnected){
     include <abstractions/base>
     include <abstractions/openssl>
-    include <strict-nameservice>
+    include <abstractions/strict-nameservice>
 
     capability dac_read_search,
     capability dac_override,
@@ -46,6 +45,10 @@ profile openvpn /usr/sbin/openvpn {
     file rw /var/log/openvpn/ipp.txt,
     file rw /{,var/}run/openvpn/*.{pid,status},
 
+    # integration with NetworkManager
+    file rw @{run}/NetworkManager/nm-openvpn-*,
+    file rUx /{usr/,}lib{exec,/NetworkManager}/nm-openvpn-service-openvpn-helper,
+
     # IP tool capability for network configuration
     file rCx /{,usr/}bin/ip,
 
@@ -69,7 +72,7 @@ profile openvpn /usr/sbin/openvpn {
     profile update-resolv {
         include <abstractions/base>
         include <abstractions/consoles>
-        include <strict-nameservice>
+        include <abstractions/strict-nameservice>
 
         # To be able to manage firewall rules.
         capability net_admin,

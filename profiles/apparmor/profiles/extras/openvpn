@@ -12,84 +12,84 @@ abi <abi/4.0>,
 include <tunables/global>
 
 profile openvpn /usr/sbin/openvpn flags=(attach_disconnected){
-    include <abstractions/base>
-    include <abstractions/openssl>
-    include <abstractions/strict-nameservice>
+  include <abstractions/base>
+  include <abstractions/openssl>
+  include <abstractions/strict-nameservice>
 
-    capability dac_read_search,
-    capability dac_override,
+  capability dac_read_search,
+  capability dac_override,
+  capability net_admin,
+
+  # These are needed when user/group are set in a OpenVPN config file
+  capability setuid,
+  capability setgid,
+
+  # Network access rules
+  network inet dgram,
+  network inet6 dgram,
+  network raw,
+  network inet stream,
+  network inet6 stream,
+
+  # OpenVPN configuration and key files
+  file r /etc/openvpn/{,**},
+
+  # TUN/TAP device
+  file rw /dev/net/tun,
+
+  # Process-specific network route access
+  file r @{PROC}/@{pid}/net/route,
+
+  # OpenVPN log and status files
+  file rw /var/log/openvpn/*.log,
+  file rw /var/log/openvpn/ipp.txt,
+  file rw /{,var/}run/openvpn/*.{pid,status},
+
+  # integration with NetworkManager
+  file rw @{run}/NetworkManager/nm-openvpn-*,
+  file rUx /{usr/,}lib{exec,/NetworkManager}/nm-openvpn-service-openvpn-helper,
+
+  # IP tool capability for network configuration
+  file rCx /{,usr/}bin/ip,
+
+  # Sub-profile for IP tool restrictions
+  profile ip /{,usr/}bin/ip {
+    include <abstractions/base>
+
     capability net_admin,
 
-    # These are needed when user/group are set in a OpenVPN config file
-    capability setuid,
-    capability setgid,
+    # Allow read access to IP tool binary
+    file r /{,usr/}bin/ip,
 
-    # Network access rules
-    network inet dgram,
-    network inet6 dgram,
-    network raw,
-    network inet stream,
-    network inet6 stream,
+    # Allow write access to OpenVPN log
+    file w /var/log/openvpn/openvpn.log,
+  }
 
-    # OpenVPN configuration and key files
-    file r /etc/openvpn/{,**},
+  # update-resolv.conf file for openvpn env set
+  file rCx /etc/openvpn/update-resolv-conf{,.sh} -> update-resolv,
 
-    # TUN/TAP device
-    file rw /dev/net/tun,
+  # Sub-profile for /etc/openvpn/update-resolv-conf
+  profile update-resolv {
+    include <abstractions/base>
+    include <abstractions/consoles>
+    include <abstractions/strict-nameservice>
 
-    # Process-specific network route access
-    file r @{PROC}/@{pid}/net/route,
+    # To be able to manage firewall rules.
+    capability net_admin,
 
-    # OpenVPN log and status files
-    file rw /var/log/openvpn/*.log,
-    file rw /var/log/openvpn/ipp.txt,
-    file rw /{,var/}run/openvpn/*.{pid,status},
+    file r /etc/openvpn/update-resolv-conf.sh,
 
-    # integration with NetworkManager
-    file rw @{run}/NetworkManager/nm-openvpn-*,
-    file rUx /{usr/,}lib{exec,/NetworkManager}/nm-openvpn-service-openvpn-helper,
+    file rix /bin/sh,
+    file rix /sbin/resolvconf,
+    file rix /{,usr/}bin/cut,
+    file rix /{,usr/}bin/ip,
+    file rix /{,usr/}bin/which{,.debianutils},
+    file rix /{,usr/}bin/xtables-nft-multi,
 
-    # IP tool capability for network configuration
-    file rCx /{,usr/}bin/ip,
+    file r /etc/iproute2/rt_tables,
+    file r /etc/iproute2/rt_tables.d/,
+  }
 
-    # Sub-profile for IP tool restrictions
-    profile ip /{,usr/}bin/ip {
-        include <abstractions/base>
-
-        capability net_admin,
-
-        # Allow read access to IP tool binary
-        file r /{,usr/}bin/ip,
-        
-        # Allow write access to OpenVPN log
-        file w /var/log/openvpn/openvpn.log,
-    }
-
-    # update-resolv.conf file for openvpn env set
-    file rCx /etc/openvpn/update-resolv-conf{,.sh} -> update-resolv,
-
-    # Sub-profile for /etc/openvpn/update-resolv-conf
-    profile update-resolv {
-        include <abstractions/base>
-        include <abstractions/consoles>
-        include <abstractions/strict-nameservice>
-
-        # To be able to manage firewall rules.
-        capability net_admin,
-
-        file r /etc/openvpn/update-resolv-conf.sh,
-
-        file rix /bin/sh,
-        file rix /sbin/resolvconf,
-        file rix /{,usr/}bin/cut,
-        file rix /{,usr/}bin/ip,
-        file rix /{,usr/}bin/which{,.debianutils},
-        file rix /{,usr/}bin/xtables-nft-multi,
-
-        file r /etc/iproute2/rt_tables,
-        file r /etc/iproute2/rt_tables.d/,
-    }
-
-    # Site-specific additions and overrides. See local/README for details.
-    include if exists <local/openvpn>
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/openvpn>
 }

@@ -23,11 +23,12 @@ settest unix_fd_server
 disk_img=$tmpdir/disk_img
 new_root=$tmpdir/new_root/
 put_old=${new_root}put_old/
-root_was_shared="no"
 fstype="ext2"
 file=$tmpdir/file
 socket=$tmpdir/unix_fd_test
 att_dis_client=$pwd/attach_disconnected
+
+. $bin/mount.inc
 
 attach_disconnected_cleanup() {
 	if [ ! -z "$loop_device" ]; then
@@ -39,33 +40,12 @@ attach_disconnected_cleanup() {
 		umount "$new_root"
 	fi
 
-	if [ "$root_was_shared" = "yes" ] ; then
-		[ -n "$VERBOSE" ] && echo 'notice: re-mounting / as shared'
-		mount --make-shared /
-	fi
+	prop_cleanup
 }
 do_onexit="attach_disconnected_cleanup"
 
 if [ ! -b /dev/loop0 ] ; then
 	modprobe loop
-fi
-
-# systemd mounts / and everything under it MS_SHARED. This breaks
-# pivot_root entirely, so attempt to detect it, and remount /
-# MS_PRIVATE temporarily.
-FINDMNT=/bin/findmnt
-if [ -x "${FINDMNT}" ] && ${FINDMNT} -no PROPAGATION / > /dev/null 2>&1 ; then
-	if [ "$(${FINDMNT} -no PROPAGATION /)" = "shared" ] ; then
-	root_was_shared="yes"
-	fi
-elif [ "$(ps hp1  -ocomm)" = "systemd" ] ; then
-	# no findmnt or findmnt doesn't know the PROPAGATION column,
-	# but init is systemd so assume rootfs is shared
-	root_was_shared="yes"
-fi
-if [ "${root_was_shared}" = "yes" ] ; then
-	[ -n "$VERBOSE" ] && echo 'notice: re-mounting / as private'
-	mount --make-private /
 fi
 
 dd if=/dev/zero of="$disk_img" bs=1024 count=512 2> /dev/null

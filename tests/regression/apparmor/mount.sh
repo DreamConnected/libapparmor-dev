@@ -32,7 +32,8 @@ mount_point2=$tmpdir/mountpoint2
 mount_bad=$tmpdir/mountbad
 loop_device="unset" 
 fstype="ext2"
-root_was_shared="no"
+
+. $bin/mount.inc
 
 setup_mnt() {
 	/bin/mount -n -t${fstype} ${loop_device} ${mount_point}
@@ -59,9 +60,7 @@ mount_cleanup() {
 	then
 		/sbin/losetup -d ${loop_device} &> /dev/null
 	fi
-	if [ "${root_was_shared}" = "yes" ] ; then
-		mount --make-shared /
-	fi
+	prop_cleanup
 }
 do_onexit="mount_cleanup"
 
@@ -80,23 +79,6 @@ fi
 # find the next free loop device and mount it
 loop_device=$(losetup -f) || fatalerror 'Unable to find a free loop device'
 /sbin/losetup "$loop_device" ${mount_file} > /dev/null 2> /dev/null
-
-# systemd mounts / and everything under it MS_SHARED which does
-# not work with "move", so attempt to detect it, and remount /
-# MS_PRIVATE temporarily. snippet from pivot_root.sh
-FINDMNT=/bin/findmnt
-if [ -x "${FINDMNT}" ] && ${FINDMNT} -no PROPAGATION / > /dev/null 2>&1 ; then
-	if [ "$(${FINDMNT} -no PROPAGATION /)" == "shared" ] ; then
-		root_was_shared="yes"
-	fi
-elif [ "$(ps hp1  -ocomm)" = "systemd" ] ; then
-	# no findmnt or findmnt doesn't know the PROPAGATION column,
-	# but init is systemd so assume rootfs is shared
-	root_was_shared="yes"
-fi
-if [ "${root_was_shared}" = "yes" ] ; then
-	mount --make-private /
-fi
 
 options=(
 	# default and non-default options

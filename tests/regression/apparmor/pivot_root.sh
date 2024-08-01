@@ -25,7 +25,8 @@ put_old=${new_root}put_old/
 bad=$tmpdir/BAD/
 proc=$new_root/proc
 fstype="ext2"
-root_was_shared="no"
+
+. $bin/mount.inc
 
 pivot_root_cleanup() {
 	mountpoint -q "$proc"
@@ -38,34 +39,13 @@ pivot_root_cleanup() {
 		umount "$new_root"
 	fi
 
-	if [ "${root_was_shared}" = "yes" ] ; then
-		[ -n "$VERBOSE" ] && echo 'notice: re-mounting / as shared'
-		mount --make-shared /
-	fi
+	prop_cleanup
 }
 do_onexit="pivot_root_cleanup"
 
 # loopback module must be loaded for mount -o loop to work
 if [ ! -b /dev/loop0 ] ; then
 	modprobe loop
-fi
-
-# systemd mounts / and everything under it MS_SHARED. This breaks
-# pivot_root entirely, so attempt to detect it, and remount /
-# MS_PRIVATE temporarily.
-FINDMNT=/bin/findmnt
-if [ -x "${FINDMNT}" ] && ${FINDMNT} -no PROPAGATION / > /dev/null 2>&1 ; then
-	if [ "$(${FINDMNT} -no PROPAGATION /)" = "shared" ] ; then
-		root_was_shared="yes"
-	fi
-elif [ "$(ps hp1  -ocomm)" = "systemd" ] ; then
-	# no findmnt or findmnt doesn't know the PROPAGATION column,
-	# but init is systemd so assume rootfs is shared
-	root_was_shared="yes"
-fi
-if [ "${root_was_shared}" = "yes" ] ; then
-	[ -n "$VERBOSE" ] && echo 'notice: re-mounting / as private'
-	mount --make-private /
 fi
 
 # Create disk image since pivot_root doesn't allow old root and new root to be

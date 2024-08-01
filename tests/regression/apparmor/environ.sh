@@ -85,6 +85,32 @@ runchecktest "ENVIRON (shell script): confined/complain & sensitive env" pass ${
 # TEST environment filtering still works on setuid apps
 removeprofile
 
+tmpfs_dir=${tmpdir}/tmpfs_dir
+remove_mnt() {
+	mountpoint -q "$tmpfs_dir"
+	if [ $? -eq 0 ] ; then
+		umount "$tmpfs_dir"
+	fi
+}
+do_onexit="remove_mnt"
+
+# setuid apps mounted in a fs with "nosuid" option do not honor those
+# bits during execution, so run the test in a mounted tmpdir without nosuid
+FINDMNT=/bin/findmnt
+if [ -x "${FINDMNT}" ] && ${FINDMNT} -no TARGET,OPTIONS -T $tmpdir > /dev/null 2>&1 ; then
+	output="$(${FINDMNT} -no TARGET,OPTIONS -T $tmpdir)"
+	target="$(echo $output | cut -d' ' -f1)"
+	options="$(echo $output | cut -d' ' -f2)"
+	case "$options" in
+		*nosuid* )
+			echo "    $target is mounted with nosuid, creating a new mountpoint..."
+			setuid_helper=${tmpfs_dir}/env_check
+			mkdir ${tmpfs_dir}
+			mount -t tmpfs tmpfs ${tmpfs_dir}
+			;;
+	esac
+fi
+
 cp $helper ${setuid_helper}
 chown nobody ${setuid_helper}
 chmod u+s ${setuid_helper}

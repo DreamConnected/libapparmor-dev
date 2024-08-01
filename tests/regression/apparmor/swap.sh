@@ -27,16 +27,38 @@ bin=$pwd
 ## A. SWAP
 ##
 
-# check if we can run the test at all
+swap_file=$tmpdir/swapfile
+
+# check if we can run the test in tmpdir
 fstype=$(stat -f --format '%T' "${tmpdir}")
 if [ "${fstype}" = "tmpfs" ] ; then
-	echo "ERROR: tmpdir '${tmpdir}' is of type tmpfs; can't mount a swapfile on it" 1>&2
-	echo "ERROR: skipping swap tests" 1>&2
-	num_testfailures=1
-	exit
+	# create a mountpoint not tmpfs
+	mount_file=$tmpdir/mountfile
+	mount_point=$tmpdir/mountpoint
+	fstype="ext2"
+	dd if=/dev/zero of=${mount_file} bs=1024 count=900 2> /dev/null
+	/sbin/mkfs -t${fstype} -F ${mount_file} > /dev/null 2> /dev/null
+	/bin/mkdir ${mount_point}
+
+	loop_device=$(losetup -f) || fatalerror 'Unable to find a free loop device'
+	/sbin/losetup "$loop_device" ${mount_file} > /dev/null 2> /dev/null
+
+	/bin/mount -n -t${fstype} ${loop_device} ${mount_point}
+
+	swap_file=$mount_point/swapfile
 fi
 
-swap_file=$tmpdir/swapfile
+remove_mnt() {
+	mountpoint -q "${mount_point}"
+	if [ $? -eq 0 ] ; then
+		/bin/umount -t${fstype} ${mount_point}
+	fi
+	if [ -n "$loop_device" ]
+	then
+		/sbin/losetup -d ${loop_device} &> /dev/null
+	fi
+}
+do_onexit="remove_mnt"
 
 # ppc64el wants this to be larger than 640KiB
 # arm/small machines want this as small as possible

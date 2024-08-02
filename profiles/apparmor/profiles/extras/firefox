@@ -28,6 +28,7 @@ profile firefox @{MOZ_LIBDIR}/@{MOZ_APP_NAME}{,*[^s][^h]} {
   include <abstractions/dbus-strict>
   include <abstractions/dbus-session-strict>
   include <abstractions/dconf>
+  include <abstractions/fcitx>
   include <abstractions/fonts>
   include <abstractions/gnome>
   include <abstractions/ibus>

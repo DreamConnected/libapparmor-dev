@@ -127,6 +127,7 @@ APPARMOR_3.0 {
 APPARMOR_3.1 {
   global:
 	aa_features_check;
+	aa_split_overlay_str;
   local:
 	*;
 } APPARMOR_3.0;

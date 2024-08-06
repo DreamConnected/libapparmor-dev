@@ -135,7 +135,7 @@ static int do_test_walk_one(const char **str, const struct component *component,
 
 static int test_walk_one(void)
 {
-	struct component c;
+	struct component c = (struct component) { NULL, 0 };
 	const char *str;
 	int rc = 0;
 

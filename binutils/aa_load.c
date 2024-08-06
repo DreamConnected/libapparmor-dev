@@ -172,7 +172,8 @@ static int load_policy_dir(const char *dir_path)
 	while ((dir = readdir(d)) != NULL) {
 		/* Only check regular files for now */
 		if (dir->d_type == DT_REG) {
-			len = strnlen(dir->d_name, PATH_MAX);
+			/* As per POSIX dir->d_name has at most NAME_MAX characters */
+			len = strnlen(dir->d_name, NAME_MAX);
 			/* Ignores .features */
 			if (strncmp(dir->d_name, CACHE_FEATURES_FILE, len) == 0) {
 				continue;

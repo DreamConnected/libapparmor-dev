@@ -6,6 +6,7 @@ include <tunables/global>
 
 profile runc /usr/sbin/runc flags=(unconfined) {
   userns,
+  pivot_root, # required when running inside LXD
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/runc>

@@ -4,7 +4,7 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile php-fpm /usr/sbin/php-fpm* flags=(attach_disconnected) {
+profile php-fpm /usr/{bin,sbin}/php-fpm* flags=(attach_disconnected) {
   # load common libraries and their support files
   include <abstractions/base>
   # resolve hostnames/usernames
@@ -40,7 +40,7 @@ profile php-fpm /usr/sbin/php-fpm* flags=(attach_disconnected) {
   owner @{run}/systemd/notify w,
 
   # to reload
-  /usr/sbin/php-fpm* rix,
+  /usr/{bin,sbin}/php-fpm* rix,
 
   # no idea why php tries to open / read/write
   deny / rw,

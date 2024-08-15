@@ -68,7 +68,7 @@ class Install(_install):
         polkit = polkit_template.format(LIB_PATH=self.install_lib)
 
         if not os.path.exists(prefix + '/usr/share/polkit-1/actions/'):
-            os.mkdir(prefix + '/usr/share/polkit-1/actions/')
+            self.mkpath(prefix + '/usr/share/polkit-1/actions/')
         with open(prefix + '/usr/share/polkit-1/actions/' + pkexec_action_name, 'w') as f:
             f.write(polkit)
         os.chmod(prefix + '/usr/share/polkit-1/actions/' + pkexec_action_name, 0o644)

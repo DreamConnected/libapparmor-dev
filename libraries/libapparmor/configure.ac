@@ -83,7 +83,6 @@ AC_CHECK_HEADERS(unistd.h stdint.h syslog.h)
 
 AC_CHECK_FUNCS([asprintf __secure_getenv secure_getenv reallocarray])
 
-AM_PROG_CC_C_O
 AC_C_CONST
 LT_INIT
 

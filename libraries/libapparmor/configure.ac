@@ -84,6 +84,7 @@ AC_CHECK_HEADERS(unistd.h stdint.h syslog.h)
 AC_CHECK_FUNCS([asprintf __secure_getenv secure_getenv reallocarray])
 
 AC_C_CONST
+AM_PROG_AR
 LT_INIT
 
 # Specifying C99 is required for older systems

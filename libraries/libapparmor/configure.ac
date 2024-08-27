@@ -100,8 +100,7 @@ AS_VAR_IF([ax_cv_check_cflags__Werror__flto_partition_none], [yes],
 	,)
 AC_SUBST([AM_CFLAGS], ["$EXTRA_CFLAGS"])
 
-AC_OUTPUT(
-Makefile
+AC_CONFIG_FILES([Makefile
 doc/Makefile
 src/Makefile
 swig/Makefile
@@ -117,4 +116,5 @@ testsuite/libaalogparse.test/Makefile
 testsuite/lib/Makefile
 include/Makefile
 include/sys/Makefile
-)
+])
+AC_OUTPUT

@@ -85,7 +85,7 @@ AC_CHECK_FUNCS([asprintf __secure_getenv secure_getenv reallocarray])
 
 AM_PROG_CC_C_O
 AC_C_CONST
-AM_PROG_LIBTOOL
+LT_INIT
 
 AC_PROG_CC_C99
 if test "$ac_cv_prog_cc_c99" = "no"; then

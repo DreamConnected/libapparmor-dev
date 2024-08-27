@@ -78,7 +78,15 @@ AM_CONDITIONAL(HAVE_PYTHON, test x$with_python = xyes)
 AM_CONDITIONAL(HAVE_PERL, test x$with_perl = xyes) 
 AM_CONDITIONAL(HAVE_RUBY, test x$with_ruby = xyes)
 
-AC_HEADER_STDC
+m4_warn([obsolete],
+[The preprocessor macro `STDC_HEADERS' is obsolete.
+  Except in unusual embedded environments, you can safely include all
+  ISO C90 headers unconditionally.])dnl
+# Autoupdate added the next two lines to ensure that your configure
+# script's behavior did not change.  They are probably safe to remove.
+AC_CHECK_INCLUDES_DEFAULT
+AC_PROG_EGREP
+
 AC_CHECK_HEADERS(unistd.h stdint.h syslog.h)
 
 AC_CHECK_FUNCS([asprintf __secure_getenv secure_getenv reallocarray])

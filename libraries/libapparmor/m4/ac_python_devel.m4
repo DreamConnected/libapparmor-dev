@@ -148,7 +148,7 @@ sys.stdout.write('%s\n' % sysconfig.get_path('purelib'));"`
         if test -z "$PYTHON_EXTRA_LIBS"; then
            PYTHON_EXTRA_LIBS=`$PYTHON -c "import sys; import sysconfig; \
 conf = sysconfig.get_config_var; \
-sys.stdout.write('%s %s %s\n' % (conf('BLDLIBRARY'), conf('LOCALMODLIBS'), conf('LIBS')))"`
+sys.stdout.write('%s %s %s\n' % (conf('BLDLIBRARY'), conf('SYSLIBS'), conf('LIBS')))"`
         fi
         AC_MSG_RESULT([$PYTHON_EXTRA_LIBS])
         AC_SUBST(PYTHON_EXTRA_LIBS)

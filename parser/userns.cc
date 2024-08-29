@@ -99,6 +99,14 @@ int userns_rule::gen_policy_re(Profile &prof)
 					rule_mode, perms,
 					audit == AUDIT_FORCE ? perms : 0,
 					parseopts))
+
+			goto fail;
+		/* add a mediates_userns rule for every rule added. It
+		 * needs to be the same priority
+		 */
+		if (!prof.policy.rules->add_rule(buf.c_str(), priority,
+					RULE_ALLOW, AA_MAY_READ, 0,
+					parseopts))
 			goto fail;
 	}
 

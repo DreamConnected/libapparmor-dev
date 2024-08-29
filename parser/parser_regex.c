@@ -1097,6 +1097,17 @@ static const char *deny_file = ".*";
  */
 static int mediates_priority = INT_MAX;
 
+/* some rule types unfortunately encoded permissions on the class byte
+ * to fix the above bug, they need a different solution. The generic
+ * mediates rule will get encoded at the minimum priority, and then
+ * for every rule of those classes a mediates rule of the same priority
+ * will be added. This way the mediates rule never has higher priority,
+ * which would wipe out the rule permissions encoded on the class state,
+ * and it is guaranteed to have the same priority as the highest priority
+ * rule.
+ */
+static int perms_onclass_mediates_priority = INT_MIN;
+
 int process_profile_policydb(Profile *prof)
 {
 	int error = -1;
@@ -1112,7 +1123,7 @@ int process_profile_policydb(Profile *prof)
 	 * to be supported
 	 */
 	if (features_supports_userns &&
-	    !prof->policy.rules->add_rule(mediates_ns, mediates_priority, RULE_ALLOW, AA_MAY_READ, 0, parseopts))
+	    !prof->policy.rules->add_rule(mediates_ns, perms_onclass_mediates_priority, RULE_ALLOW, AA_MAY_READ, 0, parseopts))
 		goto out;
 
 	/* don't add mediated classes to unconfined profiles */
@@ -1148,7 +1159,7 @@ int process_profile_policydb(Profile *prof)
 		    !prof->policy.rules->add_rule(mediates_sysv_mqueue, mediates_priority, RULE_ALLOW, AA_MAY_READ, 0, parseopts))
 			goto out;
 		if (features_supports_io_uring &&
-		    !prof->policy.rules->add_rule(mediates_io_uring, mediates_priority, RULE_ALLOW, AA_MAY_READ, 0, parseopts))
+		    !prof->policy.rules->add_rule(mediates_io_uring, perms_onclass_mediates_priority, RULE_ALLOW, AA_MAY_READ, 0, parseopts))
 			goto out;
 	}
 

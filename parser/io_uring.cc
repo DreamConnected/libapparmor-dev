@@ -127,6 +127,13 @@ int io_uring_rule::gen_policy_re(Profile &prof)
 					audit == AUDIT_FORCE ? perms : 0,
 					parseopts))
 			goto fail;
+		/* add a mediates_io_uring rule for every rule added. It
+		 * needs to be the same priority
+		 */
+		if (!prof.policy.rules->add_rule(buf.c_str(), priority,
+					RULE_ALLOW, AA_MAY_READ, 0,
+					parseopts))
+			goto fail;
 
 		if (perms & AA_IO_URING_OVERRIDE_CREDS) {
 			buf = buffer.str(); /* update buf to have label */

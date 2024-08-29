@@ -87,6 +87,7 @@ AM_PROG_CC_C_O
 AC_C_CONST
 LT_INIT
 
+# Specifying C99 is required for older systems
 AC_PROG_CC_C99
 if test "$ac_cv_prog_cc_c99" = "no"; then
   AC_MSG_ERROR([C99 mode is required to build libapparmor])

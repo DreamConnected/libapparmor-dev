@@ -7,6 +7,7 @@ AC_INIT([libapparmor1],[apparmor_version],[bugs@apparmor.net (public) or securit
 
 AM_INIT_AUTOMAKE([-Wall])
 
+# Specifying noyywrap here doesn't fix the warning
 AM_PROG_LEX
 AC_PROG_YACC
 AC_PROG_SED

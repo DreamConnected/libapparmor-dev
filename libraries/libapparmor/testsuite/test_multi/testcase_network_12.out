@@ -1,0 +1,20 @@
+START
+File: testcase_network_12.in
+Event type: AA_RECORD_ALLOWED
+Audit ID: 1724847289.985:631
+Operation: getsockname
+Mask: getattr
+Denied Mask: getattr
+Profile: /usr/bin/wg
+Command: wg
+PID: 15374
+Network family: inet6
+Socket type: dgram
+Protocol: udp
+Local addr: ::ffff:127.0.0.1
+Foreign addr: ::ffff:127.0.0.1
+Local port: 53131
+Foreign port: 51821
+Class: net
+Epoch: 1724847289
+Audit subid: 631

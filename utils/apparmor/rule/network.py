@@ -75,6 +75,8 @@ RE_NETWORK_DETAILS = re.compile(
     + '(' + RE_PEER_EXPR + r')?\s*'
     + r'$')
 
+non_peer_accesses = {'create', 'bind', 'listen', 'shutdown', 'getattr', 'setattr', 'getopt', 'setopt'}
+
 
 class NetworkRule(BaseRule):
     """Class to handle and store a single network rule"""
@@ -121,8 +123,8 @@ class NetworkRule(BaseRule):
         if self.peer_expr != self.ALL and 'ip' in self.peer_expr and not is_valid_ip(self.peer_expr['ip']):
             raise AppArmorException(f'Invalid ip: {self.peer_expr["ip"]}')
 
-        if not self.all_accesses and self.peer_expr != self.ALL and self.accesses & {'create', 'bind', 'listen', 'shutdown', 'getattr', 'setattr', 'getopt', 'setopt'}:
-            raise AppArmorException('Cannot use a peer_expr and an access in {create, bind, listen, shutdown, getattr, setattr, getopt, setopt} simultaneously')
+        if not self.all_accesses and self.peer_expr != self.ALL and self.accesses & non_peer_accesses:
+            raise AppArmorException('Cannot use a peer_expr and an access in the set (%s) simultaneously' % ', '.join(non_peer_accesses))
 
         self.domain = None
         self.all_domains = False
@@ -300,6 +302,8 @@ class NetworkRule(BaseRule):
     @classmethod
     def from_hashlog(cls, hl):
         for access, family, sock_type, protocol, local_event, peer_event in BaseRule.generate_rules_from_hashlog(hl, 6):
+            if access and set(access.split()) & non_peer_accesses:
+                peer_event = (None, None)
             yield cls(access, family, sock_type, local_event, peer_event, log_event=True)
 
 

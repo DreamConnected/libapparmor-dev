@@ -1,0 +1,1 @@
+[  310.308737] audit: type=1400 audit(1724847289.985:631): apparmor="ALLOWED" operation="getsockname" class="net" profile="/usr/bin/wg" pid=15374 comm="wg" laddr=::ffff:127.0.0.1 lport=53131 faddr=::ffff:127.0.0.1 fport=51821 saddr=::ffff:127.0.0.1 src=53131 family="inet6" sock_type="dgram" protocol=17 requested="getattr" denied="getattr"

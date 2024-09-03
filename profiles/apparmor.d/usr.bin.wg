@@ -1,0 +1,41 @@
+#------------------------------------------------------------------
+#    Copyright (C) 2024 Canonical Ltd.
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+# vim: ft=apparmor
+#
+abi <abi/4.0>,
+
+include <tunables/global>
+
+profile wg /usr/bin/wg {
+  include <abstractions/base>
+
+  capability net_admin,
+  capability net_bind_service,
+
+  # Network access rules
+  network (bind) netlink raw,
+  network (connect) inet dgram,
+  network (connect) inet6 dgram,
+  network (create) inet dgram,
+  network (create) inet6 dgram,
+  network (create) netlink raw,
+  network (getattr) inet6 dgram,
+  network (getattr) netlink raw,
+  network (receive) netlink raw,
+  network (send) netlink raw,
+
+  # wireguard configuration and key files
+  file rw /etc/wireguard/{,**},
+
+  # Read-only access to host configuration files
+  file r /etc/host.conf,
+  file r /etc/nsswitch.conf,
+  file r /etc/hosts,
+  file r /etc/gai.conf,
+
+}

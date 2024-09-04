@@ -19,6 +19,7 @@
 %option nounput
 %option noyy_top_state
 %option reentrant
+%option extra-type="struct string_buf*"
 %option prefix="aalogparse_"
 %option bison-bridge
 %option header-file="scanner.h"
@@ -34,40 +35,37 @@
 
 #define YY_NO_INPUT
 
-unsigned int string_buf_alloc = 0;
-unsigned int string_buf_len = 0;
-char *string_buf = NULL;
-
-void string_buf_reset()
+void string_buf_reset(struct string_buf* char_buf)
 {
 	/* rewind buffer to zero, possibly doing initial allocation too */
-	string_buf_len = 0;
- 	if (string_buf == NULL) {
-		string_buf_alloc = 128;
-		string_buf = malloc(string_buf_alloc);
-		assert(string_buf != NULL);
+	char_buf->buf_len = 0;
+	if (char_buf->buf == NULL) {
+		char_buf->buf_alloc = 128;
+		char_buf->buf = malloc(char_buf->buf_alloc);
+		assert(char_buf->buf != NULL);
 	}
 	/* always start with a valid but empty string */
-	string_buf[0] = '\0';
+	char_buf->buf[0] = '\0';
 }
 
-void string_buf_append(unsigned int length, char *text)
+void string_buf_append(struct string_buf* char_buf, unsigned int length, char *text)
 {
-	unsigned int current_length = string_buf_len;
+	unsigned int current_length = char_buf->buf_len;
 
 	/* handle calling ..._append before ..._reset */
-	if (string_buf == NULL) string_buf_reset();
+	if (char_buf->buf == NULL) string_buf_reset(char_buf);
 
-	string_buf_len += length;
+	char_buf->buf_len += length;
 	/* expand allocation if this append would exceed the allocation */
-	while (string_buf_len >= string_buf_alloc) {
-		string_buf_alloc *= 2;
-		string_buf = realloc(string_buf, string_buf_alloc);
-		assert(string_buf != NULL);
+	while (char_buf->buf_len >= char_buf->buf_alloc) {
+		// TODO: overflow?
+		char_buf->buf_alloc *= 2;
+		char_buf->buf = realloc(char_buf->buf, char_buf->buf_alloc);
+		assert(char_buf->buf != NULL);
 	}
 	/* copy and unconditionally terminate */
-	memcpy(string_buf+current_length, text, length);
-	string_buf[string_buf_len] = '\0';
+	memcpy(char_buf->buf+current_length, text, length);
+	char_buf->buf[char_buf->buf_len] = '\0';
 }
 
 %}
@@ -232,7 +230,7 @@ yy_flex_debug = 0;
 	{open_paren}		{ return(TOK_OPEN_PAREN); }
 	{close_paren}		{ BEGIN(INITIAL); return(TOK_CLOSE_PAREN); }
 	{ws}		{ }
-	\"			{ string_buf_reset(); BEGIN(quoted_string); }
+	\"			{ string_buf_reset(yyextra); BEGIN(quoted_string); }
 	{ID}+	{
 			yylval->t_str = strdup(yytext);
 			BEGIN(INITIAL);
@@ -241,20 +239,20 @@ yy_flex_debug = 0;
 	{equals}		{ return(TOK_EQUALS); }
 	}
 
-\"			{ string_buf_reset(); BEGIN(quoted_string); }
+\"			{ string_buf_reset(yyextra); BEGIN(quoted_string); }
 <quoted_string>\"	{ /* End of the quoted string */
 				BEGIN(INITIAL);
-				yylval->t_str = strdup(string_buf);
+				yylval->t_str = strdup(yyextra->buf);
 				return(TOK_QUOTED_STRING);
 			}
 
 
-<quoted_string>\\(.|\n) { string_buf_append(1, &yytext[1]); }
+<quoted_string>\\(.|\n) { string_buf_append(yyextra, 1, &yytext[1]); }
 
-<quoted_string>[^\\\n\"]+ { string_buf_append(yyleng, yytext); }
+<quoted_string>[^\\\n\"]+ { string_buf_append(yyextra, yyleng, yytext); }
 
 <safe_string>{
-	\"		{ string_buf_reset(); BEGIN(quoted_string); }
+	\"		{ string_buf_reset(yyextra); BEGIN(quoted_string); }
 	{hexstring}	{ yylval->t_str = hex_to_string(yytext); BEGIN(INITIAL); return(TOK_HEXSTRING);}
 	{equals}	{ return(TOK_EQUALS); }
 	.		{ /* eek, error! try another state */ BEGIN(INITIAL); yyless(0); }

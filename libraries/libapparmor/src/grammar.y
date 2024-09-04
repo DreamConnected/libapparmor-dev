@@ -497,11 +497,15 @@ _parse_yacc(char *str)
 	yydebug = 1;
 #endif
 
-	aalogparse_lex_init(&scanner);
+	struct string_buf string_buf = {.buf = NULL, .buf_len = 0, .buf_alloc = 0};
+
+	aalogparse_lex_init_extra(&string_buf, &scanner);
 	lex_buf = aalogparse__scan_string(str, scanner);
 	/* Ignore return value to return an AA_RECORD_INVALID event */
 	(void)aalogparse_parse(scanner);
 	aalogparse__delete_buffer(lex_buf, scanner);
 	aalogparse_lex_destroy(scanner);
+	// free(NULL) is a no-op
+	free(string_buf.buf);
 	return ret_record;
 }

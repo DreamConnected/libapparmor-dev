@@ -44,7 +44,7 @@ include $(COMMONDIR)/Make.rules
 
 BUILT_SOURCES = grammar.h scanner.h af_protos.h
 AM_LFLAGS = -v
-AM_YFLAGS = -d -p aalogparse_
+AM_YFLAGS = -Wno-yacc -d -p aalogparse_
 AM_CPPFLAGS = -D_GNU_SOURCE -I$(top_srcdir)/include/
 scanner.h: scanner.l
 	$(LEX) -v $<

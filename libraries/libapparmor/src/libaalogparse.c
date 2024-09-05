@@ -38,7 +38,7 @@
 #include "scanner.h"
 
 /* This is mostly just a wrapper around the code in grammar.y */
-aa_log_record *parse_record(char *str)
+aa_log_record *parse_record(const char *str)
 {
 	YY_BUFFER_STATE lex_buf;
 	yyscan_t scanner;

@@ -81,7 +81,7 @@ int aa_log_record_eq(aa_log_record *record1, aa_log_record *record2) {
 }
 
 typedef struct {
-	char* log;
+	const char* log;
 	pthread_barrier_t *barrier;
 } pthread_parse_args;
 

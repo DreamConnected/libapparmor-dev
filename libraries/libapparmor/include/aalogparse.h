@@ -176,7 +176,7 @@ typedef struct
  * @return Parsed data.
  */
 aa_log_record *
-parse_record(char *str);
+parse_record(const char *str);
 
 /**
  * Frees all struct data.

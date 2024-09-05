@@ -475,34 +475,3 @@ protocol: TOK_QUOTED_STRING
 	}
 	;
 %%
-
-aa_log_record *
-_parse_yacc(char *str)
-{
-	/* yydebug = 1;  */
-	YY_BUFFER_STATE lex_buf;
-	yyscan_t scanner;
-
-	aa_log_record *ret_record = malloc(sizeof(aa_log_record));
-
-	_init_log_record(ret_record);
-
-	if (ret_record == NULL)
-		return NULL;
-
-#if (YYDEBUG != 0)
-	yydebug = 1;
-#endif
-
-	struct string_buf string_buf = {.buf = NULL, .buf_len = 0, .buf_alloc = 0};
-
-	aalogparse_lex_init_extra(&string_buf, &scanner);
-	lex_buf = aalogparse__scan_string(str, scanner);
-	/* Ignore return value to return an AA_RECORD_INVALID event */
-	(void)aalogparse_parse(scanner, ret_record);
-	aalogparse__delete_buffer(lex_buf, scanner);
-	aalogparse_lex_destroy(scanner);
-	// free(NULL) is a no-op
-	free(string_buf.buf);
-	return ret_record;
-}

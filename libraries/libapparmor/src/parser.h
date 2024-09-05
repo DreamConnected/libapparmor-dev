@@ -27,7 +27,6 @@ struct string_buf {
 };
 
 extern void _init_log_record(aa_log_record *record);
-extern aa_log_record *_parse_yacc(char *str);
 extern char *hex_to_string(char *str);
 extern char *ipproto_to_string(unsigned int proto);
 

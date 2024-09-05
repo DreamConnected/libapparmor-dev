@@ -26,10 +26,10 @@
 #define AA_RECORD_LINK		16
 
 /**
- * This is just for convenience now that we have two 
- * wildly different grammars.
+ * Enum representing which syntax version the log entry used.
+ * Support for V1 parsing was completely removed in 2011 and that enum entry
+ * is only still there for API compatibility reasons.
  */
-
 typedef enum
 {
 	AA_RECORD_SYNTAX_V1,
@@ -47,69 +47,6 @@ typedef enum
 	AA_RECORD_HINT,		/* Process tracking info */
 	AA_RECORD_STATUS	/* Configuration change */
 } aa_record_event_type;
-
-/**
- * With the sole exception of active_hat, this is a 1:1
- * mapping from the keys that the new syntax uses.
- *
- * Some examples of the old syntax and how they're mapped with the aa_log_record struct:
- *
- * "PERMITTING r access to /path (program_name(12345) profile /profile active hat)"
- * - operation: access
- * - requested_mask: r
- * - pid: 12345
- * - profile: /profile
- * - name: /path
- * - info: program_name
- * - active_hat: hat
- *
- * "REJECTING mkdir on /path/to/something (bash(23415) profile /bin/freak-aa-out active /bin/freak-aa-out"
- * - operation: mkdir
- * - name: /path/to/something
- * - info: bash
- * - pid: 23415
- * - profile: /bin/freak-aa-out 
- * - active_hat: /bin/freak-aa-out 
- * 
- * "REJECTING xattr set on /path/to/something (bash(23415) profile /bin/freak-aa-out active /bin/freak-aa-out)"
- * - operation: xattr
- * - attribute: set
- * - name: /path/to/something
- * - info: bash
- * - pid: 23415
- * - profile: /bin/freak-aa-out
- * - active_hat: /bin/freak-aa-out
- *
- * "PERMITTING attribute (something) change to /else (bash(23415) profile /bin/freak-aa-out active /bin/freak-aa-out)"
- * - operation: setattr
- * - attribute: something
- * - name: /else
- * - info: bash
- * - pid: 23415
- * - profile: /bin/freak-aa-out
- * - active_hat: /bin/freak-aa-out
- * 
- * "PERMITTING access to capability 'cap' (bash(23415) profile /bin/freak-aa-out active /bin/freak-aa-out)"
- * - operation: capability
- * - name: cap
- * - info: bash
- * - pid: 23415
- * - profile: /bin/freak-aa-out
- * - active_hat: /bin/freak-aa-out
- * 
- * "LOGPROF-HINT unknown_hat TESTHAT pid=27764 profile=/change_hat_test/test_hat active=/change_hat_test/test_hat"
- * - operation: change_hat
- * - name: TESTHAT
- * - info: unknown_hat
- * - pid: 27764
- * - profile: /change_hat_test/test_hat
- * - active_hat: /change_hat_test/test_hat
- *
- * "LOGPROF-HINT fork pid=27764 child=38229"
- * - operation: clone
- * - task: 38229
- * - pid: 27764
- **/
 
 typedef struct
 {

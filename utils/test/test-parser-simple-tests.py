@@ -427,6 +427,8 @@ syntax_failure = (
     'vars/vars_simple_assignment_12.sd',  # Redefining existing variable @{BAR} ('\' not handled)
     'bare_include_tests/ok_2.sd',  # two #include<...> in one line
 
+    # network port range
+    'network/network_ok_17.sd',
 )
 
 

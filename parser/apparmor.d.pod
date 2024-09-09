@@ -175,7 +175,7 @@ B<NETWORK PEER EXPR> = 'peer' '=' '(' ( I<NETWORK IP COND> | I<NETWORK PORT COND
 
 B<NETWORK IP COND> = 'ip' '=' ( 'none' | I<NETWORK IPV4> | I<NETWORK IPV6> )
 
-B<NETWORK PORT COND> = 'port' '=' ( I<NETWORK PORT> )
+B<NETWORK PORT COND> = 'port' '=' ( I<NETWORK PORT> | I<NETWORK PORT> '-' I<NETWORK PORT> )
 
 B<NETWORK IPV4> = IPv4, represented by four 8-bit decimal numbers separated by '.'
 
@@ -996,13 +996,14 @@ can be represented by:
  network ip=0.0.0.0;	#allow INADDR_ANY
 
 The network rules support the specification of local and remote IP
-addresses and ports.
+addresses, ports, and port ranges.
 
  network ip=127.0.0.1 port=8080,
  network peer=(ip=10.139.15.23 port=8081),
  network ip=fd74:1820:b03a:b361::cf32 peer=(ip=fd74:1820:b03a:b361::a0f9),
  network port=8080 peer=(port=8081),
  network ip=127.0.0.1 port=8080 peer=(ip=10.139.15.23 port=8081),
+ network ip=127.0.0.1 port=8080-8084,
 
 =head2 Mount Rules
 

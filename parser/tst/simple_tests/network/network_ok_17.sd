@@ -1,0 +1,12 @@
+#
+#=DESCRIPTION network port range conditional test
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  network peer=(port=22-443),
+  network port=22-443,
+  network port=22-443 peer=(port=1-100),
+  network ip=127.0.0.1 port=3456-3457,
+  network ip=127.0.0.1 port=3456-3457 peer=(ip=127.0.0.2 port=8765-8770),
+
+}

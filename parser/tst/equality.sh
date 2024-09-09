@@ -28,10 +28,12 @@ APPARMOR_PARSER="${APPARMOR_PARSER:-${_SCRIPTDIR}/../apparmor_parser}"
 fails=0
 errors=0
 verbose="${VERBOSE:-}"
+default_features_file="features.all"
+features_file=$default_features_file
 
 hash_binary_policy()
 {
-	printf %s "$1" | ${APPARMOR_PARSER} --features-file "${_SCRIPTDIR}/features_files/features.all" -qS 2>/dev/null| md5sum | cut -d ' ' -f 1
+	printf %s "$1" | ${APPARMOR_PARSER} --features-file "${_SCRIPTDIR}/features_files/$features_file" -qS 2>/dev/null| md5sum | cut -d ' ' -f 1
 	return $?
 }
 
@@ -122,6 +124,39 @@ verify_binary_inequality()
 	verify_binary "inequality" "$@"
 }
 
+# kernel_features - test whether path(s) are present
+# $@: feature path(s) to test
+# Returns: 0 and outputs "true" if all paths exist
+#          1 and error message if features dir is not available
+#          2 and error message if path does not exist
+kernel_features()
+{
+	features_dir="/sys/kernel/security/apparmor/features/"
+	if [ ! -e "$features_dir" ] ; then
+		echo "Kernel feature masks not supported."
+		return 1;
+	fi
+
+	for f in $@ ; do
+		if [ ! -e "$features_dir/$f" ] ; then
+			# check if feature is in file
+			feature=$(basename "$features_dir/$f")
+			file=$(dirname "$features_dir/$f")
+			if [ -f $file ]; then
+				if ! grep -q $feature $file; then
+					echo "Required feature '$f' not available."
+					return 2;
+				fi
+			else
+				echo "Required feature '$f' not available."
+				return 3;
+			fi
+		fi
+	done
+
+	echo "true"
+	return 0;
+}
 
 ##########################################################################
 ### wrapper fn, should be indented but isn't to reduce wrap
@@ -787,6 +822,39 @@ verify_binary_equality "set rlimit memlock <= 2GB" \
                        "/t { set rlimit memlock <= $((2 * 1024 * 1024)) KB, }" \
                        "/t { set rlimit memlock <= $((2 * 1024 * 1024 * 1024)) , }"
 
+run_port_range=$(kernel_features network_v8/af_inet)
+if [ "$run_port_range" != "true" ]; then
+    echo -e "\nSkipping network af_inet tests. $run_port_range\n"
+else
+    # network port range
+    # select features file that contains netv8 af_inet
+    features_file="features.af_inet"
+    verify_binary_equality "network port range" \
+			   "/t { network port=3456-3460, }" \
+			   "/t { network port=3456, \
+				 network port=3457, \
+				 network port=3458, \
+				 network port=3459, \
+				 network port=3460, }"
+
+    verify_binary_equality "network peer port range" \
+			   "/t { network peer=(port=3456-3460), }" \
+			   "/t { network peer=(port=3456), \
+				 network peer=(port=3457), \
+				 network peer=(port=3458), \
+				 network peer=(port=3459), \
+				 network peer=(port=3460), }"
+
+    verify_binary_inequality "network port range allows more than single port" \
+			     "/t { network port=3456-3460, }" \
+			     "/t { network port=3456, }"
+
+    verify_binary_inequality "network peer port range allows more than single port" \
+			     "/t { network peer=(port=3456-3460), }" \
+			     "/t { network peer=(port=3456), }"
+    # return to default
+    features_file=$default_features_file
+fi
 
 # verify combinations of different priority levels
 # for single rule comparisons, rules should keep same expected result

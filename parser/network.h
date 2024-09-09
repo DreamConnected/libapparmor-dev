@@ -130,7 +130,9 @@ public:
 	bool is_ip = false;
 	bool is_port = false;
 
-	uint16_t port;
+	uint16_t from_port = 0;
+	uint16_t to_port = 0;
+
 	struct ip_address ip;
 
 	bool is_none = false;
@@ -187,7 +189,7 @@ public:
 		}
 	};
 
-	bool gen_ip_conds(Profile &prof, std::list<std::ostringstream> &streams, ip_conds &entry, bool is_peer, bool is_cmd);
+	bool gen_ip_conds(Profile &prof, std::list<std::ostringstream> &streams, ip_conds &entry, bool is_peer, uint16_t port, bool is_port, bool is_cmd);
 	bool gen_net_rule(Profile &prof, u16 family, unsigned int type_mask, unsigned int protocol);
 	void set_netperm(unsigned int family, unsigned int type, unsigned int protocol);
 	void update_compat_net(void);

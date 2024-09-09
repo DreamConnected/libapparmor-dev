@@ -81,7 +81,7 @@ while lsof -i:$bind_port >/dev/null; do
 	let bind_port=$bind_port+1
 done
 
-let remote_port=$bind_port+1
+let remote_port=$bind_port+50
 while lsof -i:$remote_port >/dev/null; do
 	let remote_port=$remote_port+1
 done
@@ -99,6 +99,23 @@ do_tests "ipv4 tcp no conds" pass pass $bind_ipv4 $bind_port $remote_ipv4 $remot
 setsockopt_rules="network;(setopt,getopt);ip=0.0.0.0;port=0" # INADDR_ANY
 rcv_rules="network;ip=$bind_ipv4;peer=(ip=none)"
 snd_rules="network;ip=$remote_ipv4;peer=(ip=none)"
+
+# port range tests
+let invalid1=$bind_port-1
+let end_range=$bind_port+10
+let invalid2=$bind_port+11
+
+for test_port in $(seq $bind_port $end_range); do
+    generate_profile="genprofile network;ip=$bind_ipv4;port=$bind_port-$end_range $setsockopt_rules $sender:px -- image=$sender network $setsockopt_rules $snd_rules"
+    do_tests "ipv4 udp port range $test_port generic perms" pass pass $bind_ipv4 $test_port $remote_ipv4 $remote_port udp "$generate_profile"
+done
+
+generate_profile="genprofile network;ip=$bind_ipv4;port=$bind_port-$end_range $setsockopt_rules $sender:px -- image=$sender network $setsockopt_rules $snd_rules"
+do_tests "ipv4 udp port range $invalid1 generic perms" fail fail $bind_ipv4 $invalid1 $remote_ipv4 $remote_port udp "$generate_profile"
+
+generate_profile="genprofile network;ip=$bind_ipv4;port=$bind_port-$end_range $setsockopt_rules $sender:px -- image=$sender network $setsockopt_rules $snd_rules"
+do_tests "ipv4 udp port range $invalid2 generic perms" fail fail $bind_ipv4 $invalid2 $remote_ipv4 $remote_port udp "$generate_profile"
+# end of port range tests
 
 generate_profile="genprofile network;ip=$bind_ipv4;port=$bind_port;peer=(ip=$remote_ipv4,port=$remote_port) $setsockopt_rules $rcv_rules $sender:px -- image=$sender network;ip=$remote_ipv4;port=$remote_port;peer=(ip=$bind_ipv4,port=$bind_port) $setsockopt_rules $snd_rules"
 do_tests "ipv4 udp generic perms" pass pass $bind_ipv4 $bind_port $remote_ipv4 $remote_port udp "$generate_profile"

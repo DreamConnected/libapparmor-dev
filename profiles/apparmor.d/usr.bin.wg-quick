@@ -1,0 +1,115 @@
+#------------------------------------------------------------------
+#    Copyright (C) 2024 Canonical Ltd.
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+# vim: ft=apparmor
+#
+abi <abi/4.0>,
+
+include <tunables/global>
+
+profile wg-quick /usr/bin/wg-quick flags=(attach_disconnected) {
+  include <abstractions/base>
+  include <abstractions/consoles>
+
+  capability dac_read_search,
+  capability net_admin,
+
+  # Network access rules
+  network netlink raw,
+  network unix stream,
+
+  # use wg aa profile 
+  file mrpx /usr/bin/wg -> wg,
+
+  # binaries called from within wg-quick
+  file rix /usr/bin/readlink,
+  file rix /usr/bin/stat,
+  file rix /usr/bin/cat,
+  file rix /usr/bin/rm,
+  file rix /usr/bin/mv,
+  file rix /usr/bin/sync,
+  file rix /usr/bin/sort,
+  file rix /usr/sbin/xtables-nft-multi,
+  file rix /usr/bin/resolvectl,
+  file rix /usr/sbin/resolvconf,
+
+  # dbus access
+  file rw @{run}/dbus/system_bus_socket,
+
+  dbus (send)
+      bus=system
+      path=/org/freedesktop/resolve1
+      interface=org.freedesktop.resolve1.Manager
+      member="SetLink{DNSEx,Domains}"
+      peer=(name=org.freedesktop.resolve1, label=unconfined),
+
+  dbus (send)
+      bus=system
+      path=/org/freedesktop/DBus
+      interface=org.freedesktop.DBus
+      member="Hello"
+      peer=(name=org.freedesktop.DBus, label=unconfined),
+
+  # Sub-profile for nft tool restrictions
+  file rCx /usr/sbin/nft,
+  profile nft /usr/sbin/nft {
+    include <abstractions/base> 
+
+    capability net_admin,
+
+    # Allow executable mapping and read for the binary
+    file rm /usr/sbin/nft,
+
+    # Network access rules
+    network netlink raw,
+
+    file r /usr/share/iproute2/rt_realms,
+    file r /usr/share/iproute2/group,
+  }
+
+  # Sub-profile for IP tool restrictions
+  file rCx /usr/bin/ip,
+  profile ip /usr/bin/ip {
+    include <abstractions/base>
+
+    capability net_admin,
+    capability sys_module,
+
+    # Allow executable mapping and read for the binary
+    file r /usr/bin/ip,
+
+    # Network access rules
+    network netlink raw,
+
+    file r /usr/share/iproute2/group,
+    file r /usr/share/iproute2/rt_tables,
+    file r @{run}/netns/{,**},
+  }
+  
+  # Sub-profile for sysctl tool restrictions
+  file rCx /usr/sbin/sysctl,
+  profile sysctl /usr/sbin/sysctl {
+    include <abstractions/base> 
+    
+    # Allow executable mapping and read for the binary
+    file mr /usr/sbin/sysctl,
+ 
+    file w @{PROC}/sys/net/ipv4/conf/all/src_valid_mark,
+  }
+
+  # wireguard configuration and key files
+  file rw @{etc_rw}/wireguard/{,**},
+
+  # Allow executable mapping and read for the binary
+  file mr /usr/bin/wg-quick,
+
+  # Process-specific access
+  file r @{PROC}/@{pid}/net/ip_tables_names,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/wg-quick>
+}

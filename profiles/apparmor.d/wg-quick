@@ -26,16 +26,16 @@ profile wg-quick /usr/bin/wg-quick flags=(attach_disconnected) {
   file mrpx /usr/bin/wg -> wg,
 
   # binaries called from within wg-quick
-  file rix /usr/bin/readlink,
-  file rix /usr/bin/stat,
-  file rix /usr/bin/cat,
-  file rix /usr/bin/rm,
-  file rix /usr/bin/mv,
-  file rix /usr/bin/sync,
-  file rix /usr/bin/sort,
-  file rix /usr/sbin/xtables-nft-multi,
-  file rix /usr/bin/resolvectl,
-  file rix /usr/sbin/resolvconf,
+  file mrix /usr/bin/readlink,
+  file mrix /usr/bin/stat,
+  file mrix /usr/bin/cat,
+  file mrix /usr/bin/rm,
+  file mrix /usr/bin/mv,
+  file mrix /usr/bin/sync,
+  file mrix /usr/bin/sort,
+  file mrix /usr/sbin/xtables-nft-multi,
+  file mrix /usr/bin/resolvectl,
+  file mrix /usr/sbin/resolvconf,
 
   # dbus access
   file rw @{run}/dbus/system_bus_socket,
@@ -55,14 +55,14 @@ profile wg-quick /usr/bin/wg-quick flags=(attach_disconnected) {
       peer=(name=org.freedesktop.DBus, label=unconfined),
 
   # Sub-profile for nft tool restrictions
-  file rCx /usr/sbin/nft,
+  file mrCx /usr/sbin/nft,
   profile nft /usr/sbin/nft {
     include <abstractions/base> 
 
     capability net_admin,
 
     # Allow executable mapping and read for the binary
-    file rm /usr/sbin/nft,
+    file mr /usr/sbin/nft,
 
     # Network access rules
     network netlink raw,
@@ -72,7 +72,7 @@ profile wg-quick /usr/bin/wg-quick flags=(attach_disconnected) {
   }
 
   # Sub-profile for IP tool restrictions
-  file rCx /usr/bin/ip,
+  file mrCx /usr/bin/ip,
   profile ip /usr/bin/ip {
     include <abstractions/base>
 
@@ -80,7 +80,7 @@ profile wg-quick /usr/bin/wg-quick flags=(attach_disconnected) {
     capability sys_module,
 
     # Allow executable mapping and read for the binary
-    file r /usr/bin/ip,
+    file mr /usr/bin/ip,
 
     # Network access rules
     network netlink raw,
@@ -91,7 +91,7 @@ profile wg-quick /usr/bin/wg-quick flags=(attach_disconnected) {
   }
   
   # Sub-profile for sysctl tool restrictions
-  file rCx /usr/sbin/sysctl,
+  file mrCx /usr/sbin/sysctl,
   profile sysctl /usr/sbin/sysctl {
     include <abstractions/base> 
     

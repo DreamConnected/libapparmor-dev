@@ -24,14 +24,6 @@
 
 %{
 
-/* set the following to non-zero to get bison to emit debugging
- * information about tokens given and rules matched.
- * Also:
- *   Uncomment the %defines
- *   parse.error
- *   parse.trace
- */
-#define YYDEBUG 0
 #include <string.h>
 #include <aalogparse.h>
 #include "parser.h"

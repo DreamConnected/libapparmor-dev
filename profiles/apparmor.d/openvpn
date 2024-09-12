@@ -11,8 +11,9 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile openvpn /usr/sbin/openvpn flags=(attach_disconnected){
+profile openvpn /usr/sbin/openvpn flags=(attach_disconnected) {
   include <abstractions/base>
+  include <abstractions/consoles>
   include <abstractions/openssl>
   include <abstractions/strict-nameservice>
 
@@ -33,6 +34,10 @@ profile openvpn /usr/sbin/openvpn flags=(attach_disconnected){
 
   # OpenVPN configuration and key files
   file r /etc/openvpn/{,**},
+  file mr /usr/sbin/openvpn,
+
+  # To prompt password to users,
+  file mrix /usr/bin/systemd-ask-password,
 
   # TUN/TAP device
   file rw /dev/net/tun,
@@ -47,7 +52,7 @@ profile openvpn /usr/sbin/openvpn flags=(attach_disconnected){
 
   # integration with NetworkManager
   file rw @{run}/NetworkManager/nm-openvpn-*,
-  file rUx /{usr/,}lib{exec,/NetworkManager}/nm-openvpn-service-openvpn-helper,
+  file PUx /{usr/,}lib{exec,/NetworkManager}/nm-openvpn-service-openvpn-helper,
 
   # IP tool capability for network configuration
   file rCx /{,usr/}bin/ip,
@@ -76,6 +81,19 @@ profile openvpn /usr/sbin/openvpn flags=(attach_disconnected){
 
     # To be able to manage firewall rules.
     capability net_admin,
+
+    network (bind,create,getattr,getopt,receive,send,setopt) netlink raw,
+    unix (bind) type=stream addr=@[a-f0-9]*/bus/resolvconf/system,
+
+    file mrix /usr/bin/resolvectl,
+    file mrix /usr/bin/sort,
+
+    owner r /etc/openvpn/update-resolv-conf,
+    owner rw /run/dbus/system_bus_socket,
+    owner r /usr/bin/bash,
+
+    dbus (send) bus=system path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member="Hello",
+    dbus (send) bus="system" path="/org/freedesktop/resolve1" interface="org.freedesktop.resolve1.Manager" member="SetLinkDNSEx",
 
     file r /etc/openvpn/update-resolv-conf.sh,
 

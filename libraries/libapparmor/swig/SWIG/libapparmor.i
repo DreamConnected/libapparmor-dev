@@ -8,6 +8,7 @@
 %}
 
 %include "typemaps.i"
+%include <cstring.i>
 
 %newobject parse_record;
 %delobject free_record;
@@ -79,6 +80,31 @@ warnings.warn("free_record is now a no-op as the record's memory is handled auto
 
 /* apparmor.h */
 
+/*
+ * label is a heap-allocated pointer, but when label and mode occur together,
+ * the freeing of label must be deferred because mode points into label.
+ *
+ * %cstring_output_allocate((char **label, char **mode), free(*$1))
+ * does not handle multi-argument typemaps correctly, so we write our own
+ * typemap based on it instead.
+ */
+%typemap(in,noblock=1,numinputs=0) (char **label, char **mode) ($*1_ltype temp_label = 0, $*2_ltype temp_mode = 0) {
+  $1 = &temp_label;
+  $2 = &temp_mode;
+}
+%typemap(freearg,match="in") (char **label, char **mode) ""
+%typemap(argout,noblock=1,fragment="SWIG_FromCharPtr") (char **label, char **mode) {
+  %append_output(SWIG_FromCharPtr(*$1));
+  %append_output(SWIG_FromCharPtr(*$2));
+  free(*$1);
+}
+
+/*
+ * mode is also an out pointer, but it points into an existing buffer.
+ * This is a catch-all for occurrences of **mode that aren't paired with **label.
+ */
+%cstring_output_allocate(char **mode, );
+
 extern char *aa_splitcon(char *con, char **mode);
 
 #ifdef SWIGPYTHON
@@ -97,6 +123,8 @@ extern char *aa_splitcon(char *con, char **mode);
 /* apparmor.h */
 
 extern int aa_is_enabled(void);
+/* aa_find_mountpoint mnt is an output pointer to a heap-allocated string */
+%cstring_output_allocate(char **mnt, free(*$1));
 extern int aa_find_mountpoint(char **mnt);
 extern int aa_change_hat(const char *subprofile, unsigned long magic_token);
 extern int aa_change_profile(const char *profile);

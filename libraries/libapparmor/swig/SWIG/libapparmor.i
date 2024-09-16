@@ -8,6 +8,26 @@
 %}
 
 %include "typemaps.i"
+
+%newobject parse_record;
+%delobject free_record;
+/*
+ * Despite its name, %delobject does not hook up destructors to language
+ * deletion mechanisms. Instead, it sets flags so that manually calling the
+ * free function and then deleting by language mechanisms doesn't cause a
+ * double-free. (Manually calling the free function twice can still cause a
+ * double-free.)
+ *
+ * Instead, we need manually extend the struct with a C++-like destructor.
+ * This ensures that the record struct is free when the high-level object
+ * goes out of scope.
+ */
+%extend aa_log_record {
+	~aa_log_record() {
+		free_record($self);
+	}
+}
+
 %include <aalogparse.h>
 
 /**

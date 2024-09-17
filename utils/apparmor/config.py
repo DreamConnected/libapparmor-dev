@@ -19,6 +19,11 @@ from configparser import ConfigParser
 from tempfile import NamedTemporaryFile
 
 from apparmor.common import AppArmorException, open_file_read  # , warn, msg,
+import apparmor.ui as aaui
+
+from apparmor.translations import init_translation
+
+_ = init_translation()
 
 
 # CFG = None
@@ -103,7 +108,11 @@ class Config:
         config = {'': dict()}
         with open_file_read(filepath) as conf_file:
             for line in conf_file:
-                result = shlex.split(line, True)
+                try:
+                    result = shlex.split(line, True)
+                except ValueError as e:
+                    aaui.UI_Important(_('Warning! invalid line \'{line}\' in config file: {err}').format(line=line[:-1], err=e))
+                    continue
                 # If not a comment of empty line
                 if result:
                     # option="value" or option=value type

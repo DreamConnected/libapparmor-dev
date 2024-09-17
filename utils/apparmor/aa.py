@@ -1600,9 +1600,9 @@ def collapse_log(hashlog, ignore_null_profiles=True):
                 log_dict[aamode][final_name] = ProfileStorage(profile, hat, 'collapse_log()')
 
             for ev_type, ev_class in ReadLog.ruletypes.items():
-                for event in ev_class.from_hashlog(hashlog[aamode][full_profile][ev_type]):
-                    if not hat_exists or not is_known_rule(aa[profile][hat], ev_type, event):
-                        log_dict[aamode][final_name][ev_type].add(event)
+                for rule in ev_class.from_hashlog(hashlog[aamode][full_profile][ev_type]):
+                    if not hat_exists or not is_known_rule(aa[profile][hat], ev_type, rule):
+                        log_dict[aamode][final_name][ev_type].add(rule)
 
     return log_dict
 

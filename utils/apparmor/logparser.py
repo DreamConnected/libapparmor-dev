@@ -114,8 +114,7 @@ class ReadLog:
     def get_event_type(self, e):
 
         if e['operation'] == 'exec':
-            return 'exec'
-
+            return 'file'
         elif e['class'] and e['class'] == 'namespace':
             if e['denied_mask'] and e['denied_mask'].startswith('userns_'):
                 return 'userns'
@@ -141,7 +140,6 @@ class ReadLog:
             return 'change_hat'
         elif e['operation'] == 'change_profile':
             return 'change_profile'
-
         elif e['operation'] == 'ptrace':
             return 'ptrace'
         elif e['operation'] == 'signal':
@@ -306,17 +304,10 @@ class ReadLog:
 
         if profile != 'null-complain-profile' and not self.profile_exists(profile):
             return
-        if e['operation'] == 'exec':
-            if not e['name']:
-                raise AppArmorException('exec without executed binary')
-
-            if not e['name2']:
-                e['name2'] = ''  # exec events in enforce mode don't have target=...
-
-            self.hashlog[aamode][full_profile]['exec'][e['name']][e['name2']] = True
-            return
-
         # TODO: replace all the if conditions with a loop over 'ruletypes'
+        if e['operation'] == 'exec':
+            FileRule.hashlog_from_event(self.hashlog[aamode][full_profile]['exec'], e)
+            return
 
         elif e['class'] and e['class'] == 'namespace':
             if e['denied_mask'].startswith('userns_'):

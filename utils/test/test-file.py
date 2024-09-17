@@ -1235,8 +1235,27 @@ class FileGetExecConflictRules_1(AATest):
         self. assertEqual(conflicts.get_clean(), expected)
 
 
-class FileModeTest(AATest):
-    def test_write_append(self):
+class FileCreateFromEvent(AATest):
+
+    def test_exec_rule(self):
+        parser = ReadLog('', '', '')
+        raw_ev = '[258945.534540] audit: type=1400 audit(1725865139.443:401): apparmor="DENIED" operation="exec" class="file" profile="foo" name="/usr/bin/ls" pid=130888 comm="foo" requested_mask="x" denied_mask="x" fsuid=1000 ouid=0'
+        hl = hasher()
+        ev = parser.parse_event(raw_ev)
+        FileRule.hashlog_from_event(hl, ev)
+
+        expected = {'/usr/bin/ls': {'': True}}
+        self.assertEqual(hl, expected)
+
+        fr = FileRule.from_hashlog(hl)
+
+        expected = FileRule('/usr/bin/ls', None, FileRule.ANY_EXEC, FileRule.ALL, False)
+
+        self.assertTrue(expected.is_equal(next(fr)))
+        with self.assertRaises(StopIteration):
+            next(fr)
+
+    def test_filemode_write_append(self):
         parser = ReadLog('', '', '')
         events = [
             '[ 9614.885136] audit: type=1400 audit(1720429924.397:191): apparmor="DENIED" operation="open" class="file" profile="/home/user/test/a" name="/home/user/test/foo" pid=24460 comm="a" requested_mask="w" denied_mask="w" fsuid=1000 ouid=1000',
@@ -1257,6 +1276,16 @@ class FileModeTest(AATest):
         self.assertTrue(expected.is_equal(next(fr)))
         with self.assertRaises(StopIteration):
             next(fr)
+
+
+class FileInvalidCreateFromEvent(AATest):
+    def test_write_append(self):
+        parser = ReadLog('', '', '')
+        raw_ev = '[258145.094974] audit: type=1400 audit(1725864339.004:396): apparmor="DENIED" operation="exec" class="file" profile="foo" name="" pid=125456 comm="foo" requested_mask="x" denied_mask="x" fsuid=1000 ouid=1000'  # Name is empty
+        hl = hasher()
+        ev = parser.parse_event(raw_ev)
+        with self.assertRaises(AppArmorException):
+            FileRule.hashlog_from_event(hl, ev)
 
 
 setup_all_loops(__name__)

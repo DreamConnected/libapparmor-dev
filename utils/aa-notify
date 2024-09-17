@@ -49,12 +49,13 @@ import apparmor.ui as aaui
 import apparmor.config as aaconfig
 import apparmor.update_profile as update_profile
 import LibAppArmor  # C-library to parse one log line
-from apparmor.common import DebugLogger, open_file_read, AppArmorException
+from apparmor.common import DebugLogger, open_file_read
 from apparmor.fail import enable_aa_exception_handler
 from apparmor.notify import get_last_login_timestamp
 from apparmor.translations import init_translation
 from apparmor.logparser import ReadLog
-from apparmor.gui import UsernsGUI, AddProfileGUI, ErrorGUI, ShowMoreGUI, set_interface_theme
+from apparmor.gui import UsernsGUI, ErrorGUI, ShowMoreGUI, set_interface_theme
+from apparmor.rule.file import FileRule
 
 from dbus import DBusException
 import gi
@@ -420,6 +421,13 @@ def compile_filter_regex(filters):
     return filters
 
 
+def can_allow_rule(ev, special_profiles):
+    if customized_message['userns']['cond'](ev, special_profiles):
+        return not aa.get_profile_filename_from_profile_name(ev['comm'])
+    else:
+        return aa.get_profile_filename_from_profile_name(ev['profile']) is not None
+
+
 def is_special_profile_userns(ev, special_profiles):
     if not special_profiles or ev['profile'] not in special_profiles:
         return False  # We don't use special profiles or there is already a profile defined: we don't ask to add userns
@@ -430,23 +438,41 @@ def is_special_profile_userns(ev, special_profiles):
     return True
 
 
-def ask_for_user_ns_denied(path, name, profile_path):
-    gui = UsernsGUI(name, path)
-    ans = gui.show()
-    if ans in {'allow', 'deny'}:
-        update_profile_path = update_profile.__file__
-        local_template_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'default_unconfined.template')
-        if os.path.exists(local_template_path):  # We are using local aa-notify -> we use local template
-            template_path = local_template_path
-        else:
-            template_path = aa.CONFDIR + '/default_unconfined.template'
+def create_userns_profile(name, path, ans):
+    update_profile_path = update_profile.__file__
 
-        command = ['pkexec', '--keep-cwd', update_profile_path, 'create_userns', template_path, name, path, profile_path, ans]
-        try:
-            subprocess.run(command, check=True)
-        except subprocess.CalledProcessError as e:
-            if e.returncode != 126:  # return code 126 means the user cancelled the request
-                UsernsGUI.show_error_cannot_reload_profile(profile_path, e.returncode)
+    local_template_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'default_unconfined.template')
+    if os.path.exists(local_template_path):  # We are using local aa-notify -> we use local template
+        template_path = local_template_path
+    else:
+        template_path = aa.CONFDIR + '/default_unconfined.template'
+
+    if path is None:
+        UsernsGUI.show_error_cannot_find_execpath(name, template_path)
+        return
+
+    profile_path = aa.get_profile_filename_from_profile_name(name, True)
+    if not profile_path:
+        ErrorGUI(_('Cannot get profile path for {}.').format(name), False).show()
+        return
+
+    command = ['pkexec', '--keep-cwd', update_profile_path, 'create_userns', template_path, name, path, profile_path, ans]
+
+    try:
+        subprocess.run(command, check=True)
+    except subprocess.CalledProcessError as e:
+        if e.returncode != 126:  # return code 126 means the user cancelled the request
+            UsernsGUI.show_error_cannot_reload_profile(profile_path, e.returncode)
+
+
+def ask_for_user_ns_denied(path, name, interactive=True):
+    if interactive:
+        gui = UsernsGUI(name, path)
+        ans = gui.show()
+    else:
+        ans = 'allow'
+    if ans in {'allow', 'deny'}:
+        create_userns_profile(name, path, ans)
     else:
         debug_logger.debug('No action from the user for {}'.format(path))
 
@@ -470,24 +496,20 @@ def prompt_userns(ev, special_profiles):
         # but if execpath is not supported by the kernel it could also mean that we inferred a bad path
         # So we do nothing beyond showing this error.
         ErrorGUI(
-            _('Application {0} tried to create an user namespace, but a profile already exists with this name.\n'
-              'This is likely because there is several binaries named {0} thus the path inferred by AppArmor ({1}) is not correct.\n'
-              'You should review your profiles (in {2}).').format(ev['comm'], ev['execpath'], aa.profile_dir),
+            _('Application {profile} tried to create an user namespace, but a profile already exists with this name.\n'
+              'This is likely because there is several binaries named {profile} thus the path inferred by AppArmor ({inferred_path}) is not correct.\n'
+              'You should review your profiles (in {profile_dir}).').format(profile=ev['comm'], inferred_path=ev['execpath'], profile_dir=aa.profile_dir),
             False).show()
         return True
 
-    profile_path = aa.get_profile_filename_from_profile_name(ev['comm'], True)
-    if not profile_path:
-        return False
-
-    ask_for_user_ns_denied(ev['execpath'], ev['comm'], profile_path)
+    ask_for_user_ns_denied(ev['execpath'], ev['comm'])
 
     return True
 
 
 # TODO reuse more code from aa-logprof in callbacks
 def cb_more_info(notification, action, _args):
-    (raw_ev, rl) = _args
+    (raw_ev, rl, special_profiles) = _args
     notification.close()
 
     parsed_event = rl.parse_record(raw_ev)
@@ -501,19 +523,54 @@ def cb_more_info(notification, action, _args):
 
     rule = rl.create_rule_from_ev(parsed_event)
 
+    # Exec events are created with the default FileRule.ANY_EXEC. We use Pix for actual rules
+    if type(rule) is FileRule and rule.exec_perms == FileRule.ANY_EXEC:
+        rule.exec_perms = 'Pix'
+
     if rule:
         aa.update_profiles()
-        profile_path = aa.get_profile_filename_from_profile_name(parsed_event['profile'])
-        if profile_path:
-            out += _('If you want to allow this operation you can add the line below in profile {}\n').format(profile_path)
-            out += rule.get_clean()
+        if customized_message['userns']['cond'](parsed_event, special_profiles):
+            profile_path = None
+            out += _('You may allow it through a dedicated unconfined profile for {}.').format(parsed_event['comm'])
         else:
-            out += _('However {0} is not in {1}\nIt is likely that the profile was not stored in {1} or was removed.\n').format(parsed_event['profile'], aa.profile_dir)
+            profile_path = aa.get_profile_filename_from_profile_name(parsed_event['profile'])
+            if profile_path:
+                out += _('If you want to allow this operation you can add the line below in profile {}\n').format(profile_path)
+                out += rule.get_clean()
+            else:
+                out += _('However {profile} is not in {profile_dir}\nIt is likely that the profile was not stored in {profile_dir} or was removed.\n').format(profile=parsed_event['profile'], profile_dir=aa.profile_dir)
     else:  # Should not happen
         out += _('ERROR: Could not create rule from event.')
         return
 
-    ShowMoreGUI(profile_path, out, profile_path is not None).show()
+    ans = ShowMoreGUI(profile_path, out, rule.get_clean(), parsed_event['profile'], profile_path is not None).show()
+    if ans == 'add_rule':
+        add_to_profile(rule.get_clean(), parsed_event['profile'])
+    elif ans in {'allow', 'deny'}:
+        create_userns_profile(parsed_event['comm'], parsed_event['execpath'], ans)
+
+
+def add_to_profile(rule, profile_name):
+    # We get update_profile.py through this import so that it works in all cases
+    profile_path = aa.get_profile_filename_from_profile_name(profile_name)
+
+    if not profile_path:
+        ErrorGUI(
+            _(
+                'Cannot find profile for {}\n\n'
+                'It is likely that the profile was not stored in {} or was removed.'
+            ).format(profile_name, aa.profile_dir),
+            False
+        ).show()
+        return
+
+    update_profile_path = update_profile.__file__
+    command = ['pkexec', '--keep-cwd', update_profile_path,  'add_rule', rule, profile_name]
+    try:
+        subprocess.run(command, check=True)
+    except subprocess.CalledProcessError as e:
+        if e.returncode != 126:  # return code 126 means the user cancelled the request
+            ErrorGUI(_('Failed to add rule {rule} to {profile}\nError code = {retcode}').format(rule=rule, profile=profile_name, retcode=e.returncode), False).show()
 
 
 def cb_add_to_profile(notification, action, _args):
@@ -523,26 +580,20 @@ def cb_add_to_profile(notification, action, _args):
 
     rule = rl.create_rule_from_ev(parsed_event)
 
+    # Exec events are created with the default FileRule.ANY_EXEC. We use Pix for actual rules
+    if type(rule) is FileRule and rule.exec_perms == FileRule.ANY_EXEC:
+        rule.exec_perms = 'Pix'
+
     if not rule:
-        ErrorGUI.show(_('ERROR: Could not create rule from event.'))
+        ErrorGUI(_('ERROR: Could not create rule from event.'), False).show()
         return
 
     aa.update_profiles()
 
     if customized_message['userns']['cond'](parsed_event, special_profiles):
-        if parsed_event['execpath'] is None:
-            UsernsGUI.show_error_cannot_find_execpath(parsed_event['comm'], os.path.dirname(os.path.abspath(__file__)) + '/default_unconfined.template')
-            return
-        profile_path = aa.get_profile_filename_from_profile_name(parsed_event['comm'], True)
-        if not profile_path:
-            ErrorGUI(_('Cannot get profile path for {}.').format(parsed_event['comm']), False).show()
-            return
-        ask_for_user_ns_denied(parsed_event['execpath'], parsed_event['comm'], profile_path)
+        ask_for_user_ns_denied(parsed_event['execpath'], parsed_event['comm'], False)
     else:
-        try:
-            AddProfileGUI(rule.get_clean(), parsed_event['profile']).show()
-        except AppArmorException:
-            AddProfileGUI.show_error_cannot_find_profile(parsed_event['profile'])
+        add_to_profile(rule.get_clean(), parsed_event['profile'])
 
 
 customized_message = {
@@ -646,15 +697,6 @@ def main():
     else:  # fallback to env variable (or None if not set)
         confdir = os.getenv('__AA_CONFDIR')
 
-    # Todo: add more kinds of notifications
-    supported_prompt_filter = {'userns'}
-
-    if args.prompt_filter:
-        args.prompt_filter = set(args.prompt_filter.strip().split(','))
-        unsupported = args.prompt_filter - supported_prompt_filter
-        if unsupported:
-            sys.exit(_('ERROR: using an unsupported prompt filter: {}\nSupported values: {}').format(', '.join(unsupported), ', '.join(supported_prompt_filter)))
-
     aa.init_aa(confdir=confdir)
 
     # Initialize aa.logfile
@@ -693,6 +735,7 @@ def main():
     - userns_special_profiles
     - ignore_denied_capability
     - interface_theme
+    - prompt_filter
     - filter.profile,
     - filter.operation,
     - filter.name,
@@ -709,6 +752,7 @@ def main():
         'userns_special_profiles',
         'ignore_denied_capability',
         'interface_theme',
+        'prompt_filter',
         'show_notifications',
         'message_body',
         'message_footer',
@@ -798,6 +842,16 @@ def main():
     else:
         set_interface_theme('ubuntu')
 
+    # Todo: add more kinds of notifications
+    supported_prompt_filter = {'userns'}
+    if not args.prompt_filter and 'prompt_filter' in config['']:
+        args.prompt_filter = config['']['prompt_filter']
+    if args.prompt_filter:
+        args.prompt_filter = set(args.prompt_filter.strip().split(','))
+        unsupported = args.prompt_filter - supported_prompt_filter
+        if unsupported:
+            sys.exit(_('ERROR: using an unsupported prompt filter: {}\nSupported values: {}').format(', '.join(unsupported), ', '.join(supported_prompt_filter)))
+
     if args.file:
         logfile = args.file
     elif os.path.isfile('/var/run/auditd.pid') and os.path.isfile('/var/log/audit/audit.log'):
@@ -830,6 +884,9 @@ def main():
 
         # Required to parse_record.
         rl = ReadLog('', '', '')
+
+        # Initialize the list of profiles for can_allow_rule
+        aa.read_profiles()
 
         # At this point this script needs to be able to read 'logfile' but once
         # the for loop starts, privileges can be dropped since the file descriptor
@@ -865,8 +922,9 @@ def main():
                 'gtk-dialog-warning'
             )
 
-            n.add_action('clicked', 'Allow', cb_add_to_profile, (event, rl, userns_special_profiles))
-            n.add_action('more_clicked', 'Show More', cb_more_info, (event, rl))
+            if can_allow_rule(ev, userns_special_profiles):
+                n.add_action('clicked', 'Allow', cb_add_to_profile, (event, rl, userns_special_profiles))
+            n.add_action('more_clicked', 'Show More', cb_more_info, (event, rl, userns_special_profiles))
 
             n.show()
 

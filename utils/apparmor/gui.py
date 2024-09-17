@@ -1,13 +1,10 @@
 import os
 import tkinter as tk
 import tkinter.ttk as ttk
-import tkinter.font as font
 import subprocess
 import ttkthemes
 
 import apparmor.aa as aa
-import apparmor.update_profile as update_profile
-from apparmor.common import AppArmorException
 
 from apparmor.translations import init_translation
 
@@ -28,6 +25,7 @@ class GUI:
             print(_('ERROR: Cannot initialize Tkinter. Please check that your terminal can use a graphical interface'))
             os._exit(1)
 
+        self.result = None
         style = ttkthemes.ThemedStyle(self.master)
         style.theme_use(interface_theme)
         self.bg_color = style.lookup('TLabel', 'background')
@@ -40,73 +38,19 @@ class GUI:
         self.button_frame = ttk.Frame(self.master, padding=(0, 10))
         self.button_frame.pack()
 
-
-class AddProfileGUI(GUI):
-    def __init__(self, rule, profile_name, dbg=None):
-        self.dbg = dbg
-        self.rule = rule
-        self.profile_name = profile_name
-        self.profile_path = aa.get_profile_filename_from_profile_name(profile_name)
-
-        if not self.profile_path:
-            raise AppArmorException('Cannot find profile for {}'.format(self.profile_name))
-        super().__init__()
-
-        self.master.title(_('AppArmor - Add rule to profile'))
-
-        self.profile_label = ttk.Label(self.label_frame, text=_('Profile for: {}').format(self.profile_name))
-        self.profile_label.pack()
-
-        self.entry_frame = ttk.Frame(self.master)
-        self.entry_frame.pack()
-
-        self.rule = tk.StringVar(value=self.rule)
-        self.rule_entry = ttk.Entry(self.entry_frame, font=font.nametofont("TkDefaultFont"), width=50, textvariable=self.rule)
-        self.rule_entry.pack(side=tk.LEFT)
-
-        self.button_frame = ttk.Frame(self.master, padding=(10, 10))
-        self.button_frame.pack()
-
-        self.add_to_profile_button = ttk.Button(self.button_frame, text=_('Add to Profile'), command=self.add_to_profile)
-        self.add_to_profile_button.pack(side=tk.LEFT)
-
-        self.show_profile_button = ttk.Button(self.button_frame, text=_('Show Current Profile'), command=lambda: open_with_default_editor(self.profile_path))
-        self.show_profile_button.pack(side=tk.LEFT)
-
-        self.cancel_button = ttk.Button(self.button_frame, text=_('Cancel'), command=self.master.destroy)
-        self.cancel_button.pack(side=tk.LEFT)
-
-    def add_to_profile(self):
-        if self.dbg:
-            self.dbg.debug('Adding rule \'{}\' to profile at: {}'.format(self.rule.get(), self.profile_name))
-
-        # We get update_profile.py through this import so that it works in all cases
-        update_profile_path = update_profile.__file__
-        command = ['pkexec', '--keep-cwd', update_profile_path,  'add_rule', self.rule.get(), self.profile_name]
-        try:
-            subprocess.run(command, check=True)
-        except subprocess.CalledProcessError as e:
-            if e.returncode != 126:  # return code 126 means the user cancelled the request
-                ErrorGUI(_('Failed to add rule {} to {}\n Error code = {}').format(self.rule.get(), self.profile_name, e.returncode), False).show()
-
-        self.master.destroy()
-
     def show(self):
         self.master.mainloop()
+        return self.result
 
-    @staticmethod
-    def show_error_cannot_find_profile(profile_name):
-        ErrorGUI(
-            _(
-                'Cannot find profile for {}\n\n'
-                'It is likely that the profile was not stored in {} or was removed.'
-            ).format(profile_name, aa.profile_dir),
-            False
-        ).show()
+    def set_result(self, result):
+        self.result = result
+        self.master.destroy()
 
 
 class ShowMoreGUI(GUI):
-    def __init__(self, profile_path, msg, profile_found=True):
+    def __init__(self, profile_path, msg, rule, profile_name, profile_found=True):
+        self.rule = rule
+        self.profile_name = profile_name
         self.profile_path = profile_path
         self.msg = msg
         self.profile_found = profile_found
@@ -121,17 +65,25 @@ class ShowMoreGUI(GUI):
 
         if self.profile_found:
             self.show_profile_button = ttk.Button(self.button_frame, text=_('Show Current Profile'), command=lambda: open_with_default_editor(self.profile_path))
-            self.show_profile_button.pack()
+            self.show_profile_button.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
 
-    def show(self):
-        self.master.mainloop()
+            self.add_to_profile_button = ttk.Button(self.button_frame, text=_('Allow'), command=lambda: self.set_result('add_rule'))
+            self.add_to_profile_button.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
+        elif rule == 'userns create,':
+            self.add_policy_button = ttk.Button(self.master, text=_('Allow'), command=lambda: self.set_result('allow'))
+            self.add_policy_button.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
+
+            self.never_ask_button = ttk.Button(self.master, text=_('Deny'), command=lambda: self.set_result('deny'))
+            self.never_ask_button.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
+
+            self.do_nothing_button = ttk.Button(self.master, text=_('Do nothing'), command=self.master.destroy)
+            self.do_nothing_button.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
 
 
 class UsernsGUI(GUI):
     def __init__(self, name, path):
         self.name = name
         self.path = path
-        self.result = None
 
         super().__init__()
 
@@ -144,10 +96,10 @@ class UsernsGUI(GUI):
         link.pack()
         link.bind('<Button-1>', self.more_info)
 
-        self.add_policy_button = ttk.Button(self.master, text=_('Allow'), command=lambda: self.set_result("allow"))
+        self.add_policy_button = ttk.Button(self.master, text=_('Allow'), command=lambda: self.set_result('allow'))
         self.add_policy_button.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
 
-        self.never_ask_button = ttk.Button(self.master, text=_('Deny'), command=lambda: self.set_result("deny"))
+        self.never_ask_button = ttk.Button(self.master, text=_('Deny'), command=lambda: self.set_result('deny'))
         self.never_ask_button.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
 
         self.do_nothing_button = ttk.Button(self.master, text=_('Do nothing'), command=self.master.destroy)
@@ -162,16 +114,9 @@ However, this feature also introduces security risks, (e.g. privilege escalation
 This dialog allows you to choose whether you want to enable user namespaces for this application.
 
 The application path is {}""".format(self.path))
-        more_gui = ShowMoreGUI(self.path, more_info_text, profile_found=False)
+        # Rule=None so we don't show redundant buttons in ShowMoreGUI.
+        more_gui = ShowMoreGUI(self.path, more_info_text, None, self.name, profile_found=False)
         more_gui.show()
-
-    def set_result(self, result):
-        self.result = result
-        self.master.destroy()
-
-    def show(self):
-        self.master.mainloop()
-        return self.result
 
     @staticmethod
     def show_error_cannot_reload_profile(profile_path, error):
@@ -203,7 +148,7 @@ class ErrorGUI(GUI):
         self.label.pack()
 
         # Create a button to close the dialog
-        self.button = ttk.Button(self.button_frame, text="OK", command=self.destroy)
+        self.button = ttk.Button(self.button_frame, text='OK', command=self.destroy)
         self.button.pack()
 
     def destroy(self):

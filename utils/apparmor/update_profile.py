@@ -15,7 +15,7 @@ def create_userns(template_path, name, bin_path, profile_path, decision):
     with open(template_path, 'r') as f:
         profile_template = f.read()
 
-    rule = 'userns' if decision == 'allow' else 'audit deny userns'
+    rule = 'userns create' if decision == 'allow' else 'audit deny userns create'
     profile = profile_template.format(rule=rule, name=name, path=bin_path)
 
     with open(profile_path, 'w') as file:

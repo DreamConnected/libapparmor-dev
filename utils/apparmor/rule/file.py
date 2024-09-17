@@ -440,6 +440,17 @@ class FileRule(BaseRule):
 
     @staticmethod
     def hashlog_from_event(hl, e):
+        # FileRule can be of two types, "file" or "exec"
+        if e['operation'] == 'exec':
+            if not e['name']:
+                raise AppArmorException('exec without executed binary')
+
+            if not e['name2']:
+                e['name2'] = ''  # exec events in enforce mode don't have target=...
+
+            hl[e['name']][e['name2']] = True
+            return
+
         # Map c (create) and d (delete) to w (logging is more detailed than the profile language)
         dmask = e['denied_mask']
         dmask = dmask.replace('c', 'w')
@@ -474,13 +485,20 @@ class FileRule(BaseRule):
 
     @classmethod
     def from_hashlog(cls, hl):
-        for path, owner in BaseRule.generate_rules_from_hashlog(hl, 2):
-            mode = set(hl[path][owner].keys())
-            # logparser sums up multiple log events, so both 'a' and 'w' can be present
-            if 'a' in mode and 'w' in mode:
-                mode.remove('a')
-            yield cls(path, mode, None, FileRule.ALL, owner=owner, log_event=True)
-            # TODO: check for existing rules with this path, and merge them into one rule
+        for h1, h2 in BaseRule.generate_rules_from_hashlog(hl, 2):
+            # FileRule can be either a 'normal' or an 'exec' file rule. These rules are encoded in hashlog differently.
+            if hl[h1][h2] is True:  # Exec Rule
+                name = h1
+                yield FileRule(name, None, FileRule.ANY_EXEC, FileRule.ALL, owner=False, log_event=True)
+            else:
+                path = h1
+                owner = h2
+                mode = set(hl[path][owner].keys())
+                # logparser sums up multiple log events, so both 'a' and 'w' can be present
+                if 'a' in mode and 'w' in mode:
+                    mode.remove('a')
+                yield cls(path, mode, None, FileRule.ALL, owner=owner, log_event=True)
+                # TODO: check for existing rules with this path, and merge them into one rule
 
 
 class FileRuleset(BaseRuleset):

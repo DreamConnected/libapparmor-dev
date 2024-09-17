@@ -406,6 +406,9 @@ class WriteFileTest(AATest):
         ('    deny      file /foo r,',                   'deny file /foo r,'),
         ('    deny      file /foo  wr,',                 'deny file /foo rw,'),
         ('    allow     file /foo Pxrm -> bar,',         'allow file /foo mrPx -> bar,'),
+        ('   deny owner file /foo r,',                   'deny owner file /foo r,'),
+        ('   deny owner file /foo  wr,',                 'deny owner file /foo rw,'),
+        ('  allow owner file /foo Pxrm -> bar,',         'allow owner file /foo mrPx -> bar,'),
         ('    deny    owner  /foo r,',                   'deny owner /foo r,'),
         ('    deny    owner  /foo  wr,',                 'deny owner /foo rw,'),
         ('    allow   owner  /foo Pxrm -> bar,',         'allow owner /foo mrPx -> bar,'),
@@ -420,6 +423,9 @@ class WriteFileTest(AATest):
         ('    deny      file r      /foo,',              'deny file r /foo,'),
         ('    deny      file wr     /foo  ,',            'deny file rw /foo,'),
         ('    allow     file Pxmr   /foo -> bar,',       'allow file mrPx /foo -> bar,'),
+        ('   deny owner file r      /foo ,',             'deny owner file r /foo,'),
+        ('   deny owner file wr     /foo  ,',            'deny owner file rw /foo,'),
+        ('  allow owner file Pxrm   /foo -> bar,',       'allow owner file mrPx /foo -> bar,'),
         ('    deny    owner  r      /foo ,',             'deny owner r /foo,'),
         ('    deny    owner  wr     /foo  ,',            'deny owner rw /foo,'),
         ('    allow   owner  Pxrm   /foo -> bar,',       'allow owner mrPx /foo -> bar,'),
@@ -863,6 +869,16 @@ class FileLogprofHeaderTest(AATest):
         obj = FileRule.create_instance('/foo rw,')
         obj.original_perms = {'allow': {'all': set(), 'owner': set()}}
         self.assertEqual(obj.logprof_header(), [_('Path'), '/foo', _('New Mode'), _('rw')])
+
+    def test_implicit_original_perms(self):
+        obj = FileRule.create_instance('/foo rw,')
+        obj.original_perms = {'allow': {'all': FileRule.ALL, 'owner': set()}}
+        self.assertEqual(obj.logprof_header(), [_('Path'), '/foo', _('Old Mode'), _('mrwlkix'), _('New Mode'), _('rw')])
+
+    def test_owner_implicit_original_perms(self):
+        obj = FileRule.create_instance('/foo rw,')
+        obj.original_perms = {'allow': {'all': set(), 'owner': FileRule.ALL}}
+        self.assertEqual(obj.logprof_header(), [_('Path'), '/foo', _('Old Mode'), _('owner mrwlkix'), _('New Mode'), _('rw')])
 
 
 class FileEditHeaderTest(AATest):

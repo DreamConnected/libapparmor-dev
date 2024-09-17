@@ -100,10 +100,45 @@ warnings.warn("free_record is now a no-op as the record's memory is handled auto
 }
 
 /*
- * mode is also an out pointer, but it points into an existing buffer.
- * This is a catch-all for occurrences of **mode that aren't paired with **label.
+ * mode also occurs in combination with con in aa_splitcon
+ * typemap based on %cstring_mutable but with substantial modifications
  */
-%cstring_output_allocate(char **mode, );
+%typemap(in,numinputs=1,fragment="SWIG_AsCharPtrAndSize") (char *con, char **mode) ($*2_ltype temp_mode = 0) {
+  int alloc_status = 0;
+  $1_ltype con_ptr = NULL;
+  size_t con_len = 0;
+  int char_ptr_res = SWIG_AsCharPtrAndSize($input, &con_ptr, &con_len, &alloc_status);
+  if (!SWIG_IsOK(char_ptr_res)) {
+    %argument_fail(char_ptr_res, "char *con", $symname, $argnum);
+  }
+  if (alloc_status != SWIG_NEWOBJ) {
+    // Unconditionally copy because the C function modifies the string in place
+    $1 = %new_copy_array(con_ptr, con_len+1, char);
+  } else {
+    $1 = con_ptr;
+  }
+
+  $2 = &temp_mode;
+}
+%typemap(freearg,noblock=1,match="in") (char *con, char **mode) {
+  %delete_array($1);
+}
+%typemap(argout,noblock=1,fragment="SWIG_FromCharPtr") (char *con, char **mode) {
+  /*
+   * aa_splitcon returns either con or NULL so we don't need to explicitly
+   * append it to the output
+   * 
+   * SWIG_FromCharPtr does NULL checks for us
+   */
+  %append_output(SWIG_FromCharPtr(*$2));
+}
+
+%exception aa_splitcon {
+  $action
+  if (result == NULL) {
+    SWIG_exception_fail(SWIG_ValueError, "received invalid confinement context");
+  }
+}
 
 extern char *aa_splitcon(char *con, char **mode);
 

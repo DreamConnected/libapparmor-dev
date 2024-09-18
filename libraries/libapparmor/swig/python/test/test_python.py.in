@@ -55,9 +55,26 @@ NO_VALUE_MAP = {
     'fsuid': int(ctypes.c_ulong(-1).value),
     'ouid':  int(ctypes.c_ulong(-1).value),
 }
-
-
 class AAPythonBindingsTests(unittest.TestCase):
+
+    def setUp(self):
+        # REPORT ALL THE OUTPUT
+        self.maxDiff = None
+
+    def test_enabled_and_find_mountpoint(self):
+        aa_enabled = libapparmor.aa_is_enabled()
+        self.assertIsInstance(aa_enabled, bool)
+
+        if not aa_enabled:
+            self.skipTest("AppArmor is not enabled")
+
+        mount_point = libapparmor.aa_find_mountpoint()
+        self.assertIsInstance(mount_point, str)
+        self.assertGreater(len(mount_point), 0, "mount point should not be empty")
+        self.assertTrue(os.path.isdir(mount_point))
+
+
+class AALogParsePythonBindingsTests(unittest.TestCase):
 
     def setUp(self):
         # REPORT ALL THE OUTPUT
@@ -145,7 +162,7 @@ def main():
         def stub_test(self, testname=f):
             self._runtest(testname)
         stub_test.__doc__ = "test " + f
-        setattr(AAPythonBindingsTests, 'test_' + f, stub_test)
+        setattr(AALogParsePythonBindingsTests, 'test_' + f, stub_test)
     return unittest.main(verbosity=2)
 
 

@@ -31,8 +31,9 @@ extern int _aa_is_blacklisted(const char *name);
 %exception {
   $action
   if (result < 0) {
+    // Unfortunately SWIG_exception does not support OSError
     PyErr_SetFromErrno(PyExc_OSError);
-    return NULL;
+    SWIG_fail;
   }
 }
 #endif

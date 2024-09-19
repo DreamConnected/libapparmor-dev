@@ -5,10 +5,16 @@
 #include <sys/apparmor.h>
 #include <sys/apparmor_private.h>
 
+// Include static_assert if the C compiler supports it
+// static_assert standardized since C11, assert.h not needed since C23
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L && __STDC_VERSION__ < 202311L
+#include <assert.h>
+#endif
 %}
 
 %include "typemaps.i"
 %include <cstring.i>
+%include <exception.i>
 
 %newobject parse_record;
 %delobject free_record;
@@ -172,6 +178,76 @@ extern char *aa_splitcon(char *con, char **mode);
 #endif
 extern int aa_is_enabled(void);
 
+#ifdef SWIGPYTHON
+// Based on SWIG's argcargv.i but we don't have an argc
+%typemap(in,fragment="SWIG_AsCharPtr") const char *subprofiles[] (Py_ssize_t seq_len=0, int* alloc_tracking = NULL) {
+  void* arg_as_ptr = NULL;
+  int res_convertptr = SWIG_ConvertPtr($input, &arg_as_ptr, $descriptor(char*[]), 0);
+  if (SWIG_IsOK(res_convertptr)) {
+    $1 = %static_cast(arg_as_ptr, $1_ltype);
+  } else {
+    // Clear error that would be set if ptr conversion failed
+    PyErr_Clear();
+
+    int is_list = PyList_Check($input);
+    if (is_list || PyTuple_Check($input)) {
+      seq_len = PySequence_Length($input);
+      /*
+       * %new_array zero-inits for cleaner error handling and memory cleanup
+       * %delete_array(NULL) is no-op (either free or delete), and
+       * alloc_tracking of 0 is uninit
+       * 
+       * Further note: SWIG_exception_fail jumps to the freearg typemap
+       */
+      $1 = %new_array(seq_len+1, char *);
+      if ($1 == NULL) {
+        SWIG_exception_fail(SWIG_MemoryError, "could not allocate C subprofiles");
+      }
+
+      alloc_tracking = %new_array(seq_len, int);
+      if (alloc_tracking == NULL) {
+        SWIG_exception_fail(SWIG_MemoryError, "could not allocate C alloc track arr");
+      }
+      for (Py_ssize_t i=0; i<seq_len; i++) {
+        PyObject *o = is_list ? PyList_GetItem($input, i) : PyTuple_GetItem($input, i);
+        if (o == NULL) {
+          // Failed to get item-Python already set exception info
+          SWIG_fail;
+        } else if (o == Py_None) {
+          // SWIG_AsCharPtr(Py_None, ...) succeeds with ptr output being NULL
+          SWIG_exception_fail(SWIG_ValueError, "sequence contains a None object");
+        }
+        int res = SWIG_AsCharPtr(o, &$1[i], &alloc_tracking[i]);
+        if (!SWIG_IsOK(res)) {
+          // Could emit idx of error here, maybe?
+          SWIG_exception_fail(SWIG_ArgError(res), "sequence does not contain all strings");
+        }
+      }
+    } else {
+      SWIG_exception_fail(SWIG_TypeError, "subprofiles is not a list or tuple");
+    }
+  }
+}
+%typemap(freearg,noblock=1) const char *subprofiles[] {
+/*
+ * If static_assert is present, use it to verify the assumption that
+ * allocation uninitialized (0) != SWIG_NEWOBJ
+ */
+%#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+  static_assert(SWIG_NEWOBJ != 0);
+%#endif
+  if ($1 != NULL && alloc_tracking$argnum != NULL) {
+    for (Py_ssize_t i=0; i<seq_len$argnum; i++) {
+      if (alloc_tracking$argnum[i] == SWIG_NEWOBJ) {
+        %delete_array($1[i]);
+      }
+    }
+  }
+  %delete_array(alloc_tracking$argnum);
+  %delete_array($1);
+}
+#endif
+
 /* These should not receive the VOID_Object typemap */
 extern int aa_change_hat(const char *subprofile, unsigned long magic_token);
 extern int aa_change_profile(const char *profile);
@@ -198,6 +274,7 @@ extern int aa_stack_onexec(const char *profile);
 #endif
 }
 #endif
+
 extern int aa_find_mountpoint(char **mnt);
 extern int aa_getprocattr(pid_t tid, const char *attr, char **label, char **mode);
 extern int aa_gettaskcon(pid_t target, char **label, char **mode);

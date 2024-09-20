@@ -95,15 +95,11 @@ extern int aa_change_hat(const char *subprofile, unsigned long magic_token);
 extern int aa_change_profile(const char *profile);
 extern int aa_change_onexec(const char *profile);
 extern int aa_change_hatv(const char *subprofiles[], unsigned long token);
-extern int aa_change_hat_vargs(unsigned long token, int count, ...);
 extern int aa_stack_profile(const char *profile);
 extern int aa_stack_onexec(const char *profile);
-extern int aa_getprocattr_raw(pid_t tid, const char *attr, char *buf, int len,
-			      char **mode);
 extern int aa_getprocattr(pid_t tid, const char *attr, char **label, char **mode);
 extern int aa_gettaskcon(pid_t target, char **label, char **mode);
 extern int aa_getcon(char **label, char **mode);
-extern int aa_getpeercon_raw(int fd, char *buf, socklen_t *len, char **mode);
 extern int aa_getpeercon(int fd, char **label, char **mode);
 extern int aa_query_label(uint32_t mask, char *query, size_t size, int *allowed,
 			  int *audited);

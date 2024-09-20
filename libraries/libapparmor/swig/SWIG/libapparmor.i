@@ -15,8 +15,7 @@
  * Despite its name, %delobject does not hook up destructors to language
  * deletion mechanisms. Instead, it sets flags so that manually calling the
  * free function and then deleting by language mechanisms doesn't cause a
- * double-free. (Manually calling the free function twice can still cause a
- * double-free.)
+ * double-free.
  *
  * Instead, we need manually extend the struct with a C++-like destructor.
  * This ensures that the record struct is free when the high-level object
@@ -27,6 +26,28 @@
 		free_record($self);
 	}
 }
+
+/*
+ * Generate a no-op free_record wrapper to avoid making a double-free footgun.
+ * Use rename directive to avoid colliding with the actual free_record, which
+ * we use above to clean up when the higher-level language deletes the object.
+ * 
+ * Ideally we would not expose a free_record at all, but we need to maintain
+ * backwards compatibility with the existing high-level code that uses it.
+ */
+%rename(free_record) noop_free_record;
+%feature("autodoc",
+  "This function used to free aa_log_record objects. Freeing is now handled "
+  "automatically, so this no-op function remains for backwards compatibility.") noop_free_record;
+%inline %{
+  void noop_free_record(aa_log_record *record) {(void) record;}
+%}
+
+/*
+ * Do not autogenerate a wrapper around free_record. This does not prevent us
+ * from calling it ourselves in %extend C code.
+ */
+%ignore free_record;
 
 %include <aalogparse.h>
 

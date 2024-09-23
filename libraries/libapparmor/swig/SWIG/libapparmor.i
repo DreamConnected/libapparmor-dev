@@ -70,10 +70,6 @@ warnings.warn("free_record is now a no-op as the record's memory is handled auto
 
 extern char *aa_splitcon(char *con, char **mode);
 
-/* apparmor_private.h */
-
-extern int _aa_is_blacklisted(const char *name);
-
 #ifdef SWIGPYTHON
 %exception {
   $action

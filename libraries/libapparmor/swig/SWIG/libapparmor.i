@@ -122,6 +122,19 @@ extern char *aa_splitcon(char *con, char **mode);
 
 /* apparmor.h */
 
+/*
+ * aa_is_enabled returns a boolean as an int with failure reason in errno 
+ * Therefore, aa_is_enabled either returns True or throws an exception
+ *
+ * Keep that behavior for backwards compatibilty but return a boolean on Python
+ * where it makes more sense, which isn't a breaking change because a boolean is
+ * a subclass of int
+ */
+#ifdef SWIGPYTHON
+%typemap(out) int {
+	$result = PyBool_FromLong($1);
+}
+#endif
 extern int aa_is_enabled(void);
 
 /* These should not receive the VOID_Object typemap */

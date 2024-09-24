@@ -36,6 +36,12 @@
  * backwards compatibility with the existing high-level code that uses it.
  */
 %rename(free_record) noop_free_record;
+#ifdef SWIGPYTHON
+%pythonprepend noop_free_record %{
+import warnings
+warnings.warn("free_record is now a no-op as the record's memory is handled automatically", DeprecationWarning)
+%}
+#endif
 %feature("autodoc",
   "This function used to free aa_log_record objects. Freeing is now handled "
   "automatically, so this no-op function remains for backwards compatibility.") noop_free_record;

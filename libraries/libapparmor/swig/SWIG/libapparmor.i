@@ -280,6 +280,30 @@ extern int aa_getprocattr(pid_t tid, const char *attr, char **label, char **mode
 extern int aa_gettaskcon(pid_t target, char **label, char **mode);
 extern int aa_getcon(char **label, char **mode);
 extern int aa_getpeercon(int fd, char **label, char **mode);
+
+/*
+ * Typemaps for the boolean outputs of the query functions
+ * Use boolean types for Python and int types elsewhere
+ */
+#ifdef SWIGPYTHON
+// TODO: find a way to deduplicate these
+%typemap(in, numinputs=0) int *allowed (int temp) {
+  $1 = &temp;
+}
+%typemap(argout) int *allowed {
+  %append_output(PyBool_FromLong(*$1));
+}
+
+%typemap(in, numinputs=0) int *audited (int temp) {
+  $1 = &temp;
+}
+%typemap(argout) int *audited {
+  %append_output(PyBool_FromLong(*$1));
+}
+#else
+%apply int *OUTPUT { int *allowed };
+%apply int *OUTPUT { int *audited };
+#endif
 extern int aa_query_file_path_len(uint32_t mask, const char *label,
 				  size_t label_len, const char *path,
 				  size_t path_len, int *allowed, int *audited);

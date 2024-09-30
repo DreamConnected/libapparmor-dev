@@ -48,12 +48,23 @@ typedef enum
 	AA_RECORD_STATUS	/* Configuration change */
 } aa_record_event_type;
 
-#ifndef __cplusplus
+/*
+ * Use this preprocessor dance to maintain backcompat for field names
+ * This will break C code that used the C++ reserved keywords "namespace"
+ * and "class" as identifiers, but this is bad practice anyways, and we
+ * hope that we are the only ones in a given C file that messed up this way
+ *
+ * TODO: document this in a man page for aalogparse?
+ */
+#if defined(SWIG) && defined(__cplusplus)
+#error "SWIG and __cplusplus are defined together"
+#elif !defined(SWIG) && !defined(__cplusplus)
+/* Use SWIG's %rename feature to preserve backcompat */
 #define class rule_class
 #define namespace aa_namespace
 #endif
 
-typedef struct
+typedef struct aa_log_record
 {
 	aa_record_syntax_version version;
 	aa_record_event_type event;	/* Event type */

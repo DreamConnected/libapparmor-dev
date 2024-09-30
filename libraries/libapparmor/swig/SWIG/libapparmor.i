@@ -55,6 +55,17 @@ warnings.warn("free_record is now a no-op as the record's memory is handled auto
  */
 %ignore free_record;
 
+
+/*
+ * Map names to preserve backwards compatibility
+ */
+#ifdef SWIGPYTHON
+%rename("_class") aa_log_record::rule_class;
+#else
+%rename("class") aa_log_record::rule_class;
+#endif
+%rename("namespace") aa_log_record::aa_namespace;
+
 %include <aalogparse.h>
 
 /**

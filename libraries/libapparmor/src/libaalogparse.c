@@ -92,8 +92,8 @@ void free_record(aa_log_record *record)
 			free(record->name);
 		if (record->name2 != NULL)
 			free(record->name2);
-		if (record->namespace != NULL)
-			free(record->namespace);
+		if (record->aa_namespace != NULL)
+			free(record->aa_namespace);
 		if (record->attribute != NULL)
 			free(record->attribute);
 		if (record->info != NULL)
@@ -139,8 +139,8 @@ void free_record(aa_log_record *record)
 		if (record->execpath != NULL)
 			free(record->execpath);
 
-		if (record->class != NULL)
-			free(record->class);
+		if (record->rule_class != NULL)
+			free(record->rule_class);
 
 		free(record);
 	}

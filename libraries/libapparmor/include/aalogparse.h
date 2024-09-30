@@ -48,6 +48,11 @@ typedef enum
 	AA_RECORD_STATUS	/* Configuration change */
 } aa_record_event_type;
 
+#ifndef __cplusplus
+#define class rule_class
+#define namespace aa_namespace
+#endif
+
 typedef struct
 {
 	aa_record_syntax_version version;
@@ -71,7 +76,7 @@ typedef struct
 	char *comm;			/* Command that triggered msg */
 	char *name;
 	char *name2;
-	char *namespace;
+	char *aa_namespace;
 	char *attribute;
 	unsigned long parent;	
 	char *info;
@@ -98,7 +103,7 @@ typedef struct
 	char *flags;
 	char *src_name;
 
-	char *class;
+	char *rule_class;
 
 	char *net_addr;
 	char *peer_addr;

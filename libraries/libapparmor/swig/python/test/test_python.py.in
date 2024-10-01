@@ -61,6 +61,31 @@ class AAPythonBindingsTests(unittest.TestCase):
         # REPORT ALL THE OUTPUT
         self.maxDiff = None
 
+    def test_aa_splitcon(self):
+        AA_SPLITCON_EXPECT = [
+            ("unconfined", "unconfined", None),
+            ("unconfined\n", "unconfined", None),
+            ("/bin/ping (enforce)", "/bin/ping", "enforce"),
+            ("/bin/ping (enforce)\n", "/bin/ping", "enforce"),
+            ("/usr/sbin/rsyslog (complain)", "/usr/sbin/rsyslog", "complain"),
+        ]
+        for context, expected_label, expected_mode in AA_SPLITCON_EXPECT:
+            actual_label, actual_mode = libapparmor.aa_splitcon(context)
+            if expected_label is None:
+                self.assertIsNone(actual_label)
+            else:
+                self.assertIsInstance(actual_label, str)
+                self.assertEqual(expected_label, actual_label)
+
+            if expected_mode is None:
+                self.assertIsNone(actual_mode)
+            else:
+                self.assertIsInstance(actual_mode, str)
+                self.assertEqual(expected_mode, actual_mode)
+
+        with self.assertRaises(ValueError):
+            libapparmor.aa_splitcon("")
+
     def test_enabled_and_find_mountpoint(self):
         aa_enabled = libapparmor.aa_is_enabled()
         self.assertIsInstance(aa_enabled, bool)

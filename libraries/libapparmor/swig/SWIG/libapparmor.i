@@ -17,9 +17,9 @@
  * free function and then deleting by language mechanisms doesn't cause a
  * double-free.
  *
- * Instead, we need manually extend the struct with a C++-like destructor.
- * This ensures that the record struct is free when the high-level object
- * goes out of scope.
+ * Additionally, we can manually extend the struct with a C++-like
+ * destructor. This ensures that the record struct is freed 
+ * automatically when the high-level object goes out of scope.
  */
 %extend aa_log_record {
 	~aa_log_record() {

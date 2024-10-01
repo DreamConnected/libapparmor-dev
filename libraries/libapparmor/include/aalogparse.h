@@ -19,6 +19,10 @@
 #ifndef __LIBAALOGPARSE_H_
 #define __LIBAALOGPARSE_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define AA_RECORD_EXEC_MMAP	1
 #define AA_RECORD_READ		2
 #define AA_RECORD_WRITE		4
@@ -137,6 +141,10 @@ parse_record(const char *str);
  */
 void
 free_record(aa_log_record *record);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

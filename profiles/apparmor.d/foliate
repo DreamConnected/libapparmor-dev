@@ -1,12 +1,563 @@
+# Last Modified: Thu Sep 26 10:12:33 2024
+abi <abi/4.0>,
+
+include <tunables/global>
+
 # This profile allows everything and only exists to give the
 # application a name instead of having the label "unconfined"
 
-abi <abi/4.0>,
-include <tunables/global>
 
-profile foliate /usr/bin/foliate flags=(unconfined) {
+profile foliate /usr/bin/foliate flags=(enforce) {
+  include <abstractions/base>
+  include <abstractions/dbus-session-strict>
+  include <abstractions/ubuntu-browsers.d/plugins-common>
+  include <abstractions/ubuntu-browsers.d/ubuntu-integration>
+
+  signal send set=kill peer=foliate///usr/bin/bwrap,
+
+  dbus (send) bus=system path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member={StartServiceByName,AddMatch,GetNameOwner,Hello} peer=(label=unconfined),
+  dbus (send) bus="accessibility" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member=Hello peer=(label="unconfined"),
+  dbus (send) bus="accessibility" path="/org/a11y/atspi/accessible/root" interface="org.a11y.atspi.Socket" member=Embed peer=(label="unconfined"),
+  dbus (receive) bus="accessibility" path="/org/a11y/atspi/accessible/root" interface="org.freedesktop.DBus.Properties" member=Set peer=(label="unconfined"),
+  dbus (send) bus="accessibility" path=/org/a11y/webkit/accessible/* interface="org.a11y.atspi.Socket" member=Embedded peer=(label="foliate///usr/bin/bwrap//&foliate//xdg-dbus-proxy"),
+  dbus (send) bus="session" path="/org/gtk/vfs/mounttracker" interface="org.gtk.vfs.MountTracker" member="ListMountableInfo" peer=(label="unconfined"),
+  dbus (send) bus="session" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member="RequestName" peer=(label="unconfined"),
+  dbus (bind) bus="session" name="com.github.johnfactotum.Foliate",
+  dbus (send) bus="session" path="/org/freedesktop/portal/desktop" interface="org.freedesktop.DBus.Properties" member="GetAll" peer=(label="unconfined"),
+  dbus (send) bus="session" path="/org/freedesktop/portal/desktop" interface="org.freedesktop.portal.Settings" member="Read" peer=(label="unconfined"),
+  dbus (send) bus="session" path="/org/freedesktop/portal/desktop" interface="org.freedesktop.portal.Settings" member="Read" peer=(label="unconfined"),
+  dbus (send) bus="session" path="/org/a11y/bus" interface="org.a11y.Bus" member="GetAddress" peer=(label="unconfined"),
+  dbus (receive) bus="session" path="/com/github/johnfactotum/Foliate" interface="org.gtk.Actions" member="DescribeAll" peer=(label="unconfined"),
+  dbus (receive) bus="session" path="/com/github/johnfactotum/Foliate" interface="org.freedesktop.DBus.Properties" member="GetAll" peer=(label="unconfined"),
+  dbus (send) bus="session" path="/org/a11y/bus" interface="org.a11y.Bus" member="GetAddress" peer=(label="unconfined"),
+  dbus (send) bus="session" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member="ReleaseName" peer=(label="unconfined"),
+
+  dbus (send receive) bus="session" path="/com/github/johnfactotum/Foliate" interface="org.gtk.Actions" member={DescribeAll,Open} peer=(label="foliate"),
+
+
+  dbus (send receive) bus="session" path="/com/github/johnfactotum/Foliate" interface="org.gtk.Application" member=Open peer=(label="foliate"),
+
+  dbus (receive) bus="session" path="/com/github/johnfactotum/Foliate/window/*" interface="org.gtk.Actions" member="DescribeAll" peer=(label="unconfined"),
+
+  dbus (send) bus="session" path="/com/github/johnfactotum/Foliate/window/*" interface="org.gtk.Actions" member="Changed" peer=(label="unconfined"),
+  dbus (send) bus="session" path="/org/gtk/vfs/Daemon" interface="org.gtk.vfs.Daemon" member="ListMonitorImplementations" peer=(label="unconfined"),
+  dbus (send) bus="session" path="/org/gtk/Private/RemoteVolumeMonitor" interface="org.gtk.Private.RemoteVolumeMonitor" member={IsSupported,List} peer=(label="unconfined"),
+  dbus (send) bus="session" path="/org/gtk/vfs/mounttracker" interface="org.gtk.vfs.MountTracker" member={ListMounts2,LookupMount} peer=(label="unconfined"),
+  dbus (send) bus="session" path="/org/gtk/vfs/Daemon" interface="org.gtk.vfs.Daemon" member="GetConnection" peer=(label="unconfined"),
+  dbus (send) bus="session" path="/org/freedesktop/portal/desktop" interface="org.freedesktop.portal.FileChooser" member="SaveFile" peer=(label="unconfined"),
+  dbus (send) bus="system" path="/org/freedesktop/hostname1" interface="org.freedesktop.DBus.Properties" member="GetAll" peer=(label="unconfined"),
+  dbus (receive) bus="session" path="/org/gtk/vfs/mounttracker" interface="org.gtk.vfs.MountTracker" member="Mounted" peer=(label="unconfined"),
+  dbus (receive) bus="session" path="/org/freedesktop/portal/desktop/request/1_165/gtk186140039" interface="org.freedesktop.portal.Request" member="Response" peer=(label="unconfined"),
+  dbus (send) bus="session" path="/org/freedesktop/portal/desktop" interface="org.freedesktop.portal.OpenURI" member="OpenFile" peer=(label="unconfined"),
+  dbus (receive) bus="session" path="/org/freedesktop/portal/desktop/request/*/gtk*" interface="org.freedesktop.portal.Request" member="Response" peer=(label="unconfined"),
+  dbus (send) bus="system" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member="RemoveMatch" peer=(label="unconfined"),
+  dbus (send) bus="session" path="/org/freedesktop/portal/desktop" interface="org.freedesktop.portal.FileChooser" member="OpenFile" peer=(label="unconfined"),
+
+  unix (send, receive) addr=none peer=(label=foliate//WebKitNetworkProcess),
+  unix (send receive) type=seqpacket addr=none peer=(label="foliate///usr/bin/bwrap"),
+  unix (send receive) type=seqpacket addr=none peer=(label="foliate//WebKitWebProcess"),
+
+  network netlink, 
+
+  /etc/ld.so.cache r,
+  /etc/nsswitch.conf r,
+  /etc/passwd r,
+  /etc/glvnd/{**,} r,
+  /etc/vulkan/{**,} r,
+  /proc/zoneinfo r,
+  /run/dbus/system_bus_socket rw,
+  /sys/devices/pci**/device r,
+  /sys/devices/pci**/subsystem_device r,
+  /sys/devices/pci**/subsystem_vendor r,
+  /sys/devices/pci**/uevent r,
+  /sys/devices/pci**/vendor r,
+  /sys/devices/virtual/dmi/id/chassis_type r,
+  /sys/firmware/acpi/pm_profile r,
+  /usr/bin/bwrap Cx,
+  /usr/bin/foliate r,
+  /usr/bin/speech-dispatcher Cx -> speech-dispatcher,
+  /usr/lib/*/webkitgtk-*/WebKitNetworkProcess Cx -> WebKitNetworkProcess,
+  /var/lib/snapd/desktop/icons/ r,
+  @{HOME}/{**,} rw,
+  owner @{HOME}/.cache/mesa_shader_cache/** rwk,
+  owner @{HOME}/.config/dconf/user r,
+  @{HOME}/.local/share/com.github.johnfactotum.Foliate/** rw,
+  owner /proc/*/cgroup r,
+  owner /proc/*/cmdline r,
+  owner /proc/*/mounts r,
+  owner /proc/*/stat r,
+  owner /proc/*/statm r,
+  owner /proc/*/task/*/stat r,
+  owner @{run}/user/@{uid}/.flatpak/{**,} rw,
+  owner @{run}/user/@{uid}/.mutter-Xwaylandauth.* r,
+  owner @{run}/user/@{uid}/gvfsd/socket-* rw,
+  owner @{run}/user/@{uid}/speech-dispatcher/speechd.sock rw,
+  owner @{run}/user/@{uid}/wayland-0 rw,
+  owner @{run}/user/@{uid}/webkitgtk/{**,} rw,
+  owner /sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.current r,
+  owner /sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.high r,
+  owner /sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.max r,
+  owner @{HOME}/.cache/com.github.johnfactotum.Foliate/** rwkl,
+  /usr/share/com.github.johnfactotum.Foliate/** rw,
+  /usr/share/** r,
+
   userns,
 
-  # Site-specific additions and overrides. See local/README for details.
-  include if exists <local/foliate>
+
+  profile /usr/bin/bwrap flags=(attach_disconnected.path=/container/, attach_disconnected) {
+    include <abstractions/base>
+    include <abstractions/consoles>
+    include <abstractions/ubuntu-konsole>
+    include <abstractions/dbus-session>
+
+    
+    dbus (send) bus="accessibility" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member="Hello" peer=(label="unconfined"),
+    dbus (send) bus="accessibility" path="/" interface="org.freedesktop.DBus" member="AddMatch" peer=(label="unconfined"),
+    dbus (send) bus="accessibility" path="/" interface="org.freedesktop.DBus" member="GetNameOwner" peer=(label="unconfined"),
+
+    dbus (send) bus="accessibility" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member="AddMatch" peer=(label="unconfined"),
+    dbus (send) bus="accessibility" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member="GetNameOwner" peer=(label="unconfined"),
+
+    dbus (send) bus="accessibility" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member="StartServiceByName" peer=(label="unconfined"),
+    dbus (send) bus="accessibility" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member="RemoveMatch" peer=(label="unconfined"),
+    dbus (send) bus="accessibility" path="/org/a11y/webkit/accessible/*" interface="org.a11y.atspi.Socket" member="Embedded" peer=(label="foliate"),
+    dbus (send) bus="accessibility" path="/org/a11y/atspi/registry" interface="org.a11y.atspi.Registry" member="GetRegisteredEvents" peer=(label="unconfined"),
+    dbus (send receive) bus="accessibility" path="/org/a11y/webkit/accessible/*" interface="org.a11y.atspi.Socket" member="Embedded" peer=(label="foliate"),
+    dbus (receive) bus="accessibility" path="/org/a11y/atspi/registry" interface="org.a11y.atspi.Registry" member="EventListenerDeregistered" peer=(label="unconfined"),
+    dbus (send receive) bus="session" path="/com/github/johnfactotum/Foliate" interface="org.gtk.Actions" member={DescribeAll,Open} peer=(label="foliate"),
+
+
+    unix (send receive) type=seqpacket addr=none peer=(label="foliate"),
+
+    unix (send receive) type=seqpacket addr=none peer=(label="foliate//WebKitNetworkProcess"),
+
+
+    network netlink,
+
+    signal receive set=kill peer=foliate,
+
+
+    pivot_root /tmp/,
+    pivot_root /newroot/,
+    /newroot/** rw,
+    capability setpcap,
+    capability sys_admin,
+    capability net_admin,
+    capability net_bind_service,
+    capability dac_override,
+    capability dac_read_search,
+    mount options in (rw, silent, rslave, rbind, ro, nosuid, nodev, remount, bind, silent, relatime, noexec, rprivate),
+    umount, 
+
+    mount fstype=tmpfs options=(rw, nosuid, nodev),
+    mount fstype=devpts options in (rw, nosuid, noexec),
+    mount fstype=proc options in (rw, nosuid, nodev, noexec),
+
+    /container/** rw,    
+    /bindfile** rw,
+    /{**,} r,
+
+    @{HOME}/.config/glib-*/settings/ rw,
+
+    @{HOME}/.config/glib-*/ rw,
+    owner @{HOME}/.cache/mesa_shader_cache/** rwk,
+    /usr/bin/xdg-dbus-proxy Px -> foliate///usr/bin/bwrap//&foliate//xdg-dbus-proxy,
+    /usr/lib/@{multiarch}/webkitgtk-*/WebKitWebProcess Px -> foliate///usr/bin/bwrap//&foliate//WebKitWebProcess,
+
+
+    /run/user/*/webkitgtk/bus-proxy-* rw,
+    /etc/ld.so.cache r,
+    /proc/filesystems r,
+    /proc/sys/kernel/overflowgid r,
+    /proc/sys/kernel/overflowuid r,
+    /proc/zoneinfo r,
+    /proc/*/mountinfo r,
+    /apparmor/.null rw,
+    /usr/bin/bwrap mr,
+    owner /proc/*/fd/ r,
+    owner @{run}/user/@{uid}/.flatpak/** rw,
+    owner /sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.current r,
+    owner /sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.high r,
+    owner /sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.max r,
+    owner /proc/@{pid}/uid_map rw,
+    owner /proc/*/cgroup r,
+    owner /proc/*/cmdline r,
+    owner /proc/*/mounts r,
+    owner /proc/*/stat r,
+    owner /proc/*/statm r,
+    owner /proc/*/setgroups rw,
+    owner /proc/@{pid}/gid_map rw,
+
+    /run/user/*/webkitgtk/a11y-proxy-** rw,
+
+    userns create,
+
+  }
+
+  profile WebKitWebProcess flags=(attach_disconnected.path=/container/, attach_disconnected){
+    include <abstractions/X>
+    include <abstractions/fonts>
+
+
+    /container/dev/null r,
+    /container/dev/urandom r,
+    /container** rw,
+    /usr/bin/xdg-dbus-proxy mr,
+    /lib/@{multiarch}/ld-linux-*.so.* r,
+    /etc/ld.so.cache r,
+
+    @{HOME}/.config/glib-*/settings/ rw,
+    owner @{HOME}/.cache/mesa_shader_cache** rw,
+    /usr/share/publicsuffix/public_suffix_list.dafsa r,
+
+    /proc/filesystems r,
+    /usr/lib/locale/locale-archive r,
+    /run/user/*/webkitgtk/bus-proxy-* rw,
+    /run/user/*/webkitgtk/** rw,
+    network unix,
+    /etc/locale.alias r,
+
+    /usr/lib/@{multiarch}/webkitgtk-*/WebKitWebProcess r,
+
+    /lib/@{multiarch}/libglib-*.so.* mr,
+    /lib/@{multiarch}/libgio-*.so.*  mr,
+    /lib/@{multiarch}/libgobject-*.so.* mr,
+    /lib/@{multiarch}/libc.so.* mr,
+    /lib/@{multiarch}/libm.so.* mr,
+    /lib/@{multiarch}/libpcre*.so.* mr,
+    /lib/@{multiarch}/libgmodule-*.so.* mr,
+    /lib/@{multiarch}/libz.so.* mr,
+    /lib/@{multiarch}/libmount.so.* mr,
+    /lib/@{multiarch}/libselinux.so.* mr,
+    /lib/@{multiarch}/libffi.so.* mr,
+    /lib/@{multiarch}/libblkid.so.* mr,
+    /lib/@{multiarch}/libwebkitgtk-*.so.* mr,
+    /lib/@{multiarch}/libepoxy.so.* mr,
+    /lib/@{multiarch}/libjavascriptcoregtk-*.so.* mr,
+    /lib/@{multiarch}/libicui18n.so.* mr,
+    /lib/@{multiarch}/libsystemd.so.* mr,
+    /lib/@{multiarch}/libicuuc.so.* mr,
+    /lib/@{multiarch}/libgtk-*.so.* mr,
+    /lib/@{multiarch}/libpango-*.so.* mr,
+    /lib/@{multiarch}/libharfbuzz.so.* mr,
+    /lib/@{multiarch}/libgdk_pixbuf-*.so.* mr,
+    /lib/@{multiarch}/libcairo.so.* mr,
+    /lib/@{multiarch}/libxml2.so.* mr,
+    /lib/@{multiarch}/libsqlite3.so.* mr,
+    /lib/@{multiarch}/libxslt.so.* mr,
+    /lib/@{multiarch}/liblcms2.so.* mr,
+    /lib/@{multiarch}/libwoff2dec.so.* mr,
+    /lib/@{multiarch}/libfontconfig.so.* mr,
+    /lib/@{multiarch}/libfreetype.so.* mr,
+    /lib/@{multiarch}/libharfbuzz-icu.so.* mr,
+    /lib/@{multiarch}/libgcrypt.so.* mr,
+    /lib/@{multiarch}/libgstallocators-*.so.* mr,
+    /lib/@{multiarch}/libgstapp-*.so.* mr,
+    /lib/@{multiarch}/libgstbase-*.so.* mr,
+    /lib/@{multiarch}/libgstreamer-*.so.* mr,
+    /lib/@{multiarch}/libgstpbutils-*.so.* mr,
+    /lib/@{multiarch}/libgstaudio-*.so.* mr,
+    /lib/@{multiarch}/libgsttag-*.so.* mr,
+    /lib/@{multiarch}/libgstvideo-*.so.* mr,
+    /lib/@{multiarch}/libgstgl-*.so.* mr,
+    /lib/@{multiarch}/libgstfft-*.so.* mr,
+    /lib/@{multiarch}/libjpeg.so.* mr,
+    /lib/@{multiarch}/libpng16.so.* mr,
+    /lib/@{multiarch}/libwebpdemux.so.* mr,
+    /lib/@{multiarch}/libwebp.so.* mr,
+    /lib/@{multiarch}/libsoup-*.so.* mr,
+    /lib/@{multiarch}/libenchant-*.so* mr,
+    /lib/@{multiarch}/libsecret-*.so.* mr,
+    /lib/@{multiarch}/libtasn1.so.* mr,
+    /lib/@{multiarch}/libhyphen.so.* mr,
+    /lib/@{multiarch}/libX11.so.* mr,
+    /lib/@{multiarch}/libwayland-server.so.* mr,
+    /lib/@{multiarch}/libwayland-client.so.* mr,
+    /lib/@{multiarch}/libmanette-*.so.* mr,
+    /lib/@{multiarch}/libseccomp.so.* mr,
+    /lib/@{multiarch}/libgbm.so.* mr,
+    /lib/@{multiarch}/libdrm.so.* mr,
+    /lib/@{multiarch}/libstdc++.so.* mr,
+    /lib/@{multiarch}/libgcc_s.so.* mr,
+    /lib/@{multiarch}/libatomic.so.* mr,
+    /lib/@{multiarch}/libcap.so.* mr,
+    /lib/@{multiarch}/liblz4.so.* mr,
+    /lib/@{multiarch}/liblzma.so.* mr,
+    /lib/@{multiarch}/libzstd.so.* mr,
+    /lib/@{multiarch}/libicudata.so.* mr,
+    /lib/@{multiarch}/libpangocairo-1.0.so.* mr,
+    /lib/@{multiarch}/libfribidi.so.* mr,
+    /lib/@{multiarch}/libcairo-gobject.so.* mr,
+    /lib/@{multiarch}/libgraphene-1.0.so.* mr,
+    /lib/@{multiarch}/libXi.so.* mr,
+    /lib/@{multiarch}/libpangoft2-1.0.so.* mr,
+    /lib/@{multiarch}/libvulkan.so.* mr,
+    /lib/@{multiarch}/libtiff.so.* mr,
+    /lib/@{multiarch}/libxkbcommon.so.* mr,
+    /lib/@{multiarch}/libwayland-egl.so.* mr,
+    /lib/@{multiarch}/libXext.so.* mr,
+    /lib/@{multiarch}/libXcursor.so.* mr,
+    /lib/@{multiarch}/libXdamage.so.* mr,
+    /lib/@{multiarch}/libXfixes.so.* mr,
+    /lib/@{multiarch}/libXrandr.so.* mr,
+    /lib/@{multiarch}/libXinerama.so.* mr,
+    /lib/@{multiarch}/libcairo-script-interpreter.so.* mr,
+    /lib/@{multiarch}/libthai.so.* mr,
+    /lib/@{multiarch}/libgraphite2.so.* mr,
+    /lib/@{multiarch}/libXrender.so.* mr,
+    /lib/@{multiarch}/libxcb.so.* mr,
+    /lib/@{multiarch}/libxcb-render.so.* mr,
+    /lib/@{multiarch}/libxcb-shm.so.* mr,
+    /lib/@{multiarch}/libpixman-*.so.* mr,
+    /lib/@{multiarch}/libwoff2common.so.* mr,
+    /lib/@{multiarch}/libbrotlidec.so.* mr,
+    /lib/@{multiarch}/libexpat.so.* mr,
+    /lib/@{multiarch}/libbz2.so.* mr,
+    /lib/@{multiarch}/libgpg-error.so.* mr,
+    /lib/@{multiarch}/libunwind.so.* mr,
+    /lib/@{multiarch}/libdw-*.so mr,
+    /lib/@{multiarch}/liborc-*.so.* mr,
+    /lib/@{multiarch}/libGL.so.* mr,
+    /lib/@{multiarch}/libEGL.so.* mr,
+    /lib/@{multiarch}/libwayland-cursor.so.* mr,
+    /lib/@{multiarch}/libX11-xcb.so.* mr,
+    /lib/@{multiarch}/libgudev-*.so.* mr,
+    /lib/@{multiarch}/libsharpyuv.so.* mr,
+    /lib/@{multiarch}/libpsl.so.* mr,
+    /lib/@{multiarch}/libgssapi_krb5.so.* mr,
+    /lib/@{multiarch}/libnghttp2.so.* mr,
+    /lib/@{multiarch}/libevdev.so.* mr,
+    /lib/@{multiarch}/libxcb-randr.so.* mr,
+    /lib/@{multiarch}/libLerc.so.* mr,
+    /lib/@{multiarch}/libjbig.so.* mr,
+    /lib/@{multiarch}/libdeflate.so.* mr,
+    /lib/@{multiarch}/liblzo2.so.* mr,
+    /lib/@{multiarch}/libdatrie.so.* mr,
+    /lib/@{multiarch}/libXau.so.* mr,
+    /lib/@{multiarch}/libXdmcp.so.* mr,
+    /lib/@{multiarch}/libbrotlicommon.so.* mr,
+    /lib/@{multiarch}/libelf-*.so mr,
+    /lib/@{multiarch}/libGLdispatch.so.* mr,
+    /lib/@{multiarch}/libGLX.so.* mr,
+    /lib/@{multiarch}/libudev.so.* mr,
+    /lib/@{multiarch}/libunistring.so.* mr,
+    /lib/@{multiarch}/libidn2.so.* mr,
+    /lib/@{multiarch}/libkrb5.so.* mr,
+    /lib/@{multiarch}/libk5crypto.so.* mr,
+    /lib/@{multiarch}/libcom_err.so.* mr,
+    /lib/@{multiarch}/libkrb5support.so.* mr,
+    /lib/@{multiarch}/libbsd.so.* mr,
+    /lib/@{multiarch}/libkeyutils.so.* mr,
+    /lib/@{multiarch}/libresolv.so.* mr,
+    /lib/@{multiarch}/libmd.so.* mr,
+    /lib/@{multiarch}/libibus-1.0.so.* mr,
+    /lib/@{multiarch}/libxcb-dri2.so.* mr,
+    /lib/@{multiarch}/libxcb-xfixes.so.* mr,
+    /lib/@{multiarch}/libxcb-dri3.so.* mr,
+    /lib/@{multiarch}/libxcb-present.so.* mr,
+    /lib/@{multiarch}/libxcb-sync.so.* mr,
+    /lib/@{multiarch}/libxshmfence.so.* mr,
+    /lib/@{multiarch}/libLLVM-17.so.* mr,
+    /lib/@{multiarch}/libsensors.so.* mr,
+    /lib/@{multiarch}/libdrm_radeon.so.* mr,
+    /lib/@{multiarch}/libdrm_amdgpu.so.* mr,
+    /lib/@{multiarch}/libdrm_nouveau.so.* mr,
+    /lib/@{multiarch}/libdrm_intel.so.* mr,
+    /lib/@{multiarch}/libedit.so.* mr,
+    /lib/@{multiarch}/libtinfo.so.* mr,
+    /lib/@{multiarch}/libpciaccess.so.* mr,
+    /lib/@{multiarch}/libGLESv2.so.* mr,
+    
+
+    /usr/lib/@{multiarch}/gtk-*/*/printbackends/ r,
+    /usr/lib/@{multiarch}/gtk-*/*/printbackends/giomodule.cache r,
+    /usr/lib/@{multiarch}/gtk-*/*/immodules/ r,
+    /usr/lib/@{multiarch}/gtk-*/*/immodules/libim-ibus.so r,
+    /usr/lib/@{multiarch}/gtk-*/*/immodules/libim-ibus.so mr,
+    /usr/lib/@{multiarch}/gtk-*/*/media/ r,
+    /usr/lib/@{multiarch}/gtk-*/*/media/libmedia-gstreamer.so mr,
+    /usr/lib/@{multiarch}/gio/modules/ r,
+    /usr/lib/@{multiarch}/gio/modules/giomodule.cache r,
+    /usr/lib/@{multiarch}/gio/modules/libdconfsettings.so mr,
+    /usr/lib/@{multiarch}/dri/swrast_dri.so mr,
+    /usr/lib/@{multiarch}/gdk-pixbuf-*/*/loaders.cache r,
+    /usr/lib/@{multiarch}/webkitgtk-*/injected-bundle/libwebkitgtkinjectedbundle.so mr,
+
+
+    
+
+
+
+
+    /usr/share/zoneinfo/{**,} r,
+    /usr/share/glib-*/schemas/gschemas.compiled r,
+    /.flatpak-info r,
+    @{HOME}/.config/glib-*/ rw,
+    
+    
+    
+    /dev/urandom r,
+    /sys/devices/system/cpu/online r,
+    /proc/*/maps r,
+    /proc/*/smaps r,
+    
+
+    /usr/share/poppler/cMap/Adobe-CNS1/ r,
+    /usr/share/poppler/cMap/Adobe-GB1/ r,
+    /usr/share/poppler/cMap/Adobe-Japan1/ r,
+    /usr/share/poppler/cMap/Adobe-Japan2/ r,
+    /usr/share/poppler/cMap/Adobe-Korea1/ r,
+    /etc/glvnd/egl_vendor.d/ r,
+    /usr/share/glvnd/egl_vendor.d/ r,
+    /usr/lib/@{multiarch}/gconv/gconv-modules.cache r,
+    /usr/share/glvnd/egl_vendor.d/50_mesa.json r,
+    /lib/@{multiarch}/libEGL_mesa.so.* mr,
+    /lib/@{multiarch}/libglapi.so.* mr,
+    
+    /dev/dri/ r,
+    /sys/devices/pci**/uevent r,
+    /sys/devices/pci**/vendor r,
+    /sys/devices/pci**/device r,
+    /sys/devices/pci**/subsystem_vendor r,
+    /sys/devices/pci**/subsystem_device r,
+    /usr/share/drirc.d/ r,
+    /usr/share/drirc.d/*-amber-defaults.conf r,
+    /usr/share/drirc.d/*-mesa-defaults.conf r,
+    /usr/share/drirc.d/*-radv-defaults.conf r,
+    /sys/devices/system/cpu/possible r,
+    /usr/share/drirc.d/ r,
+    /usr/share/drirc.d/*-amber-defaults.conf r,
+    /usr/share/drirc.d/*-mesa-defaults.conf r,
+    /usr/share/drirc.d/*-radv-defaults.conf r,
+
+    /usr/share/themes/Yaru/gtk-*/gtk.gresource r,
+    /usr/share/themes/Yaru/gtk-*/gtk.css r,
+    /sys/devices/system/cpu/online r,
+    /usr/share/icons/Yaru/index.theme r,
+    /usr/share/icons/Yaru/icon-theme.cache r,
+    /usr/share/icons/Humanity/index.theme r,
+    /usr/share/icons/Humanity/icon-theme.cache r,
+    /usr/share/icons/Adwaita/index.theme r,
+    /usr/share/icons/Adwaita/icon-theme.cache r,
+    /usr/share/icons/hicolor/index.theme r,
+    /usr/share/icons/hicolor/icon-theme.cache r,
+    /usr/share/icons/ r,
+    /usr/share/pixmaps/ r,
+    /dev/urandom r,
+    /etc/nsswitch.conf r,
+    /etc/passwd r,
+    owner @{HOME}/.cache/mesa_shader_cache/** rwk,
+    /sys/devices/virtual/dmi/id/chassis_type r,
+    /proc/2/statm r,
+    /usr/share/mime/mime.cache r,
+    
+
+
+}
+
+  profile xdg-dbus-proxy flags=(attach_disconnected.path=/container/, attach_disconnected){
+
+
+
+    dbus (send) bus="accessibility" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member="Hello" peer=(label="unconfined"),
+    dbus (send) bus="accessibility" path="/" interface="org.freedesktop.DBus" member={AddMatch,GetNameOwner} peer=(label="unconfined"),
+    dbus (receive) bus="accessibility" path="/org/a11y/atspi/registry" interface="org.a11y.atspi.Registry" member="EventListenerDeregistered" peer=(label="unconfined"),
+    dbus (send) bus="accessibility" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member={AddMatch,GetNameOwner,StartServiceByName,RemoveMatch} peer=(label="unconfined"),
+    dbus (receive) bus="accessibility" path="/org/a11y/webkit/accessible/1d653f32_6d36_4cca_beef_e582e892e5cd" interface="org.a11y.atspi.Socket" member="Embedded" peer=(label="foliate"),
+
+    dbus (send) bus="accessibility" path="/org/a11y/atspi/registry" interface="org.a11y.atspi.Registry" member="GetRegisteredEvents" peer=(label="unconfined"),
+    dbus (receive) bus="accessibility" path="/org/a11y/webkit/accessible/*" interface="org.a11y.atspi.Socket" member="Embedded" peer=(label="foliate"),
+
+
+
+    /container/dev/null r,
+    /container/dev/urandom r,
+    /container** rw,
+    /usr/bin/xdg-dbus-proxy mr,
+    /lib/@{multiarch}/ld-linux-*.so.* r,
+    /etc/ld.so.cache r,
+    /lib/@{multiarch}/libglib-*.so.* mr,
+    /lib/@{multiarch}/libgio-*.so.*  mr,
+    /lib/@{multiarch}/libgobject-*.so.* mr,
+    /lib/@{multiarch}/libc.so.* mr,
+    /lib/@{multiarch}/libm.so.* mr,
+    /lib/@{multiarch}/libpcre*.so.* mr,
+    /lib/@{multiarch}/libgmodule-*.so.* mr,
+    /lib/@{multiarch}/libz.so.* mr,
+    /lib/@{multiarch}/libmount.so.* mr,
+    /lib/@{multiarch}/libselinux.so.* mr,
+    /lib/@{multiarch}/libffi.so.* mr,
+    /lib/@{multiarch}/libblkid.so.* mr,
+    /proc/filesystems r,
+    /usr/lib/locale/locale-archive r,
+    /run/user/*/webkitgtk/bus-proxy-* rw,
+    /run/user/*/webkitgtk/** rw,
+    network unix,
+    /etc/locale.alias r,
+    
+  
+  }
+
+  profile speech-dispatcher /usr/bin/speech-dispatcher flags=(enforce) {
+    include <abstractions/audio>
+    include <abstractions/base>
+    include <abstractions/consoles>
+    include <abstractions/dbus-session-strict>
+
+    /etc/ld.so.cache r,
+    /etc/locale.alias r,
+    /etc/speech-dispatcher/** r,
+    /proc/sys/vm/overcommit_memory r,
+    /usr/bin/speech-dispatcher mr,
+    owner @{HOME}/.config/pulse/cookie rk,
+    owner @{run}/user/@{uid}/ r,
+    owner @{run}/user/@{uid}/pulse/ r,
+    owner @{run}/user/@{uid}/pulse/native rw,
+    owner @{run}/user/@{uid}/speech-dispatcher/** rwk,
+
+  }
+
+  profile WebKitNetworkProcess /usr/lib/@{multiarch}/webkitgtk-*/WebKitNetworkProcess flags=(enforce) {
+    include <abstractions/base>
+    include <abstractions/dbus-session>
+    include <abstractions/evince>
+    include <abstractions/nameservice>
+    include <abstractions/ubuntu-browsers.d/ubuntu-integration>
+
+
+    dbus (receive) bus="system" path="/org/freedesktop/NetworkManager" interface="org.freedesktop.DBus.Properties" member="PropertiesChanged" peer=(label="unconfined"),
+    dbus (receive) bus="system" path="/org/freedesktop/NetworkManager" interface="org.freedesktop.NetworkManager" member="StateChanged" peer=(label="unconfined"),
+
+    dbus (send) bus="system" path="/org/freedesktop/NetworkManager" interface="org.freedesktop.DBus.Properties" member="GetAll" peer=(label="unconfined"),
+    dbus (send) bus="system" path="/net/hadess/PowerProfiles" interface="org.freedesktop.DBus.Properties" member="GetAll" peer=(label="unconfined"),
+
+    dbus (send receive) bus="session" path="/com/github/johnfactotum/Foliate" interface="org.gtk.Actions" member={DescribeAll,Open} peer=(label="foliate"),
+    
+
+
+    unix (send receive) type=seqpacket addr=none peer=(label="foliate"),
+    unix (send receive) type=seqpacket addr=none peer=(label="foliate///usr/bin/bwrap"),
+    unix (send receive) type=seqpacket addr=none peer=(label="foliate//WebKitWebProcess"),
+
+
+
+    /etc/ld.so.cache r,
+    /proc/filesystems r,
+    /run/dbus/system_bus_socket rw,
+    /sys/devices/system/cpu/online r,
+    /usr/lib/*/webkitgtk-*/WebKitNetworkProcess mr,
+    owner @{HOME}/.cache/com.github.johnfactotum.Foliate/** rwlk,
+    owner @{HOME}/.local/share/com.github.johnfactotum.Foliate/** rw,
+    owner @{HOME}/.config/dconf/user r,
+    owner @{HOME}/** rw,
+    owner /proc/*/maps r,
+    /proc/zoneinfo r,
+    /proc/[0-9]*/cgroup r,
+    /sys/fs/cgroup/**/memory.current r,
+    /sys/fs/cgroup/**/memory.max r,
+    /sys/fs/cgroup/**/memory.high r,
+    /apparmor/.null rw,
+    owner @{run}/user/@{uid}/bus rw,
+  }
+
 }

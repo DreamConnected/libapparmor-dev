@@ -129,6 +129,10 @@ libraries/libapparmor/src/tst_aalogparse_reentrancy
 libraries/libapparmor/src/tst_aalogparse_reentrancy.log
 libraries/libapparmor/src/tst_aalogparse_reentrancy.o
 libraries/libapparmor/src/tst_aalogparse_reentrancy.trs
+libraries/libapparmor/src/tst_aalogparse_oldname
+libraries/libapparmor/src/tst_aalogparse_oldname.log
+libraries/libapparmor/src/tst_aalogparse_oldname.o
+libraries/libapparmor/src/tst_aalogparse_oldname.trs
 libraries/libapparmor/src/tst_features
 libraries/libapparmor/src/tst_features.log
 libraries/libapparmor/src/tst_features.o

@@ -76,6 +76,9 @@ tst_aalogmisc_LDADD = .libs/libapparmor.a
 tst_aalogparse_cpp_SOURCES = tst_aalogparse_cpp.cpp
 tst_aalogparse_cpp_LDADD = .libs/libapparmor.a
 
+tst_aalogparse_oldname_SOURCES = tst_aalogparse_oldname.c
+tst_aalogparse_oldname_LDADD = .libs/libapparmor.a
+
 tst_aalogparse_reentrancy_SOURCES = tst_aalogparse_reentrancy.c
 tst_aalogparse_reentrancy_LDADD = .libs/libapparmor.a
 tst_aalogparse_reentrancy_LDFLAGS = -pthread
@@ -87,7 +90,7 @@ tst_kernel_SOURCES = tst_kernel.c
 tst_kernel_LDADD = .libs/libapparmor.a
 tst_kernel_LDFLAGS = -pthread
 
-check_PROGRAMS = tst_aalogmisc tst_aalogparse_reentrancy tst_aalogparse_cpp tst_features tst_kernel
+check_PROGRAMS = tst_aalogmisc tst_aalogparse_cpp tst_aalogparse_reentrancy tst_aalogparse_oldname tst_features tst_kernel
 TESTS = $(check_PROGRAMS)
 
 .PHONY: check-local

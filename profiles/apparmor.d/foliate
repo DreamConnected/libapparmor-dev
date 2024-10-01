@@ -20,6 +20,8 @@ profile foliate /usr/bin/foliate flags=(enforce) {
   include <abstractions/dbus-session-strict>
   include <abstractions/ubuntu-browsers.d/plugins-common>
   include <abstractions/ubuntu-browsers.d/ubuntu-integration>
+  include <abstractions/mesa>
+  include <abstractions/private-files-strict>
 
   signal send set=kill peer=foliate///usr/bin/bwrap,
 
@@ -39,6 +41,9 @@ profile foliate /usr/bin/foliate flags=(enforce) {
   dbus (receive) bus="session" path="/com/github/johnfactotum/Foliate" interface="org.freedesktop.DBus.Properties" member="GetAll" peer=(label="unconfined"),
   dbus (send) bus="session" path="/org/a11y/bus" interface="org.a11y.Bus" member="GetAddress" peer=(label="unconfined"),
   dbus (send) bus="session" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member="ReleaseName" peer=(label="unconfined"),
+  dbus (send) bus="session" path="/org/gtk/vfs/metadata" interface="org.gtk.vfs.Metadata" member="Remove" peer=(label="unconfined"),
+  dbus (send) bus="session" path="/ca/desrt/dconf/Writer/user" interface="ca.desrt.dconf.Writer" member="Change" peer=(label="unconfined"),
+  dbus (receive) bus="session" path="/ca/desrt/dconf/Writer/user" interface="ca.desrt.dconf.Writer" member="Notify" peer=(label="unconfined"),
 
   dbus (send receive) bus="session" path="/com/github/johnfactotum/Foliate" interface="org.gtk.Actions" member={DescribeAll,Open} peer=(label="foliate"),
 
@@ -86,8 +91,7 @@ profile foliate /usr/bin/foliate flags=(enforce) {
   /usr/bin/speech-dispatcher Cx -> speech-dispatcher,
   /usr/lib/*/webkitgtk-*/WebKitNetworkProcess Cx -> WebKitNetworkProcess,
   /var/lib/snapd/desktop/icons/ r,
-  @{HOME}/{**,} rw,
-  owner @{HOME}/.cache/mesa_shader_cache/** rwk,
+  @{HOME}/{**,} r,
   owner @{HOME}/.config/dconf/user r,
   @{HOME}/.local/share/com.github.johnfactotum.Foliate/** rw,
   owner /proc/*/cgroup r,
@@ -96,7 +100,8 @@ profile foliate /usr/bin/foliate flags=(enforce) {
   owner /proc/*/stat r,
   owner /proc/*/statm r,
   owner /proc/*/task/*/stat r,
-  owner @{run}/user/@{uid}/.flatpak/{**,} rw,
+  owner @{run}/user/@{uid}/.flatpak/ w,
+  owner @{run}/user/@{uid}/.flatpak/webkit-*/{,bwrapinfo.json} rw,
   owner @{run}/user/@{uid}/.mutter-Xwaylandauth.* r,
   owner @{run}/user/@{uid}/gvfsd/socket-* rw,
   owner @{run}/user/@{uid}/speech-dispatcher/speechd.sock rw,
@@ -106,7 +111,6 @@ profile foliate /usr/bin/foliate flags=(enforce) {
   owner /sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.high r,
   owner /sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.max r,
   owner @{HOME}/.cache/com.github.johnfactotum.Foliate/** rwkl,
-  /usr/share/com.github.johnfactotum.Foliate/** rw,
   /usr/share/** r,
 
   userns,
@@ -117,7 +121,7 @@ profile foliate /usr/bin/foliate flags=(enforce) {
     include <abstractions/consoles>
     include <abstractions/ubuntu-konsole>
     include <abstractions/dbus-session>
-
+    include <abstractions/mesa>
     
     dbus (send) bus="accessibility" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member="Hello" peer=(label="unconfined"),
     dbus (send) bus="accessibility" path="/" interface="org.freedesktop.DBus" member="AddMatch" peer=(label="unconfined"),
@@ -168,7 +172,6 @@ profile foliate /usr/bin/foliate flags=(enforce) {
     @{HOME}/.config/glib-*/settings/ rw,
 
     @{HOME}/.config/glib-*/ rw,
-    owner @{HOME}/.cache/mesa_shader_cache/** rwk,
     /usr/bin/xdg-dbus-proxy Px -> foliate///usr/bin/bwrap//&foliate//xdg-dbus-proxy,
     /usr/lib/@{multiarch}/webkitgtk-*/WebKitWebProcess Px -> foliate///usr/bin/bwrap//&foliate//WebKitWebProcess,
 
@@ -205,24 +208,34 @@ profile foliate /usr/bin/foliate flags=(enforce) {
   profile WebKitWebProcess flags=(attach_disconnected.path=/container/, attach_disconnected){
     include <abstractions/X>
     include <abstractions/fonts>
+    include <abstractions/mesa>
 
+    network unix,
 
     /container/dev/null r,
     /container/dev/urandom r,
-    /container** rw,
+    /container/proc/meminfo r,
+    /container/apparmor/.null rw,
+    /container/proc/zoneinfo r,
+    /container/proc/*/cgroup r,
+    /container/sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.current r,
+    /container/sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.max r,
+    /container/sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.high r,
+    /container/@{run}/user/@{uid}/wayland-* rw,
+    /container/@{run}/user/@{uid}/webkitgtk/a11y-proxy-* rw,
+    /container/@{HOME}/.cache/com.github.johnfactotum.Foliate/** rw,
+
     /usr/bin/xdg-dbus-proxy mr,
     /lib/@{multiarch}/ld-linux-*.so.* r,
     /etc/ld.so.cache r,
 
     @{HOME}/.config/glib-*/settings/ rw,
-    owner @{HOME}/.cache/mesa_shader_cache** rw,
     /usr/share/publicsuffix/public_suffix_list.dafsa r,
 
     /proc/filesystems r,
     /usr/lib/locale/locale-archive r,
-    /run/user/*/webkitgtk/bus-proxy-* rw,
-    /run/user/*/webkitgtk/** rw,
-    network unix,
+    owner @{run}/user/@{uid}/webkitgtk/bus-proxy-* rw,
+    owner @{run}/user/@{uid}/webkitgtk/** rw,
     /etc/locale.alias r,
 
     /usr/lib/@{multiarch}/webkitgtk-*/WebKitWebProcess r,
@@ -392,9 +405,6 @@ profile foliate /usr/bin/foliate flags=(enforce) {
     /usr/lib/@{multiarch}/webkitgtk-*/injected-bundle/libwebkitgtkinjectedbundle.so mr,
 
 
-    
-
-
 
 
     /usr/share/zoneinfo/{**,} r,
@@ -428,15 +438,9 @@ profile foliate /usr/bin/foliate flags=(enforce) {
     /sys/devices/pci**/device r,
     /sys/devices/pci**/subsystem_vendor r,
     /sys/devices/pci**/subsystem_device r,
-    /usr/share/drirc.d/ r,
-    /usr/share/drirc.d/*-amber-defaults.conf r,
-    /usr/share/drirc.d/*-mesa-defaults.conf r,
-    /usr/share/drirc.d/*-radv-defaults.conf r,
     /sys/devices/system/cpu/possible r,
     /usr/share/drirc.d/ r,
-    /usr/share/drirc.d/*-amber-defaults.conf r,
-    /usr/share/drirc.d/*-mesa-defaults.conf r,
-    /usr/share/drirc.d/*-radv-defaults.conf r,
+    /usr/share/drirc.d/*.conf r,
 
     /usr/share/themes/Yaru/gtk-*/gtk.gresource r,
     /usr/share/themes/Yaru/gtk-*/gtk.css r,
@@ -454,7 +458,6 @@ profile foliate /usr/bin/foliate flags=(enforce) {
     /dev/urandom r,
     /etc/nsswitch.conf r,
     /etc/passwd r,
-    owner @{HOME}/.cache/mesa_shader_cache/** rwk,
     /sys/devices/virtual/dmi/id/chassis_type r,
     /proc/2/statm r,
     /usr/share/mime/mime.cache r,
@@ -480,7 +483,15 @@ profile foliate /usr/bin/foliate flags=(enforce) {
 
     /container/dev/null r,
     /container/dev/urandom r,
-    /container** rw,
+    /container/proc/zoneinfo r,
+    /container/proc/meminfo r,
+    /container/proc/*/cgroup r,
+    /container/sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.current r,
+    /container/sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.max r,
+    /container/sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.high r,
+    /container/@{run}/user/@{uid}/.flatpak/webkit-*/bwrapinfo.json rw,
+    /container/@{run}/user/@{uid}/at-spi/bus rw,
+
     /usr/bin/xdg-dbus-proxy mr,
     /lib/@{multiarch}/ld-linux-*.so.* r,
     /etc/ld.so.cache r,
@@ -512,8 +523,6 @@ profile foliate /usr/bin/foliate flags=(enforce) {
     include <abstractions/consoles>
     include <abstractions/dbus-session-strict>
 
-    /etc/ld.so.cache r,
-    /etc/locale.alias r,
     /etc/speech-dispatcher/** r,
     /proc/sys/vm/overcommit_memory r,
     /usr/bin/speech-dispatcher mr,
@@ -549,8 +558,6 @@ profile foliate /usr/bin/foliate flags=(enforce) {
 
 
 
-    /etc/ld.so.cache r,
-    /proc/filesystems r,
     /run/dbus/system_bus_socket rw,
     /sys/devices/system/cpu/online r,
     /usr/lib/*/webkitgtk-*/WebKitNetworkProcess mr,

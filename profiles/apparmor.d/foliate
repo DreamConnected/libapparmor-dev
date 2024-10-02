@@ -91,9 +91,24 @@ profile foliate /usr/bin/foliate flags=(enforce) {
   /usr/bin/speech-dispatcher Cx -> speech-dispatcher,
   /usr/lib/*/webkitgtk-*/WebKitNetworkProcess Cx -> WebKitNetworkProcess,
   /var/lib/snapd/desktop/icons/ r,
-  @{HOME}/{**,} r,
+
+  # Access to ebooks
+  @{HOME}/**.[eE][pP][uU][bB] r,
+  @{HOME}/**.[mM][oO][bB][iI] r,
+  @{HOME}/**.[aA][zZ][wW] r,
+  @{HOME}/**.[kK][fF][xX] r,
+  @{HOME}/**.[aA][zZ][wW]3 r,
+  @{HOME}/**.[fF][bB][23] r,
+  @{HOME}/**.[cC][bB][rR] r,
+  @{HOME}/**.[cC][bB][zZ] r,
+  @{HOME}/**.[pP][nN][gG] r,
+  @{HOME}/**.[jJ][pP][eE][gG] r,
+  @{HOME}/**.[jJ][pP][gG] r,
+  @{HOME}/.local/share/gvfs-metadata/home/{**,} r,
+
+
   owner @{HOME}/.config/dconf/user r,
-  @{HOME}/.local/share/com.github.johnfactotum.Foliate/** rw,
+  @{HOME}/.local/share/com.github.johnfactotum.Foliate/{**,} rw,
   owner /proc/*/cgroup r,
   owner /proc/*/cmdline r,
   owner /proc/*/mounts r,
@@ -224,6 +239,7 @@ profile foliate /usr/bin/foliate flags=(enforce) {
     /container/@{run}/user/@{uid}/wayland-* rw,
     /container/@{run}/user/@{uid}/webkitgtk/a11y-proxy-* rw,
     /container/@{HOME}/.cache/com.github.johnfactotum.Foliate/** rw,
+    /container/@{HOME}/.local/share/gvfs-metadata/home/{**,} r,
 
     /usr/bin/xdg-dbus-proxy mr,
     /lib/@{multiarch}/ld-linux-*.so.* r,
@@ -537,7 +553,6 @@ profile foliate /usr/bin/foliate flags=(enforce) {
   profile WebKitNetworkProcess /usr/lib/@{multiarch}/webkitgtk-*/WebKitNetworkProcess flags=(enforce) {
     include <abstractions/base>
     include <abstractions/dbus-session>
-    include <abstractions/evince>
     include <abstractions/nameservice>
     include <abstractions/ubuntu-browsers.d/ubuntu-integration>
 
@@ -564,7 +579,19 @@ profile foliate /usr/bin/foliate flags=(enforce) {
     owner @{HOME}/.cache/com.github.johnfactotum.Foliate/** rwlk,
     owner @{HOME}/.local/share/com.github.johnfactotum.Foliate/** rw,
     owner @{HOME}/.config/dconf/user r,
-    owner @{HOME}/** rw,
+    # Access to ebooks
+    @{HOME}/**.[eE][pP][uU][bB]{.wkdownload,} rw,
+    @{HOME}/**.[mM][oO][bB][iI]{.wkdownload,} rw,
+    @{HOME}/**.[aA][zZ][wW]{.wkdownload,} rw,
+    @{HOME}/**.[kK][fF][xX]{.wkdownload,} rw,
+    @{HOME}/**.[aA][zZ][wW]3{.wkdownload,} rw,
+    @{HOME}/**.[fF][bB][23]{.wkdownload,} rw,
+    @{HOME}/**.[cC][bB][rR]{.wkdownload,} rw,
+    @{HOME}/**.[cC][bB][zZ]{.wkdownload,} rw,
+    @{HOME}/**.[pP][nN][gG]{.wkdownload,} rw,
+    @{HOME}/**.[jJ][pP][eE][gG]{.wkdownload,} rw,
+    @{HOME}/**.[jJ][pP][gG]{.wkdownload,} rw,
+
     owner /proc/*/maps r,
     /proc/zoneinfo r,
     /proc/[0-9]*/cgroup r,

@@ -86,13 +86,12 @@ class AAPythonBindingsTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             libapparmor.aa_splitcon("")
 
-    def test_enabled_and_find_mountpoint(self):
+    def test_aa_is_enabled(self):
         aa_enabled = libapparmor.aa_is_enabled()
         self.assertIsInstance(aa_enabled, bool)
 
-        if not aa_enabled:
-            self.skipTest("AppArmor is not enabled")
-
+    @unittest.skipUnless(libapparmor.aa_is_enabled(), "AppArmor is not enabled")
+    def test_aa_find_mountpoint(self):
         mount_point = libapparmor.aa_find_mountpoint()
         self.assertIsInstance(mount_point, str)
         self.assertGreater(len(mount_point), 0, "mount point should not be empty")
@@ -108,13 +107,8 @@ class AAPythonBindingsTests(unittest.TestCase):
     # extern int aa_getprocattr(pid_t tid, const char *attr, char **label, char **mode);
     # extern int aa_gettaskcon(pid_t target, char **label, char **mode);
 
+    @unittest.skipUnless(libapparmor.aa_is_enabled(), "AppArmor is not enabled")
     def test_aa_getcon(self):
-        aa_enabled = libapparmor.aa_is_enabled()
-        self.assertIsInstance(aa_enabled, bool)
-
-        if not aa_enabled:
-            self.skipTest("AppArmor is not enabled")
-
         # Our test harness should be running us as unconfined
         label, mode = libapparmor.aa_getcon()
         self.assertEqual(label, "unconfined", "aa_getcon label should be unconfined")

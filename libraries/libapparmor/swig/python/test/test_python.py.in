@@ -98,10 +98,19 @@ class AAPythonBindingsTests(unittest.TestCase):
         self.assertTrue(os.path.isdir(mount_point))
 
     # TODO: test commented out functions (or at least their prototypes)
-    # extern int aa_change_hat(const char *subprofile, unsigned long magic_token);
     # extern int aa_change_profile(const char *profile);
     # extern int aa_change_onexec(const char *profile);
-    # extern int aa_change_hatv(const char *subprofiles[], unsigned long token);
+    @unittest.skipUnless(libapparmor.aa_is_enabled(), "AppArmor is not enabled")
+    def test_change_hats(self):
+        # Changing hats will fail because we have no valid hats to change to
+        # However, we still verify that we get an OSError instead of a TypeError
+        with self.assertRaises(OSError):
+            libapparmor.aa_change_hat("nonexistent_profile", 12345678)
+
+        with self.assertRaises(OSError):
+            libapparmor.aa_change_hatv(["nonexistent_1", "nonexistent_2"], 0xabcdef)
+            libapparmor.aa_change_hatv(("nonexistent_1", "nonexistent_2"), 0xabcdef)
+
     # extern int aa_stack_profile(const char *profile);
     # extern int aa_stack_onexec(const char *profile);
     # extern int aa_getprocattr(pid_t tid, const char *attr, char **label, char **mode);

@@ -98,6 +98,30 @@ class AAPythonBindingsTests(unittest.TestCase):
         self.assertGreater(len(mount_point), 0, "mount point should not be empty")
         self.assertTrue(os.path.isdir(mount_point))
 
+    # TODO: test commented out functions (or at least their prototypes)
+    # extern int aa_change_hat(const char *subprofile, unsigned long magic_token);
+    # extern int aa_change_profile(const char *profile);
+    # extern int aa_change_onexec(const char *profile);
+    # extern int aa_change_hatv(const char *subprofiles[], unsigned long token);
+    # extern int aa_stack_profile(const char *profile);
+    # extern int aa_stack_onexec(const char *profile);
+    # extern int aa_getprocattr(pid_t tid, const char *attr, char **label, char **mode);
+    # extern int aa_gettaskcon(pid_t target, char **label, char **mode);
+
+    def test_aa_getcon(self):
+        aa_enabled = libapparmor.aa_is_enabled()
+        self.assertIsInstance(aa_enabled, bool)
+
+        if not aa_enabled:
+            self.skipTest("AppArmor is not enabled")
+
+        # Our test harness should be running us as unconfined
+        label, mode = libapparmor.aa_getcon()
+        self.assertEqual(label, "unconfined", "aa_getcon label should be unconfined")
+        self.assertIsNone(mode, "aa_getcon mode should be unconfined")
+
+    # extern int aa_getpeercon(int fd, char **label, char **mode);
+
 
 class AALogParsePythonBindingsTests(unittest.TestCase):
 

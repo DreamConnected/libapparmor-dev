@@ -14,6 +14,7 @@
 
 %include "typemaps.i"
 %include <cstring.i>
+%include <stdint.i>
 %include <exception.i>
 
 %newobject parse_record;
@@ -304,6 +305,29 @@ extern int aa_getpeercon(int fd, char **label, char **mode);
 %apply int *OUTPUT { int *allowed };
 %apply int *OUTPUT { int *audited };
 #endif
+
+/* Sync this with the apparmor.h */
+/* Permission flags for the AA_CLASS_FILE mediation class */
+#define AA_MAY_EXEC			(1 << 0)
+#define AA_MAY_WRITE			(1 << 1)
+#define AA_MAY_READ			(1 << 2)
+#define AA_MAY_APPEND			(1 << 3)
+#define AA_MAY_CREATE			(1 << 4)
+#define AA_MAY_DELETE			(1 << 5)
+#define AA_MAY_OPEN			(1 << 6)
+#define AA_MAY_RENAME			(1 << 7)
+#define AA_MAY_SETATTR			(1 << 8)
+#define AA_MAY_GETATTR			(1 << 9)
+#define AA_MAY_SETCRED			(1 << 10)
+#define AA_MAY_GETCRED			(1 << 11)
+#define AA_MAY_CHMOD			(1 << 12)
+#define AA_MAY_CHOWN			(1 << 13)
+#define AA_MAY_LOCK			0x8000
+#define AA_EXEC_MMAP			0x10000
+#define AA_MAY_LINK			0x40000
+#define AA_MAY_ONEXEC			0x20000000
+#define AA_MAY_CHANGE_PROFILE		0x40000000
+
 extern int aa_query_file_path_len(uint32_t mask, const char *label,
 				  size_t label_len, const char *path,
 				  size_t path_len, int *allowed, int *audited);

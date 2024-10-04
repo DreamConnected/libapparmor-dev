@@ -276,6 +276,28 @@ extern int aa_stack_onexec(const char *profile);
 }
 #endif
 
+/*
+ * We can't use "typedef int pid_t" because we still support systems
+ * with 16-bit PIDs and SWIG can't find sys/types.h
+ *
+ * Capture the passed-in value as an intmax_t because pid_t is guaranteed
+ * to be a signed integer
+ */
+%typemap(in,noblock=1,fragment="SWIG_AsVal_long") pid_t (int conv_pid, intmax_t pid_large) {
+  conv_pid = SWIG_AsVal_long($input, &pid_large);
+  if (!SWIG_IsOK(conv_pid)) {
+    %argument_fail(conv_pid, "pid_t", $symname, $argnum);
+  }
+  /*
+   * Cast the long to a pid_t and then cast back to check for overflow
+   * Technically this is implementation-defined behaviour but we should be fine
+   */
+  $1 = (pid_t) pid_large;
+  if ((intmax_t) $1 != pid_large) {
+    SWIG_exception_fail(SWIG_OverflowError, "pid_t is too large");
+  }
+}
+
 extern int aa_find_mountpoint(char **mnt);
 extern int aa_getprocattr(pid_t tid, const char *attr, char **label, char **mode);
 extern int aa_gettaskcon(pid_t target, char **label, char **mode);

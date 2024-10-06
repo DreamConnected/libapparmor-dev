@@ -37,6 +37,9 @@ profile zgrep /usr/bin/{x,}zgrep {
   owner /tmp/zgrep* rw,
   /usr/bin/zgrep r,
 
+  deny /etc/nsswitch.conf r,
+  deny /etc/passwd r,
+
   include if exists <local/zgrep>
 
   profile helper {

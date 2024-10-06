@@ -222,10 +222,12 @@ class ProfileStorage:
                     % {'profile': profile, 'file': file, 'line': lineno + 1})
 
             hat = matches['profile']
+            prof_or_hat_name = hat
             pps_set_hat_external = False
 
         else:  # stand-alone profile
             profile = matches['profile']
+            prof_or_hat_name = profile
             if len(profile.split('//')) > 2:
                 raise AppArmorException(
                     "Nested child profiles ('%(profile)s', found in %(file)s) are not supported by the AppArmor tools yet."
@@ -239,7 +241,7 @@ class ProfileStorage:
 
         prof_storage = cls(profile, hat, cls.__name__ + '.parse()')
 
-        prof_storage['name'] = profile
+        prof_storage['name'] = prof_or_hat_name
         prof_storage['filename'] = file
         prof_storage['external'] = pps_set_hat_external
         prof_storage['flags'] = matches['flags']

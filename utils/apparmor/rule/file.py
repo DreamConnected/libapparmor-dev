@@ -26,7 +26,7 @@ allow_exec_transitions          = ('ix', 'ux', 'Ux', 'px', 'Px', 'cx', 'Cx')  # 
 allow_exec_fallback_transitions = ('pix', 'Pix', 'cix', 'Cix', 'pux', 'PUx', 'cux', 'CUx')  # 3 chars - len relevant for split_perms()
 deny_exec_transitions           = ('x')
 file_permissions                = ('m', 'r', 'w', 'a', 'l', 'k', 'link', 'subset')  # also defines the write order
-
+implicit_all_permissions        = ('m', 'r', 'w', 'l', 'k')
 
 
 class FileRule(BaseRule):
@@ -234,7 +234,7 @@ class FileRule(BaseRule):
         if self.all_paths and self.all_perms and not path and not perms and not target:
             return('%s%s%sfile,%s' % (space, self.modifiers_str(), owner, self.comment))  # plain 'file,' rule
         elif not self.all_paths and not self.all_perms and path and perms:
-            return('%s%s%s%s%s%s,%s' % (space, self.modifiers_str(), file_keyword, owner, path_and_perms, target, self.comment))
+            return ('%s%s%s%s%s%s,%s' % (space, self.modifiers_str(), owner, file_keyword, path_and_perms, target, self.comment))
         else:
             raise AppArmorBug('Invalid combination of path and perms in file rule - either specify path and perms, or none of them')
 
@@ -366,8 +366,21 @@ class FileRule(BaseRule):
 
         old_mode = ''
         if self.original_perms:
-            original_perms_all = self._join_given_perms(self.original_perms['allow']['all'], None)
-            original_perms_owner = self._join_given_perms(self.original_perms['allow']['owner'] - self.original_perms['allow']['all'], None)  # only list owner perms that are not covered by other perms
+            original_perms_set = {}
+            for who in ['all', 'owner']:
+                original_perms_set[who] = {}
+                original_perms_set[who]['perms'] = self.original_perms['allow'][who]
+                original_perms_set[who]['exec_perms'] = None
+
+                if self.original_perms['allow'][who] == FileRule.ALL:
+                    original_perms_set[who]['perms'] = set(implicit_all_permissions)
+                    original_perms_set[who]['exec_perms'] = 'ix'
+
+            original_perms_all = self._join_given_perms(original_perms_set['all']['perms'],
+                                                        original_perms_set['all']['exec_perms'])
+            original_perms_owner = self._join_given_perms(
+                original_perms_set['owner']['perms'] - original_perms_set['all']['perms'],  # only list owner perms that are not covered by other perms
+                original_perms_set['owner']['exec_perms'])
 
             if original_perms_all and original_perms_owner:
                 old_mode = '%s + owner %s' % (original_perms_all, original_perms_owner)

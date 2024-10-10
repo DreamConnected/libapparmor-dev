@@ -361,22 +361,84 @@ class capability_lookup {
 
 static capability_lookup cap_table;
 
-/* don't mark up str with \0 */
-static const char *strn_token(const char *str, size_t &len)
-{
-	const char *start;
+// The pair should be changed to string_view when we can migrate to C++17
+class ws_delimited_token_iter: public std::iterator<
+		std::input_iterator_tag,
+		std::pair<const char*, size_t>
+		> {
+	// Stores a (current_token, token_len) pair
+	std::pair<const char*, size_t> token;
+	size_t remaining_count;
 
-	while (isspace(*str))
-		str++;
-	start = str;
-	while (*str && !isspace(*str))
-		str++;
-	if (start == str)
-		return NULL;
+	// Increment the iter_ptr and update the remaining_count accordingly
+	// Returns whether there are characters left afterwards
+	bool incr_ptr() {
+		if (remaining_count > 0) {
+			token.first++;
+			remaining_count--;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	void advance_past_token() {
+		token.first += token.second;
+		remaining_count -= token.second;
+		token.second = 0;
+	}
+public:
+	// Call operator++ once to locate the first token
+	explicit ws_delimited_token_iter(const char* str): token(str, 0), remaining_count(strlen(str)) {
+		this->operator++();
+	}
+	explicit ws_delimited_token_iter(const char* str, size_t len): token(str, 0), remaining_count(len) {
+		this->operator++();
+	}
+	explicit ws_delimited_token_iter(string const &str): token(str.c_str(), 0), remaining_count(str.length()) {
+		this->operator++();
+	}
 
-	len = str - start;
-	return start;
-}
+	ws_delimited_token_iter begin() {
+		return *this;
+	}
+	ws_delimited_token_iter end() {
+		return ws_delimited_token_iter(this->token.first+remaining_count, 0);
+	}
+	bool operator==(ws_delimited_token_iter other) const {
+		return (this->token.first == other.token.first) && (this->remaining_count == other.remaining_count);
+	}
+	// Needed before C++20
+	bool operator!=(ws_delimited_token_iter other) const {
+		return !(*this==other);
+	}
+	const std::pair<const char*, size_t>& operator*() const {
+		return this->token;
+	}
+	ws_delimited_token_iter& operator++() {
+		advance_past_token();
+
+		if (remaining_count == 0) {
+			return *this;
+		}
+		while (isspace(*token.first)) {
+			if (!incr_ptr()) {
+				assert(*this == this->end());
+				return *this;
+			}
+		}
+		token.second = 0;
+		while (token.second < remaining_count && !isspace(token.first[token.second])) {
+			token.second++;
+		}
+
+		return *this;
+	}
+	ws_delimited_token_iter operator++(int) {
+		ws_delimited_token_iter old = *this;
+		operator++();
+		return old;
+	}
+};
 
 int null_strcmp(const char *s1, const char *s2)
 {
@@ -400,7 +462,6 @@ bool strcomp (const char *lhs, const char *rhs)
 bool add_cap_feature_mask(struct aa_features *features, capability_flags flags)
 {
 	autofree char *value = NULL;
-	const char *capstr;
 	size_t valuelen, len = 0;
 	int n;
 
@@ -410,10 +471,11 @@ bool add_cap_feature_mask(struct aa_features *features, capability_flags flags)
 		return true;
 
 	n = 0;
-	for (capstr = strn_token(value, len);
-	     capstr;
-	     capstr = strn_token(capstr + len, len)) {
-		string capstr_as_str = string(capstr, len);
+
+	ws_delimited_token_iter tok_iter = ws_delimited_token_iter(value, valuelen);
+	for (auto it = tok_iter.begin(); it != tok_iter.end(); ++it) {
+		auto capstr_len_pair = *it;
+		string capstr_as_str = string(capstr_len_pair.first, capstr_len_pair.second);
 		if (cap_table.capable_add_cap(capstr_as_str, n, flags) < 0)
 			return false;
 		n++;

@@ -1,0 +1,70 @@
+#------------------------------------------------------------------
+#    Copyright (C) 2024 Canonical Ltd.
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+# vim: ft=apparmor
+
+abi <abi/3.0>,
+
+include <tunables/global>
+
+tomcat9 /usr/share/tomcat9/bin/catalina.sh {
+  include <abstractions/base>
+  include <abstractions/bash>
+  include <abstractions/evince>
+  include <abstractions/nameservice>
+  include <abstractions/openssl>
+  include <abstractions/ubuntu-browsers.d/plugins-common>
+  include <abstractions/user-tmp>
+
+  # DNS
+  /etc/host.conf r,
+  /etc/hosts r,
+  /etc/nsswitch.conf r,
+  /run/systemd/resolve/stub-resolv.conf r,
+  @{PROC}/@{pid}/net/if_inet6 r,
+
+  # User info
+  /etc/passwd r,
+
+  # Timezone info
+  /etc/timezone r,
+
+  # Resource limits
+  /sys/fs/cgroup/system.slice/tomcat9.service/{,**} r,
+
+  # Shell scripts
+  /usr/bin/dash ix,
+  /usr/bin/dirname mrix,
+  /usr/bin/uname mrix,
+
+  # java
+  /usr/lib/jvm/default-java/bin/java mrix,
+  /usr/lib/jvm/java-*/bin/java mrix,
+  /usr/share/java/{,**} r,
+  /etc/java-*/{,**} r,
+
+  # procfs
+  @{PROC}/cgroups r,
+  owner @{PROC}/@{pid}/ r,
+  owner @{PROC}/@{pid}/cgroup r,
+  owner @{PROC}/@{pid}/coredump_filter rw,
+  owner @{PROC}/@{pid}/mountinfo r,
+
+  # tomcat9
+  /var/cache/tomcat9/{,**} r,
+  /var/log/tomcat9/{,**} r,
+  /var/lib/tomcat9/{,**} r,
+  /etc/tomcat9/{,**} r,
+
+  /usr/share/tomcat9/{,**} r,
+  /usr/share/tomcat9-examples/{,**} r,
+  /usr/share/tomcat9-admin/{,**} r,
+
+  owner /var/cache/tomcat9/{,**} rw,
+  owner /var/lib/tomcat9/{,**} rw,
+  owner /var/log/tomcat9/{,**} rw,
+}

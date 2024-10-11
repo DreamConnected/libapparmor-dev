@@ -1,11 +1,24 @@
 #ifndef __AA_LIB_H_
 #define __AA_LIB_H_
 
+#include <cstdlib>
+
 #include <sys/apparmor_private.h>
 
 #define autofree __attribute((cleanup(_aa_autofree)))
 #define autoclose __attribute((cleanup(_aa_autoclose)))
 #define autofclose __attribute((cleanup(_aa_autofclose)))
+
+class delete_via_free {
+	public:
+
+	void operator()(void *ptr) {
+		free(ptr);
+	}
+	void operator()(const void *ptr) {
+		free((void*) ptr);
+	}
+};
 
 #define asprintf _aa_asprintf
 

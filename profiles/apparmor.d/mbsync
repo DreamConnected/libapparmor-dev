@@ -1,0 +1,45 @@
+#------------------------------------------------------------------
+#    Copyright (C) 2024 Canonical Ltd.
+#
+#    Author: Eduardo Barretto <eduardo.barretto@canonical.com>
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+# vim: ft=apparmor
+
+abi <abi/4.0>,
+
+include <tunables/global>
+
+profile mbsync /usr/bin/mbsync {
+  include <abstractions/base>
+  include <abstractions/ssl_certs>
+
+  network inet dgram,
+  network inet stream,
+  network inet6 dgram,
+  network inet6 stream,
+  network netlink raw,
+
+  @{etc_ro}/gai.conf r,
+  @{etc_ro}/host.conf r,
+  @{etc_ro}/hosts r,
+  @{etc_ro}/nsswitch.conf r,
+  @{etc_ro}/ssl/openssl.cnf r,
+  @{run}/systemd/resolve/stub-resolv.conf r,
+  /usr/bin/mbsync r,
+  owner @{HOME}/.mbsyncrc r,
+  owner @{HOME}/Mail/**/ r,
+  owner @{HOME}/Mail/**/.mbsyncstate rw,
+  owner @{HOME}/Mail/**/.mbsyncstate.journal rw,
+  owner @{HOME}/Mail/**/.mbsyncstate.lock wk,
+  owner @{HOME}/Mail/**/.mbsyncstate.new rw,
+  owner @{HOME}/Mail/**/.uidvalidity rwk,
+  owner @{HOME}/Mail/**/cur/* rw,
+  owner @{HOME}/Mail/**/new/* rw,
+  owner @{HOME}/Mail/**/tmp/* rw,
+
+  include if exists <local/mbsync>
+}

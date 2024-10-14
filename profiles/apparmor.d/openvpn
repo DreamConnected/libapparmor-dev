@@ -15,7 +15,7 @@ profile openvpn /usr/sbin/openvpn flags=(attach_disconnected) {
   include <abstractions/base>
   include <abstractions/consoles>
   include <abstractions/openssl>
-  include <abstractions/strict-nameservice>
+  include <abstractions/nameservice-strict>
 
   capability dac_read_search,
   capability dac_override,
@@ -77,7 +77,7 @@ profile openvpn /usr/sbin/openvpn flags=(attach_disconnected) {
   profile update-resolv {
     include <abstractions/base>
     include <abstractions/consoles>
-    include <abstractions/strict-nameservice>
+    include <abstractions/nameservice-strict>
 
     # To be able to manage firewall rules.
     capability net_admin,

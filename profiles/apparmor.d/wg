@@ -13,7 +13,7 @@ include <tunables/global>
 
 profile wg /usr/bin/wg flags=(attach_disconnected){
   include <abstractions/base>
-  include <abstractions/strict-nameservice>
+  include <abstractions/nameservice-strict>
 
   capability net_admin,
   capability net_bind_service,

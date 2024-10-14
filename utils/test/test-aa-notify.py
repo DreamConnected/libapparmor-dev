@@ -162,25 +162,15 @@ Feb  4 13:40:38 XPS-13-9370 kernel: [128552.880347] audit: type=1400 audit({epoc
 
 
 class AANotifyTest(AANotifyBase):
-
-    # The Perl aa-notify script was written so, that it will checked for kern.log
-    # before printing help when invoked without arguments (sic!).
-    @unittest.skipUnless(os.path.isfile('/var/log/kern.log'), 'Requires kern.log on system')
     def test_no_arguments(self):
-        """Test using no arguments at all"""
-
-        expected_return_code = 0
-        expected_output_has = 'usage: aa-notify'
-
-        return_code, output = cmd(aanotify_bin)
-        result = 'Got return code {}, expected {}\n'.format(return_code, expected_return_code)
-        self.assertEqual(expected_return_code, return_code, result + output)
-        result = 'Got output "{}", expected "{}"\n'.format(output, expected_output_has)
-        self.assertIn(expected_output_has, output, result + output)
+        """Test using no arguments at all - should output help text"""
+        self._check_help_text(aanotify_bin)
 
     def test_help_contents(self):
-        """Test output of help text"""
+        """Test output of help text with --help"""
+        self._check_help_text(aanotify_bin + ['--help'])
 
+    def _check_help_text(self, command):
         expected_return_code = 0
         expected_output_1 = \
 '''usage: aa-notify [-h] [-p] [--display DISPLAY] [-f FILE] [-l] [-s NUM] [-v]
@@ -227,7 +217,7 @@ Filtering options:
                         regular expression to match the network socket type
 '''  # noqa: E128
 
-        return_code, output = cmd(aanotify_bin + ['--help'])
+        return_code, output = cmd(command)
         result = 'Got return code {}, expected {}\n'.format(return_code, expected_return_code)
         self.assertEqual(expected_return_code, return_code, result + output)
 

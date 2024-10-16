@@ -46,7 +46,8 @@
   /var/lib/libvirt/dnsmasq/*  r,
 
   # make libnss-libvirt name resolution work.
-  /var/lib/libvirt/dnsmasq/*  r,
+  /var/lib/libvirt/dnsmasq/  r,
+  /var/lib/libvirt/dnsmasq/*.status  r,
 
   # The nss libraries are sometimes used in addition to PAM; make sure
   # they are available

@@ -267,8 +267,8 @@ profile foliate /usr/bin/foliate flags=(enforce) {
 
     @{PROC}/2/statm r,
     @{PROC}/filesystems r,
-    @{PROC}/*/maps r,
-    @{PROC}/*/smaps r,
+    @{PROC}/@{pid}/maps r,
+    @{PROC}/@{pid}/smaps r,
     
     @{sys}/devices/pci**/uevent r,
     @{sys}/devices/pci**/vendor r,

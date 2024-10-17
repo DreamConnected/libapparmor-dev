@@ -18,6 +18,7 @@ import sys
 import time
 
 import LibAppArmor
+import apparmor.ui as aaui
 from apparmor.common import AppArmorBug, AppArmorException, DebugLogger, hasher, open_file_read, split_name
 from apparmor.rule.capability import CapabilityRule
 from apparmor.rule.change_profile import ChangeProfileRule
@@ -274,7 +275,11 @@ class ReadLog:
         """Parse the event from log into key value pairs"""
         msg = msg.strip()
         self.debug_logger.info('parse_event: %s', msg)
-        event = LibAppArmor.parse_record(msg)
+        try:
+            event = LibAppArmor.parse_record(msg)
+        except TypeError:
+            aaui.UI_Important(_("WARNING: Cannot process log message, skipping entry. Make sure log is plaintext."))
+            return None
 
         ev = self.parse_record(event)
         LibAppArmor.free_record(event)

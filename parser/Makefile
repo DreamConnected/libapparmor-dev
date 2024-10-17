@@ -365,6 +365,9 @@ cap_names.h: generated_cap_names.h base_cap_names.h
 		exit 1; \
 	fi
 
+.PHONY: tst_binaries
+tst_binaries: $(TESTS)
+
 tst_lib: lib.c parser.h $(filter-out lib.o, ${TEST_OBJECTS})
 	$(CXX) $(TEST_CFLAGS) -o $@ $< $(filter-out $(<:.c=.o), ${TEST_OBJECTS}) $(TEST_LDFLAGS) $(TEST_LDLIBS)
 tst_%: parser_%.c parser.h $(filter-out parser_%.o, ${TEST_OBJECTS})

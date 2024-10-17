@@ -546,7 +546,7 @@ profile foliate /usr/bin/foliate flags=(enforce) {
     /usr/lib/*/webkitgtk-*/WebKitNetworkProcess mr,
     
     
-    owner @{PROC}/*/maps r,
+    owner @{PROC}/@{pid}/maps r,
     owner @{run}/user/@{uid}/bus rw,
     owner @{HOME}/.cache/com.github.johnfactotum.Foliate/** rwlk,
     owner @{HOME}/.local/share/com.github.johnfactotum.Foliate/** rw,

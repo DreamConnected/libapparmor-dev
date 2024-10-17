@@ -476,8 +476,8 @@ profile foliate /usr/bin/foliate flags=(enforce) {
     /lib/@{multiarch}/libffi.so.* mr,
     /lib/@{multiarch}/libblkid.so.* mr,
     @{PROC}/filesystems r,
-    /run/user/*/webkitgtk/bus-proxy-* rw,
-    /run/user/*/webkitgtk/** rw,
+    @{run}/user/@{uid}/webkitgtk/bus-proxy-* rw,
+    @{run}/user/@{uid}/webkitgtk/** rw,
     
     /usr/lib/locale/locale-archive r,
     /usr/bin/xdg-dbus-proxy mr,

@@ -58,6 +58,8 @@ test-libapparmor:
     - .ubuntu-before_script
   script:
     - *install-c-build-deps
+    # This is to touch the built files in the test stage to avoid needless rebuilding
+    - make -C libraries/libapparmor --touch
     - make -C libraries/libapparmor check
 
 test-parser:
@@ -67,6 +69,8 @@ test-parser:
     - .ubuntu-before_script
   script:
     - *install-c-build-deps
+    # This is to touch the built files in the test stage to avoid needless rebuilding
+    - make -C parser --touch
     - make -C parser -j $(nproc) tst_binaries
     - make -C parser check
 
@@ -84,6 +88,9 @@ test-utils:
   extends:
     - .ubuntu-before_script
   script:
+    # This is to touch the built files in the test stage to avoid needless rebuilding
+    - make -C utils --touch
+
     - apt-get install --no-install-recommends -y libc6-dev libjs-jquery libjs-jquery-throttle-debounce libjs-jquery-isonscreen libjs-jquery-tablesorter flake8 python3-coverage python3-notify2 python3-psutil python3-setuptools python3-tk python3-ttkthemes python3-gi
 
     # See apparmor/apparmor#221
@@ -102,6 +109,8 @@ test-mod-apparmor:
   extends:
     - .ubuntu-before_script
   script:
+    # This is to touch the built files in the test stage to avoid needless rebuilding
+    - make -C changehat/mod_apparmor --touch
     - make -C changehat/mod_apparmor check
 
 test-profiles:
@@ -110,6 +119,8 @@ test-profiles:
   extends:
     - .ubuntu-before_script
   script:
+    # This is to touch the built files in the test stage to avoid needless rebuilding
+    - make -C profiles --touch
     - make -C profiles check-parser
     - make -C profiles check-abstractions.d
     - make -C profiles check-local

@@ -43,9 +43,9 @@ build-all:
       - profiles/
   script:
     - *install-c-build-deps
-    - cd libraries/libapparmor && ./autogen.sh && ./configure --with-perl --with-python --prefix=/usr && make && cd ../.. || { cat config.log ; exit 1 ; }
-    - make -C parser
-    - make -C binutils
+    - cd libraries/libapparmor && ./autogen.sh && ./configure --with-perl --with-python --prefix=/usr && make -j $(nproc) && cd ../.. || { cat config.log ; exit 1 ; }
+    - make -C parser -j $(nproc)
+    - make -C binutils -j $(nproc)
     - make -C utils
     - make -C changehat/mod_apparmor
     - make -C changehat/pam_apparmor

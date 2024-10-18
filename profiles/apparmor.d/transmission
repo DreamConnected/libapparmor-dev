@@ -5,7 +5,7 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile transmission-daemon /usr/bin/transmission-daemon flags=(complain) {
+profile transmission-daemon /usr/bin/transmission-daemon flags=(complain,attach_disconnected) {
   # Don't use abstractions/transmission-common here, as the
   # access needed is narrower than the user applications
   include <abstractions/base>

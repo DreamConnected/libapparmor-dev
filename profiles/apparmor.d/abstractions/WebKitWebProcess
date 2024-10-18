@@ -33,3 +33,5 @@
   @{sys}/devices/pci**/subsystem_vendor r,
   @{sys}/devices/pci**/subsystem_device r,
   @{sys}/devices/virtual/dmi/id/chassis_type r,
+
+  include if exists <abstractions/WebKitWebProcess.d>

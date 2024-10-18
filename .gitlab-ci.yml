@@ -67,6 +67,7 @@ test-parser:
     - .ubuntu-before_script
   script:
     - *install-c-build-deps
+    - make -C parser -j $(nproc) tst_binaries
     - make -C parser check
 
 test-binutils:

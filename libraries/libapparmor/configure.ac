@@ -3,9 +3,8 @@ m4_ifdef(__apparmor_version, , m4_define([__apparmor_version], m4_sinclude(../..
 m4_define([__aalen], decr(len(__apparmor_version)))
 m4_define([apparmor_version], m4_substr(__apparmor_version, 0, __aalen))
 
-AC_INIT(configure.ac)
-
-AM_INIT_AUTOMAKE(libapparmor1, apparmor_version)
+AC_INIT([libapparmor1], apparmor_version)
+AM_INIT_AUTOMAKE
 
 AM_PROG_LEX
 AC_PROG_YACC

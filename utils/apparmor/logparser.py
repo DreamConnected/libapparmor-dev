@@ -17,6 +17,7 @@ import re
 import sys
 import time
 import LibAppArmor
+import apparmor.ui as aaui
 from apparmor.common import AppArmorException, AppArmorBug, hasher, open_file_read, split_name, DebugLogger
 
 # setup module translations
@@ -82,7 +83,13 @@ class ReadLog:
         if sys.version_info < (3, 0):
             # parse_record fails with u'foo' style strings hence typecasting to string
             msg = str(msg)
-        event = LibAppArmor.parse_record(msg)
+
+        try:
+            event = LibAppArmor.parse_record(msg)
+        except TypeError:
+            aaui.UI_Important(_("WARNING: Cannot process log message, skipping entry. Make sure log is plaintext."))
+            return None
+
         ev = dict()
         ev['resource'] = event.info
         ev['active_hat'] = event.active_hat

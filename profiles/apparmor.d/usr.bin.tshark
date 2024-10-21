@@ -28,14 +28,17 @@ profile tshark /usr/bin/tshark {
   file mrix /usr/lib/@{multiarch}/wireshark/extcap/{,*},
   file r /usr/share/wireshark/{,**},
   file r @{PROC}/@{pid}/fd/,
-  file rw @{HOME}/wireshark/**,
 
   # for -i sdjournal
   file r /{var,run}/log/journal/{,**},
 
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/tshark>
+
   profile dumpcap {
     include <abstractions/base>
     include <abstractions/nameservice>
+    include <abstractions/private-files-strict>
     include <abstractions/user-tmp>
     include <abstractions/user-write>
 
@@ -55,12 +58,11 @@ profile tshark /usr/bin/tshark {
     file r @{sys}/devices/{,**},
     file rw @{sys}/devices/**/statistics/rx_*,
 
-    file r /**pcap{,ng}{,.gz},
-    owner rw /**pcap{,ng}{,.gz},
+    file r /**.pcap{,ng}{,.gz},
+    owner rw /**.pcap{,ng}{,.gz},
 
     owner rw @{run}/dbus/system_bus_socket,
     file mr /usr/bin/dumpcap,
 
   }
-  include if exists <local/tshark>
 }

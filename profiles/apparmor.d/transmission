@@ -47,7 +47,7 @@ profile transmission-cli /usr/bin/transmission-cli flags=(complain) {
   include if exists <local/transmission-cli>
 }
 
-profile transmission-gtk /usr/bin/transmission-gtk flags=(complain) {
+profile transmission-gtk /usr/bin/transmission-gtk flags=(complain,attach_disconnected) {
   include <abstractions/transmission-common>
   include <abstractions/dbus-session-strict>
   include <abstractions/dconf>

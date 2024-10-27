@@ -18,7 +18,7 @@ import sys
 import unittest
 
 import apparmor.aa as apparmor
-from common_test import AATest, read_file, setup_aa, setup_all_loops
+from common_test import AATest, read_file, write_file, setup_aa, setup_all_loops
 
 # Use the same python as the one this script is being run with
 python_interpreter = sys.executable
@@ -189,7 +189,34 @@ class MinitoolsTest(AATest):
             'Failed to create a symlink for {} in disable'.format(self.local_profilename))
 
     def test_autodep(self):
-        pass
+        # small bash script - we'll create a profile for it with aa-autodep
+        script_filename = write_file(self.tmpdir, 'autodep_test.sh', '#!/bin/bash\necho hello world')
+
+        subprocess.check_output([python_interpreter, './../aa-autodep', '--no-reload', '-d', self.profile_dir, '--configdir',  './', script_filename])
+
+        expected_file = apparmor.get_new_profile_filename(script_filename)
+
+        self.assertTrue(os.path.isfile(expected_file), 'Failed to create profile with aa-autodep: {}'.format(script_filename))
+
+        prof_content = read_file(expected_file).split('\n')
+
+        self.assertTrue(prof_content[0].startswith('# Last Modified:'), 'prof_content[0] starts with %s' % prof_content[0])
+        self.assertEqual(prof_content[1], 'abi <abi/4.0>,')
+        self.assertEqual(prof_content[2], '')
+        self.assertEqual(prof_content[3], 'include <tunables/global>')
+        self.assertEqual(prof_content[4], '')
+        self.assertEqual(prof_content[5], '%s flags=(complain) {' % script_filename)
+        self.assertEqual(prof_content[6], '  include <abstractions/base>')
+        self.assertEqual(prof_content[7], '  include <abstractions/bash>')
+        self.assertEqual(prof_content[8], '')
+        self.assertEqual(prof_content[9], '  %s r,' % script_filename)
+        self.assertTrue(prof_content[10] in ['  /usr/bin/bash ix,', '  /bin/bash ix,'])
+        self.assertEqual(prof_content[11], '')
+        self.assertEqual(prof_content[12], '}')
+        self.assertEqual(prof_content[13], '')
+
+        with self.assertRaises(IndexError):
+            prof_content[14]
 
     @unittest.skipIf(apparmor.check_for_apparmor() is None, "Securityfs not mounted or doesn't have the apparmor directory.")
     def test_unconfined(self):

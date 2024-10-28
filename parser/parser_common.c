@@ -110,7 +110,12 @@ FILE *ofile = NULL;
 IncludeCache_t *g_includecache;
 
 optflags parseopts = {
-	.control = (optflags_t)(CONTROL_DFA_TREE_NORMAL | CONTROL_DFA_TREE_SIMPLE | CONTROL_DFA_MINIMIZE | CONTROL_DFA_DIFF_ENCODE | CONTROL_RULE_MERGE),
+	.control = (optflags_t)(CONTROL_DFA_TREE_NORMAL | CONTROL_DFA_TREE_SIMPLE | CONTROL_DFA_MINIMIZE | CONTROL_DFA_DIFF_ENCODE | CONTROL_RULE_MERGE |
+				/* TODO: remove when we have better auto
+				 * selection on when/which explicit denies
+				 * to remove
+				 */
+				CONTROL_DFA_FILTER_DENY),
 	.dump = 0,
 	.warn = DEFAULT_WARNINGS,
 	.Werror = 0

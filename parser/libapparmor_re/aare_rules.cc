@@ -265,11 +265,7 @@ CHFA *aare_rules::create_chfa(int *min_match_len,
 		 * information supported by the backed
 		 */
 		if (!extended_perms ||
-		    // TODO: we should drop DFA_MINIMIZE check here but doing
-		    // so changes behavior. Do as a separate patch and fixup
-		    // tests, etc.
-		    ((opts.control & CONTROL_DFA_FILTER_DENY) &&
-		     (opts.control & CONTROL_DFA_MINIMIZE)))
+		    ((opts.control & CONTROL_DFA_FILTER_DENY)))
 			dfa.apply_and_clear_deny();
 
 		if (opts.control & CONTROL_DFA_MINIMIZE) {

@@ -640,10 +640,10 @@ opt_priority: { $$ = 0; }
 			yyerror("invalid priority %s", $3);
 		free($3);
 		/* see note on mediates_priority */
-		if (tmp > MAX_PRIORITY)
-			yyerror("invalid priority %l > %d", tmp, MAX_PRIORITY);
-		if (tmp < MIN_PRIORITY)
-			yyerror("invalid priority %l > %d", tmp, MIN_PRIORITY);
+		if (tmp > MAX_POLICY_PRIORITY)
+			yyerror("invalid priority %l > %d", tmp, MAX_POLICY_PRIORITY);
+		if (tmp < MIN_POLICY_PRIORITY)
+			yyerror("invalid priority %l > %d", tmp, MIN_POLICY_PRIORITY);
 		$$ = tmp;
 	}
 

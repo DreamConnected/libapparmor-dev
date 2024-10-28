@@ -52,7 +52,7 @@ ostream &operator<<(ostream &os, State &state);
 
 class perms_t {
 public:
-	perms_t(void): priority(INT_MIN), allow(0), deny(0), prompt(0), audit(0), quiet(0), exact(0) { };
+	perms_t(void): priority(MIN_INTERNAL_PRIORITY), allow(0), deny(0), prompt(0), audit(0), quiet(0), exact(0) { };
 
 	bool is_accept(void) { return (allow | deny | prompt | audit | quiet); }
 
@@ -68,7 +68,7 @@ public:
 	}
 
 	void clear(void) {
-		priority = INT_MIN;
+		priority = MIN_INTERNAL_PRIORITY;
 		allow = deny = prompt = audit = quiet = exact = 0;
 	}
 	void clear(int p) {

@@ -1,0 +1,7 @@
+#
+#=Description to rule priority out of low end of range
+#=EXRESULT FAIL
+#
+/usr/bin/foo {
+  priority=-1001 /usr/bin/foo r,
+}

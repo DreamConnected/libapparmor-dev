@@ -1093,9 +1093,10 @@ static const char *deny_file = ".*";
  *
  * Note: it turns out the above bug does exist for dbus rules in parsers
  * that do not support priority, and we don't have a way to fix it.
- * We fix it here by capping user specified priority to be < INT_MAX.
+ * We fix it here by capping user specified priority to be less than
+ * MAX_INTERNAL_PRIORITY.
  */
-static int mediates_priority = INT_MAX;
+static int mediates_priority = MAX_INTERNAL_PRIORITY;
 
 /* some rule types unfortunately encoded permissions on the class byte
  * to fix the above bug, they need a different solution. The generic
@@ -1106,7 +1107,7 @@ static int mediates_priority = INT_MAX;
  * and it is guaranteed to have the same priority as the highest priority
  * rule.
  */
-static int perms_onclass_mediates_priority = INT_MIN;
+static int perms_onclass_mediates_priority = MIN_INTERNAL_PRIORITY;
 
 int process_profile_policydb(Profile *prof)
 {

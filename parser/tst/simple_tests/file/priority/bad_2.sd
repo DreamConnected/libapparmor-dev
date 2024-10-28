@@ -1,0 +1,7 @@
+#
+#=Description basic file rule priority outside high end of range.
+#=EXRESULT FAIL
+#
+/usr/bin/foo {
+  priority=1001 /usr/bin/foo r,
+}

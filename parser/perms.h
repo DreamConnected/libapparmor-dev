@@ -24,6 +24,11 @@
  * older versions
  */
 
+#include <ostream>
+#include <iostream>
+using std::ostream;
+using std::cerr;
+
 #include <stdint.h>
 #include <sys/apparmor.h>
 
@@ -82,7 +87,7 @@
  * - exec type - which determines how the executable name and index are used
  * - flags - which modify how the destination name is applied
  */
-#define AA_X_INDEX_MASK		AA_INDEX_MASK
+#define AA_X_INDEX_MASK		0xffffff
 
 #define AA_X_TYPE_MASK		0x0c000000
 #define AA_X_NONE		AA_INDEX_NONE
@@ -96,7 +101,8 @@
 
 typedef uint32_t perm32_t;
 
-struct aa_perms {
+class aa_perms {
+public:
 	perm32_t allow;
 	perm32_t deny;	/* explicit deny, or conflict if allow also set */
 
@@ -115,6 +121,33 @@ struct aa_perms {
 	uint32_t xindex;
 	uint32_t tag;	/* tag string index, if present */
 	uint32_t label;	/* label string index, if present */
+
+	void dump_header(ostream &os)
+	{
+		os << "(allow/deny/prompt//audit/quiet//xindex)\n";
+	}
+
+	void dump(ostream &os)
+	{
+		os << std::hex << "(0x" << allow << "/0x" << deny << "/0x"
+		   << prompt << "//0x" << audit << "/0x" << quiet
+		   << std::dec << "//";
+		if (xindex & AA_X_UNSAFE)
+			os << "unsafe ";
+		if (xindex & AA_X_TYPE_MASK) {
+			if (xindex & AA_X_CHILD)
+				os << "c";
+			else
+				os << "p";
+		}
+		if (xindex & AA_X_INHERIT)
+			os << "i";
+		if (xindex & AA_X_UNCONFINED)
+			os << "u";
+		os << (xindex & AA_X_INDEX_MASK);
+		os << ")";
+	}
+
 };
 
 #endif /* __AA_PERM_H */

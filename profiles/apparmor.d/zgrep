@@ -17,6 +17,8 @@ profile zgrep /usr/bin/{x,}zgrep {
   include <abstractions/bash>
 
   /dev/tty rw,
+  @{etc_ro}/nsswitch.conf  r,
+  /etc/passwd r,
   /usr/bin/{ba,da,}sh ix,
   /usr/bin/bzip2 Cx -> helper,
   /usr/bin/cat ix,

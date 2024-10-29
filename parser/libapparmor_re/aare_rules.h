@@ -90,8 +90,10 @@ public:
 			else
 				node = new MatchFlag(priority, perms, audit);
 			pair<iterator, bool> val = nodes.insert(make_pair(tmp, node));
-			if (val.second == false)
+			if (val.second == false) {
+				delete node;
 				return val.first->second;
+			}
 			return node;
 		}
 		return res->second;

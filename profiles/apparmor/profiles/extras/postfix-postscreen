@@ -12,10 +12,13 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile postfix-postscreen /usr/lib/postfix/{bin/,sbin/,}postscreen {
+profile postfix-postscreen /usr/lib{,exec}/postfix/{bin/,sbin/,}postscreen {
   include <abstractions/base>
+  include <abstractions/nameservice>
+  include <abstractions/postfix-common>
 
-  /usr/lib/postfix/{bin/,sbin/,}postscreen mrix,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}postscreen mrix,
+  owner /var/lib/postfix/{,__db.}postscreen_cache.db rwk,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/postfix-postscreen>

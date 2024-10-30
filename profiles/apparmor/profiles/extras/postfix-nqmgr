@@ -13,12 +13,12 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile postfix-nqmgr /usr/lib/postfix/{bin/,sbin/,}nqmgr {
+profile postfix-nqmgr /usr/lib{,exec}/postfix/{bin/,sbin/,}nqmgr {
   include <abstractions/base>
   include <abstractions/nameservice>
   include <abstractions/postfix-common>
 
-  /usr/lib/postfix/{bin/,sbin/,}nqmgr                             mrix,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}nqmgr                      mrix,
 
   /{var/spool/postfix/,}active/                                   r,
   /{var/spool/postfix/,}active/[0-9A-F]/                          r,

@@ -14,12 +14,12 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile postfix-pipe /usr/lib/postfix/{bin/,sbin/,}pipe {
+profile postfix-pipe /usr/lib{,exec}/postfix/{bin/,sbin/,}pipe {
   include <abstractions/base>
   include <abstractions/nameservice>
   include <abstractions/postfix-common>
 
-  /usr/lib/postfix/{bin/,sbin/,}pipe mrix,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}pipe mrix,
 
   /var/spool/postfix/active/* rwk,
   /var/spool/postfix/private/bounce w,

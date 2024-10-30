@@ -13,12 +13,12 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile postfix-qmqpd /usr/lib/postfix/{bin/,sbin/,}qmqpd {
+profile postfix-qmqpd /usr/lib{,exec}/postfix/{bin/,sbin/,}qmqpd {
   include <abstractions/base>
   include <abstractions/nameservice>
   include <abstractions/postfix-common>
 
-  /usr/lib/postfix/{bin/,sbin/,}qmqpd mrix,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}qmqpd mrix,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/postfix-qmqpd>

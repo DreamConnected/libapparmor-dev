@@ -13,12 +13,12 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile postfix-pickup /usr/lib/postfix/{bin/,sbin/,}pickup {
+profile postfix-pickup /usr/lib{,exec}/postfix/{bin/,sbin/,}pickup {
   include <abstractions/base>
   include <abstractions/nameservice>
   include <abstractions/postfix-common>
 
-  /usr/lib/postfix/{bin/,sbin/,}pickup           mrix,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}pickup    mrix,
 
   /{var/spool/postfix/,}public/cleanup           rw,
   /{var/spool/postfix/,}public/pickup            r,

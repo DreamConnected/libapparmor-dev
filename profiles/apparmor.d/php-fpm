@@ -32,9 +32,9 @@ profile php-fpm /usr/{bin,sbin}/php-fpm* flags=(attach_disconnected) {
   /var/log/php*-fpm.log rw,
 
   # we need to be able to create all sockets
-  @{run}/php{,-fpm}/php*-fpm.pid rw,
+  @{run}/php{,-fpm,-fpm-legacy}/php*-fpm.pid rw,
   @{run}/php*-fpm.pid rw,
-  @{run}/php{,-fpm}/php*-fpm.sock rwlk,
+  @{run}/php{,-fpm,-fpm-legacy}/php*-fpm.sock rwlk,
 
   # LP: #2061113
   owner @{run}/systemd/notify w,

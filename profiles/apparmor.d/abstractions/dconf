@@ -5,7 +5,7 @@
 # permissions for querying dconf settings; granting write access should
 # be specified in a specific application's profile.
 
-  /etc/dconf/** r,
+  @{etc_ro}/dconf/** r,
   owner @{run}/user/*/dconf/user r,
   owner @{HOME}/.config/dconf/user r,
 

@@ -128,6 +128,7 @@ profile foliate /usr/bin/foliate flags=(enforce) {
     include <abstractions/dbus-session>
     include <abstractions/mesa>
     include <abstractions/WebKitWebProcess>
+    include <abstractions/nameservice-strict>
 
     signal receive set=kill peer=foliate,
     userns create,
@@ -236,21 +237,6 @@ profile foliate /usr/bin/foliate flags=(enforce) {
     /usr/share/zoneinfo/{**,} r,
     
     /usr/lib/locale/locale-archive r,
-    /usr/lib/@{multiarch}/gconv/gconv-modules.cache r,
-    /usr/lib/@{multiarch}/gtk-*/*/printbackends/ r,
-    /usr/lib/@{multiarch}/gtk-*/*/printbackends/giomodule.cache r,
-    /usr/lib/@{multiarch}/gtk-*/*/immodules/ r,
-    /usr/lib/@{multiarch}/gtk-*/*/immodules/libim-ibus.so r,
-    /usr/lib/@{multiarch}/gtk-*/*/immodules/libim-ibus.so mr,
-    /usr/lib/@{multiarch}/gtk-*/*/media/ r,
-    /usr/lib/@{multiarch}/gtk-*/*/media/libmedia-gstreamer.so mr,
-    /usr/lib/@{multiarch}/gio/modules/ r,
-    /usr/lib/@{multiarch}/gio/modules/giomodule.cache r,
-    /usr/lib/@{multiarch}/gio/modules/libdconfsettings.so mr,
-    /usr/lib/@{multiarch}/dri/swrast_dri.so mr,
-    /usr/lib/@{multiarch}/gdk-pixbuf-*/*/loaders.cache r,
-    /usr/lib/@{multiarch}/webkitgtk-*/injected-bundle/libwebkitgtkinjectedbundle.so mr,
-    /usr/lib/@{multiarch}/webkitgtk-*/WebKitWebProcess r,
 
     @{sys}/devices/system/cpu/online r,
     @{sys}/devices/system/cpu/possible r,
@@ -262,6 +248,7 @@ profile foliate /usr/bin/foliate flags=(enforce) {
 }
 
   profile xdg-dbus-proxy flags=(attach_disconnected.path=/container/, attach_disconnected){
+    include <abstractions/base>
     network unix,
 
     dbus (send) bus="accessibility" path="/" interface="org.freedesktop.DBus" member={AddMatch,GetNameOwner} peer=(label="unconfined"),
@@ -284,19 +271,6 @@ profile foliate /usr/bin/foliate flags=(enforce) {
     @{etc_ro}/ld.so.cache r,
     @{etc_ro}/locale.alias r,
 
-    /lib/@{multiarch}/ld-linux-*.so.* r,
-    /lib/@{multiarch}/libglib-*.so.* mr,
-    /lib/@{multiarch}/libgio-*.so.*  mr,
-    /lib/@{multiarch}/libgobject-*.so.* mr,
-    /lib/@{multiarch}/libc.so.* mr,
-    /lib/@{multiarch}/libm.so.* mr,
-    /lib/@{multiarch}/libpcre*.so.* mr,
-    /lib/@{multiarch}/libgmodule-*.so.* mr,
-    /lib/@{multiarch}/libz.so.* mr,
-    /lib/@{multiarch}/libmount.so.* mr,
-    /lib/@{multiarch}/libselinux.so.* mr,
-    /lib/@{multiarch}/libffi.so.* mr,
-    /lib/@{multiarch}/libblkid.so.* mr,
     @{PROC}/filesystems r,
     @{run}/user/@{uid}/webkitgtk/bus-proxy-* rw,
     @{run}/user/@{uid}/webkitgtk/** rw,
@@ -368,7 +342,7 @@ profile foliate /usr/bin/foliate flags=(enforce) {
     @{sys}/fs/cgroup/**/memory.max r,
     @{sys}/fs/cgroup/**/memory.high r,
     /usr/lib/*/webkitgtk-*/WebKitNetworkProcess mr,
-    
+    /usr/share/publicsuffix/public_suffix_list.dafsa r,
     
     owner @{PROC}/@{pid}/maps r,
     owner @{run}/user/@{uid}/bus rw,

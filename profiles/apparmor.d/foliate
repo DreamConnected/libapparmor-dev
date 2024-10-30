@@ -29,7 +29,7 @@ profile foliate /usr/bin/foliate flags=(enforce) {
 
   network netlink,
 
-  unix (send, receive) addr=none peer=(label=foliate//WebKitNetworkProcess),
+  unix (send receive) addr=none peer=(label=foliate//WebKitNetworkProcess),
   unix (send receive) type=seqpacket addr=none peer=(label="foliate//bwrap"),
   unix (send receive) type=seqpacket addr=none peer=(label="foliate//WebKitWebProcess"),
 

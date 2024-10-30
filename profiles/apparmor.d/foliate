@@ -184,11 +184,11 @@ profile foliate /usr/bin/foliate flags=(enforce) {
     owner @{sys}/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.high r,
     owner @{sys}/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.max r,
     owner @{PROC}/@{pid}/uid_map rw,
-    owner @{PROC}/*/cgroup r,
-    owner @{PROC}/*/cmdline r,
-    owner @{PROC}/*/mounts r,
-    owner @{PROC}/*/stat r,
-    owner @{PROC}/*/setgroups rw,
+    owner @{PROC}/@{pid}/cgroup r,
+    owner @{PROC}/@{pid}/cmdline r,
+    owner @{PROC}/@{pid}/mounts r,
+    owner @{PROC}/@{pid}/stat r,
+    owner @{PROC}/@{pid}/setgroups rw,
     owner @{PROC}/@{pid}/gid_map rw,
 
     include if exists <local/foliate_bwrap>

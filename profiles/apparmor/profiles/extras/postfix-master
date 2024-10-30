@@ -14,7 +14,7 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile postfix-master /usr/lib/postfix/{bin/,sbin/,}master {
+profile postfix-master /usr/lib{,exec}/postfix/{bin/,sbin/,}master {
   include <abstractions/base>
   include <abstractions/nameservice>
   include <abstractions/postfix-common>
@@ -37,25 +37,28 @@ profile postfix-master /usr/lib/postfix/{bin/,sbin/,}master {
   /{var/spool/postfix/,}private/tlsmgr            rwl,
   /{var/spool/postfix/,}public/{cleanup,flush,pickup,postlog,qmgr,showq,tlsmgr} rwl,
 
-  /usr/lib/postfix/{bin/,sbin/,}anvil               Px,
-  /usr/lib/postfix/{bin/,sbin/,}bounce              Px,
-  /usr/lib/postfix/{bin/,sbin/,}cleanup             Px,
-  /usr/lib/postfix/{bin/,sbin/,}error               Px,
-  /usr/lib/postfix/{bin/,sbin/,}flush               Px,
-  /usr/lib/postfix/{bin/,sbin/,}local               Px,
-  /usr/lib/postfix/{bin/,sbin/,}lmtp                mrPx,
-  /usr/lib/postfix/{bin/,sbin/,}master              mrix,
-  /usr/lib/postfix/{bin/,sbin/,}nqmgr               Px,
-  /usr/lib/postfix/{bin/,sbin/,}proxymap            Px,
-  /usr/lib/postfix/{bin/,sbin/,}pickup              Px,
-  /usr/lib/postfix/{bin/,sbin/,}pipe                Px,
-  /usr/lib/postfix/{bin/,sbin/,}qmgr                Px,
-  /usr/lib/postfix/{bin/,sbin/,}scache              Px,
-  /usr/lib/postfix/{bin/,sbin/,}showq               Px,
-  /usr/lib/postfix/{bin/,sbin/,}smtp                Px,
-  /usr/lib/postfix/{bin/,sbin/,}smtpd               Px,
-  /usr/lib/postfix/{bin/,sbin/,}tlsmgr              Px,
-  /usr/lib/postfix/{bin/,sbin/,}trivial-rewrite     Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}anvil               Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}bounce              Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}cleanup             Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}error               Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}flush               Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}local               Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}lmtp                mrPx,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}master              mrix,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}nqmgr               Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}proxymap            Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}pickup              Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}pipe                Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}postfix-tlsproxy    Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}postscreen          Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}qmgr                Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}scache              Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}showq               Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}smtp                Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}smtpd               Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}spawn               Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}tlsmgr              Px,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}trivial-rewrite     Px,
 
   owner /var/lib/postfix/master.lock rwk,
 

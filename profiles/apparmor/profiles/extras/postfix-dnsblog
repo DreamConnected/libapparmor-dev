@@ -13,10 +13,10 @@
 
 include <tunables/global>
 
-profile postfix-dnsblog /usr/lib/postfix/{bin/,sbin/,}dnsblog {
+profile postfix-dnsblog /usr/lib{,exec}/postfix/{bin/,sbin/,}dnsblog {
   include <abstractions/base>
 
-  /usr/lib/postfix/{bin/,sbin/,}dnsblog mrix,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}dnsblog mrix,
 
   /var/spool/postfix/private/dnsblog rw,
 

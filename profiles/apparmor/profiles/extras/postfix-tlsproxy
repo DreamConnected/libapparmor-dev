@@ -1,24 +1,27 @@
 # ------------------------------------------------------------------
 #
-#    Copyright (C) 2002-2005 Novell/SUSE
-#    Copyright (C) 2018 Canonical, Ltd.
+#    Copyright (C) 2024 pyllyukko
 #
 #    This program is free software; you can redistribute it and/or
 #    modify it under the terms of version 2 of the GNU General Public
 #    License published by the Free Software Foundation.
 #
 # ------------------------------------------------------------------
-# vim:syntax=apparmor
 
-  abi <abi/4.0>,
+abi <abi/4.0>,
 
 include <tunables/global>
 
-profile postfix-discard /usr/lib{,exec}/postfix/{bin/,sbin/,}discard {
+profile postfix-tlsproxy /usr/lib{,exec}/postfix/{bin/,sbin/,}tlsproxy {
   include <abstractions/base>
+  include <abstractions/nameservice>
+  include <abstractions/postfix-common>
+  include <abstractions/ssl_keys>
 
-  /usr/lib{,exec}/postfix/{bin/,sbin/,}discard mrix,
+  capability dac_read_search,
+
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}tlsproxy mrix,
 
   # Site-specific additions and overrides. See local/README for details.
-  include if exists <local/postfix-discard>
+  include if exists <local/postfix-tlsproxy>
 }

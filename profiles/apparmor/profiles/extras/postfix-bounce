@@ -14,12 +14,12 @@
 
 include <tunables/global>
 
-profile postfix-bounce /usr/lib/postfix/{bin/,sbin/,}bounce {
+profile postfix-bounce /usr/lib{,exec}/postfix/{bin/,sbin/,}bounce {
   include <abstractions/base>
   include <abstractions/nameservice>
   include <abstractions/postfix-common>
 
-  /usr/lib/postfix/{bin/,sbin/,}bounce                             mrix,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}bounce                      mrix,
 
   /{var/spool/postfix/,}active/[0-9A-F]/[0-9A-F]/*                 rwkl,
   /{var/spool/postfix/,}active/[0-9A-F]/[0-9A-F]/                  rwl,

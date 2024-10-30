@@ -14,12 +14,12 @@
 
 include <tunables/global>
 
-profile postfix-flush /usr/lib/postfix/{bin/,sbin/,}flush {
+profile postfix-flush /usr/lib{,exec}/postfix/{bin/,sbin/,}flush {
   include <abstractions/base>
   include <abstractions/nameservice>
   include <abstractions/postfix-common>
 
-  /usr/lib/postfix/{bin/,sbin/,}flush                mrix,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}flush         mrix,
 
   /{var/spool/postfix/,}deferred/                    r,
   /{var/spool/postfix/,}deferred/[0-9A-F]/[0-9A-F]/* rwl,

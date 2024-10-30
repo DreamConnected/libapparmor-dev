@@ -14,7 +14,7 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile postfix-smtp /usr/lib/postfix/{bin/,sbin/,}smtp {
+profile postfix-smtp /usr/lib{,exec}/postfix/{bin/,sbin/,}smtp {
   include <abstractions/base>
   include <abstractions/nameservice>
   include <abstractions/postfix-common>
@@ -23,7 +23,7 @@ profile postfix-smtp /usr/lib/postfix/{bin/,sbin/,}smtp {
   capability dac_read_search,
   capability net_bind_service,
 
-  /usr/lib/postfix/{bin/,sbin/,}smtp                    mrix,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}smtp             mrix,
 
   /{var/spool/postfix/,}active/[0-9A-F]/[0-9A-F]/*      rwl,
   /{var/spool/postfix/,}active/[0-9A-F]/[0-9A-F]/       rwl,

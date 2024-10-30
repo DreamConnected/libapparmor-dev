@@ -15,12 +15,12 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile postfix-scache /usr/lib/postfix/{bin/,sbin/,}scache {
+profile postfix-scache /usr/lib{,exec}/postfix/{bin/,sbin/,}scache {
   include <abstractions/base>
   include <abstractions/nameservice>
   include <abstractions/postfix-common>
 
-  /usr/lib/postfix/{bin/,sbin/,}scache mrix,
+  /usr/lib{,exec}/postfix/{bin/,sbin/,}scache mrix,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/postfix-scache>

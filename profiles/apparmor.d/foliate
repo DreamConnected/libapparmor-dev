@@ -178,7 +178,7 @@ profile foliate /usr/bin/foliate flags=(enforce) {
     /usr/bin/xdg-dbus-proxy Px -> foliate//bwrap//&foliate//xdg-dbus-proxy,
     /usr/lib/@{multiarch}/webkitgtk-*/WebKitWebProcess Px -> foliate//bwrap//&foliate//WebKitWebProcess,
     
-    owner @{PROC}/*/fd/ r,
+    owner @{PROC}/@{pid}/fd/ r,
     owner @{run}/user/@{uid}/.flatpak/** rw,
     owner @{sys}/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.current r,
     owner @{sys}/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.high r,

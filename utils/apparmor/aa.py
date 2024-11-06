@@ -1677,7 +1677,7 @@ def read_inactive_profiles(skip_profiles=()):
                 read_profile(full_file, False)
 
 
-def read_profile(file, active_profile):
+def read_profile(file, active_profile, read_error_fatal=False):
     data = None
     try:
         with open_file_read(file) as f_in:
@@ -1685,7 +1685,10 @@ def read_profile(file, active_profile):
     except IOError as e:
         aaui.UI_Important('WARNING: Error reading file %s, skipping.\n    %s' % (file, e))
         debug_logger.debug("read_profile: can't read %s - skipping", file)
-        return
+        if read_error_fatal:
+            raise (e)
+        else:
+            return
 
     profile_data = parse_profile_data(data, file, 0, True)
 

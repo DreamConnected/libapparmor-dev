@@ -14,6 +14,14 @@ AR ?= ar
 CFLAGS ?= -g -Wall -O2 ${EXTRA_CFLAGS} -std=gnu++0x
 CXXFLAGS := ${CFLAGS} ${INCLUDE_APPARMOR}
 
+LIB_HDRS = aare_rules.h flex-tables.h apparmor_re.h hfa.h chfa.h parse.h \
+	expr-tree.h policy_compat.h
+
+OTHER_HDRS =  ../common_optarg.h ../common_flags.h ../immunix.h \
+	../policydb.h ../perms.h ../rule.h
+
+HDRS = ${LIB_HDRS} ${OTHER_HDRS}
+
 ARFLAGS=-rcs
 
 BISON := bison
@@ -27,17 +35,17 @@ libapparmor_re.a: parse.o expr-tree.o hfa.o chfa.o aare_rules.o policy_compat.o
 
 expr-tree.o: expr-tree.cc expr-tree.h
 
-hfa.o: hfa.cc apparmor_re.h hfa.h ../immunix.h  policy_compat.h
+hfa.o: hfa.cc ${HDRS}
 
-aare_rules.o: aare_rules.cc aare_rules.h apparmor_re.h expr-tree.h hfa.h chfa.h parse.h ../immunix.h
+aare_rules.o: aare_rules.cc ${HDRS}
 
-chfa.o: chfa.cc chfa.h ../immunix.h
+chfa.o: chfa.cc ${HDRS}
 
-policy_compat.o: policy_compat.cc policy_compat.h ../perms.h ../immunix.h
+policy_compat.o: policy_compat.cc ${HDRS}
 
-parse.o : parse.cc apparmor_re.h expr-tree.h
+parse.o : parse.cc ${HDRS}
 
-parse.cc : parse.y parse.h flex-tables.h ../immunix.h
+parse.cc : parse.y ${HDRS}
 	${BISON} -o $@ $<
 
 clean:

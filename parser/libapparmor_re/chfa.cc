@@ -307,11 +307,16 @@ void CHFA::dump(ostream &os)
 		st.insert(make_pair(i->second, i->first));
 	}
 
-	os << "size=" << default_base.size() << " (accept, default, base):  {state} -> {default state}" << "\n";
+	os << "size=" << default_base.size() << " (accept, accept2, default, base):  {state} -> {default state}" << "\n";
 	for (size_t i = 0; i < default_base.size(); i++) {
 		os << i << ": ";
-		os << "(" << accept[i] << ", " << num[default_base[i].first]
-		   << ", " << default_base[i].second << ")";
+		os << "(" << accept[i] << ", ";
+		if (accept2.size() > 0)
+			os << accept2[i];
+		else
+			os << "---, ";
+		os << num[default_base[i].first] << ", " <<
+			default_base[i].second << ")";
 		if (st[i])
 			os << " " << *st[i];
 		if (default_base[i].first)

@@ -86,10 +86,10 @@ static pid_t _clone(int (*fn)(void *), void *arg)
         void *stack = alloca(stack_size);
 
 #ifdef __ia64__
-        return __clone2(pivot_and_verify_label, stack,  stack_size,
+        return __clone2(fn, stack,  stack_size,
 			CLONE_NEWNS | SIGCHLD, arg);
 #else
-        return    clone(pivot_and_verify_label, stack + stack_size,
+        return    clone(fn, stack + stack_size,
 			CLONE_NEWNS | SIGCHLD, arg);
 #endif
 }

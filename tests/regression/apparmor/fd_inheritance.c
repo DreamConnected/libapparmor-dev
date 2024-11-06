@@ -25,7 +25,7 @@
 #include <unistd.h>
 
 #define BUF_LEN		128
-#define FD_STR_LEN	4
+#define FD_STR_LEN	16
 
 int main(int argc, char *argv[])
 {

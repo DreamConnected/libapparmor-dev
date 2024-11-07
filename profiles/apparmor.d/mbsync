@@ -15,6 +15,7 @@ include <tunables/global>
 
 profile mbsync /usr/bin/mbsync {
   include <abstractions/base>
+  include <abstractions/nameservice-strict>
   include <abstractions/ssl_certs>
 
   network inet dgram,
@@ -23,12 +24,7 @@ profile mbsync /usr/bin/mbsync {
   network inet6 stream,
   network netlink raw,
 
-  @{etc_ro}/gai.conf r,
-  @{etc_ro}/host.conf r,
-  @{etc_ro}/hosts r,
-  @{etc_ro}/nsswitch.conf r,
   @{etc_ro}/ssl/openssl.cnf r,
-  @{run}/systemd/resolve/stub-resolv.conf r,
   /usr/bin/mbsync r,
   owner @{HOME}/.mbsyncrc r,
   owner @{HOME}/Mail/**/ r,

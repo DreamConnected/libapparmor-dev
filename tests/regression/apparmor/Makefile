@@ -152,8 +152,7 @@ SRC=access.c \
     unlink.c \
     userns.c \
     userns_setns.c \
-    xattrs.c \
-    xattrs_profile.c
+    xattrs.c
 
 #only do the ioperm/iopl tests for x86 derived architectures
 ifneq (,$(findstring $(shell uname -i),i386 i486 i586 i686 x86 x86_64))
@@ -164,6 +163,17 @@ endif
 # kernel
 ifeq ($(USE_SYSCTL),true)
 SRC+=syscall_sysctl.c
+endif
+
+# Only do xattrs_profile test if we have the required setfattr binary
+ifneq (,$(shell which -s setfattr && echo TRUE))
+SRC+=xattrs_profile.c
+else
+$(warning ${nl}\
+************************************************************************${nl}\
+No setfattr skipping xattrs_profile tests ...${nl}\
+Install attr or equivalent package to build and run this test${nl}\
+************************************************************************${nl})
 endif
 
 #only do dbus if proper libs are installl
@@ -281,9 +291,13 @@ TESTS=aa_exec \
       unlink\
       userns\
       xattrs\
-      xattrs_profile\
       longpath \
       nfs
+
+# Only do xattrs_profile test if we have the required setfattr binary
+ifneq (,$(shell which -s setfattr && echo TRUE))
+TESTS+=xattrs_profile
+endif
 
 #only do dbus if proper libs are installl
 ifneq (,$(shell pkg-config --exists dbus-1 && echo TRUE))

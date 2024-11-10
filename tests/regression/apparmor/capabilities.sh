@@ -139,18 +139,18 @@ for TEST in ${TESTS} ; do
 	# okay, now check to see if the capability functions from within
 	# a subprofile.
 	settest ${testwrapper}
-	genprofile hat:$bin/${TEST} addimage:${bin}/${TEST} ${my_entries}
+	genprofile "hat:$bin/${TEST}" "addimage:${bin}/${TEST}" ${my_entries}
 	if [ "${TEST}" = "syscall_ptrace" -a "$(kernel_features ptrace)" = "true" ] ; then
 	    # ptrace between profiles confining tasks of same pid is controlled by the ptrace rule
 	    # capability + ptrace rule needed between pids
-	    runchecktest "${TEST} changehat -- no caps" pass $bin/${TEST} ${my_arg}
+	    runchecktest "${TEST} changehat -- no caps" pass "$bin/${TEST}" ${my_arg}
 	else
-	    runchecktest "${TEST} changehat -- no caps" fail $bin/${TEST} ${my_arg}
+	    runchecktest "${TEST} changehat -- no caps" fail "$bin/${TEST}" ${my_arg}
 	fi
 
 	# all capabilities allowed
-	genprofile hat:$bin/${TEST} addimage:${bin}/${TEST} cap:ALL ${my_entries}
-	runchecktest "${TEST} changehat -- all caps" ${expected} $bin/${TEST} ${my_arg}
+	genprofile "hat:$bin/${TEST}" "addimage:${bin}/${TEST}" cap:ALL ${my_entries}
+	runchecktest "${TEST} changehat -- all caps" ${expected} "$bin/${TEST}" ${my_arg}
 
 	for cap in ${CAPABILITIES} ; do
 		if [ ${expected} = "fail" ]; then
@@ -162,8 +162,8 @@ for TEST in ${TESTS} ; do
 		else
 			expected_result=fail
 		fi
-		genprofile hat:$bin/${TEST} addimage:${bin}/${TEST} cap:${cap} ${my_entries}
-		runchecktest "${TEST} changehat -- capability ${cap}" ${expected_result} $bin/${TEST} ${my_arg}
+		genprofile "hat:$bin/${TEST}" "addimage:${bin}/${TEST}" cap:${cap} ${my_entries}
+		runchecktest "${TEST} changehat -- capability ${cap}" ${expected_result} "$bin/${TEST}" ${my_arg}
 	done
 
 done

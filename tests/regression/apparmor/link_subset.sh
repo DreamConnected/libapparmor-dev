@@ -25,8 +25,8 @@ bin=$pwd
 target=$tmpdir/target_
 linkfile=$tmpdir/link_
 
-tfiles=`$bin/link_subset --filenames $target`
-lfiles=`$bin/link_subset --filenames $linkfile`
+tfiles=`"$bin/link_subset" --filenames $target`
+lfiles=`"$bin/link_subset" --filenames $linkfile`
 
 # unconfined test - no target file
 #runchecktest "unconfined - no target" fail $target $linkfile

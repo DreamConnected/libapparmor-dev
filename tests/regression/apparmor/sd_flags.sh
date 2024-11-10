@@ -58,56 +58,56 @@ settest changehat_wrapper
 
 # audit alone
 # PASS TEST (noflags)
-genprofile hat:open addimage:${bin}/open $file:$okperm
+genprofile hat:open "addimage:${bin}/open" $file:$okperm
 runchecktest "SD_FLAGS HAT/OPEN RW (noflags)" pass open $file
 
 # PASS TEST 1 (audit)
-genprofile flag:audit hat:open addimage:${bin}/open $file:$okperm
+genprofile flag:audit hat:open "addimage:${bin}/open" $file:$okperm
 runchecktest "SD_FLAGS HAT/OPEN RW (audit)" pass open $file
 
 # PASS TEST 2 (audit)
-genprofile hat:open addimage:${bin}/open $file:$okperm flag:audit
+genprofile hat:open "addimage:${bin}/open" $file:$okperm flag:audit
 runchecktest "SD_FLAGS HAT/OPEN RW (audit)" pass open $file
 
 # PASS TEST 3 (audit)
-genprofile flag:audit hat:open addimage:${bin}/open $file:$okperm flag:audit
+genprofile flag:audit hat:open "addimage:${bin}/open" $file:$okperm flag:audit
 runchecktest "SD_FLAGS HAT/OPEN RW (audit)" pass open $file
 
 # FAILURE TEST 1 (audit)
-genprofile flag:audit  hat:open addimage:${bin}/open $file:$badperm1
+genprofile flag:audit  hat:open "addimage:${bin}/open" $file:$badperm1
 runchecktest "SD_FLAGS HAT/OPEN R (audit)" fail open $file
 
 # FAILURE TEST 2 (audit)
-genprofile hat:open addimage:${bin}/open $file:$badperm1 flag:audit
+genprofile hat:open "addimage:${bin}/open" $file:$badperm1 flag:audit
 runchecktest "SD_FLAGS HAT/OPEN R (audit)" fail open $file
 
 # FAILURE TEST 3 (audit)
-genprofile flag:audit hat:open addimage:${bin}/open $file:$badperm1 flag:audit
+genprofile flag:audit hat:open "addimage:${bin}/open" $file:$badperm1 flag:audit
 runchecktest "SD_FLAGS HAT/OPEN R (audit)" fail open $file
 
 # complain alone
 # PASS TEST 1 (complain)
-genprofile flag:complain hat:open addimage:${bin}/open $file:$okperm
+genprofile flag:complain hat:open "addimage:${bin}/open" $file:$okperm
 runchecktest "SD_FLAGS HAT/OPEN RW (complain)" pass open $file
 
 # PASS TEST 2 (complain)
-genprofile hat:open addimage:${bin}/open $file:$okperm flag:complain
+genprofile hat:open "addimage:${bin}/open" $file:$okperm flag:complain
 runchecktest "SD_FLAGS HAT/OPEN RW (complain)" pass open $file
 
 # PASS TEST 3 (complain)
-genprofile flag:complain hat:open addimage:${bin}/open $file:$okperm flag:complain
+genprofile flag:complain hat:open "addimage:${bin}/open" $file:$okperm flag:complain
 runchecktest "SD_FLAGS HAT/OPEN RW (complain)" pass open $file
 
 # FAILURE TEST 1 (complain)
-genprofile flag:complain  hat:open addimage:${bin}/open $file:$badperm1
+genprofile flag:complain  hat:open "addimage:${bin}/open" $file:$badperm1
 runchecktest "SD_FLAGS HAT/OPEN R (complain)" fail open $file
 
 # PASS TEST 4 (complain)
-genprofile hat:open addimage:${bin}/open $file:$badperm1 flag:complain
+genprofile hat:open "addimage:${bin}/open" $file:$badperm1 flag:complain
 runchecktest "SD_FLAGS HAT/OPEN R (complain)" pass open $file
 
 # PASS TEST 5 (complain)
-genprofile flag:complain hat:open addimage:${bin}/open $file:$badperm1 flag:complain
+genprofile flag:complain hat:open "addimage:${bin}/open" $file:$badperm1 flag:complain
 runchecktest "SD_FLAGS HAT/OPEN R (complain)" pass open $file
 
 # PASS TEST 6 (complain) no hat defined
@@ -116,10 +116,10 @@ runchecktest "SD_FLAGS HAT/OPEN R (complain)" pass open $file
 
 # audit + complain
 # PASS TEST 3 (audit+complain)
-genprofile flag:audit hat:open addimage:${bin}/open $file:$badperm1 flag:complain
+genprofile flag:audit hat:open "addimage:${bin}/open" $file:$badperm1 flag:complain
 runchecktest "SD_FLAGS HAT/OPEN RW (audit+complain)" pass open $file
 
 # FAILURE TEST 3 (complain+audit)
-genprofile flag:complain hat:open addimage:${bin}/open $file:$badperm1 flag:audit
+genprofile flag:complain hat:open "addimage:${bin}/open" $file:$badperm1 flag:audit
 runchecktest "SD_FLAGS HAT/OPEN R (complain+audit)" fail open $file
 

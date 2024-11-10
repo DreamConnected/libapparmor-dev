@@ -20,7 +20,7 @@ bin=$pwd
 . "$bin/prologue.inc"
 requires_kernel_features dbus
 requires_parser_support "dbus,"
-. $bin/dbus.inc
+. "$bin/dbus.inc"
 
 args="--session"
 

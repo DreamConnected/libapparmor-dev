@@ -26,7 +26,7 @@ bad=$tmpdir/BAD/
 proc=$new_root/proc
 fstype="ext2"
 
-. $bin/mount.inc
+. "$bin/mount.inc"
 
 pivot_root_cleanup() {
 	mountpoint -q "$proc"

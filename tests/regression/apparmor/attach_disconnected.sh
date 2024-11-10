@@ -28,7 +28,7 @@ file=$tmpdir/file
 socket=$tmpdir/unix_fd_test
 att_dis_client=$pwd/attach_disconnected
 
-. $bin/mount.inc
+. "$bin/mount.inc"
 
 attach_disconnected_cleanup() {
 	if [ ! -z "$loop_device" ]; then

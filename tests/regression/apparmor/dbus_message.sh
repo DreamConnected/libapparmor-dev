@@ -20,7 +20,7 @@ bin=$pwd
 . "$bin/prologue.inc"
 requires_kernel_features dbus
 requires_parser_support "dbus,"
-. $bin/dbus.inc
+. "$bin/dbus.inc"
 
 listnames="--type=method_call --session --name=org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus.ListNames"
 

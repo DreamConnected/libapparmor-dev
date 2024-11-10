@@ -16,7 +16,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 # load_and_verify - Generate and load a profile, then verify that raw_data
 #                            matches the generated cached policy

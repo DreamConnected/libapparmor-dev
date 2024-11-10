@@ -14,7 +14,7 @@ pwd=`cd $pwd ; pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 file=${tmpdir}/pwrite
 okperm=rw

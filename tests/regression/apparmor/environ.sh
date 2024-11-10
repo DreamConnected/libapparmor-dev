@@ -17,7 +17,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 helper=$pwd/env_check
 setuid_helper=${tmpdir}/env_check

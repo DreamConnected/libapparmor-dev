@@ -16,7 +16,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 requires_kernel_features network_v8/af_inet
 requires_parser_support "network ip=::1,"

@@ -19,7 +19,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 file1=$tmpdir/file1
 file2=$tmpdir/file2

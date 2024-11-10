@@ -16,7 +16,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 # cacheloc is the top level directory of cache directories
 cacheloc="$tmpdir/cache"

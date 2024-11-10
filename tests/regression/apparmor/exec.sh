@@ -14,7 +14,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 cp -pL /bin/true ${tmpdir}/true
 file=${tmpdir}/true

@@ -16,7 +16,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 requires_kernel_features dbus
 requires_parser_support "dbus,"
 . $bin/dbus.inc

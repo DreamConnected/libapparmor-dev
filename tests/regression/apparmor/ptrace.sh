@@ -21,7 +21,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 # Read permission was required for a confined process to be able to be traced 
 # using ptrace.  This stopped being required or functioning correctly 

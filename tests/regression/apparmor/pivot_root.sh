@@ -17,7 +17,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 disk_img=$tmpdir/disk_img
 new_root=$tmpdir/new_root/

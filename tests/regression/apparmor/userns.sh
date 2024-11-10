@@ -59,7 +59,7 @@ do_test()
 	    # add profile for userns_setns_bin
 	    # ptrace is needed because userns_bin needs to
 	    # access userns_setns_bin's /proc/pid/ns/user
-	    generate_setns_profile="$generate_profile "$userns_setns_bin:px" $parentpipe:rw $childpipe:rw cap:sys_ptrace ptrace:read -- "image=$userns_setns_bin" userns $parentpipe:rw $childpipe:wr ptrace:readby cap:sys_admin"
+	    generate_setns_profile="$generate_profile $userns_setns_bin:px $parentpipe:rw $childpipe:rw cap:sys_ptrace ptrace:read -- image=$userns_setns_bin userns $parentpipe:rw $childpipe:wr ptrace:readby cap:sys_admin"
 	fi
 
 	settest userns

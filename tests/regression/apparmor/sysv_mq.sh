@@ -35,8 +35,8 @@ echo "$user:password" | sudo chpasswd
 userid=$(id -u $user)
 
 # workaround to not have to set o+x
-chmod 6755 $receiver
-setcap cap_dac_read_search+pie $receiver
+chmod 6755 "$receiver"
+setcap cap_dac_read_search+pie "$receiver"
 
 cleanup()
 {
@@ -62,7 +62,7 @@ do_tests()
     all_args=("$@")
     rest_args=("${all_args[@]:2}")
 
-    do_test "$prefix" "$expect_send" -c $sender -k $qkey -s $semaphore "${rest_args[@]}"
+    do_test "$prefix" "$expect_send" -c "$sender" -k $qkey -s $semaphore "${rest_args[@]}"
 }
 
 for username in "root" "$userid" ; do
@@ -75,10 +75,10 @@ for username in "root" "$userid" ; do
     do_tests "unconfined $username" pass $usercmd
 
     # No mqueue perms
-    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "$sender:px" -- image=$sender
+    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "$sender:px" -- "image=$sender"
     do_tests "confined $username - no perms" fail $usercmd
 
-    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "deny:mqueue" "$sender:px" -- image=$sender "deny mqueue"
+    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "deny:mqueue" "$sender:px" -- "image=$sender" "deny mqueue"
     do_tests "confined $username - deny perms" fail $usercmd
 
     # generic mqueue
@@ -89,56 +89,56 @@ for username in "root" "$userid" ; do
     #   apparmor when doing "root" username tests
     # * if doing the $userid set of tests and you see
     #   Permission denied in the test output
-    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue" "$sender:px" -- image=$sender "mqueue"
+    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue" "$sender:px" -- "image=$sender" "mqueue"
     do_tests "confined $username - mqueue" pass $usercmd
 
-    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:type=sysv" "$sender:px" -- image=$sender "mqueue:type=sysv"
+    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:type=sysv" "$sender:px" -- "image=$sender" "mqueue:type=sysv"
     do_tests "confined $username - mqueue type=sysv" pass $usercmd
 
     # queue name
-    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:$qkey" "$sender:px" -- image=$sender "mqueue:$qkey"
+    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:$qkey" "$sender:px" -- "image=$sender" "mqueue:$qkey"
     do_tests "confined $username - mqueue /name 1" pass $usercmd
 
-    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue" "$sender:px" -- image=$sender "mqueue:$qkey"
+    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue" "$sender:px" -- "image=$sender" "mqueue:$qkey"
     do_tests "confined $username - mqueue /name 2" pass $usercmd
 
-    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:$qkey" "$sender:px" -- image=$sender "mqueue"
+    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:$qkey" "$sender:px" -- "image=$sender" "mqueue"
     do_tests "confined $username - mqueue /name 3" pass $usercmd
 
-    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:$qkey" "$sender:px" -- image=$sender "mqueue:$qkey2"
+    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:$qkey" "$sender:px" -- "image=$sender" "mqueue:$qkey2"
     do_tests "confined $username - mqueue /name 4" fail $usercmd -t 1
 
 
     # specific permissions
-    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:(create,read,delete,getattr,setattr)" "$sender:px" -- image=$sender "mqueue:(open,write)"
+    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:(create,read,delete,getattr,setattr)" "$sender:px" -- "image=$sender" "mqueue:(open,write)"
     do_tests "confined $username - specific 1" pass $usercmd
 
-    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:(read,delete,getattr,setattr)" "$sender:px" -- image=$sender "mqueue:(open,write)"
+    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:(read,delete,getattr,setattr)" "$sender:px" -- "image=$sender" "mqueue:(open,write)"
     do_tests "confined $username - specific 2" fail $usercmd -t 1
 
-    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:(create,delete,getattr,setattr)" "$sender:px" -- image=$sender "mqueue:(open,write)"
+    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:(create,delete,getattr,setattr)" "$sender:px" -- "image=$sender" "mqueue:(open,write)"
     do_tests "confined $username - specific 3" fail $usercmd -t 1
 
-    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:(create,read,getattr,setattr)" "$sender:px" -- image=$sender "mqueue:(open,write)"
+    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:(create,read,getattr,setattr)" "$sender:px" -- "image=$sender" "mqueue:(open,write)"
     do_tests "confined $username - specific 4" fail $usercmd -t 1
     # we need to remove queue since the previous test didn't
     ipcrm --queue-key $qkey >/dev/null 2>&1
 
-    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:(create,read,delete,setattr)" "$sender:px" -- image=$sender "mqueue:(open,write)"
+    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:(create,read,delete,setattr)" "$sender:px" -- "image=$sender" "mqueue:(open,write)"
     do_tests "confined $username - specific 5" pass $usercmd
 
-    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:(create,read,delete,getattr)" "$sender:px" -- image=$sender "mqueue:(open,write)"
+    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:(create,read,delete,getattr)" "$sender:px" -- "image=$sender" "mqueue:(open,write)"
     do_tests "confined $username - specific 6" pass $usercmd
 
-    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:(create,read,delete,getattr,setattr)" "$sender:px" -- image=$sender "mqueue:(open,read)"
+    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:(create,read,delete,getattr,setattr)" "$sender:px" -- "image=$sender" "mqueue:(open,read)"
     do_tests "confined $username - specific 7" fail $usercmd -t 1
 
-    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:(create,read,delete,getattr,setattr)" "$sender:px" -- image=$sender "mqueue:write"
+    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:(create,read,delete,getattr,setattr)" "$sender:px" -- "image=$sender" "mqueue:write"
     do_tests "confined $username - specific 7" fail $usercmd -t 1
 
 
     # unconfined receiver
-    genprofile image=$sender "mqueue"
+    genprofile "image=$sender" "mqueue"
     do_tests "confined sender $username - unconfined receiver" pass $usercmd
 
 
@@ -148,12 +148,12 @@ for username in "root" "$userid" ; do
 
 
     # queue label
-    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:label=$receiver" "$sender:px" -- image=$sender "mqueue:label=$receiver"
+    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:label=$receiver" "$sender:px" -- "image=$sender" "mqueue:label=$receiver"
     do_tests "confined $username - mqueue label 1" xpass $usercmd
 
 
     # queue name and label
-    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:(create,read,delete):type=sysv:label=$receiver:$qkey" "$sender:px" -- image=$sender "mqueue:(open,write):type=sysv:label=$receiver:$qkey"
+    genprofile "qual=deny:cap:sys_resource" "cap:setuid" "cap:fowner" "mqueue:(create,read,delete):type=sysv:label=$receiver:$qkey" "$sender:px" -- "image=$sender" "mqueue:(open,write):type=sysv:label=$receiver:$qkey"
     do_tests "confined $username - mqueue label 2" xpass $usercmd
 
 

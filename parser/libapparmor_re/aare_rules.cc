@@ -270,7 +270,6 @@ CHFA *aare_rules::create_chfa(int *min_match_len,
 
 		if (opts.control & CONTROL_DFA_MINIMIZE) {
 			dfa.minimize(opts);
-
 			if (opts.dump & DUMP_DFA_MIN_UNIQ_PERMS)
 				dfa.dump_uniq_perms("minimized dfa");
 		}

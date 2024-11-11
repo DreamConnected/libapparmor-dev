@@ -721,7 +721,7 @@ bool network_rule::gen_ip_conds(Profile &prof, std::list<std::ostringstream> &st
 
 	cond_perms = map_perms(perms);
 	if (!is_cmd && (label || is_peer))
-		cond_perms = (AA_CONT_MATCH << 1);
+		cond_perms = AA_COMPAT_CONT_MATCH;
 
 	for (auto &oss : streams) {
 		oss << "\\x00"; /* null transition */

@@ -65,6 +65,9 @@
 #define AA_MAY_DELEGATE
 #define AA_CONT_MATCH		0x08000000
 
+// TODO: move into a reworked immunix.h that is dependent on perms.h
+#define AA_COMPAT_CONT_MATCH	(AA_CONT_MATCH << 1)
+
 #define AA_MAY_STACK		0x10000000
 #define AA_MAY_ONEXEC		0x20000000 /* either stack or change_profile */
 #define AA_MAY_CHANGE_PROFILE	0x40000000

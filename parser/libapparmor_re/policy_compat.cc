@@ -182,6 +182,8 @@ struct aa_perms compute_perms_entry(uint32_t accept1, uint32_t accept2,
 	perms.prompt = dfa_user_allow(accept3);
 	perms.audit = dfa_user_audit(accept1, accept2);
 	perms.quiet = dfa_user_quiet(accept1, accept2);
+	if (accept1 & AA_COMPAT_CONT_MATCH)
+		perms.allow |= AA_CONT_MATCH;
 
 	/*
 	 * This mapping is convulated due to history.

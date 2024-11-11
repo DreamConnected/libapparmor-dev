@@ -131,12 +131,23 @@ public:
 		*/
 	}
 
+
+	/* returns true if perm is no longer accept */
 	int apply_and_clear_deny(void)
 	{
 		if (deny) {
 			allow &= ~deny;
+			exact &= ~deny;
 			prompt &= ~deny;
-			quiet &= deny;
+			/* don't change audit or quiet based on clearing
+			 * deny at this stage. This was made unique in
+			 * accept_perms, and the info about whether
+			 * we are auditing or quieting based on the explicit
+			 * deny has been discarded and can only be inferred.
+			 * But we know it is correct from accept_perms()
+			 * audit &= deny;
+			 * quiet &= deny;
+			 */
 			deny = 0;
 			return !is_accept();
 		}
@@ -282,9 +293,9 @@ public:
 	{
 		accept1 = perms.allow;
 		if (prompt && prompt_compat_mode == PROMPT_COMPAT_DEV)
-		  accept2 = PACK_AUDIT_CTL(perms.prompt, perms.quiet & perms.deny);
+			accept2 = PACK_AUDIT_CTL(perms.prompt, perms.quiet);
 		else
-		accept2 = PACK_AUDIT_CTL(perms.audit, perms.quiet & perms.deny);
+			accept2 = PACK_AUDIT_CTL(perms.audit, perms.quiet);
 		accept3 = perms.prompt;
 	}
 

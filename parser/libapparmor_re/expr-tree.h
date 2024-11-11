@@ -890,7 +890,7 @@ public:
 	{
 		type_flags |= NODE_TYPE_MATCHFLAG;
 	}
-	ostream &dump(ostream &os) { return os << "< 0x" << hex << perms << '>'; }
+	ostream &dump(ostream &os) { return os << "< 0x" << hex << perms << std::dec << '>'; }
 
 	int priority;
 	perm32_t perms;

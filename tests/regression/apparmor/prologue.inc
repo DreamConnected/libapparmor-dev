@@ -201,7 +201,7 @@ exit_handler()
 	# global bin
 	if [ -d "$bin" ]
 	then
-		. $bin/epilogue.inc
+		. "$bin/epilogue.inc"
 	fi
 }
 
@@ -403,7 +403,7 @@ emit_profile()
 
 	name=$1; shift 1
 
-	$bin/mkprofile.pl ${mkflags} "$name" ${outfile}:w "$@" >> $profile
+	"$bin/mkprofile.pl" ${mkflags} "$name" ${outfile}:w "$@" >> $profile
 
 	echo $name >> $profilenames
 }
@@ -537,7 +537,7 @@ loadprofile()
 {
 	#global complainflaf profile profileloaded
 
-	$subdomain ${parser_args} $complainflag $profile > /dev/null
+	"$subdomain" ${parser_args} $complainflag $profile > /dev/null
 	if [ $? -ne 0 ]
 	then
 		removeprofile
@@ -551,7 +551,7 @@ replaceprofile()
 {
 	#global complainflag profile
 
-	$subdomain ${parser_args} -r $complainflag $profile > /dev/null
+	"$subdomain" ${parser_args} -r $complainflag $profile > /dev/null
 	if [ $? -ne 0 ]
 	then
 		fatalerror "Unable to replace profile $profile"
@@ -570,7 +570,7 @@ removeprofile()
 		remprofile=$profile
 	fi
 
-	$subdomain ${parser_args} -R $remprofile > /dev/null
+	"$subdomain" ${parser_args} -R $remprofile > /dev/null
 	if [ $? -ne 0 ]
 	then
 		fatalerror "Unable to remove profile $remprofile"
@@ -685,9 +685,9 @@ else
 fi
 
 # load user changeable variables
-. $bin/uservars.inc
+. "$bin/uservars.inc"
 
-if [ ! -x $subdomain ]
+if [ ! -x "$subdomain" ]
 then
 	fatalerror "AppArmor parser '$subdomain' is not executable"
 fi

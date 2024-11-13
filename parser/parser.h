@@ -217,6 +217,37 @@ do {						\
 #define unused __attribute__ ((unused))
 #endif
 
+template<typename T>
+class for_each_iter: public std::iterator<std::input_iterator_tag, T*> {
+private:
+	T* ptr;
+public:
+	explicit for_each_iter(T* ptr): ptr(ptr) {}
+	for_each_iter begin() const {
+		return *this;
+	}
+	for_each_iter end() const {
+		return for_each_iter(NULL);
+	}
+	bool operator==(for_each_iter other) const {
+		return (this->ptr == other.ptr);
+	}
+	bool operator!=(for_each_iter other) const {
+		return !(*this == other);
+	}
+	T* operator*() const {
+		return ptr;
+	}
+	for_each_iter& operator++() {
+		ptr = ptr ? ptr->next : NULL;
+		return *this;
+	}
+	for_each_iter operator++(int) {
+		for_each_iter old = *this;
+		operator++();
+		return old;
+	}
+};
 
 #define list_first(LIST) (LIST)
 #define list_for_each(LIST, ENTRY) \

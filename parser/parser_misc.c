@@ -1134,11 +1134,11 @@ static void debug_base_perm_mask(int mask)
 
 void debug_cod_entries(struct cod_entry *list)
 {
-	struct cod_entry *item = NULL;
+	for_each_iter<struct cod_entry> list_iter(list);
 
 	printf("--- Entries ---\n");
 
-	list_for_each(list, item) {
+	for (auto item: list_iter) {
 		printf("Perms:\t");
 		if (HAS_CHANGE_PROFILE(item->perms))
 			printf(" change_profile");

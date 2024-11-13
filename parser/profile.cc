@@ -271,10 +271,10 @@ static bool add_proc_access(Profile *prof, const char *rule)
 #define CHANGEPROFILE_PATH "/proc/*/attr/{apparmor/,}{current,exec}"
 void post_process_file_entries(Profile *prof)
 {
-	struct cod_entry *entry;
+	for_each_iter<struct cod_entry> prof_entries_iter(prof->entries);
 	perm32_t cp_perms = 0;
 
-	list_for_each(prof->entries, entry) {
+	for (auto entry: prof_entries_iter) {
 		if (entry->nt_name) {
 			perm32_t perms = 0;
 			int n = add_named_transition(prof, entry);

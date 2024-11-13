@@ -243,9 +243,9 @@ int expand_entry_variables(char **name)
 static int process_variables_in_entries(struct cod_entry *entry_list)
 {
 	int error = 0;
-	struct cod_entry *entry;
+	for_each_iter<struct cod_entry> entry_iter(entry_list);
 
-	list_for_each(entry_list, entry) {
+	for (auto entry: entry_iter) {
 		error = expand_entry_variables(&entry->name);
 		if (error)
 			return error;

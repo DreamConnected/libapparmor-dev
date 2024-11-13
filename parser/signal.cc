@@ -154,9 +154,9 @@ void signal_rule::extract_sigs(value_list &list)
 
 void signal_rule::move_conditionals(struct cond_entry *conds)
 {
-	struct cond_entry *cond_ent;
+	for_each_iter<struct cond_entry> cond_iter(conds);
 
-	list_for_each(conds, cond_ent) {
+	for (auto cond_ent: cond_iter) {
 		/* for now disallow keyword 'in' (list) */
 		if (!cond_ent->eq)
 			yyerror("keyword \"in\" is not allowed in signal rules\n");

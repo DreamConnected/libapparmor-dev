@@ -1730,13 +1730,13 @@ static const char *mnt_cond_msg[] = {"",
 
 int verify_mnt_conds(struct cond_entry *conds, int src)
 {
-	struct cond_entry *entry;
+	for_each_iter<struct cond_entry> conds_iter(conds);
 	int error = 0;
 
 	if (!conds)
 		return 0;
 
-	list_for_each(conds, entry) {
+	for (auto entry: conds_iter) {
 		int res = is_valid_mnt_cond(entry->name, src);
 		if (res <= 0) {
 				printyyerror(_("invalid mount conditional %s%s"),

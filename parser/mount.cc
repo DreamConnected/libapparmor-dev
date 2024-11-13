@@ -427,9 +427,9 @@ static struct cond_entry *extract_options(struct cond_entry **conds, int eq)
 
 static void perror_conds(const char *rule, struct cond_entry *conds)
 {
-	struct cond_entry *entry;
+	for_each_iter<struct cond_entry> cond_iter(conds);
 
-	list_for_each(conds, entry) {
+	for (auto entry: cond_iter) {
 		PERROR(  "unsupported %s condition '%s%s(...)'\n", rule, entry->name, entry->eq ? "=" : " in ");
 	}
 }

@@ -46,9 +46,9 @@ static struct supported_cond supported_conds[] = {
 
 void unix_rule::move_conditionals(struct cond_entry *conds)
 {
-	struct cond_entry *ent;
+	for_each_iter<struct cond_entry> conds_iter(conds);
 
-	list_for_each(conds, ent) {
+	for (auto ent: conds_iter) {
 
 		if (!cond_check(supported_conds, ent, false, "unix") &&
 		    !move_base_cond(ent, false)) {
@@ -77,9 +77,9 @@ void unix_rule::move_conditionals(struct cond_entry *conds)
 
 void unix_rule::move_peer_conditionals(struct cond_entry *conds)
 {
-	struct cond_entry *ent;
+	for_each_iter<struct cond_entry> conds_iter(conds);
 
-	list_for_each(conds, ent) {
+	for (auto ent: conds_iter) {
 		if (!cond_check(supported_conds, ent, true, "unix") &&
 		    !move_base_cond(ent, true)) {
 			yyerror("unix rule: invalid peer conditional '%s'\n",

@@ -757,9 +757,9 @@ static bool process_dfa_entry(aare_rules *dfarules, struct cod_entry *entry)
 bool post_process_entries(Profile *prof)
 {
 	int ret = true;
-	struct cod_entry *entry;
+	for_each_iter<cod_entry> prof_entries_iter(prof->entries);
 
-	list_for_each(prof->entries, entry) {
+	for (auto entry: prof_entries_iter) {
 		if (!process_dfa_entry(prof->dfa.rules, entry))
 			ret = false;
 	}

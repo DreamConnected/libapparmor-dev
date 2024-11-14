@@ -248,6 +248,39 @@ public:
 		return old;
 	}
 };
+template<typename T>
+class for_each_iter_safe: public std::iterator<std::input_iterator_tag, T*> {
+private:
+	T* ptr;
+	T* ptr_next;
+public:
+	explicit for_each_iter_safe(T* ptr): ptr(ptr), ptr_next(ptr ? ptr->next : NULL) {}
+	for_each_iter_safe begin() const {
+		return *this;
+	}
+	for_each_iter_safe end() const {
+		return for_each_iter_safe(NULL);
+	}
+	bool operator==(for_each_iter_safe other) const {
+		return (this->ptr == other.ptr);
+	}
+	bool operator!=(for_each_iter_safe other) const {
+		return !(*this == other);
+	}
+	T* operator*() const {
+		return ptr;
+	}
+	for_each_iter_safe& operator++() {
+		ptr = ptr_next;
+		ptr_next = ptr ? ptr->next : NULL;
+		return *this;
+	}
+	for_each_iter_safe operator++(int) {
+		for_each_iter_safe old = *this;
+		operator++();
+		return old;
+	}
+};
 
 #define list_first(LIST) (LIST)
 #define list_for_each_safe(LIST, ENTRY, TMP) \

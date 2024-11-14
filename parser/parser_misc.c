@@ -1282,10 +1282,9 @@ void free_cond_entry(struct cond_entry *ent)
 
 void free_cond_list(struct cond_entry *ents)
 {
-	struct cond_entry *entry, *tmp;
-
 	if (ents) {
-		list_for_each_safe(ents, entry, tmp) {
+		for_each_iter_safe<struct cond_entry> ents_iter(ents);
+		for (auto entry: ents_iter) {
 			free_cond_entry(entry);
 		}
 	}

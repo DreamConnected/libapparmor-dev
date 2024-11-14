@@ -701,7 +701,7 @@ block: TOK_OPEN rules TOK_CLOSE
 
 rules: rules opt_prefix block
 	{
-		struct cod_entry *entry, *tmp;
+		for_each_iter_safe<struct cod_entry> entries_iter($3->entries);
 
 		if (($2).priority != 0) {
 			yyerror(_("priority is not allowed on rule blocks"));
@@ -711,7 +711,7 @@ rules: rules opt_prefix block
 		       $2.rule_mode == RULE_DENY ? "deny " : "",
 		       $2.rule_mode == RULE_PROMPT ? "prompt " : "",
 		       $2.owner == OWNER_SPECIFIED ? "owner " : "");
-		list_for_each_safe($3->entries, entry, tmp) {
+		for (auto entry: entries_iter) {
 			const char *error;
 			entry->next = NULL;
 			if (!entry_add_prefix(entry, $2, error)) {

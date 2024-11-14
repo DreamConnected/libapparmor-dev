@@ -389,9 +389,11 @@ static value_list extract_fstype(struct cond_entry **conds)
 {
 	value_list list;
 
-	struct cond_entry *entry, *tmp, *prev = NULL;
+	struct cond_entry *prev = NULL;
 
-	list_for_each_safe(*conds, entry, tmp) {
+	for_each_iter_safe<struct cond_entry> conds_iter(*conds);
+
+	for (auto entry: conds_iter) {
 		if (strcmp(entry->name, "fstype") == 0 ||
 		    strcmp(entry->name, "vfstype") == 0) {
 			PDEBUG("  extracting fstype\n");
@@ -407,9 +409,10 @@ static value_list extract_fstype(struct cond_entry **conds)
 
 static struct cond_entry *extract_options(struct cond_entry **conds, int eq)
 {
-	struct cond_entry *list = NULL, *entry, *tmp, *prev = NULL;
+	struct cond_entry *list = NULL, *prev = NULL;
+	for_each_iter_safe<struct cond_entry> conds_iter(*conds);
 
-	list_for_each_safe(*conds, entry, tmp) {
+	for (auto entry: conds_iter) {
 		if ((strcmp(entry->name, "options") == 0 ||
 		     strcmp(entry->name, "option") == 0) &&
 		    entry->eq == eq) {

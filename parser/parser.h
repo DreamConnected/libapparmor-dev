@@ -250,8 +250,6 @@ public:
 };
 
 #define list_first(LIST) (LIST)
-#define list_for_each(LIST, ENTRY) \
-	for ((ENTRY) = (LIST); (ENTRY); (ENTRY) = (ENTRY)->next)
 #define list_for_each_safe(LIST, ENTRY, TMP) \
 	for ((ENTRY) = (LIST), (TMP) = (LIST) ? (LIST)->next : NULL; (ENTRY); (ENTRY) = (TMP), (TMP) = (TMP) ? (TMP)->next : NULL)
 #define list_last_entry(LIST, ENTRY) \
@@ -266,9 +264,11 @@ public:
 #define list_len(LIST)		\
 ({				\
 	int len = 0;		\
-	typeof(LIST) tmp;		\
-	list_for_each((LIST), tmp)	\
+	auto tmp = LIST;	\
+	while (tmp) {		\
+		tmp = tmp->next;\
 		len++;		\
+	}			\
 	len;			\
 })
 

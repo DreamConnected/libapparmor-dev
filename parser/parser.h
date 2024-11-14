@@ -283,8 +283,6 @@ public:
 };
 
 #define list_first(LIST) (LIST)
-#define list_for_each_safe(LIST, ENTRY, TMP) \
-	for ((ENTRY) = (LIST), (TMP) = (LIST) ? (LIST)->next : NULL; (ENTRY); (ENTRY) = (TMP), (TMP) = (TMP) ? (TMP)->next : NULL)
 #define list_last_entry(LIST, ENTRY) \
 	for ((ENTRY) = (LIST); (ENTRY) && (ENTRY)->next; (ENTRY) = (ENTRY)->next)
 #define list_append(LISTA, LISTB)		\

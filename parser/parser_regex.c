@@ -497,7 +497,7 @@ static bool process_profile_name_xmatch(Profile *prof)
 	if (!prof->attachment)
 		free(name);
 
-	if (ptype == ePatternBasic && !(prof->altnames || prof->attachment || prof->xattrs.list)) {
+	if (ptype == ePatternBasic && !(!prof->altnames.empty() || prof->attachment || prof->xattrs.list)) {
 		/* no regex so do not set xmatch */
 		prof->xmatch = NULL;
 		prof->xmatch_len = 0;
@@ -512,13 +512,12 @@ static bool process_profile_name_xmatch(Profile *prof)
 			delete rules;
 			return false;
 		}
-		if (prof->altnames) {
-			struct alt_name *alt;
-			list_for_each(prof->altnames, alt) {
+		if (!prof->altnames.empty()) {
+			for (auto it = prof->altnames.begin(); it != prof->altnames.end(); ++it) {
 				int len;
 				tbuf.clear();
-				filter_slashes(alt->name);
-				ptype = convert_aaregex_to_pcre(alt->name, 0,
+				filter_slashes(it->get());
+				ptype = convert_aaregex_to_pcre(it->get(), 0,
 								glob_default,
 								tbuf, &len);
 				if (!rules->add_rule(tbuf.c_str(), 0,

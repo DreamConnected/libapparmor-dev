@@ -38,8 +38,10 @@
 #include "libapparmor_re/aare_rules.h"
 #include "rule.h"
 #include "bignum.h"
+#include "lib.h"
 
 #include <string>
+#include <memory>
 
 using namespace std;
 
@@ -142,10 +144,7 @@ struct aa_rlimits {
 	rlim_t limits[RLIMIT_NLIMITS];
 };
 
-struct alt_name {
-	char *name;
-	struct alt_name *next;
-};
+typedef std::vector<unique_ptr<char, delete_via_free>> alt_name;
 
 struct sd_hat {
 	char *hat_name;

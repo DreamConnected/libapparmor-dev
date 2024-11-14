@@ -102,6 +102,7 @@ Profile::~Profile()
 	for (int i = (AA_EXEC_LOCAL >> 10) + 1; i < AA_EXEC_COUNT; i++)
 		if (exec_table[i])
 			free(exec_table[i]);
+	// unique_ptrs in altnames get automatically cleaned up
 }
 
 static bool comp (rule_t *lhs, rule_t *rhs)

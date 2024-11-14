@@ -172,19 +172,16 @@ static void process_name(const void *nodep, VISIT value, int level unused)
 		name = prof->name;
 
 	if (name && strncmp((*t)->from, name, len) == 0) {
-		struct alt_name *alt;
+		/* aliases create alternate names */
 		char *n = do_alias(*t, name);
 		if (!n)
 			return;
-		/* aliases create alternate names */
-		alt = (struct alt_name *) calloc(1, sizeof(struct alt_name));
-		if (!alt) {
-			free(n);
+		unique_ptr<char, delete_via_free> n_wrapped(n);
+		try {
+			prof->altnames.push_back(std::move(n_wrapped));
+		} catch (const std::bad_alloc &_e) {
 			return;
 		}
-		alt->name = n;
-		alt->next = prof->altnames;
-		prof->altnames = alt;
 	}
 }
 

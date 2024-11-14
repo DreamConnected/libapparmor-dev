@@ -355,7 +355,7 @@ public:
 	char *ns;
 	char *name;
 	char *attachment;
-	struct alt_name *altnames;
+	alt_name altnames;
 	void *xmatch;
 	size_t xmatch_size;
 	int xmatch_len;
@@ -387,7 +387,7 @@ public:
 	{
 		uses_prompt_rules = false;
 		ns = name = attachment = NULL;
-		altnames = NULL;
+		altnames = std::vector<unique_ptr<char, delete_via_free>>();
 		xmatch = NULL;
 		xmatch_size = 0;
 		xmatch_len = 0;

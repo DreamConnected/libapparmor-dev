@@ -138,20 +138,18 @@ int find_signal_mapping(const char *sig)
 	return -1;
 }
 
-void signal_rule::extract_sigs(struct value_list **list)
+void signal_rule::extract_sigs(value_list *list)
 {
-	struct value_list *entry, *tmp, *prev = NULL;
-	list_for_each_safe(*list, entry, tmp) {
-		int i = find_signal_mapping(entry->value);
+	for (auto it = list->begin(); it != list->end(); ++it) {
+		int i = find_signal_mapping(it->get());
 		if (i != -1) {
 			signals.insert(i);
-			list_remove_at(*list, prev, entry);
-			free_value_list(entry);
+			it->reset(NULL);
 		} else {
-			yyerror("unknown signal \"%s\"\n", entry->value);
-			prev = entry;
+			yyerror("unknown signal \"%s\"\n", it->get());
 		}
 	}
+	list->remove(NULL);
 }
 
 void signal_rule::move_conditionals(struct cond_entry *conds)
@@ -163,7 +161,7 @@ void signal_rule::move_conditionals(struct cond_entry *conds)
 		if (!cond_ent->eq)
 			yyerror("keyword \"in\" is not allowed in signal rules\n");
 		if (strcmp(cond_ent->name, "set") == 0) {
-			extract_sigs(&cond_ent->vals);
+			extract_sigs(cond_ent->vals);
 		} else if (strcmp(cond_ent->name, "peer") == 0) {
 			move_conditional_value("signal", &peer_label, cond_ent);
 		} else {

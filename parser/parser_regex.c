@@ -454,7 +454,7 @@ char *get_xattr_value(struct cond_entry *entry)
 		return NULL;
 	if (!entry->vals)
 		return NULL;
-	return entry->vals->value;
+	return entry->vals->front().get();
 }
 
 /* do we want to warn once/profile or just once per compile?? */
@@ -814,9 +814,8 @@ out:
 	return error;
 }
 
-bool build_list_val_expr(std::string& buffer, struct value_list *list)
+bool build_list_val_expr(std::string& buffer, value_list *list)
 {
-	struct value_list *ent;
 	pattern_t ptype;
 	int pos;
 
@@ -827,13 +826,13 @@ bool build_list_val_expr(std::string& buffer, struct value_list *list)
 
 	buffer.append("(");
 
-	ptype = convert_aaregex_to_pcre(list->value, 0, glob_default, buffer, &pos);
+	ptype = convert_aaregex_to_pcre(list->front().get(), 0, glob_default, buffer, &pos);
 	if (ptype == ePatternInvalid)
 		goto fail;
 
-	list_for_each(list->next, ent) {
+	for (auto it = ++list->begin(); it != list->end(); ++it) {
 		buffer.append("|");
-		ptype = convert_aaregex_to_pcre(ent->value, 0, glob_default, buffer, &pos);
+		ptype = convert_aaregex_to_pcre(it->get(), 0, glob_default, buffer, &pos);
 		if (ptype == ePatternInvalid)
 			goto fail;
 	}

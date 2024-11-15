@@ -346,16 +346,14 @@ int is_valid_mnt_cond(const char *name, int src)
 	return -1;
 }
 
-static unsigned int extract_flags(struct value_list **list, unsigned int *inv)
+// Pair is (flags, invflags)
+static pair<unsigned int, unsigned int> extract_flags(value_list *list)
 {
 	unsigned int flags = 0, invflags = 0;
-	if (inv)
-		*inv = 0;
 
-	struct value_list *entry, *tmp, *prev = NULL;
-	list_for_each_safe(*list, entry, tmp) {
+	for (auto it = list->begin(); it != list->end(); ++it) {
 		int i;
-		i = find_mnt_keyword(mnt_opts_table, entry->value);
+		i = find_mnt_keyword(mnt_opts_table, it->get());
 		if (i != -1) {
 			flags |= mnt_opts_table[i].set;
 			invflags |= mnt_opts_table[i].clear;
@@ -363,16 +361,13 @@ static unsigned int extract_flags(struct value_list **list, unsigned int *inv)
 			       " => req: 0x%x inv: 0x%x\n",
 			       entry->value, mnt_opts_table[i].set,
 			       mnt_opts_table[i].clear, flags, invflags);
-			list_remove_at(*list, prev, entry);
-			free_value_list(entry);
-		} else
-			prev = entry;
+			it->reset(NULL);
+		}
 	}
 
-	if (inv)
-		*inv = invflags;
+	list->remove(NULL);
 
-	return flags;
+	return make_pair(flags, invflags);
 }
 
 static bool conflicting_flags(unsigned int flags, unsigned int inv)
@@ -390,9 +385,9 @@ static bool conflicting_flags(unsigned int flags, unsigned int inv)
 	return false;
 }
 
-static struct value_list *extract_fstype(struct cond_entry **conds)
+static value_list *extract_fstype(struct cond_entry **conds)
 {
-	struct value_list *list = NULL;
+	value_list *list = NULL;
 
 	struct cond_entry *entry, *tmp, *prev = NULL;
 
@@ -401,7 +396,9 @@ static struct value_list *extract_fstype(struct cond_entry **conds)
 		    strcmp(entry->name, "vfstype") == 0) {
 			PDEBUG("  extracting fstype\n");
 			list_remove_at(*conds, prev, entry);
-			list_append(entry->vals, list);
+			if (list) {
+				entry->vals->splice(entry->vals->end(), *list);
+			}
 			list = entry->vals;
 			entry->vals = NULL;
 			free_cond_entry(entry);
@@ -441,12 +438,10 @@ static void perror_conds(const char *rule, struct cond_entry *conds)
 	}
 }
 
-static void perror_vals(const char *rule, struct value_list *vals)
+static void perror_vals(const char *rule, value_list *vals)
 {
-	struct value_list *entry;
-
-	list_for_each(vals, entry) {
-		PERROR(  "unsupported %s value '%s'\n", rule, entry->value);
+	for (auto it = vals->cbegin(); it != vals->cend(); ++it) {
+		PERROR(  "unsupported %s value '%s'\n", rule, it->get());
 	}
 }
 
@@ -454,7 +449,7 @@ static void process_one_option(struct cond_entry *&opts, unsigned int &flags,
 			       unsigned int &inv_flags)
 {
 	struct cond_entry *entry;
-	struct value_list *vals;
+	value_list *vals;
 
 	entry = list_pop(opts);
 	vals = entry->vals;
@@ -466,8 +461,8 @@ static void process_one_option(struct cond_entry *&opts, unsigned int &flags,
 	}
 	free_cond_entry(entry);
 
-	flags = extract_flags(&vals, &inv_flags);
-	if (vals) {
+	std::tie(flags, inv_flags) = extract_flags(vals);
+	if (!vals->empty()) {
 		perror_vals("mount option", vals);
 		exit(1);
 	}
@@ -601,7 +596,6 @@ ostream &mnt_rule::dump(ostream &os)
 /* does not currently support expansion of vars in options */
 int mnt_rule::expand_variables(void)
 {
-	struct value_list *ent;
 	int error = 0;
 
 	error = expand_entry_variables(&mnt_point);
@@ -616,15 +610,24 @@ int mnt_rule::expand_variables(void)
 	if (error)
 		return error;
 
-	list_for_each(dev_type, ent) {
-		error = expand_entry_variables(&ent->value);
-		if (error)
-			return error;
+	// These loops need unique_ptr.release() since the subroutine reallocates
+	if (dev_type) {
+		for (auto it = dev_type->begin(); it != dev_type->end(); ++it) {
+			char *name = it->release();
+			error = expand_entry_variables(&name);
+			it->reset(name);
+			if (error)
+				return error;
+		}
 	}
-	list_for_each(opts, ent) {
-		error = expand_entry_variables(&ent->value);
-		if (error)
-			return error;
+	if (opts) {
+		for (auto it = opts->begin(); it != opts->end(); ++it) {
+			char *name = it->release();
+			error = expand_entry_variables(&name);
+			it->reset(name);
+			if (error)
+				return error;
+		}
 	}
 
 	return 0;
@@ -715,9 +718,8 @@ static bool build_mnt_flags(char *buffer, int size, unsigned int flags,
 	return true;
 }
 
-static bool build_mnt_opts(std::string& buffer, struct value_list *opts)
+static bool build_mnt_opts(std::string& buffer, value_list *opts)
 {
-	struct value_list *ent;
 	pattern_t ptype;
 	int pos;
 
@@ -726,12 +728,14 @@ static bool build_mnt_opts(std::string& buffer, struct value_list *opts)
 		return true;
 	}
 
-	list_for_each(opts, ent) {
-		ptype = convert_aaregex_to_pcre(ent->value, 0, glob_default, buffer, &pos);
+	for (auto it = opts->cbegin(); it != opts->cend(); ++it) {
+		ptype = convert_aaregex_to_pcre(it->get(), 0, glob_default, buffer, &pos);
 		if (ptype == ePatternInvalid)
 			return false;
 
-		if (ent->next)
+		auto it_copy = it;
+		it_copy++;
+		if (it_copy != opts->cend())
 			buffer.append(",");
 	}
 

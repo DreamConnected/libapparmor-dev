@@ -1202,20 +1202,19 @@ bool entry_add_prefix(struct cod_entry *entry, const prefixes &p, const char *&e
 // these need to move to stl
 int ordered_cmp_value_list(value_list *lhs, value_list *rhs)
 {
-	std::vector<const char *> lhstable;
-	std::vector<const char *> rhstable;
-
-	struct value_list *entry;
-	list_for_each(lhs, entry) {
-		lhstable.push_back(entry->value);
-	}
-	list_for_each(rhs, entry) {
-		rhstable.push_back(entry->value);
-	}
-
-	int res = lhstable.size() - rhstable.size();
+	int res = lhs->size() - rhs->size();
 	if (res)
 		return res;
+
+	std::vector<char *> lhstable(lhs->size());
+	std::vector<char *> rhstable(rhs->size());
+
+	for (auto it = lhs->cbegin(); it != lhs->cend(); ++it) {
+		lhstable.push_back(it->get());
+	}
+	for (auto it = rhs->cbegin(); it != rhs->cend(); ++it) {
+		rhstable.push_back(it->get());
+	}
 
 	std::sort(lhstable.begin(), lhstable.end(), strcomp);
 	std::sort(rhstable.begin(), rhstable.end(), strcomp);
@@ -1243,38 +1242,35 @@ int cmp_value_list(value_list *lhs, value_list *rhs)
 	return 0;
 }
 
-struct value_list *new_value_list(char *value)
+value_list *new_value_list(char *value)
 {
-	struct value_list *val = (struct value_list *) calloc(1, sizeof(struct value_list));
-	if (val)
-		val->value = value;
-	return val;
-}
-
-void free_value_list(struct value_list *list)
-{
-	struct value_list *next;
-
-	while (list) {
-		next = list->next;
-		if (list->value)
-			free(list->value);
-		free(list);
-		list = next;
+	try {
+		value_list *val = new value_list();
+		val->push_front(unique_ptr<char, delete_via_free>(value));
+		return val;
+	} catch (const std::bad_alloc &_e) {
+		return NULL;
 	}
 }
-
-void print_value_list(struct value_list *list)
+void free_value_list(value_list *list)
 {
-	struct value_list *entry;
+	delete list;
+}
+
+void print_value_list(value_list *list)
+{
+	bool is_first = true;
 
 	if (!list)
 		return;
 
-	fprintf(stderr, "%s", list->value);
-	list = list->next;
-	list_for_each(list, entry) {
-		fprintf(stderr, ", %s", entry->value);
+	for (auto it = list->cbegin(); it != list->cend(); ++it) {
+		if (is_first) {
+			fprintf(stderr, "%s", it->get());
+			is_first = false;
+		} else {
+			fprintf(stderr, ", %s", it->get());
+		}
 	}
 }
 
@@ -1285,11 +1281,11 @@ void move_conditional_value(const char *rulename, char **dst_ptr,
 		yyerror("%s conditional \"%s\" can only be specified once\n",
 			rulename, cond_ent->name);
 
-	*dst_ptr = cond_ent->vals->value;
-	cond_ent->vals->value = NULL;
+	*dst_ptr = cond_ent->vals->front().release();
+	cond_ent->vals->pop_front();
 }
 
-struct cond_entry *new_cond_entry(char *name, int eq, struct value_list *list)
+struct cond_entry *new_cond_entry(char *name, int eq, value_list *list)
 {
 	struct cond_entry *ent = (struct cond_entry *) calloc(1, sizeof(struct cond_entry));
 	if (ent) {

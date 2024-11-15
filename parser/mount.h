@@ -144,8 +144,8 @@ public:
 	char *mnt_point;
 	char *device;
 	char *trans;
-	struct value_list *dev_type;
-	struct value_list *opts;
+	value_list *dev_type;
+	value_list *opts;
 
 	std::vector<unsigned int> flagsv, opt_flagsv;
 

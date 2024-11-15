@@ -34,7 +34,7 @@ void io_uring_rule::move_conditionals(struct cond_entry *conds)
 		if (!cond_ent->eq)
 			yyerror("keyword \"in\" is not allowed in io_uring rules\n");
 
-		if (list_len(cond_ent->vals) > 1)
+		if (cond_ent->vals->size() > 1)
 			yyerror("io_uring conditional \"%s\" only supports a single value\n",
 				cond_ent->name);
 

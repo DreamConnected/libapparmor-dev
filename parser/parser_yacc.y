@@ -221,7 +221,7 @@ static void abi_features(char *filename, bool search);
 	char *set_var;
 	char *bool_var;
 	char *var_val;
-	struct value_list *val_list;
+	value_list *val_list;
 	struct cond_entry *cond_entry;
 	struct cond_entry_list cond_entry_list;
 	bool boolean;
@@ -491,24 +491,24 @@ alias: TOK_ALIAS TOK_ID TOK_ARROW TOK_ID TOK_END_OF_RULE
 
 varassign:	TOK_SET_VAR TOK_EQUALS valuelist
 	{
-		struct value_list *list = $3;
+		value_list *list = $3;
 		char *var_name = process_var($1);
 		int err;
-		if (!list || !list->value)
+		if (!list || list->empty() || !list->front().get())
 			yyerror("Assert: valuelist returned NULL");
 		PDEBUG("Matched: set assignment for (%s)\n", $1);
-		err = new_set_var(var_name, list->value);
+		err = new_set_var(var_name, list->front().get());
 		if (err) {
 			free(var_name);
 			yyerror("variable %s was previously declared", $1);
 			/* FIXME: it'd be handy to report the previous location */
 		}
-		for (list = list->next; list; list = list->next) {
-			err = add_set_value(var_name, list->value);
+		for (auto it = ++list->cbegin(); it != list->cend(); ++it) {
+			err = add_set_value(var_name, it->get());
 			if (err) {
 				free(var_name);
 				yyerror("Error adding %s to set var %s",
-					list->value, $1);
+					it->get(), $1);
 			}
 		}
 		free_value_list($3);
@@ -518,25 +518,25 @@ varassign:	TOK_SET_VAR TOK_EQUALS valuelist
 
 varassign:	TOK_SET_VAR TOK_ADD_ASSIGN valuelist
 	{
-		struct value_list *list = $3;
+		value_list *list = $3;
 		char *var_name = process_var($1);
 		int err;
-		if (!list || !list->value)
+		if (!list || list->empty() || !list->front().get())
 			yyerror("Assert: valuelist returned NULL");
 		PDEBUG("Matched: additive assignment for (%s)\n", $1);
 		/* do the first one outside the loop, subsequent
 		 * failures are indicative of symtab failures */
-		err = add_set_value(var_name, list->value);
+		err = add_set_value(var_name, list->front().get());
 		if (err) {
 			free(var_name);
 			yyerror("variable %s was not previously declared, but is being assigned additional values", $1);
 		}
-		for (list = list->next; list; list = list->next) {
-			err = add_set_value(var_name, list->value);
+		for (auto it = ++list->cbegin(); it != list->cend(); ++it) {
+			err = add_set_value(var_name, it->get());
 			if (err) {
 				free(var_name);
 				yyerror("Error adding %s to set var %s",
-					list->value, $1);
+					it->get(), $1);
 			}
 		}
 		free_value_list($3);
@@ -566,7 +566,7 @@ varassign:	TOK_BOOL_VAR TOK_EQUALS TOK_VALUE
 
 valuelist:	TOK_VALUE
 	{
-		struct value_list *val = new_value_list($1);
+		value_list *val = new_value_list($1);
 		if (!val)
 			yyerror(_("Memory allocation error."));
 		PDEBUG("Matched: value (%s)\n", $1);
@@ -576,12 +576,13 @@ valuelist:	TOK_VALUE
 
 valuelist:	valuelist TOK_VALUE
 	{
-		struct value_list *val = new_value_list($2);
-		if (!val)
+		try {
+			$1->push_back(unique_ptr<char, delete_via_free>($2));
+		} catch (const std::bad_alloc &_e) {
 			yyerror(_("Memory allocation error."));
+		}
 		PDEBUG("Matched: value list\n");
 
-		list_append($1, val);
 		$$ = $1;
 	}
 
@@ -1164,7 +1165,7 @@ cond: TOK_CONDID
 cond: TOK_CONDID TOK_EQUALS TOK_VALUE
 	{
 		struct cond_entry *ent;
-		struct value_list *value = new_value_list($3);
+		value_list *value = new_value_list($3);
 		if (!value)
 			yyerror(_("Memory allocation error."));
 		ent = new_cond_entry($1, 1, value);
@@ -1760,8 +1761,8 @@ mnt_rule *do_pivot_rule(struct cond_entry *old, char *root, char *transition)
 		if (strcmp(old->name, "oldroot") != 0)
 			yyerror(_("invalid pivotroot conditional '%s'"), old->name);
 		if (old->vals) {
-			device = old->vals->value;
-			old->vals->value = NULL;
+			device = old->vals->front().release();
+			old->vals->pop_front();
 		}
 		free_cond_entry(old);
 	}

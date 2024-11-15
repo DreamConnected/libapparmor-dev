@@ -55,7 +55,7 @@ bool af_rule::cond_check(struct supported_cond *conds, struct cond_entry *ent,
 			yyerror("%s rule: '%s' conditional is not allowed in the peer expression\n", rname, ent->name);
 		if (!ent->eq && !i->in)
 			yyerror("%s rule: keyword 'in' is not allowed in '%s' socket conditional\n", rname, ent->name);
-		if (list_len(ent->vals) > 1 && !i->multivalue)
+		if (ent->vals->size() > 1 && !i->multivalue)
 			yyerror("%s rule: conditional '%s' only supports a single value\n", rname, ent->name);
 		return true;
 	}

@@ -223,127 +223,113 @@
 #include <string.h>
 #include <linux/limits.h>
 
+#include <unordered_map>
+
 #include "parser.h"
 #include "policydb.h"
 #include "profile.h"
 #include "mount.h"
 
-struct mnt_keyword_table {
-	const char *keyword;
+struct mnt_keyword_flags {
 	unsigned int set;
 	unsigned int clear;
 };
 
 // keep in sync with utils/apparmor/rule/mount.py flags_keywords
-static struct mnt_keyword_table mnt_opts_table[] = {
-	{"ro",			MS_RDONLY, 0},
-	{"r",			MS_RDONLY, 0},
-	{"read-only",		MS_RDONLY, 0},
-	{"rw",			0, MS_RDONLY},
-	{"w",			0, MS_RDONLY},
-	{"suid",		0, MS_NOSUID},
-	{"nosuid",		MS_NOSUID, 0},
-	{"dev",			0, MS_NODEV},
-	{"nodev",		MS_NODEV, 0},
-	{"exec",		0, MS_NOEXEC},
-	{"noexec",		MS_NOEXEC, 0},
-	{"sync",		MS_SYNC, 0},
-	{"async",		0, MS_SYNC},
-	{"remount",		MS_REMOUNT, 0},
-	{"mand",		MS_MAND, 0},
-	{"nomand",		0, MS_MAND},
-	{"dirsync",		MS_DIRSYNC, 0},
-	{"symfollow",		0, MS_NOSYMFOLLOW},
-	{"nosymfollow",		MS_NOSYMFOLLOW, 0},
-	{"atime",		0, MS_NOATIME},
-	{"noatime",		MS_NOATIME, 0},
-	{"diratime",		0, MS_NODIRATIME},
-	{"nodiratime",		MS_NODIRATIME, 0},
-	{"bind",		MS_BIND, 0},
-	{"B",			MS_BIND, 0},
-	{"move",		MS_MOVE, 0},
-	{"M",			MS_MOVE, 0},
-	{"rbind",		MS_RBIND, 0},
-	{"R",			MS_RBIND, 0},
-	{"verbose",		MS_VERBOSE, 0},
-	{"silent",		MS_SILENT, 0},
-	{"loud",		0, MS_SILENT},
-	{"acl",			MS_ACL, 0},
-	{"noacl",		0, MS_ACL},
-	{"unbindable",		MS_UNBINDABLE, 0},
-	{"make-unbindable",	MS_UNBINDABLE, 0},
-	{"runbindable",		MS_RUNBINDABLE, 0},
-	{"make-runbindable",	MS_RUNBINDABLE, 0},
-	{"private",		MS_PRIVATE, 0},
-	{"make-private",	MS_PRIVATE, 0},
-	{"rprivate",		MS_RPRIVATE, 0},
-	{"make-rprivate",	MS_RPRIVATE, 0},
-	{"slave",		MS_SLAVE, 0},
-	{"make-slave",		MS_SLAVE, 0},
-	{"rslave",		MS_RSLAVE, 0},
-	{"make-rslave",		MS_RSLAVE, 0},
-	{"shared",		MS_SHARED, 0},
-	{"make-shared",		MS_SHARED, 0},
-	{"rshared",		MS_RSHARED, 0},
-	{"make-rshared",	MS_RSHARED, 0},
+static unordered_map<string, mnt_keyword_flags> mnt_opts_table = {
+	{"ro",			{MS_RDONLY, 0}},
+	{"r",			{MS_RDONLY, 0}},
+	{"read-only",		{MS_RDONLY, 0}},
+	{"rw",			{0, MS_RDONLY}},
+	{"w",			{0, MS_RDONLY}},
+	{"suid",		{0, MS_NOSUID}},
+	{"nosuid",		{MS_NOSUID, 0}},
+	{"dev",			{0, MS_NODEV}},
+	{"nodev",		{MS_NODEV, 0}},
+	{"exec",		{0, MS_NOEXEC}},
+	{"noexec",		{MS_NOEXEC, 0}},
+	{"sync",		{MS_SYNC, 0}},
+	{"async",		{0, MS_SYNC}},
+	{"remount",		{MS_REMOUNT, 0}},
+	{"mand",		{MS_MAND, 0}},
+	{"nomand",		{0, MS_MAND}},
+	{"dirsync",		{MS_DIRSYNC, 0}},
+	{"symfollow",		{0, MS_NOSYMFOLLOW}},
+	{"nosymfollow",		{MS_NOSYMFOLLOW, 0}},
+	{"atime",		{0, MS_NOATIME}},
+	{"noatime",		{MS_NOATIME, 0}},
+	{"diratime",		{0, MS_NODIRATIME}},
+	{"nodiratime",		{MS_NODIRATIME, 0}},
+	{"bind",		{MS_BIND, 0}},
+	{"B",			{MS_BIND, 0}},
+	{"move",		{MS_MOVE, 0}},
+	{"M",			{MS_MOVE, 0}},
+	{"rbind",		{MS_RBIND, 0}},
+	{"R",			{MS_RBIND, 0}},
+	{"verbose",		{MS_VERBOSE, 0}},
+	{"silent",		{MS_SILENT, 0}},
+	{"loud",		{0, MS_SILENT}},
+	{"acl",			{MS_ACL, 0}},
+	{"noacl",		{0, MS_ACL}},
+	{"unbindable",		{MS_UNBINDABLE, 0}},
+	{"make-unbindable",	{MS_UNBINDABLE, 0}},
+	{"runbindable",		{MS_RUNBINDABLE, 0}},
+	{"make-runbindable",	{MS_RUNBINDABLE, 0}},
+	{"private",		{MS_PRIVATE, 0}},
+	{"make-private",	{MS_PRIVATE, 0}},
+	{"rprivate",		{MS_RPRIVATE, 0}},
+	{"make-rprivate",	{MS_RPRIVATE, 0}},
+	{"slave",		{MS_SLAVE, 0}},
+	{"make-slave",		{MS_SLAVE, 0}},
+	{"rslave",		{MS_RSLAVE, 0}},
+	{"make-rslave",		{MS_RSLAVE, 0}},
+	{"shared",		{MS_SHARED, 0}},
+	{"make-shared",		{MS_SHARED, 0}},
+	{"rshared",		{MS_RSHARED, 0}},
+	{"make-rshared",	{MS_RSHARED, 0}},
 
-	{"relatime",		MS_RELATIME, 0},
-	{"norelatime",		0, MS_NORELATIME},
-	{"iversion",		MS_IVERSION, 0},
-	{"noiversion",		0, MS_IVERSION},
-	{"strictatime",		MS_STRICTATIME, 0},
-	{"nostrictatime",	0, MS_STRICTATIME},
-	{"lazytime",		MS_LAZYTIME, 0},
-	{"nolazytime",		0, MS_LAZYTIME},
-	{"user",		0, (unsigned int) MS_NOUSER},
-	{"nouser",		(unsigned int) MS_NOUSER, 0},
-
-	{NULL, 0, 0}
+	{"relatime",		{MS_RELATIME, 0}},
+	{"norelatime",		{0, MS_NORELATIME}},
+	{"iversion",		{MS_IVERSION, 0}},
+	{"noiversion",		{0, MS_IVERSION}},
+	{"strictatime",		{MS_STRICTATIME, 0}},
+	{"nostrictatime",	{0, MS_STRICTATIME}},
+	{"lazytime",		{MS_LAZYTIME, 0}},
+	{"nolazytime",		{0, MS_LAZYTIME}},
+	{"user",		{0, (unsigned int) MS_NOUSER}},
+	{"nouser",		{(unsigned int) MS_NOUSER, 0}},
 };
 
-static struct mnt_keyword_table mnt_conds_table[] = {
-	{"options", MNT_SRC_OPT, MNT_COND_OPTIONS},
-	{"option", MNT_SRC_OPT, MNT_COND_OPTIONS},
-	{"fstype", MNT_SRC_OPT | MNT_DST_OPT, MNT_COND_FSTYPE},
-	{"vfstype", MNT_SRC_OPT | MNT_DST_OPT, MNT_COND_FSTYPE},
-
-	{NULL, 0, 0}
+static unordered_map<string, mnt_keyword_flags> mnt_conds_table = {
+	{"options", {MNT_SRC_OPT, MNT_COND_OPTIONS}},
+	{"option", {MNT_SRC_OPT, MNT_COND_OPTIONS}},
+	{"fstype", {MNT_SRC_OPT | MNT_DST_OPT, MNT_COND_FSTYPE}},
+	{"vfstype", {MNT_SRC_OPT | MNT_DST_OPT, MNT_COND_FSTYPE}},
 };
 
-static ostream &dump_flags(ostream &os,
-			    pair <unsigned int, unsigned int> flags)
+static ostream &dump_flags(ostream &os, mnt_keyword_flags flags)
 {
-	for (int i = 0; mnt_opts_table[i].keyword; i++) {
-		if ((flags.first & mnt_opts_table[i].set) ||
-		    (flags.second & mnt_opts_table[i].clear))
-			os << mnt_opts_table[i].keyword;
+	for (auto it = mnt_opts_table.cbegin(); it != mnt_opts_table.cend(); ++it) {
+		if ((flags.set & it->second.set) || (flags.clear & it->second.clear)) {
+			os << it->first;
+		}
 	}
 	return os;
 }
 
-ostream &operator<<(ostream &os, pair<unsigned int, unsigned int> flags)
+ostream &operator<<(ostream &os, mnt_keyword_flags flags)
 {
 	return dump_flags(os, flags);
 }
 
-static int find_mnt_keyword(struct mnt_keyword_table *table, const char *name)
-{
-	int i;
-	for (i = 0; table[i].keyword; i++) {
-		if (strcmp(name, table[i].keyword) == 0)
-			return i;
-	}
-
-	return -1;
-}
-
 int is_valid_mnt_cond(const char *name, int src)
 {
-	int i;
-	i = find_mnt_keyword(mnt_conds_table, name);
-	if (i != -1)
-		return (mnt_conds_table[i].set & src);
-	return -1;
+	auto mnt_conds_flags = mnt_conds_table.find(string(name));
+	if (mnt_conds_flags != mnt_conds_table.end()) {
+		return (mnt_conds_flags->second.set & src);
+	} else {
+		return -1;
+	}
 }
 
 static unsigned int extract_flags(struct value_list **list, unsigned int *inv)
@@ -354,15 +340,14 @@ static unsigned int extract_flags(struct value_list **list, unsigned int *inv)
 
 	struct value_list *entry, *tmp, *prev = NULL;
 	list_for_each_safe(*list, entry, tmp) {
-		int i;
-		i = find_mnt_keyword(mnt_opts_table, entry->value);
-		if (i != -1) {
-			flags |= mnt_opts_table[i].set;
-			invflags |= mnt_opts_table[i].clear;
+		auto mnt_opts_flags = mnt_opts_table.find(string(entry->value));
+		if (mnt_opts_flags != mnt_opts_table.end()) {
+			flags |= mnt_opts_flags->second.set;
+			invflags |= mnt_opts_flags->second.clear;
 			PDEBUG(" extracting mount flag %s req: 0x%x inv: 0x%x"
 			       " => req: 0x%x inv: 0x%x\n",
-			       entry->value, mnt_opts_table[i].set,
-			       mnt_opts_table[i].clear, flags, invflags);
+			       entry->value, mnt_opts_flags->second.set,
+			       mnt_opts_flags->second.clear, flags, invflags);
 			list_remove_at(*list, prev, entry);
 			free_value_list(entry);
 		} else

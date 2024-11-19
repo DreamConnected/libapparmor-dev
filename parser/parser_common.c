@@ -98,7 +98,7 @@ int conf_quiet = 0;
 int names_only = 0;
 int current_lineno = 1;
 int option = OPTION_ADD;
-
+bool opt_allow_mnt_conflict = 0;
 
 const char *progname = __FILE__;
 char *profile_ns = NULL;

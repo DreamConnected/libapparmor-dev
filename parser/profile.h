@@ -30,12 +30,6 @@
 
 class Profile;
 
-class block {
-public:
-
-};
-
-
 struct deref_profileptr_lt {
 	bool operator()(Profile * const &lhs, Profile * const &rhs) const;
 };

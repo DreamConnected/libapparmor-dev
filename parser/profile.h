@@ -160,6 +160,12 @@ public:
 	int signal;
 	int error;
 
+	static flagvals make_default(void) {
+		flagvals ret_obj;
+		ret_obj.init();
+		return ret_obj;
+	}
+
 	// stupid not constructor constructors
 	void init(void)
 	{
@@ -323,7 +329,7 @@ struct capabilities {
 	uint64_t deny;
 	uint64_t quiet;
 
-	capabilities(void) { allow = audit = deny = quiet = 0; }
+	capabilities(void): allow(0), audit(0), deny(0), quiet(0) {};
 
 	void dump()
 		{
@@ -381,27 +387,13 @@ public:
 	struct dfa_stuff dfa;
 	struct dfa_stuff policy;
 
-	Profile(void)
-	{
-		uses_prompt_rules = false;
-		ns = name = attachment = NULL;
-		altnames = NULL;
-		xmatch = NULL;
-		xmatch_size = 0;
-		xmatch_len = 0;
-
-		xattrs.list = NULL;
-		xattrs.name = NULL;
-
-		parent = NULL;
-
-		flags.init();
-		rlimits = {0, {}};
-
-		std::fill(exec_table, exec_table + AA_EXEC_COUNT, (char *)NULL);
-
-		entries = NULL;
-	};
+	Profile(void): uses_prompt_rules(false),
+		ns(NULL), name(NULL), attachment(NULL), altnames(NULL),
+		xmatch(NULL), xmatch_size(0), xmatch_len(0),
+		xattrs{.name = NULL, .list = NULL},
+		parent(NULL), flags(flagvals::make_default()),
+		rlimits({0, {}}),
+		exec_table{NULL}, entries(NULL) {};
 
 	// Non-trivial destructor defined in profile.cc
 	virtual ~Profile();

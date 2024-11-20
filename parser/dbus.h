@@ -50,6 +50,12 @@ public:
 		free(interface);
 		free(member);
 	};
+
+	// Delete the copy constructors to prevent accidental pointer aliasing
+	dbus_rule(const dbus_rule&) = delete;
+	dbus_rule& operator=(const dbus_rule&) = delete;
+	// TODO: write move constructors if that is desired later
+
 	virtual bool valid_prefix(const prefixes &p, const char *&error) {
 		if (p.owner != OWNER_UNSPECIFIED) {
 			error = "owner prefix not allowed on dbus rules";

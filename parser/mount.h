@@ -162,6 +162,11 @@ public:
 		free(trans);
 	}
 
+	// Delete the copy constructors to prevent accidental pointer aliasing
+	mnt_rule(const mnt_rule&) = delete;
+	mnt_rule& operator=(const mnt_rule&) = delete;
+	// TODO: write move constructors if that is desired later
+
 	virtual bool valid_prefix(const prefixes &p, const char *&error) {
 		if (p.owner != OWNER_UNSPECIFIED) {
 			error = "owner prefix not allowed on mount rules";

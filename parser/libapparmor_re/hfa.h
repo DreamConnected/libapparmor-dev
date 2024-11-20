@@ -371,6 +371,11 @@ public:
 	DFA(Node *root, optflags const &flags, bool filedfa);
 	virtual ~DFA();
 
+	// Delete the copy constructors to prevent accidental pointer aliasing
+	DFA(const DFA&) = delete;
+	DFA& operator=(const DFA&) = delete;
+	// TODO: write move constructors if that is desired later
+
 	State *match_len(State *state, const char *str, size_t len);
 	State *match_until(State *state, const char *str, const char term);
 	State *match(const char *str);

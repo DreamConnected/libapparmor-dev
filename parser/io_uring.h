@@ -37,6 +37,11 @@ public:
 		free(label);
 	};
 
+	// Delete the copy constructors to prevent accidental pointer aliasing
+	io_uring_rule(const io_uring_rule&) = delete;
+	io_uring_rule& operator=(const io_uring_rule&) = delete;
+	// TODO: write move constructors if that is desired later
+
 	virtual bool valid_prefix(const prefixes &p, const char *&error) {
 		if (p.owner) {
 			error = _("owner prefix not allowed on io_uring rules");

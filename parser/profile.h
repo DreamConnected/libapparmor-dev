@@ -43,6 +43,10 @@ public:
 	iterator end() { return list.end(); }
 
 	ProfileList() { };
+	// Delete the copy constructors to prevent accidental pointer aliasing
+	ProfileList(const ProfileList&) = delete;
+	ProfileList& operator=(const ProfileList&) = delete;
+	// TODO: write move constructors if that is desired later
 	virtual ~ProfileList() { clear(); }
 	virtual bool empty(void) { return list.empty(); }
 	virtual pair<ProfileList::iterator,bool> insert(Profile *);
@@ -399,7 +403,12 @@ public:
 		entries = NULL;
 	};
 
+	// Non-trivial destructor defined in profile.cc
 	virtual ~Profile();
+	// Delete the copy constructors to prevent accidental pointer aliasing
+	Profile(const Profile&) = delete;
+	Profile& operator=(const Profile&) = delete;
+	// TODO: write move constructors if that is desired later
 
 	bool operator<(Profile const &rhs)const
 	{

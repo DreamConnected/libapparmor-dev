@@ -47,6 +47,11 @@ public:
 		free(peer_addr);
 	};
 
+	// Delete the copy constructors to prevent accidental pointer aliasing
+	unix_rule(const unix_rule&) = delete;
+	unix_rule& operator=(const unix_rule&) = delete;
+	// TODO: write move constructors if that is desired later
+
 	virtual bool valid_prefix(const prefixes &p, const char *&error) {
 		// priority is partially supported for unix rules
 		// rules that get downgraded to just network socket

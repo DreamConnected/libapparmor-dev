@@ -100,6 +100,11 @@ public:
 		free(label);
 	};
 
+	// Delete the copy constructors to prevent accidental pointer aliasing
+	mqueue_rule(const mqueue_rule&) = delete;
+	mqueue_rule& operator=(const mqueue_rule&) = delete;
+	// TODO: write move constructors if that is desired later
+
 	virtual bool valid_prefix(const prefixes &p, const char *&error) {
 		// not yet, but soon
 		if (p.owner) {

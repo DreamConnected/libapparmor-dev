@@ -365,7 +365,7 @@ class DFA {
 	NodeVecCache anodes_cache;
 	NodeVecCache nnodes_cache;
 	NodeMap node_map;
-	list<State *> work_queue;
+	deque<State *> work_queue;
 
 public:
 	DFA(Node *root, optflags const &flags, bool filedfa);

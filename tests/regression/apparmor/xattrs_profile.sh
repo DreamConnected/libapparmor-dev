@@ -27,8 +27,8 @@ requires_kernel_features policy/outofband
 clean_xattr()
 {
     setfattr --remove=user.foo "$file" 2> /dev/null || true
-    setfattr --remove=user.bar "$file "2> /dev/null || true
-    setfattr --remove=user.spam "$file "2> /dev/null || true
+    setfattr --remove=user.bar "$file" 2> /dev/null || true
+    setfattr --remove=user.spam "$file" 2> /dev/null || true
 }
 
 set_xattr()

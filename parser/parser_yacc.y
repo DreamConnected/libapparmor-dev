@@ -511,7 +511,7 @@ varassign:	TOK_SET_VAR TOK_EQUALS valuelist
 					it->get(), $1);
 			}
 		}
-		free_value_list($3);
+		delete $3;
 		free(var_name);
 		free($1);
 	}
@@ -539,7 +539,7 @@ varassign:	TOK_SET_VAR TOK_ADD_ASSIGN valuelist
 					it->get(), $1);
 			}
 		}
-		free_value_list($3);
+		delete $3;
 		free(var_name);
 		free($1);
 	}
@@ -1156,7 +1156,7 @@ network_rule: TOK_NETWORK opt_net_perm TOK_ID TOK_ID opt_conds opt_cond_list TOK
 cond: TOK_CONDID
 	{
 		struct cond_entry *ent;
-		ent = new_cond_entry($1, 0, NULL);
+		ent = new_cond_entry($1, 0, value_list());
 		if (!ent)
 			yyerror(_("Memory allocation error."));
 		$$ = ent;
@@ -1165,12 +1165,13 @@ cond: TOK_CONDID
 cond: TOK_CONDID TOK_EQUALS TOK_VALUE
 	{
 		struct cond_entry *ent;
-		value_list *value = new_value_list($3);
-		if (!value)
-			yyerror(_("Memory allocation error."));
-		ent = new_cond_entry($1, 1, value);
-		if (!ent) {
-			free_value_list(value);
+		value_list value;
+		try {
+			value.emplace_back($3);
+			ent = new_cond_entry($1, 1, std::move(value));
+			if (!ent)
+				throw std::bad_alloc();
+		} catch (const std::bad_alloc &_e) {
 			yyerror(_("Memory allocation error."));
 		}
 		$$ = ent;
@@ -1178,20 +1179,22 @@ cond: TOK_CONDID TOK_EQUALS TOK_VALUE
 
 cond: TOK_CONDID TOK_EQUALS TOK_OPENPAREN valuelist TOK_CLOSEPAREN
 	{
-		struct cond_entry *ent = new_cond_entry($1, 1, $4);
+		struct cond_entry *ent = new_cond_entry($1, 1, std::move(*$4));
 
 		if (!ent)
 			yyerror(_("Memory allocation error."));
+		delete $4;
 		$$ = ent;
 	}
 
 
 cond: TOK_CONDID TOK_IN TOK_OPENPAREN valuelist TOK_CLOSEPAREN
 	{
-		struct cond_entry *ent = new_cond_entry($1, 0, $4);
+		struct cond_entry *ent = new_cond_entry($1, 0, std::move(*$4));
 
 		if (!ent)
 			yyerror(_("Memory allocation error."));
+		delete $4;
 		$$ = ent;
 	}
 
@@ -1760,9 +1763,9 @@ mnt_rule *do_pivot_rule(struct cond_entry *old, char *root, char *transition)
 	if (old) {
 		if (strcmp(old->name, "oldroot") != 0)
 			yyerror(_("invalid pivotroot conditional '%s'"), old->name);
-		if (old->vals) {
-			device = old->vals->front().release();
-			old->vals->pop_front();
+		if (!old->vals.empty()) {
+			device = old->vals.front().release();
+			old->vals.pop_front();
 		}
 		free_cond_entry(old);
 	}

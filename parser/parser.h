@@ -99,12 +99,12 @@ struct cod_pattern {
 
 typedef list<unique_ptr<char, delete_via_free>> value_list;
 
-int cmp_value_list(value_list *lhs, value_list *rhs);
+int cmp_value_list(const value_list &lhs, const value_list &rhs);
 
 struct cond_entry {
 	char *name;
 	int eq;			/* where equals was used in specifying list */
-	value_list *vals;
+	value_list vals;
 
 	struct cond_entry *next;
 };
@@ -396,7 +396,7 @@ extern const char *basedir;
 #define glob_null	1
 extern pattern_t convert_aaregex_to_pcre(const char *aare, int anchor, int glob,
 					 std::string& pcre, int *first_re_pos);
-extern bool build_list_val_expr(std::string& buffer, value_list *list);
+extern bool build_list_val_expr(std::string& buffer, const value_list &list);
 extern bool convert_entry(std::string& buffer, char *entry);
 extern int clear_and_convert_entry(std::string& buffer, char *entry);
 extern bool convert_range(std::string& buffer, bignum start, bignum end);
@@ -418,9 +418,8 @@ extern void free_var_string(struct var_string *var);
 extern void warn_uppercase(void);
 extern int is_blacklisted(const char *name, const char *path);
 extern value_list *new_value_list(char *value);
-extern void free_value_list(value_list *list);
-extern void print_value_list(value_list *list);
-extern struct cond_entry *new_cond_entry(char *name, int eq, value_list *list);
+extern void print_value_list(const value_list &list);
+extern struct cond_entry *new_cond_entry(char *name, int eq, value_list &&list);
 extern void move_conditional_value(const char *rulename, char **dst_ptr,
 				   struct cond_entry *cond_ent);
 extern void free_cond_entry(struct cond_entry *ent);

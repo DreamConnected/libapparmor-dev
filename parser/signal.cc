@@ -138,9 +138,9 @@ int find_signal_mapping(const char *sig)
 	return -1;
 }
 
-void signal_rule::extract_sigs(value_list *list)
+void signal_rule::extract_sigs(value_list &list)
 {
-	for (auto it = list->begin(); it != list->end(); ++it) {
+	for (auto it = list.begin(); it != list.end(); ++it) {
 		int i = find_signal_mapping(it->get());
 		if (i != -1) {
 			signals.insert(i);
@@ -149,7 +149,7 @@ void signal_rule::extract_sigs(value_list *list)
 			yyerror("unknown signal \"%s\"\n", it->get());
 		}
 	}
-	list->remove(NULL);
+	list.remove(NULL);
 }
 
 void signal_rule::move_conditionals(struct cond_entry *conds)

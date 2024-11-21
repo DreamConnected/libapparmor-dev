@@ -1200,19 +1200,19 @@ bool entry_add_prefix(struct cod_entry *entry, const prefixes &p, const char *&e
 }
 
 // these need to move to stl
-int ordered_cmp_value_list(value_list *lhs, value_list *rhs)
+int ordered_cmp_value_list(const value_list &lhs, const value_list &rhs)
 {
-	int res = lhs->size() - rhs->size();
+	int res = lhs.size() - rhs.size();
 	if (res)
 		return res;
 
-	std::vector<char *> lhstable(lhs->size());
-	std::vector<char *> rhstable(rhs->size());
+	std::vector<char *> lhstable(lhs.size());
+	std::vector<char *> rhstable(rhs.size());
 
-	for (auto it = lhs->cbegin(); it != lhs->cend(); ++it) {
+	for (auto it = lhs.cbegin(); it != lhs.cend(); ++it) {
 		lhstable.push_back(it->get());
 	}
-	for (auto it = rhs->cbegin(); it != rhs->cend(); ++it) {
+	for (auto it = rhs.cbegin(); it != rhs.cend(); ++it) {
 		rhstable.push_back(it->get());
 	}
 
@@ -1228,18 +1228,10 @@ int ordered_cmp_value_list(value_list *lhs, value_list *rhs)
 	return 0;
 }
 
-int cmp_value_list(value_list *lhs, value_list *rhs)
+int cmp_value_list(const value_list &lhs, const value_list &rhs)
 {
-	if (lhs) {
-		if (rhs) {
-			return ordered_cmp_value_list(lhs, rhs);
-		}
-		return 1;
-	} else if (rhs) {
-		return -1;
-	}
-
-	return 0;
+	// Should this just be inlined?
+	return ordered_cmp_value_list(lhs, rhs);
 }
 
 value_list *new_value_list(char *value)
@@ -1252,19 +1244,12 @@ value_list *new_value_list(char *value)
 		return NULL;
 	}
 }
-void free_value_list(value_list *list)
-{
-	delete list;
-}
 
-void print_value_list(value_list *list)
+void print_value_list(const value_list &list)
 {
 	bool is_first = true;
 
-	if (!list)
-		return;
-
-	for (auto it = list->cbegin(); it != list->cend(); ++it) {
+	for (auto it = list.cbegin(); it != list.cend(); ++it) {
 		if (is_first) {
 			fprintf(stderr, "%s", it->get());
 			is_first = false;
@@ -1281,28 +1266,28 @@ void move_conditional_value(const char *rulename, char **dst_ptr,
 		yyerror("%s conditional \"%s\" can only be specified once\n",
 			rulename, cond_ent->name);
 
-	*dst_ptr = cond_ent->vals->front().release();
-	cond_ent->vals->pop_front();
+	*dst_ptr = cond_ent->vals.front().release();
+	cond_ent->vals.pop_front();
 }
 
-struct cond_entry *new_cond_entry(char *name, int eq, value_list *list)
+struct cond_entry *new_cond_entry(char *name, int eq, value_list &&list)
 {
-	struct cond_entry *ent = (struct cond_entry *) calloc(1, sizeof(struct cond_entry));
-	if (ent) {
+	try {
+		struct cond_entry *ent = new cond_entry();
 		ent->name = name;
-		ent->vals = list;
+		ent->vals = std::move(list);
 		ent->eq = eq;
+		return ent;
+	} catch (const std::bad_alloc &_e) {
+		return NULL;
 	}
-
-	return ent;
 }
 
 void free_cond_entry(struct cond_entry *ent)
 {
 	if (ent) {
 		free(ent->name);
-		free_value_list(ent->vals);
-		free(ent);
+		delete ent;
 	}
 }
 

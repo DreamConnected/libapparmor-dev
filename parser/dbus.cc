@@ -43,7 +43,7 @@ void dbus_rule::move_conditionals(struct cond_entry *conds)
 		/* for now disallow keyword 'in' (list) */
 		if (!cond_ent->eq)
 			yyerror("keyword \"in\" is not allowed in dbus rules\n");
-		if (cond_ent->vals->size() > 1)
+		if (cond_ent->vals.size() > 1)
 			yyerror("dbus conditional \"%s\" only supports a single value\n",
 				cond_ent->name);
 

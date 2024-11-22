@@ -282,7 +282,6 @@ public:
 	}
 };
 
-#define list_first(LIST) (LIST)
 #define list_last_entry(LIST, ENTRY) \
 	for ((ENTRY) = (LIST); (ENTRY) && (ENTRY)->next; (ENTRY) = (ENTRY)->next)
 #define list_append(LISTA, LISTB)		\
@@ -291,17 +290,6 @@ public:
 		list_last_entry((LISTA), ___tmp);\
 		___tmp->next = (LISTB);		\
 	} while (0)
-
-#define list_len(LIST)		\
-({				\
-	int len = 0;		\
-	auto tmp = LIST;	\
-	while (tmp) {		\
-		tmp = tmp->next;\
-		len++;		\
-	}			\
-	len;			\
-})
 
 #define list_pop(LIST)				\
 ({						\

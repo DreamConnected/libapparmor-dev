@@ -131,7 +131,6 @@ static void merge_hats(Profile *prof, ProfileList &hats)
 Profile *merge_policy(Profile *a, Profile *b)
 {
 	Profile *ret = a;
-	struct cod_entry *last;
 
 	if (!a) {
 		ret = b;
@@ -148,8 +147,7 @@ Profile *merge_policy(Profile *a, Profile *b)
 	}
 
 	if (a->entries) {
-		list_last_entry(a->entries, last);
-		last->next = b->entries;
+		list_append(a->entries, b->entries);
 	} else {
 		a->entries = b->entries;
 	}

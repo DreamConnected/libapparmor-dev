@@ -64,6 +64,7 @@
 
 int parser_token = 0;
 
+static value_list *new_value_list(char *value);
 struct cod_entry *do_file_rule(char *id, perm32_t perms, char *link_id, char *nt);
 mnt_rule *do_mnt_rule(struct cond_entry *src_conds, char *src,
 		      struct cond_entry *dst_conds, char *dst,
@@ -1694,6 +1695,19 @@ void yyerror(const char *msg, ...)
 	va_end(arg);
 
 	exit(1);
+}
+
+// We only keep this around (and keep value_list as a ptr in the union)
+// because all types in the union must be trivially constructable
+static value_list *new_value_list(char *value)
+{
+	try {
+		value_list *val = new value_list();
+		val->push_front(unique_ptr<char, delete_via_free>(value));
+		return val;
+	} catch (const std::bad_alloc &_e) {
+		return NULL;
+	}
 }
 
 struct cod_entry *do_file_rule(char *id, perm32_t perms, char *link_id, char *nt)

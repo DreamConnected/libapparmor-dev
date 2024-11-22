@@ -1234,17 +1234,6 @@ int cmp_value_list(const value_list &lhs, const value_list &rhs)
 	return ordered_cmp_value_list(lhs, rhs);
 }
 
-value_list *new_value_list(char *value)
-{
-	try {
-		value_list *val = new value_list();
-		val->push_front(unique_ptr<char, delete_via_free>(value));
-		return val;
-	} catch (const std::bad_alloc &_e) {
-		return NULL;
-	}
-}
-
 void print_value_list(const value_list &list)
 {
 	bool is_first = true;

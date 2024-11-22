@@ -417,7 +417,6 @@ extern void free_var_string(struct var_string *var);
 /* parser_misc.c */
 extern void warn_uppercase(void);
 extern int is_blacklisted(const char *name, const char *path);
-extern value_list *new_value_list(char *value);
 extern void print_value_list(const value_list &list);
 extern struct cond_entry *new_cond_entry(char *name, int eq, value_list &&list);
 extern void move_conditional_value(const char *rulename, char **dst_ptr,

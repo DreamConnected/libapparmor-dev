@@ -35,7 +35,7 @@ VERSION=$(shell cat $(COMMONDIR)/Version)
 pathsearch = $(firstword $(wildcard $(addsuffix /$(1),$(subst :, ,$(PATH)))))
 map = $(foreach a,$(2),$(call $(1),$(a)))
 
-AWK:=$(shell which awk)
+AWK:=$(shell command -v awk)
 ifndef AWK
 $(error awk utility required for build but not available)
 endif

@@ -35,4 +35,5 @@ include <tunables/global>
   @{sys}/devices/pci[0-9]*:[0-9]*/**/usb[0-9]**/product r,
   @{sys}/devices/pci[0-9]*:[0-9]*/**/usb[0-9]**/serial r,
 
+  include if exists <local/lsusb>
 }

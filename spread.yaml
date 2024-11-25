@@ -1,0 +1,182 @@
+project: apparmor
+backends:
+  google:
+    key: '$(HOST: echo "$SPREAD_GOOGLE_KEY")'
+    halt-timeout: 1h
+    # Run only when explicitly named. This backend requires a Google Compute
+    # Engine (GCE) account and incurs cost on every use. It is most practical
+    # to scale-out tests once spread can express sufficient concurrency.
+    manual: true
+    # TODO: This needs to be adjusted to properly account for apparmor tests.
+    location: snapd-spread/europe-west2-b
+    systems:
+      - ubuntu-22.04-64:
+          workers: 4
+      - ubuntu-24.04-64:
+          workers: 4
+      - ubuntu-24.10-64:
+          workers: 4
+  garden:
+    # The garden backend relies on https://gitlab.com/zygoon/image-garden
+    # TODO: Switch to a released version for better stability.
+    type: adhoc
+    # Use 2GB of RAM and four cores as otherwise we may not have enough memory
+    # to link the parser. It is better to have more workers than to have one
+    # big worker with lots of resources.
+    allocate: ADDRESS "$(QEMU_MEM_OPTION="-m 2048" QEMU_SMP_OPTION="-smp 4" image-garden allocate "$SPREAD_SYSTEM".$(uname -m))"
+    discard: image-garden discard "$SPREAD_SYSTEM_ADDRESS"
+    systems:
+      # All systems except for the one Ubuntu system are marked as manual.
+      # This way we don't accidentally spin up everything when someone runs
+      # spread without knowing better.
+      - opensuse-cloud-15.6:
+          username: opensuse
+          password: opensuse
+          workers: 2
+          manual: true  # Run only when explicitly named.
+          environment:
+            # openSUSE 15 ships very old default python.
+            PYTHON: /usr/bin/python3.11
+            PYTHON_CONFIG: /usr/bin/python3.11-config
+      - opensuse-cloud-tumbleweed:
+          username: opensuse
+          password: opensuse
+          workers: 2
+          manual: true
+      - debian-cloud-12:
+          username: debian
+          password: debian
+          workers: 2
+          manual: true
+      - debian-cloud-13:
+          username: debian
+          password: debian
+          workers: 2
+          manual: true
+      - ubuntu-cloud-22.04:
+          username: ubuntu
+          password: ubuntu
+          workers: 2
+          manual: true
+      - ubuntu-cloud-24.04:
+          username: ubuntu
+          password: ubuntu
+          workers: 2
+          manual: true
+      - ubuntu-cloud-24.10:
+          username: ubuntu
+          password: ubuntu
+          workers: 2
+
+exclude:
+  - .git
+  - "*.qcow2"
+  - "*.iso"
+  - "*.img"
+  - "*.log"
+  - "*.run"
+
+# Copy the project to this path on the test system.
+# This is also available as $SPREAD_PATH.
+path: /tmp/apparmor
+
+prepare: |
+  # Install build dependencies, depending on the type of system running.
+  case "$SPREAD_SYSTEM" in
+    debian-*|ubuntu-*)
+      apt-get update -qq
+      # TODO: extract this from README.md libapparmor section and unifiy with what is in .gitlab-ci.yml.
+      DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
+        attr \
+        autoconf \
+        autoconf-archive \
+        automake \
+        bison \
+        build-essential \
+        dejagnu \
+        flake8 \
+        flex \
+        gettext \
+        libdbus-1-dev \
+        libtool \
+        liburing-dev \
+        pkg-config \
+        python3-all-dev \
+        python3-gi \
+        python3-notify2 \
+        python3-psutil \
+        python3-setuptools \
+        python3-tk \
+        python3-ttkthemes \
+        swig
+    ;;
+    opensuse-*)
+      # On openSUSE the default gcc and python are very old. We can use more
+      # recent version of Python quite easily but perl extension module system
+      # does not want us to modify the CC that's baked into perl and all my
+      # attempts at using gcc-14 have failed.
+      zypper install -y \
+        attr \
+        autoconf \
+        autoconf-archive \
+        automake \
+        bison \
+        dbus-1-devel \
+        dejagnu \
+        flex \
+        gcc \
+        gcc-c++ \
+        gettext \
+        gobject-introspection \
+        libtool \
+        liburing2-devel \
+        make \
+        pkg-config \
+        python3-flake8 \
+        python3-notify2 \
+        python3-psutil \
+        python3-setuptools \
+        python3-setuptools \
+        python3-tk \
+        python311 \
+        python311-devel \
+        swig
+    ;;
+    *)
+      echo "Please add support for $SPREAD_SYSTEM to spread.yaml"
+      exit 1
+    ;;
+  esac
+
+  # TODO: add logic to skip this build phase and use prebuild binaries from
+  # GitLab pipeline. This should also reduce the number of dependencies we need
+  # to install above.
+
+  # Configure libapparmor. We have to pass CC and CXX explicitly if provided in
+  # the environment.
+  (
+    cd $SPREAD_PATH/libraries/libapparmor
+    sh ./autogen.sh && sh ./configure --prefix=/usr --with-perl --with-python
+  )
+  # Build libapparmor.
+  make -C $SPREAD_PATH/libraries/libapparmor -j"$(nproc)"
+  # Build apparmor_parser.
+  # The alternative builds sequentially to use less memory.
+  make -C $SPREAD_PATH/parser -j"$(nproc)"
+  # Build binary utilities (aa-exec and firends).
+  make -C $SPREAD_PATH/binutils -j"$(nproc)"
+  # Build python utilities.
+  make -C $SPREAD_PATH/utils -j"$(nproc)"
+
+# In case of failure, include the kernel version in the log.
+debug-each: |
+  uname -a
+
+suites:
+  tests/unit/:
+    summary: Unit tests that do not exercise the kernel layer.
+  tests/regression/:
+    summary: Regression tests for parser-kernel interaction.
+    prepare: |
+      # FIXME: `make -C tests/regression` does not do anything.
+      make -C "$SPREAD_PATH/tests/regression/apparmor" -j"$(nproc)"

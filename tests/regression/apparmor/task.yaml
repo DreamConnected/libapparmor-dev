@@ -1,0 +1,86 @@
+summary: run all of the apparmor regression test suite
+# TODO: This is somewhat tedious and it'd be nicer if we could somehow generate
+# the variants without doing it "by hand" with the following one-liner:
+#
+# echo '$(foreach t,$(TESTS),$(info TEST/$t: 1))'| make -f Makefile -f /dev/stdin
+environment:
+  TEST/aa_exec: 1
+  TEST/access: 1
+  TEST/attach_disconnected: 1
+  TEST/at_secure: 1
+  TEST/introspect: 1
+  TEST/capabilities: 1
+  TEST/changeprofile: 1
+  TEST/onexec: 1
+  TEST/changehat: 1
+  TEST/changehat_fork: 1
+  TEST/changehat_misc: 1
+  TEST/chdir: 1
+  TEST/clone: 1
+  TEST/complain: 1
+  TEST/coredump: 1
+  TEST/deleted: 1
+  TEST/e2e: 1
+  TEST/environ: 1
+  TEST/exec: 1
+  TEST/exec_qual: 1
+  TEST/fchdir: 1
+  TEST/fd_inheritance: 1
+  TEST/fork: 1
+  TEST/i18n: 1
+  TEST/link: 1
+  TEST/link_subset: 1
+  TEST/mkdir: 1
+  TEST/mmap: 1
+  TEST/mount: 1
+  TEST/mult_mount: 1
+  TEST/named_pipe: 1
+  TEST/namespaces: 1
+  TEST/net_raw: 1
+  TEST/open: 1
+  TEST/openat: 1
+  TEST/pipe: 1
+  TEST/pivot_root: 1
+  TEST/posix_ipc: 1
+  TEST/ptrace: 1
+  TEST/pwrite: 1
+  TEST/query_label: 1
+  TEST/regex: 1
+  TEST/rename: 1
+  TEST/readdir: 1
+  TEST/rw: 1
+  TEST/socketpair: 1
+  TEST/swap: 1
+  TEST/sd_flags: 1
+  TEST/setattr: 1
+  TEST/symlink: 1
+  TEST/syscall: 1
+  TEST/sysv_ipc: 1
+  TEST/tcp: 1
+  TEST/unix_fd_server: 1
+  TEST/unix_socket_pathname: 1
+  TEST/unix_socket_abstract: 1
+  TEST/unix_socket_unnamed: 1
+  TEST/unix_socket_autobind: 1
+  TEST/unlink: 1
+  TEST/userns: 1
+  TEST/xattrs: 1
+  TEST/longpath: 1
+  TEST/nfs: 1
+  TEST/xattrs_profile: 1
+  TEST/dbus_eavesdrop: 1
+  TEST/dbus_message: 1
+  TEST/dbus_service: 1
+  TEST/dbus_unrequested_reply: 1
+  TEST/io_uring: 1
+  TEST/exec_stack: 1
+  TEST/aa_policy_cache: 1
+  TEST/nnp: 1
+  TEST/stackonexec: 1
+  TEST/stackprofile: 1
+execute: |
+  # Run the shell script that is named after the spread variant we are running
+  # now. The makefile runs them all sequentially via the "alltests" goal. Here
+  # we can parallelize it through spread and also have a way to run precisely
+  # the test we want, especially for debugging.
+  bash "$SPREAD_VARIANT".sh

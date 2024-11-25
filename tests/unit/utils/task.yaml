@@ -1,0 +1,7 @@
+summary: Run unit tests of python utilities
+# FIXME: Exclude openSUSE as the test depends on python3-ttkthemes
+# which are not packaged in the distribution.
+systems:
+ - -opensuse-*
+execute: |
+  make -C "$SPREAD_PATH/utils" check

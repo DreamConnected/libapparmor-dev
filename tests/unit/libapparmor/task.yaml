@@ -1,0 +1,3 @@
+summary: Run unit tests of libapparmor
+execute: |
+  make -C "$SPREAD_PATH/libraries/libapparmor" check

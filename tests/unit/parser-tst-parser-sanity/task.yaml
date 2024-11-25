@@ -1,0 +1,7 @@
+summary: Run apparmor_parser parser_sanity test from parser/tst
+# This test is particularly slow. Those values are aimed at running fast enough
+# on a Raspberry Pi 5, representing a slower-ish computer.
+warn-timeout: 20m
+kill-timeout: 30m
+execute: |
+  make -C "$SPREAD_PATH/parser/tst" -j"$(nproc)" parser_sanity

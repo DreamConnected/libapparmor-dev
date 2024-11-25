@@ -35,10 +35,7 @@ VERSION=$(shell cat $(COMMONDIR)/Version)
 pathsearch = $(firstword $(wildcard $(addsuffix /$(1),$(subst :, ,$(PATH)))))
 map = $(foreach a,$(2),$(call $(1),$(a)))
 
-AWK:=$(shell command -v awk)
-ifndef AWK
-$(error awk utility required for build but not available)
-endif
+AWK?=$(or $(shell command -v awk),$(error awk utility required for build but not available))
 
 define nl
 

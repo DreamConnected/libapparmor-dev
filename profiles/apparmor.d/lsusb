@@ -1,0 +1,35 @@
+#------------------------------------------------------------------
+#    Copyright (C) 2024 Canonical Ltd.
+#
+#    Author: Federico Quattrin <federico.quattrin@canonical.com>
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+# vim: ft=apparmor
+#
+
+abi <abi/4.0>,
+include <tunables/global>
+
+/usr/bin/lsusb flags=(enforce) {
+  include <abstractions/base>
+  include <abstractions/nameservice>
+
+  /dev/ r,
+  /dev/bus/usb/ r,
+  @{run}/udev/data/*usb:* r,
+  @{run}/udev/data/c*:* r,
+
+  @{sys}/bus/ r,
+  @{sys}/bus/usb/devices/ r,
+  @{sys}/class/ r,
+
+  @{sys}/devices/pci[0-9]*:[0-9]*/**/usb[0-9]**/uevent r,
+  @{sys}/devices/pci[0-9]*:[0-9]*/**/usb[0-9]**/busnum r,
+  @{sys}/devices/pci[0-9]*:[0-9]*/**/usb[0-9]**/descriptors r,
+  @{sys}/devices/pci[0-9]*:[0-9]*/**/usb[0-9]**/devnum r,
+  @{sys}/devices/pci[0-9]*:[0-9]*/**/usb[0-9]**/speed r,
+
+}

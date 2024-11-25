@@ -417,7 +417,7 @@ syntax_failure = (
     'generated_perms_leading/dominate-Cuxtarget.sd',
     'generated_perms_leading/dominate-ownerPuxtarget2.sd',
 
-    # escaping with \
+    # escaping with "\"
     'file/ok_embedded_spaces_4.sd',  # \-escaped space
     'file/file/ok_embedded_spaces_4.sd',  # \-escaped space
     'file/ok_quoted_4.sd',  # quoted string including \"

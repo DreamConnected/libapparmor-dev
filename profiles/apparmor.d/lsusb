@@ -13,7 +13,7 @@
 abi <abi/4.0>,
 include <tunables/global>
 
-/usr/bin/lsusb flags=(enforce) {
+profile lsusb /usr/bin/lsusb {
   include <abstractions/base>
   include <abstractions/nameservice>
 

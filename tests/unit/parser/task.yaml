@@ -1,16 +1,16 @@
 summary: Run apparmor_parser unit tests from parser/
 details: |
-  The parser has a number of different tests. Those are all represented as
-  spread task variants so that they are directly visisble and runnable.
+    The parser has a number of different tests. Those are all represented as
+    spread task variants so that they are directly visible and runnable.
 environment:
-  TEST/tst_regex: 1
-  TEST/tst_misc: 1
-  TEST/tst_symtab: 1
-  TEST/tst_variable: 1
-  TEST/tst_lib: 1
+    TEST/tst_regex: 1
+    TEST/tst_misc: 1
+    TEST/tst_symtab: 1
+    TEST/tst_variable: 1
+    TEST/tst_lib: 1
 prepare: |
-  # The test relies on make to build a binary.
-  make -C "$SPREAD_PATH/parser" -j"$(nproc)" "$SPREAD_VARIANT"
+    # The test relies on make to build a binary.
+    make -C "$SPREAD_PATH"/parser -j"$(nproc)" "$SPREAD_VARIANT"
 execute: |
-  cd "$SPREAD_PATH"/parser
-  ./"$SPREAD_VARIANT"
+    cd "$SPREAD_PATH"/parser
+    ./"$SPREAD_VARIANT"

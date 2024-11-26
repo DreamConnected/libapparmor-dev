@@ -1,0 +1,50 @@
+summary: Run "make check" broken down by test name
+systems:
+ - -opensuse-cloud-15.6
+environment:
+    # FIXME: Spread disallows dashes in variant names, most likely as a bug.
+    # As such we map the all_under_score variant name to actual test name.
+    TEST/aa_cli_bootstrap: aa-cli-bootstrap
+    TEST/aa_decode: aa-decode
+    TEST/aa_easyprof: aa-easyprof
+    TEST/aa_notify: aa-notify
+    TEST/aa: aa
+    TEST/aare: aare
+    TEST/abi: abi
+    TEST/alias: alias
+    TEST/all: all
+    TEST/baserule: baserule
+    TEST/boolean: boolean
+    TEST/capability: capability
+    TEST/change_profile: change_profile
+    TEST/common: common
+    TEST/config: config
+    TEST/dbus: dbus
+    TEST/example: example
+    TEST/file: file
+    TEST/include: include
+    TEST/io_uring: io_uring
+    TEST/libapparmor_test_multi: libapparmor-test_multi
+    TEST/logparser: logparser
+    TEST/logprof: logprof
+    TEST/minitools: minitools
+    TEST/mount: mount
+    TEST/mqueue: mqueue
+    TEST/network: network
+    TEST/notify: notify
+    TEST/parser_simple_tests: parser-simple-tests
+    TEST/pivot_root: pivot_root
+    TEST/profile_list: profile-list
+    TEST/profile_storage: profile-storage
+    TEST/profiles: profiles
+    TEST/ptrace: ptrace
+    TEST/regex_matches: regex_matches
+    TEST/rlimit: rlimit
+    TEST/severity: severity
+    TEST/signal: signal
+    TEST/translations: translations
+    TEST/unix: unix
+    TEST/userns: userns
+    TEST/variable: variable
+execute: |
+    make --warn-undefined-variables check-one-test-"$TEST"

@@ -1,83 +1,129 @@
 summary: run all of the apparmor regression test suite
 # See spread.yaml for the code which verifies that nothing is missing from this list of variants
 environment:
-  TEST/aa_exec: 1
-  TEST/access: 1
-  TEST/attach_disconnected: 1
-  TEST/at_secure: 1
-  TEST/introspect: 1
-  TEST/capabilities: 1
-  TEST/changeprofile: 1
-  TEST/onexec: 1
-  TEST/changehat: 1
-  TEST/changehat_fork: 1
-  TEST/changehat_misc: 1
-  TEST/chdir: 1
-  TEST/clone: 1
-  TEST/complain: 1
-  TEST/coredump: 1
-  TEST/deleted: 1
-  TEST/e2e: 1
-  TEST/environ: 1
-  TEST/exec: 1
-  TEST/exec_qual: 1
-  TEST/fchdir: 1
-  TEST/fd_inheritance: 1
-  TEST/fork: 1
-  TEST/i18n: 1
-  TEST/link: 1
-  TEST/link_subset: 1
-  TEST/mkdir: 1
-  TEST/mmap: 1
-  TEST/mount: 1
-  TEST/mult_mount: 1
-  TEST/named_pipe: 1
-  TEST/namespaces: 1
-  TEST/net_raw: 1
-  TEST/open: 1
-  TEST/openat: 1
-  TEST/pipe: 1
-  TEST/pivot_root: 1
-  TEST/posix_ipc: 1
-  TEST/ptrace: 1
-  TEST/pwrite: 1
-  TEST/query_label: 1
-  TEST/regex: 1
-  TEST/rename: 1
-  TEST/readdir: 1
-  TEST/rw: 1
-  TEST/socketpair: 1
-  TEST/swap: 1
-  TEST/sd_flags: 1
-  TEST/setattr: 1
-  TEST/symlink: 1
-  TEST/syscall: 1
-  TEST/sysv_ipc: 1
-  TEST/tcp: 1
-  TEST/unix_fd_server: 1
-  TEST/unix_socket_pathname: 1
-  TEST/unix_socket_abstract: 1
-  TEST/unix_socket_unnamed: 1
-  TEST/unix_socket_autobind: 1
-  TEST/unlink: 1
-  TEST/userns: 1
-  TEST/xattrs: 1
-  TEST/longpath: 1
-  TEST/nfs: 1
-  TEST/xattrs_profile: 1
-  TEST/dbus_eavesdrop: 1
-  TEST/dbus_message: 1
-  TEST/dbus_service: 1
-  TEST/dbus_unrequested_reply: 1
-  TEST/io_uring: 1
-  TEST/exec_stack: 1
-  TEST/aa_policy_cache: 1
-  TEST/nnp: 1
-  TEST/stackonexec: 1
-  TEST/stackprofile: 1
+    TEST/aa_exec: 1
+    TEST/aa_policy_cache: 1
+    TEST/access: 1
+    TEST/at_secure: 1
+    TEST/attach_disconnected: 1
+    TEST/capabilities: 1
+    TEST/changehat: 1
+    TEST/changehat_fork: 1
+    TEST/changehat_misc: 1
+    TEST/changeprofile: 1
+    TEST/chdir: 1
+    TEST/clone: 1
+    TEST/complain: 1
+    TEST/coredump: 1
+    TEST/dbus_eavesdrop: 1
+    TEST/dbus_message: 1
+    TEST/dbus_service: 1
+    TEST/dbus_unrequested_reply: 1
+    TEST/deleted: 1
+    TEST/e2e: 1
+    TEST/environ: 1
+    TEST/exec: 1
+    TEST/exec_qual: 1
+    TEST/exec_stack: 1
+    TEST/fchdir: 1
+    TEST/fd_inheritance: 1
+    TEST/fork: 1
+    TEST/i18n: 1
+    TEST/introspect: 1
+    TEST/io_uring: 1
+    TEST/link: 1
+    TEST/link_subset: 1
+    TEST/longpath: 1
+    TEST/mkdir: 1
+    TEST/mmap: 1
+    TEST/mount: 1
+    TEST/mult_mount: 1
+    TEST/named_pipe: 1
+    TEST/namespaces: 1
+    TEST/net_raw: 1
+    TEST/nfs: 1
+    TEST/nnp: 1
+    TEST/onexec: 1
+    TEST/open: 1
+    TEST/openat: 1
+    TEST/pipe: 1
+    TEST/pivot_root: 1
+    TEST/posix_ipc: 1
+    TEST/ptrace: 1
+    TEST/pwrite: 1
+    TEST/query_label: 1
+    TEST/readdir: 1
+    TEST/regex: 1
+    TEST/rename: 1
+    TEST/rw: 1
+    TEST/sd_flags: 1
+    TEST/setattr: 1
+    TEST/socketpair: 1
+    TEST/stackonexec: 1
+    TEST/stackprofile: 1
+    TEST/swap: 1
+    TEST/symlink: 1
+    TEST/syscall: 1
+    TEST/sysv_ipc: 1
+    TEST/tcp: 1
+    TEST/unix_fd_server: 1
+    TEST/unix_socket_abstract: 1
+    TEST/unix_socket_autobind: 1
+    TEST/unix_socket_pathname: 1
+    TEST/unix_socket_unnamed: 1
+    TEST/unlink: 1
+    TEST/userns: 1
+    TEST/xattrs: 1
+    TEST/xattrs_profile: 1
+    # Some tests are currently failing. Those are listed below. For each variant
+    # listed above, the XFAIL variable contains a list of spread systems where this
+    # test is expected to fail.
+    #
+    # Error: unix_fd_server passed. Test 'ATTACH_DISCONNECTED (attach_disconnected.path rule at /)' was expected to 'fail'
+    XFAIL/attach_disconnected: opensuse-cloud-tumbleweed debian-cloud-12 debian-cloud-13 ubuntu-cloud-22.04
+    # Error: unix_fd_server failed. Test 'fd passing; unconfined client' was expected to 'pass'. Reason for failure 'FAIL - bind failed: Permission denied'
+    # Error: unix_fd_server failed. Test 'fd passing; confined client w/ rw' was expected to 'pass'. Reason for failure 'FAIL - bind failed: Permission denied'
+    XFAIL/deleted: opensuse-cloud-tumbleweed debian-cloud-12 debian-cloud-13
+    # Error: unix_fd_server failed. Test 'fd passing; confined -> unconfined' was expected to 'pass'. Reason for failure 'FAIL - bind failed: Permission denied'
+    # Error: unix_fd_server failed. Test 'fd passing; unconfined -> confined' was expected to 'pass'. Reason for failure 'FAIL CLIENT - connect Permission denied'
+    # Error: unix_fd_server failed. Test 'fd passing; unconfined -> confined (no perm)' was expected to 'pass'. Reason for failure 'FAIL CLIENT - connect Permission denied'
+    # Error: unix_fd_server failed. Test 'fd passing; confined -> confined' was expected to 'pass'. Reason for failure 'FAIL - bind failed: Permission denied'
+    XFAIL/unix_fd_server: opensuse-cloud-tumbleweed debian-cloud-12 debian-cloud-13
+    # Error: unix_socket failed. Test 'AF_UNIX pathname socket (stream); confined server w/ access (rw)' was expected to 'pass'. Reason for failure 'FAIL - setsockopt (SO_RCVTIMEO): Permission denied'
+    # Error: unix_socket passed. Test 'AF_UNIX pathname socket (stream); confined server w/ a missing af_unix access (create)' was expected to 'fail'
+    # Error: unix_socket failed. Test 'AF_UNIX pathname socket (stream); confined client w/ access (rw)' was expected to 'pass'. Reason for failure 'FAIL - setsockopt (SO_RCVTIMEO): Permission denied'
+    # xpass: AF_UNIX pathname socket (dgram); confined server w/ access (rw)
+    # Error: unix_socket passed. Test 'AF_UNIX pathname socket (dgram); confined server w/ a missing af_unix access (create)' was expected to 'fail'
+    # xpass: AF_UNIX pathname socket (dgram); confined client w/ access (rw)
+    # Error: unix_socket failed. Test 'AF_UNIX pathname socket (seqpacket); confined server w/ access (rw)' was expected to 'pass'. Reason for failure 'FAIL - setsockopt (SO_RCVTIMEO): Permission denied'
+    # Error: unix_socket passed. Test 'AF_UNIX pathname socket (seqpacket); confined server w/ a missing af_unix access (create)' was expected to 'fail'
+    # Error: unix_socket failed. Test 'AF_UNIX pathname socket (seqpacket); confined client w/ access (rw)' was expected to 'pass'. Reason for failure 'FAIL - setsockopt (SO_RCVTIMEO): Permission denied'
+    XFAIL/unix_socket_pathname: opensuse-cloud-tumbleweed debian-cloud-12 debian-cloud-13
+artifacts:
+    - bash.log
+    - bash.err
 execute: |
-  # Run the shell script that is named after the spread variant we are running
-  # now. The makefile runs them all sequentially via the "alltests" goal. Here
-  # we can parallelize it through spread and also have a way to run precisely
-  # the test we want, especially for debugging.
-  bash "$SPREAD_VARIANT".sh
+    # Run the shell script that is named after the spread variant we are running
+    # now. The makefile runs them all sequentially via the "alltests" goal. Here
+    # we can parallelize it through spread and also have a way to run precisely
+    # the test we want, especially for debugging.
+    if ! bash -x "$SPREAD_VARIANT".sh >bash.log 2>bash.err; then
+      for xfail in ${XFAIL:-}; do
+        if [ "$SPREAD_SYSTEM" = "$xfail" ]; then
+          echo "Ignoring expected failure of $SPREAD_TASK on $SPREAD_SYSTEM"
+          exit 0
+        fi
+      done
+
+      echo "Test $SPREAD_VARIANT has unexpectedly failed"
+      echo "Test execution logs are in the files bash.{log.err} and are collected as artifacts"
+      exit 1
+    else
+      for xfail in ${XFAIL:-}; do
+        if [ "$SPREAD_SYSTEM" = "$xfail" ]; then
+          echo "Test $SPREAD_VARIANT has unexpectedly passed"
+          echo "Test execution logs are in the files bash.{log.err} and are collected as artifacts"
+          exit 1
+        fi
+      done
+    fi

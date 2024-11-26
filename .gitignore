@@ -304,3 +304,6 @@ tests/regression/apparmor/coredump
 *.qcow2
 *.run
 .spread-reuse.yaml
+.spread-reuse.*.yaml
+spread-artifacts/
+spread-logs/

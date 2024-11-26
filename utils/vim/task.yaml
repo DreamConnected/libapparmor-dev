@@ -1,0 +1,3 @@
+summary: Run "make check"
+execute: |
+    make --warn-undefined-variables check

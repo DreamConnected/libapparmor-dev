@@ -1,7 +1,11 @@
 summary: Run apparmor_parser parser_sanity test from parser/tst
 # This test is particularly slow. Those values are aimed at running fast enough
 # on a Raspberry Pi 5, representing a slower-ish computer.
+#
+# TODO: figure out how to make this test more parallelizable.
 warn-timeout: 20m
 kill-timeout: 30m
+# Start this task sooner rather than later.
+priority: 100
 execute: |
-  make -C "$SPREAD_PATH/parser/tst" -j"$(nproc)" parser_sanity
+    make -C "$SPREAD_PATH"/parser/tst -j"$(nproc)" parser_sanity

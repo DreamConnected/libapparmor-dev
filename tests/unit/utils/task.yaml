@@ -3,5 +3,8 @@ summary: Run unit tests of python utilities
 # which are not packaged in the distribution.
 systems:
  - -opensuse-*
+prepare: |
+  # Generate the profiles that the test relies on.
+  make -C "$SPREAD_PATH"/parser/tst gen_xtrans gen_dbus
 execute: |
-  make -C "$SPREAD_PATH/utils" check
+  make -C "$SPREAD_PATH"/utils check

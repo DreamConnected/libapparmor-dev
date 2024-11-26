@@ -1,8 +1,5 @@
 summary: run all of the apparmor regression test suite
-# TODO: This is somewhat tedious and it'd be nicer if we could somehow generate
-# the variants without doing it "by hand" with the following one-liner:
-#
-# echo '$(foreach t,$(TESTS),$(info TEST/$t: 1))'| make -f Makefile -f /dev/stdin
+# See spread.yaml for the code which verifies that nothing is missing from this list of variants
 environment:
   TEST/aa_exec: 1
   TEST/access: 1

@@ -15,7 +15,8 @@ include <tunables/global>
 
 profile lsusb /usr/bin/lsusb {
   include <abstractions/base>
-  include <abstractions/nameservice>
+
+  network netlink raw,
 
   /dev/ r,
   /dev/bus/usb/ r,

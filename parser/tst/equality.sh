@@ -57,7 +57,8 @@ verify_binary()
 	shift
 	shift
 
-	if [ "$t" != "equality" ] && [ "$t" != "inequality" ]
+	if [ "$t" != "equality" ] && [ "$t" != "inequality" ] && \
+	       [ "$t" != "xequality" ] && [ "$t" != "xinequality" ]
 	then
 		printf "\nERROR: Unknown test mode:\n%s\n\n" "$t" 1>&2
 		((errors++))
@@ -91,6 +92,17 @@ verify_binary()
 				"$good_hash" "$hash" "$profile" 1>&2
 			((fails++))
 			((ret++))
+		elif [ "$t" == "xequality" ] && [ "$hash" == "$good_hash" ]
+		then
+			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
+			printf "\nunexpected PASS: equality test with known problem, Hash values match\n" 2>&1
+			printf "known-good (%s) == profile-under-test (%s) for the following profile:\n%s\n\n" \
+				"$good_hash" "$hash" "$profile" 1>&2
+			((fails++))
+			((ret++))
+		elif [ "$t" == "xequality" ] && [ "$hash" != "$good_hash" ]
+		then
+		    printf "\nknown problem %s %s: unchanged" "$t" "$desc" 1>&2
 		elif [ "$t" == "inequality" ] && [ "$hash" == "$good_hash" ]
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
@@ -99,6 +111,17 @@ verify_binary()
 				"$good_hash" "$hash" "$profile" 1>&2
 			((fails++))
 			((ret++))
+		elif [ "$t" == "xinequality" ] && [ "$hash" != "$good_hash" ]
+		then
+			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
+			printf "\nunexpected PASS: inequality test with known problem, Hash values do not match\n" 2>&1
+			printf "known-good (%s) != profile-under-test (%s) for the following profile:\n%s\n\n" \
+				"$good_hash" "$hash" "$profile" 1>&2
+			((fails++))
+			((ret++))
+		elif [ "$t" == "xinequality" ] && [ "$hash" == "$good_hash" ]
+		then
+		    printf "\nknown problem %s %s: unchanged" "$t" "$desc" 1>&2
 		fi
 	done
 
@@ -119,9 +142,21 @@ verify_binary_equality()
 	verify_binary "equality" "$@"
 }
 
+# test we want to be equal but is currently a known problem
+verify_binary_xequality()
+{
+	verify_binary "xequality" "$@"
+}
+
 verify_binary_inequality()
 {
 	verify_binary "inequality" "$@"
+}
+
+# test we want to be not equal but is currently a know problem
+verify_binary_xinequality()
+{
+	verify_binary "xinequality" "$@"
 }
 
 # kernel_features - test whether path(s) are present

@@ -891,6 +891,27 @@ else
     features_file=$default_features_file
 fi
 
+# Equality tests that set explicit priority level
+# TODO: priority handling for file paths is currently broken
+
+# This test is not actually correct due to two subtle interactions:
+# - /* is special-cased to expand to /[^/\x00]+ with at least one character
+# - Quieting of [^a] in the DFA is different and cannot be manually fixed
+
+#verify_binary_xequality "file rule carveout regex vs priority" \
+#	"/t { deny /[^a]* rwxlk, /a r, }" \
+#	"/t { priority=-1 deny /* rwxlk, /a r, }" \
+
+# Not grouping all three together because parser correctly handles
+# the equivalence of carveout regex and default audit deny
+verify_binary_xequality "file rule carveout regex vs priority (audit)" \
+	"/t { audit deny /[^a]* rwxlk, /a r, }" \
+	"/t { priority=-1 audit deny /* rwxlk, /a r, }" \
+
+verify_binary_xequality "file rule default audit deny vs audit priority carveout" \
+	"/t { /a r, }" \
+	"/t { priority=-1 audit deny /* rwxlk, /a r, }" \
+
 # verify combinations of different priority levels
 # for single rule comparisons, rules should keep same expected result
 # even when the priorities are different.

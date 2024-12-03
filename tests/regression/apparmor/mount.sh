@@ -77,8 +77,8 @@ if [ ! -b /dev/loop0 ] ; then
 fi
 
 # find the next free loop device and mount it
-loop_device=$(losetup -f) || fatalerror 'Unable to find a free loop device'
-/sbin/losetup "$loop_device" ${mount_file} > /dev/null 2> /dev/null
+/sbin/losetup -f ${mount_file} || fatalerror 'Unable to set up a loop device'
+loop_device="$(/sbin/losetup -n -O NAME -l -j ${mount_file})"
 
 options=(
 	# default and non-default options

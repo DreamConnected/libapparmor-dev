@@ -64,7 +64,7 @@ mount_cleanup() {
 }
 do_onexit="mount_cleanup"
 
-dd if=/dev/zero of=${mount_file} bs=1024 count=512 2> /dev/null
+fallocate -l 512K ${mount_file}
 /sbin/mkfs -t${fstype} -F ${mount_file} > /dev/null 2> /dev/null
 /bin/mkdir ${mount_point}
 /bin/mkdir ${mount_point2}

@@ -61,19 +61,18 @@ def main():
     else:
         command = None  # Handle the case where no command is provided
 
-    match command:
-        case 'create_userns':
-            if not len(sys.argv) == 7:
-                usage(False)
-            create_userns(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])
-        case 'add_rule':
-            if not len(sys.argv) == 4:
-                usage(False)
-            add_to_profile(sys.argv[2], sys.argv[3])
-        case 'help':
-            usage(True)
-        case _:
+    if command == 'create_userns':
+        if not len(sys.argv) == 7:
             usage(False)
+        create_userns(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])
+    elif command == 'add_rule':
+        if not len(sys.argv) == 4:
+            usage(False)
+        add_to_profile(sys.argv[2], sys.argv[3])
+    elif command == 'help':
+        usage(True)
+    else:
+        usage(False)
 
 
 if __name__ == '__main__':

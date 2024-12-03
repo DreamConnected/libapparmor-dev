@@ -199,49 +199,49 @@ class ReadLog:
             ev['fsuid'] = event.fsuid
             ev['ouid'] = event.ouid
 
-        match self.get_event_type(ev):
-            case 'signal':
-                ev['signal'] = event.signal
-                ev['peer'] = event.peer
-            case 'ptrace':
-                ev['peer'] = event.peer
-            case 'pivot_root':
-                ev['src_name'] = event.src_name
-            case 'mount':
-                ev['flags'] = event.flags
-                ev['fs_type'] = event.fs_type
-                if ev['operation'] and ev['operation'] == 'mount':
-                    ev['src_name'] = event.src_name  # mount can have a source but not umount.
-            case 'userns':
-                ev['execpath'] = event.execpath
-                ev['comm'] = event.comm
-            case 'network':
-                ev['accesses'] = event.requested_mask
-                ev['port'] = event.net_local_port or None
-                ev['remote_port'] = event.net_foreign_port or None
-                ev['addr'] = event.net_local_addr
-                ev['peer_addr'] = event.net_foreign_addr
-                ev['addr'] = event.net_local_addr
-                ev['peer_addr'] = event.net_foreign_addr
-            case 'unix':
-                ev['accesses'] = event.requested_mask
-                ev['port'] = event.net_local_port or None
-                ev['remote_port'] = event.net_foreign_port or None
-                ev['addr'] = event.net_addr
-                ev['peer_addr'] = event.peer_addr
-                ev['peer'] = event.peer
-                ev['peer_profile'] = event.peer_profile
-            case 'dbus':
-                ev['peer_profile'] = event.peer_profile
-                ev['bus'] = event.dbus_bus
-                ev['path'] = event.dbus_path
-                ev['interface'] = event.dbus_interface
-                ev['member'] = event.dbus_member
+        event_type = self.get_event_type(ev)
+        if event_type == 'signal':
+            ev['signal'] = event.signal
+            ev['peer'] = event.peer
+        elif event_type == 'ptrace':
+            ev['peer'] = event.peer
+        elif event_type == 'pivot_root':
+            ev['src_name'] = event.src_name
+        elif event_type == 'mount':
+            ev['flags'] = event.flags
+            ev['fs_type'] = event.fs_type
+            if ev['operation'] and ev['operation'] == 'mount':
+                ev['src_name'] = event.src_name  # mount can have a source but not umount.
+        elif event_type == 'userns':
+            ev['execpath'] = event.execpath
+            ev['comm'] = event.comm
+        elif event_type == 'network':
+            ev['accesses'] = event.requested_mask
+            ev['port'] = event.net_local_port or None
+            ev['remote_port'] = event.net_foreign_port or None
+            ev['addr'] = event.net_local_addr
+            ev['peer_addr'] = event.net_foreign_addr
+            ev['addr'] = event.net_local_addr
+            ev['peer_addr'] = event.net_foreign_addr
+        elif event_type == 'unix':
+            ev['accesses'] = event.requested_mask
+            ev['port'] = event.net_local_port or None
+            ev['remote_port'] = event.net_foreign_port or None
+            ev['addr'] = event.net_addr
+            ev['peer_addr'] = event.peer_addr
+            ev['peer'] = event.peer
+            ev['peer_profile'] = event.peer_profile
+        elif event_type == 'dbus':
+            ev['peer_profile'] = event.peer_profile
+            ev['bus'] = event.dbus_bus
+            ev['path'] = event.dbus_path
+            ev['interface'] = event.dbus_interface
+            ev['member'] = event.dbus_member
 
-            case 'io_uring':
-                ev['peer_profile'] = event.peer_profile
-            case 'capability':
-                ev['comm'] = event.comm
+        elif event_type == 'io_uring':
+            ev['peer_profile'] = event.peer_profile
+        elif event_type == 'capability':
+            ev['comm'] = event.comm
 
         if not ev['time']:
             ev['time'] = int(time.time())

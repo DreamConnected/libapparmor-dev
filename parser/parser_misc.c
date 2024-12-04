@@ -1079,6 +1079,8 @@ void debug_cod_entries(struct cod_entry *list)
 		debug_base_perm_mask(SHIFT_TO_BASE(item->perms, AA_USER_SHIFT));
 		printf(":");
 		debug_base_perm_mask(SHIFT_TO_BASE(item->perms, AA_OTHER_SHIFT));
+
+		printf(" priority=%d ", item->priority);
 		if (item->name)
 			printf("\tName:\t(%s)\n", item->name);
 		else
@@ -1121,6 +1123,8 @@ bool entry_add_prefix(struct cod_entry *entry, const prefixes &p, const char *&e
 		entry->perms &= (AA_USER_PERMS | AA_SHARED_PERMS);
 	else if (p.owner == 2)
 		entry->perms &= (AA_OTHER_PERMS | AA_SHARED_PERMS);
+
+	entry->priority = p.priority;
 
 	/* implied audit modifier */
 	if (p.audit == AUDIT_FORCE && (entry->rule_mode != RULE_DENY))

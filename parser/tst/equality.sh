@@ -31,6 +31,32 @@ verbose="${VERBOSE:-}"
 default_features_file="features.all"
 features_file=$default_features_file
 
+map_priority()
+{
+    if [ -z "$1" -o "$1" == "priority=0" ] ; then
+	echo "0";
+    elif [ "$1" == "priority=-1" ] ; then
+	echo "-1"
+    elif [ "$1" == "priority=1" ] ;then
+	echo "1"
+    else
+	echo "unknown priority '$1'"
+	exit 1
+    fi
+}
+
+priority_eq()
+{
+	local p1=$(map_priority "$1")
+	local p2=$(map_priority "$2")
+
+	if [ $p1 -eq $p2 ] ; then
+		return 0
+	fi
+
+	return 1
+}
+
 hash_binary_policy()
 {
 	printf %s "$1" | ${APPARMOR_PARSER} --features-file "${_SCRIPTDIR}/features_files/$features_file" -qS 2>/dev/null| md5sum | cut -d ' ' -f 1
@@ -662,9 +688,25 @@ verify_binary_equality "'$p1'x'$p2' @{profile_name} is literal in peer with esc 
 # the "write" permission in the second profile and the test will fail.
 # If the parser is adding the change_hat proc attr rules then the
 # rules should merge and be equivalent.
-verify_binary_equality "'$p1'x'$p2' change_hat rules automatically inserted"\
-		       "/t { $p1 owner /proc/[0-9]*/attr/{apparmor/,}current a, ^test { $p2 owner /proc/[0-9]*/attr/{apparmor/,}current a, /f r, }}" \
+#
+# if priorities are different then the implied rule priority then the
+# implied rule will completely override or completely be overriden.
+# (the change_hat implied rule has a priority of 0)
+# because of the difference in 'a' vs 'w' permission the two rules should
+# only be equal when the append rule has the same priority as the implied
+# rule (allowing them to combine) AND the other rule is not overridden by
+# the implied rule, or both being overridden by the implied rule
+# the implied rule
+if { priority_lt "$p1" "" && priority_lt "$p2" "" ; } ||
+   { priority_eq "$p1" "" && ! priority_lt "$p2" "" ; }; then
+    verify_binary_equality "'$p1'x'$p2' change_hat rules automatically inserted"\
+		       "/t { $p1 owner /proc/[0-9]*/attr/{apparmor/,}current a, ^test { $p1 owner /proc/[0-9]*/attr/{apparmor/,}current a, /f r, }}" \
 		       "/t { $p2 owner /proc/[0-9]*/attr/{apparmor/,}current w, ^test { $p2 owner /proc/[0-9]*/attr/{apparmor/,}current w, /f r, }}"
+else
+    verify_binary_inequality "'$p1'x'$p2' change_hat rules automatically inserted"\
+		       "/t { $p1 owner /proc/[0-9]*/attr/{apparmor/,}current a, ^test { $p1 owner /proc/[0-9]*/attr/{apparmor/,}current a, /f r, }}" \
+		       "/t { $p2 owner /proc/[0-9]*/attr/{apparmor/,}current w, ^test { $p2 owner /proc/[0-9]*/attr/{apparmor/,}current w, /f r, }}"
+fi
 
 # verify slash filtering for unix socket address paths.
 # see https://bugs.launchpad.net/apparmor/+bug/1856738

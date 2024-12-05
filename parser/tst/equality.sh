@@ -899,12 +899,14 @@ verify_binary_equality "'$p1'x'$p2' dbus slash filtering for paths" \
 }
 
 
-printf "Equality Tests:\n"
+run_tests()
+{
+	printf "Equality Tests:\n"
 
-#rules that don't support priority
+	#rules that don't support priority
 
-# verify rlimit data conversions
-verify_binary_equality "set rlimit rttime <= 12 weeks" \
+	# verify rlimit data conversions
+	verify_binary_equality "set rlimit rttime <= 12 weeks" \
                        "/t { set rlimit rttime <= 12 weeks, }" \
                        "/t { set rlimit rttime <= $((12 * 7)) days, }" \
                        "/t { set rlimit rttime <= $((12 * 7 * 24)) hours, }" \
@@ -914,7 +916,7 @@ verify_binary_equality "set rlimit rttime <= 12 weeks" \
                        "/t { set rlimit rttime <= $((12 * 7 * 24 * 60 * 60 * 1000 * 1000)) us, }" \
                        "/t { set rlimit rttime <= $((12 * 7 * 24 * 60 * 60 * 1000 * 1000)), }"
 
-verify_binary_equality "set rlimit cpu <= 42 weeks" \
+	verify_binary_equality "set rlimit cpu <= 42 weeks" \
                        "/t { set rlimit cpu <= 42 weeks, }" \
                        "/t { set rlimit cpu <= $((42 * 7)) days, }" \
                        "/t { set rlimit cpu <= $((42 * 7 * 24)) hours, }" \
@@ -922,20 +924,20 @@ verify_binary_equality "set rlimit cpu <= 42 weeks" \
                        "/t { set rlimit cpu <= $((42 * 7 * 24 * 60 * 60)) seconds, }" \
                        "/t { set rlimit cpu <= $((42 * 7 * 24 * 60 * 60)), }"
 
-verify_binary_equality "set rlimit memlock <= 2GB" \
+	verify_binary_equality "set rlimit memlock <= 2GB" \
                        "/t { set rlimit memlock <= 2GB, }" \
                        "/t { set rlimit memlock <= $((2 * 1024)) MB, }" \
                        "/t { set rlimit memlock <= $((2 * 1024 * 1024)) KB, }" \
                        "/t { set rlimit memlock <= $((2 * 1024 * 1024 * 1024)) , }"
 
-run_port_range=$(kernel_features network_v8/af_inet)
-if [ "$run_port_range" != "true" ]; then
-    echo -e "\nSkipping network af_inet tests. $run_port_range\n"
-else
-    # network port range
-    # select features file that contains netv8 af_inet
-    features_file="features.af_inet"
-    verify_binary_equality "network port range" \
+	run_port_range=$(kernel_features network_v8/af_inet)
+	if [ "$run_port_range" != "true" ]; then
+	    echo -e "\nSkipping network af_inet tests. $run_port_range\n"
+	else
+	    # network port range
+	    # select features file that contains netv8 af_inet
+	    features_file="features.af_inet"
+	    verify_binary_equality "network port range" \
 			   "/t { network port=3456-3460, }" \
 			   "/t { network port=3456, \
 				 network port=3457, \
@@ -943,7 +945,7 @@ else
 				 network port=3459, \
 				 network port=3460, }"
 
-    verify_binary_equality "network peer port range" \
+	    verify_binary_equality "network peer port range" \
 			   "/t { network peer=(port=3456-3460), }" \
 			   "/t { network peer=(port=3456), \
 				 network peer=(port=3457), \
@@ -951,64 +953,68 @@ else
 				 network peer=(port=3459), \
 				 network peer=(port=3460), }"
 
-    verify_binary_inequality "network port range allows more than single port" \
+	    verify_binary_inequality "network port range allows more than single port" \
 			     "/t { network port=3456-3460, }" \
 			     "/t { network port=3456, }"
 
-    verify_binary_inequality "network peer port range allows more than single port" \
+	    verify_binary_inequality "network peer port range allows more than single port" \
 			     "/t { network peer=(port=3456-3460), }" \
 			     "/t { network peer=(port=3456), }"
-    # return to default
-    features_file=$default_features_file
-fi
-
-# Equality tests that set explicit priority level
-# TODO: priority handling for file paths is currently broken
-
-# This test is not actually correct due to two subtle interactions:
-# - /* is special-cased to expand to /[^/\x00]+ with at least one character
-# - Quieting of [^a] in the DFA is different and cannot be manually fixed
-
-#verify_binary_xequality "file rule carveout regex vs priority" \
-#	"/t { deny /[^a]* rwxlk, /a r, }" \
-#	"/t { priority=-1 deny /* rwxlk, /a r, }" \
-
-# Not grouping all three together because parser correctly handles
-# the equivalence of carveout regex and default audit deny
-verify_binary_equality "file rule carveout regex vs priority (audit)" \
-	"/t { audit deny /[^a]* rwxlk, /a r, }" \
-	"/t { priority=-1 audit deny /* rwxlk, /a r, }" \
-
-verify_binary_equality "file rule default audit deny vs audit priority carveout" \
-	"/t { /a r, }" \
-	"/t { priority=-1 audit deny /* rwxlk, /a r, }" \
-
-# verify combinations of different priority levels
-# for single rule comparisons, rules should keep same expected result
-# even when the priorities are different.
-# different priorities within a profile comparison resulting in
-# different permission could affected expected results
-
-
-priorities="none 0 1 -1"
-
-for pri1 in $priorities ; do
-    if [ "$pri1" = "none" ] ; then
-	priority1=""
-    else
-	priority1="priority=$pri1"
-    fi
-    for pri2 in $priorities  ; do
-	if [ "$pri2" = "none" ] ; then
-	    priority2=""
-	else
-	    priority2="priority=$pri2"
+	    # return to default
+	    features_file=$default_features_file
 	fi
 
-	verify_set "$priority1" "$priority2"
-    done
-done
+	# Equality tests that set explicit priority level
+	# TODO: priority handling for file paths is currently broken
 
-[ -z "${verbose}" ] && printf "\n"
-printf "PASS\n"
-exit 0
+	# This test is not actually correct due to two subtle
+	# interactions: - /* is special-cased to expand to /[^/\x00]+
+	# with at least one character - Quieting of [^a] in the DFA is
+	# different and cannot be manually fixed
+
+	#verify_binary_xequality "file rule carveout regex vs priority" \
+	#	"/t { deny /[^a]* rwxlk, /a r, }" \
+	#	"/t { priority=-1 deny /* rwxlk, /a r, }" \
+
+	# Not grouping all three together because parser correctly handles
+	# the equivalence of carveout regex and default audit deny
+	verify_binary_equality "file rule carveout regex vs priority (audit)" \
+			"/t { audit deny /[^a]* rwxlk, /a r, }" \
+			"/t { priority=-1 audit deny /* rwxlk, /a r, }"
+
+	verify_binary_equality "file rule default audit deny vs audit priority carveout" \
+			"/t { /a r, }" \
+			"/t { priority=-1 audit deny /* rwxlk, /a r, }"
+
+	# verify combinations of different priority levels
+	# for single rule comparisons, rules should keep same expected result
+	# even when the priorities are different.
+	# different priorities within a profile comparison resulting in
+	# different permission could affected expected results
+
+
+	priorities="none 0 1 -1"
+
+	for pri1 in $priorities ; do
+	    if [ "$pri1" = "none" ] ; then
+		priority1=""
+	    else
+		priority1="priority=$pri1"
+	    fi
+	    for pri2 in $priorities  ; do
+		if [ "$pri2" = "none" ] ; then
+		    priority2=""
+		else
+		    priority2="priority=$pri2"
+		fi
+
+		verify_set "$priority1" "$priority2"
+	    done
+	done
+
+	[ -z "${verbose}" ] && printf "\n"
+	printf "PASS\n"
+	exit 0
+}
+
+run_tests "$@"

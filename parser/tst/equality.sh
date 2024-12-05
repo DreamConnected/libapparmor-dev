@@ -904,11 +904,11 @@ fi
 
 # Not grouping all three together because parser correctly handles
 # the equivalence of carveout regex and default audit deny
-verify_binary_xequality "file rule carveout regex vs priority (audit)" \
+verify_binary_equality "file rule carveout regex vs priority (audit)" \
 	"/t { audit deny /[^a]* rwxlk, /a r, }" \
 	"/t { priority=-1 audit deny /* rwxlk, /a r, }" \
 
-verify_binary_xequality "file rule default audit deny vs audit priority carveout" \
+verify_binary_equality "file rule default audit deny vs audit priority carveout" \
 	"/t { /a r, }" \
 	"/t { priority=-1 audit deny /* rwxlk, /a r, }" \
 

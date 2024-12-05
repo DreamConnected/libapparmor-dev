@@ -137,8 +137,8 @@ verify_binary()
 		elif [ "$t" == "equality" ] && [ "$hash" != "$good_hash" ]
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
-			printf "\nFAIL: Hash values do not match\n" 2>&1
-			printf "parser: %s --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 2>&1
+			printf "\nFAIL: Hash values do not match\n" 1>&2
+			printf "parser: %s --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 1>&2
 			printf "known-good (%s) != profile-under-test (%s) for the following profiles:\nknown-good         %s\nprofile-under-test %s\n\n" \
 				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
@@ -146,8 +146,8 @@ verify_binary()
 		elif [ "$t" == "xequality" ] && [ "$hash" == "$good_hash" ]
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
-			printf "\nunexpected PASS: equality test with known problem, Hash values match\n" 2>&1
-			printf "parser: %s --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 2>&1
+			printf "\nunexpected PASS: equality test with known problem, Hash values match\n" 1>&2
+			printf "parser: %s --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 1>&2
 			printf "known-good (%s) == profile-under-test (%s) for the following profile:\nknown-good         %s\nprofile-under-test %s\n\n" \
 				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
@@ -158,8 +158,8 @@ verify_binary()
 		elif [ "$t" == "inequality" ] && [ "$hash" == "$good_hash" ]
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
-			printf "\nFAIL: Hash values match\n" 2>&1
-			printf "parser: %s --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 2>&1
+			printf "\nFAIL: Hash values match\n" 1>&2
+			printf "parser: %s --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 1>&2
 			printf "known-good (%s) == profile-under-test (%s) for the following profiles:\nknown-good         %s\nprofile-under-test %s\n\n" \
 				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
@@ -167,8 +167,8 @@ verify_binary()
 		elif [ "$t" == "xinequality" ] && [ "$hash" != "$good_hash" ]
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
-			printf "\nunexpected PASS: inequality test with known problem, Hash values do not match\n" 2>&1
-			printf "parser: %s --features-file %s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 2>&1
+			printf "\nunexpected PASS: inequality test with known problem, Hash values do not match\n" 1>&2
+			printf "parser: %s --features-file %s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 1>&2
 			printf "known-good (%s) != profile-under-test (%s) for the following profile:\nknown-good         %s\nprofile-under-test %s\n\n" \
 				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
@@ -176,7 +176,7 @@ verify_binary()
 		elif [ "$t" == "xinequality" ] && [ "$hash" == "$good_hash" ]
 		then
 			printf "\nknown problem %s %s: unchanged" "$t" "$desc" 1>&2
-			printf "parser: %s --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file"  2>&1
+			printf "parser: %s --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file"  1>&2
 		fi
 	done
 
@@ -818,7 +818,7 @@ verify_binary_equality "'$p1'x'$p2' mount specific deny doesn't affect non-overl
 
 if [ $fails -ne 0 ] || [ $errors -ne 0 ]
 then
-	printf "ERRORS: %d\nFAILS: %d\n" $errors $fails 2>&1
+	printf "ERRORS: %d\nFAILS: %d\n" $errors $fails 1>&2
 	exit $((fails + errors))
 fi
 

@@ -88,6 +88,7 @@ verify_binary()
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
 			printf "\nFAIL: Hash values do not match\n" 2>&1
+			printf "parser: %s --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 2>&1
 			printf "known-good (%s) != profile-under-test (%s) for the following profiles:\nknown-good         %s\nprofile-under-test %s\n\n" \
 				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
@@ -96,6 +97,7 @@ verify_binary()
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
 			printf "\nunexpected PASS: equality test with known problem, Hash values match\n" 2>&1
+			printf "parser: %s --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 2>&1
 			printf "known-good (%s) == profile-under-test (%s) for the following profile:\nknown-good         %s\nprofile-under-test %s\n\n" \
 				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
@@ -107,6 +109,7 @@ verify_binary()
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
 			printf "\nFAIL: Hash values match\n" 2>&1
+			printf "parser: %s --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 2>&1
 			printf "known-good (%s) == profile-under-test (%s) for the following profiles:\nknown-good         %s\nprofile-under-test %s\n\n" \
 				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
@@ -115,13 +118,15 @@ verify_binary()
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
 			printf "\nunexpected PASS: inequality test with known problem, Hash values do not match\n" 2>&1
+			printf "parser: %s --features-file %s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 2>&1
 			printf "known-good (%s) != profile-under-test (%s) for the following profile:\nknown-good         %s\nprofile-under-test %s\n\n" \
 				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
 			((ret++))
 		elif [ "$t" == "xinequality" ] && [ "$hash" == "$good_hash" ]
 		then
-		    printf "\nknown problem %s %s: unchanged" "$t" "$desc" 1>&2
+			printf "\nknown problem %s %s: unchanged" "$t" "$desc" 1>&2
+			printf "parser: %s --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file"  2>&1
 		fi
 	done
 

@@ -57,6 +57,30 @@ priority_eq()
 	return 1
 }
 
+priority_lt()
+{
+	local p1=$(map_priority "$1")
+	local p2=$(map_priority "$2")
+
+	if [ $p1 -lt $p2 ] ; then
+		return 0
+	fi
+
+	return 1
+}
+
+priority_gt()
+{
+	local p1=$(map_priority "$1")
+	local p2=$(map_priority "$2")
+
+	if [ $p1 -gt $p2 ] ; then
+		return 0
+	fi
+
+	return 1
+}
+
 hash_binary_policy()
 {
 	printf %s "$1" | ${APPARMOR_PARSER} --features-file "${_SCRIPTDIR}/features_files/$features_file" -qS 2>/dev/null| md5sum | cut -d ' ' -f 1
@@ -578,7 +602,7 @@ do
 	             "pix -> b" "Pix -> b" "cux -> b" "Cux -> b" \
 	             "cix -> b" "Cix -> b"
 	do
-		if [ "$perm1" == "$perm2" ] ; then
+		if [ "$perm1" == "$perm2" ] || priority_gt "$p1" "" ; then
 			verify_binary_equality "'$p1'x'$p2' Exec perm \"${perm1}\" - most specific match: same as glob" \
 				"/t { $p1 /* ${perm1}, /f ${perm2}, }" \
 				"/t { $p2 /* ${perm1}, }"

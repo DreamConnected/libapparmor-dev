@@ -197,6 +197,30 @@ usage and how to update and add tests. Below is a quick overview of their
 location and how to run them.
 
 
+Using spread with local virtual machines
+----------------------------------------
+
+It may be convenient to use the spread tool to provision and run the test suite
+in an ephemeral virtual machine. This allows testing in isolation from the
+host, as well as testing across different commonly used distributions and their
+real kernels.
+
+```sh
+sudo apt install git golang whois ovmf genisoimage qemu-utils qemu-system
+go install github.com/snapcore/spread/cmd/spread@latest
+git clone https://gitlab.com/zygoon/image-garden
+make -C image-garden
+sudo make -C image-garden install
+image-garden make ubuntu-cloud-24.10.x86_64.run
+cd $APPARMOR_PATH
+git clean -xdf
+~/go/bin/spread -artifacts ./spread-artifacts -v ubuntu-cloud-24.10
+# or ~/go/bin/spread -v garden:ubuntu-cloud-24.04:tests/regression/apparmor:at_secure
+```
+
+Running the `run_spread.sh` script, with `spread` on `PATH` will run all the
+tests across several supported systems (Debian, Ubuntu and openSUSE).
+
 Regression tests
 ----------------
 For details on structure and adding tests, see

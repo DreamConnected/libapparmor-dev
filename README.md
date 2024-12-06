@@ -221,6 +221,9 @@ git clean -xdf
 Running the `run_spread.sh` script, with `spread` on `PATH` will run all the
 tests across several supported systems (Debian, Ubuntu and openSUSE).
 
+If you include a `bzImage` file in the root of the repository then that kernel
+will be used in the integration test. Please look at `spread.yaml` for details.
+
 Regression tests
 ----------------
 For details on structure and adding tests, see

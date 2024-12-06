@@ -4,12 +4,40 @@ backends:
         # The garden backend relies on https://gitlab.com/zygoon/image-garden
         # TODO: Switch to a released version for better stability.
         type: adhoc
-        # Use just enough RAM to link the parser on a virtual system with two
-        # cores. Using more cores may easily consume more memory, due to make
-        # -j$(nproc, used below than a small CI/CD system is typically granted.
-        # It is better to have more workers than to have one big worker with
-        # lots of resources.
-        allocate: ADDRESS "$(QEMU_MEM_OPTION="-m 1536" QEMU_SMP_OPTION="-smp 2" image-garden allocate "$SPREAD_SYSTEM".$(uname -m))"
+        allocate: |
+            # Use just enough RAM to link the parser on a virtual system with
+            # two cores. Using more cores may easily consume more memory, due
+            # to make -j$(nproc), used below than a small CI/CD system is
+            # typically granted.  It is better to have more workers than to
+            # have one big worker with lots of resources.
+            export QEMU_MEM_OPTION="-m 1536"
+            export QEMU_SMP_OPTION="-smp 2"
+            ARCH="$(uname -m)"
+            # If a locally built kernel image exist then use it for booting.
+            # Care needs to be taken to make sure the kernel is compatible with
+            # loadable modules present in the file system.
+            if [ -f bzImage ]; then
+                # Create the qcow2/run files before setting custom kernel
+                # options, so that first boot and initialization happen in a
+                # standardized manner.
+                image-garden make "$SPREAD_SYSTEM"."$ARCH".run "$SPREAD_SYSTEM"."$ARCH".qcow2 1>&2
+                # Pass a simple drive instead of the more elaborate virtio
+                # configuration that is used by default. Some images may not
+                # support virtio enough for booting.
+                export QEMU_STORAGE_OPTION="-drive file=$SPREAD_SYSTEM.$ARCH.qcow2,format=qcow2"
+                # Refrain from passing EFI firmware to qemu so that we boot a
+                # kernel directly and bypass both EFI and BIOS.
+                export QEMU_BOOT_FIRMWARE_OPTION=""
+                # Pass the kernel and cmdline by hand. At present this is tuned
+                # to the Ubuntu cloud images that have the rootfs as the first
+                # partition.
+                exec image-garden allocate "$SPREAD_SYSTEM"."$ARCH" \
+                  -kernel bzImage \
+                  -append 'root=/dev/sda1 ro console=tty1 console=ttyS0'
+            fi
+            # Ask image garden to allocate the system and relay the result back
+            # to spread as either success of failure.
+            exec image-garden allocate "$SPREAD_SYSTEM"."$ARCH"
         discard: image-garden discard "$SPREAD_SYSTEM_ADDRESS"
         systems:
             # All systems except for the one Ubuntu system are marked as
@@ -57,6 +85,9 @@ exclude:
     - "*.lock"
     - spread-logs
     - spread-artifacts
+    # Locally provided kernel image. See allocate section in system backends,
+    # this image, if present, is passed directly to qemu.
+    - bzImage
 
 # Copy the project to this path on the test system.
 # This is also available as $SPREAD_PATH.

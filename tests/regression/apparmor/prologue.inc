@@ -456,7 +456,7 @@ fi
 
 	while /bin/true
 	do
-		imagename=$test
+		imagename=$testbin
 
 		# image/subhat allows overriding of the default
 		# imagename which is based on the testname
@@ -631,6 +631,11 @@ settest()
 	else
 		fatalerror "settest, illegal usage"
 	fi
+
+	# store testbin name from testexec so that testexec represents
+	# what will be executed - allowing for a change of username
+	# with sudo -u
+	testbin=$testexec
 
 	if [ ! -z "$username" ]
 	then

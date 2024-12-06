@@ -80,8 +80,10 @@ runchecktest_errno EACCES "CHANGEPROFILE_RE (nochange access subfile)" fail noch
 runchecktest_errno EACCES "CHANGEPROFILE_RE (access file)" fail $fqsubtest $file
 runchecktest "CHANGEPROFILE_RE (access sub file)" pass $fqsubtest $subfile
 
-genprofile --stdin <<EOF
+genprofile image=$test --stdin <<EOF
 $test { file, change_profile -> ${nstest}, }
+EOF
+genprofile --append image=$nstest --stdin <<EOF
 $nstest { $subfile ${okperm}, }
 EOF
 expected_result=pass
@@ -103,8 +105,10 @@ else
 	runchecktest "CHANGEPROFILE_STACK (access file)" fail "&$othertest" $file
 	runchecktest "CHANGEPROFILE_STACK (access stack file)" pass "&$othertest" $stackfile
 
-	genprofile --stdin <<EOF
+	genprofile image=$test --stdin <<EOF
 $test { file, audit deny $subfile $okperm, $stackfile $okperm, change_profile -> &${nstest}, }
+EOF
+	genprofile --append image=$nstest --stdin <<EOF
 $nstest { $subfile $okperm, $stackfile $okperm, }
 EOF
 	runchecktest "CHANGEPROFILE_NS_STACK (nochange access file)" pass nochange $file

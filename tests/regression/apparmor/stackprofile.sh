@@ -115,13 +115,15 @@ ns="ns"
 prof="stackprofile"
 nstest=":${ns}:${prof}"
 # Verify file access and contexts by stacking a profile with a namespaced profile
-genprofile --stdin <<EOF
+genprofile image=$test --stdin <<EOF
 $test {
   file,
   audit deny $otherfile $okperm,
   change_profile -> &$nstest,
 }
+EOF
 
+genprofile --append image=$nstest --stdin <<EOF
 $nstest {
   $otherfile $okperm,
   $sharedfile $okperm,
@@ -167,8 +169,10 @@ runchecktest "STACKPROFILE (complain mode - file)" pass -p $othertest -f $file
 runchecktest "STACKPROFILE (complain mode - okcon)" pass -p $othertest -l "${test}//&${othertest}" -m complain
 
 # Verify that stacking with a bare namespace is handled
-genprofile --stdin <<EOF
+genprofile image=$test --stdin <<EOF
 $test { file, change_profile, }
+EOF
+genprofile --append image=$nstest --stdin <<EOF
 $nstest { }
 EOF
 runchecktest "STACKPROFILE (bare :ns:)" pass -p ":${ns}:"

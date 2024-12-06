@@ -34,7 +34,7 @@ load_and_verify() {
     # Write to cache
     parser_args="${parser_config} -q -W"
 
-    echo "profile $prof {}" | genprofile --stdin
+    echo "profile $prof {}" | genprofile image=$prof --stdin
 
     cache_md5=$(cat $cache_dir/profile | md5sum | awk '{ print $1 }')
 

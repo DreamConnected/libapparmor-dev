@@ -457,7 +457,7 @@ fi
 		# it is most often used after --, in fact it is basically
 		# mandatory after --
 		case "$1" in
-			image=*) imagename=`echo $1 | sed 's/^image=\([^:]*\).*$/\1/'`
+			image=*) imagename=`echo $1 | sed 's/^image=\(.*\)$/\1/'`
 				 num_emitted=0
 				 shift
 				 ;;

@@ -30,6 +30,13 @@ errors=0
 verbose="${VERBOSE:-}"
 default_features_file="features.all"
 features_file=$default_features_file
+retain=0
+dumpdfa=0
+testtype=""
+description="Manually run test"
+tmpdir=$(mktemp -d /tmp/eq.$$-XXXXXX)
+chmod 755 ${tmpdir}
+export tmpdir
 
 map_priority()
 {
@@ -83,8 +90,42 @@ priority_gt()
 
 hash_binary_policy()
 {
-	printf %s "$1" | ${APPARMOR_PARSER} --features-file "${_SCRIPTDIR}/features_files/$features_file" -qS 2>/dev/null| md5sum | cut -d ' ' -f 1
-	return $?
+	local hash="parser_failure"
+	local dump="/dev/null"
+	local flags="-QKSq"
+	local rc=0
+
+	if [ $dumpdfa -ne 0 ] ; then
+		flags="$flags -D rule-exprs -D dfa-states"
+		dump="${tmpdir}/$1.state"
+	fi
+
+	printf %s "$2" | ${APPARMOR_PARSER} --features-file "${_SCRIPTDIR}/features_files/$features_file" ${flags} > "$tmpdir/$1.bin" 2>"$dump"
+	rc=$?
+	if [ $rc -eq 0 ] ; then
+		hash=$(md5sum "${tmpdir}/$1.bin" | cut -d ' ' -f 1)
+		rc=$?
+	fi
+
+	printf %s $hash
+	if [ $retain -eq 0 -a $rc -ne 0 ] ; then
+		rm ${tmpdir}/*
+	else
+		mv "${tmpdir}/$1.bin" "${tmpdir}/$1.bin.$hash"
+		if [ $dumpdfa -ne 0 ] ; then
+			mv "${tmpdir}/$1.state" "$tmpdir/$1.state.$hash"
+		fi
+	fi
+
+	return $rc
+}
+
+check_retain()
+{
+	if [ ${retain} -ne 0 ] ; then
+		printf "  files retained in \"%s/\"\n" ${tmpdir} 1>&2
+		exit $ret
+	fi
 }
 
 # verify_binary - compares the binary policy of multiple profiles
@@ -114,20 +155,21 @@ verify_binary()
 		((errors++))
 		return $((ret + 1))
 	fi
+	rm -f $tmpdir/*
 
 	if [ -n "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
-	if ! good_hash=$(hash_binary_policy "$good_profile")
-	then
+	if ! good_hash=$(hash_binary_policy "known" "$good_profile") ; then
 		if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
 		printf "\nERROR: Error hashing the following \"known-good\" profile:\n%s\n\n" \
 		       "$good_profile" 1>&2
 		((errors++))
+		rm -f ${tmpdir}/*
 		return $((ret + 1))
 	fi
 
 	for profile in "$@"
 	do
-		if ! hash=$(hash_binary_policy "$profile")
+		if ! hash=$(hash_binary_policy "test" "$profile")
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
 			printf "\nERROR: Error hashing the following profile:\n%s\n\n" \
@@ -138,20 +180,22 @@ verify_binary()
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
 			printf "\nFAIL: Hash values do not match\n" 1>&2
-			printf "parser: %s --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 1>&2
+			printf "parser: %s -QKSq --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 1>&2
 			printf "known-good (%s) != profile-under-test (%s) for the following profiles:\nknown-good         %s\nprofile-under-test %s\n\n" \
 				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
 			((ret++))
+			check_retain
 		elif [ "$t" == "xequality" ] && [ "$hash" == "$good_hash" ]
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
 			printf "\nunexpected PASS: equality test with known problem, Hash values match\n" 1>&2
-			printf "parser: %s --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 1>&2
+			printf "parser: %s -QKSq --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 1>&2
 			printf "known-good (%s) == profile-under-test (%s) for the following profile:\nknown-good         %s\nprofile-under-test %s\n\n" \
 				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
 			((ret++))
+			check_retain
 		elif [ "$t" == "xequality" ] && [ "$hash" != "$good_hash" ]
 		then
 		    printf "\nknown problem %s %s: unchanged" "$t" "$desc" 1>&2
@@ -159,25 +203,28 @@ verify_binary()
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
 			printf "\nFAIL: Hash values match\n" 1>&2
-			printf "parser: %s --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 1>&2
+			printf "parser: %s -QKSq --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 1>&2
 			printf "known-good (%s) == profile-under-test (%s) for the following profiles:\nknown-good         %s\nprofile-under-test %s\n\n" \
 				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
 			((ret++))
+			check_retain
 		elif [ "$t" == "xinequality" ] && [ "$hash" != "$good_hash" ]
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
 			printf "\nunexpected PASS: inequality test with known problem, Hash values do not match\n" 1>&2
-			printf "parser: %s --features-file %s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 1>&2
+			printf "parser: %s -QKSq --features-file %s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 1>&2
 			printf "known-good (%s) != profile-under-test (%s) for the following profile:\nknown-good         %s\nprofile-under-test %s\n\n" \
 				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
 			((ret++))
+			check_retain
 		elif [ "$t" == "xinequality" ] && [ "$hash" == "$good_hash" ]
 		then
 			printf "\nknown problem %s %s: unchanged" "$t" "$desc" 1>&2
-			printf "parser: %s --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file"  1>&2
+			printf "parser: %s -QKSq --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file"  1>&2
 		fi
+		rm -f ${tmpdir}/test*
 	done
 
 	if [ $ret -eq 0 ]
@@ -254,7 +301,7 @@ verify_set()
 {
     local p1="$1"
     local p2="$2"
-    echo -e "\n   equality $e of '$p1' vs '$p2'\n"
+    [ -n "${verbose}" ] && echo -e "\n   equality $e of '$p1' vs '$p2'\n"
 
 verify_binary_equality "'$p1'x'$p2' dbus send" \
 	"/t { $p1 dbus send, }" \
@@ -1017,4 +1064,116 @@ run_tests()
 	exit 0
 }
 
-run_tests "$@"
+
+usage()
+{
+	local progname="$0"
+	local rc="$1"
+	local msg="usage: ${progname} [Options]
+
+Run the equality tests if no options given, otherwise run as directed
+by the options.
+
+Options:
+  -h, --help	display this help
+  -e base args	run an equality test on the following args
+  -n base args	run an inequality test on the following args
+  -xequality	run a known proble equality test
+  -xinequality	run a known proble inequality test
+  -r		on failure retain failed test output and abort
+  -d		include dfa dumps with failed test output
+  -f arg	features file to use
+  -p arg	parser to invoke
+  --description	description to print with test
+  -v		verbose
+examples:
+$ equality.sh
+...
+$ equality.sh -r
+....
+inary equality 'priority=1'x'' Exec perm \"ux\" - most specific match: same as glob
+FAIL: Hash values do not match
+parser: ../apparmor_parser --config-file=./parser.conf --features-file=./features_files/features.all
+known-good (0344cd377ccb239aba4cce768b818010961d68091d8c7fae72c755cfcb48d4a2) != profile-under-test (33fdf4575322a036c2acb75f93a7154179036f1189ef68ab9f1ae98e7f865780) for the following profiles:
+known-good         /t { priority=1 /* ux, /f px -> b, }
+profile-under-test /t {  /* ux, }
+
+$ equality.sh -e \"/t { priority=1 /* Px -> b, /f Px, }\" \"/t {  /* Px, }\"
+$ equality.sh -e \"/t { priority=1 /* Px -> b, /f Px, }\" \"/t {  /* Px, }\""
+
+	echo "$msg"
+}
+
+
+POSITIONAL_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+	-h|--help)
+	  usage
+	  exit 0
+	  ;;
+	-e|--equality)
+	    testtype="equality"
+	    shift # past argument
+	    ;;
+	--xequality)
+	    testtype="xequality"
+	    shift # past argument
+	    ;;
+	-n|--inequality)
+	    testtype="inequality"
+	    shift # past argument
+	    ;;
+	--xinequality)
+	    testtype="xinequality"
+	    shift # past argument
+	    ;;
+	-d|--dfa)
+	    dumpdfa=1
+	    shift # past argument
+	    ;;
+	-r|--retain)
+	    retain=1
+	    shift # past argument
+	    ;;
+	-v|--verbose)
+	    verbos=1
+	    shift # past argument
+	    ;;
+	-f|--feature-file)
+	    features_file="$2"
+	    shift # past argument
+	    shift # past option
+	    ;;
+	--description)
+	    description="$2"
+	    shift # past argument
+	    shift # past option
+	    ;;
+	-p|--parser)
+	    APPARMOR_PARSER="$2"
+	    shift # past argument
+	    shift # past option
+	    ;;
+	-*|--*)
+	    echo "Unknown option $1"
+	    exit 1
+	    ;;
+	*)
+	    POSITIONAL_ARGS+=("$1") # save positional arg
+	    shift # past argument
+	    ;;
+    esac
+done
+
+set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
+
+if [ $# -eq 0 -o -z $testtype] ; then
+	run_tests "$@"
+	exit $?
+fi
+
+for profile in "$@" ; do
+	verify_binary "$testtype" "$description" "$known" "$profile"
+done

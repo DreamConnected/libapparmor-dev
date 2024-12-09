@@ -38,6 +38,7 @@ profile postfix-showq /usr/lib/postfix/{bin/,sbin/,}showq {
   /{var/spool/postfix/,}hold/[0-9A-F]/[0-9A-F]/*                   r,
   /{var/spool/postfix/,}hold/[0-9A-F]/[0-9A-F]/                    r,
   /{var/spool/postfix/,}hold/[0-9A-F]/                             r,
+  /{var/spool/postfix/,}hold/[0-9A-F]*                             r,
   /{var/spool/postfix/,}incoming/                                  r,
   /{var/spool/postfix/,}incoming/[0-9A-F]/[0-9A-F]/*               r,
   /{var/spool/postfix/,}incoming/[0-9A-F]/[0-9A-F]/                r,

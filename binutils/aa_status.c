@@ -488,7 +488,7 @@ static int filter_processes(struct process *processes,
  *
  * Return: 0 on success, else shell error code
  */
-static int simple_filtered_count(FILE *outf, filters_t *filters,
+static int simple_filtered_count(FILE *outf, filters_t *filters, bool json,
 				 struct profile *profiles, size_t nprofiles)
 {
 	struct profile *filtered = NULL;
@@ -497,7 +497,13 @@ static int simple_filtered_count(FILE *outf, filters_t *filters,
 
 	ret = filter_profiles(profiles, nprofiles, filters,
 			      &filtered, &nfiltered);
-	fprintf(outf, "%zd\n", nfiltered);
+
+	if (!json) {
+		fprintf(outf, "%zd\n", nfiltered);
+	} else {
+		fprintf(outf, "\"profile_count\": %zd", nfiltered);
+	}
+
 	free_profiles(filtered, nfiltered);
 
 	return ret;
@@ -512,7 +518,7 @@ static int simple_filtered_count(FILE *outf, filters_t *filters,
  *
  * Return: 0 on success, else shell error code
  */
-static int simple_filtered_process_count(FILE *outf, filters_t *filters,
+static int simple_filtered_process_count(FILE *outf, filters_t *filters, bool json,
 					 struct process *processes, size_t nprocesses) {
 	struct process *filtered = NULL;
 	size_t nfiltered;
@@ -520,7 +526,12 @@ static int simple_filtered_process_count(FILE *outf, filters_t *filters,
 
 	ret = filter_processes(processes, nprocesses, filters, &filtered,
 			       &nfiltered);
-	fprintf(outf, "%zd\n", nfiltered);
+	if (!json) {
+		fprintf(outf, "%zd\n", nfiltered);
+	} else {
+		fprintf(outf, "\"process_count\": %zd", nfiltered);
+	}
+	
 	free_processes(filtered, nfiltered);
 
 	return ret;
@@ -1036,7 +1047,7 @@ int main(int argc, char **argv)
 		if (opt_json)
 			json_seperator(outf);
 		if (opt_count) {
-			ret = simple_filtered_count(outf, &filters,
+			ret = simple_filtered_count(outf, &filters, opt_json,
 						    profiles, nprofiles);
 		} else {
 			ret = detailed_profiles(outf, &filters, opt_json,
@@ -1057,7 +1068,7 @@ int main(int argc, char **argv)
 		if (ret != 0) {
 			eprintf("Failed to get processes: %d....\n", ret);
 		} else if (opt_count) {
-			ret = simple_filtered_process_count(outf, &filters,
+			ret = simple_filtered_process_count(outf, &filters, opt_json,
 							processes, nprocesses);
 		} else {
 			ret = detailed_processes(outf, &filters, opt_json,

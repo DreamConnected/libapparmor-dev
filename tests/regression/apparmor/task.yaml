@@ -27,6 +27,7 @@ environment:
     TEST/exec_stack: 1
     TEST/fchdir: 1
     TEST/fd_inheritance: 1
+    TEST/file_unbindable_mount: 1
     TEST/fork: 1
     TEST/i18n: 1
     TEST/introspect: 1

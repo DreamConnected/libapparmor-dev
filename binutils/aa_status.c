@@ -539,7 +539,12 @@ static int compare_processes_by_executable(const void *a, const void *b) {
 
 static void json_header(FILE *outf)
 {
-	fprintf(outf, "{\"version\": \"%s\", ", aa_status_json_version);
+	fprintf(outf, "{\"version\": \"%s\"", aa_status_json_version);
+}
+
+static void json_seperator(FILE *outf)
+{
+	fprintf(outf, ", ");
 }
 
 static void json_footer(FILE *outf)
@@ -607,7 +612,7 @@ static int detailed_profiles(FILE *outf, filters_t *filters, bool json,
 		free_profiles(filtered, nfiltered);
 	}
 	if (json)
-		fprintf(outf, "}, ");
+		fprintf(outf, "}");
 
 	return AA_EXIT_ENABLED;
 }
@@ -700,7 +705,7 @@ static int detailed_processes(FILE *outf, filters_t *filters, bool json,
 			fprintf(outf, "]");
 		}
 
-		fprintf(outf, "}\n");
+		fprintf(outf, "}");
 	}
 
 exit:
@@ -1028,6 +1033,8 @@ int main(int argc, char **argv)
 	if (opt_json)
 		json_header(outf);
 	if (opt_show & SHOW_PROFILES) {
+		if (opt_json)
+			json_seperator(outf);
 		if (opt_count) {
 			ret = simple_filtered_count(outf, &filters,
 						    profiles, nprofiles);
@@ -1040,6 +1047,9 @@ int main(int argc, char **argv)
 	}
 
 	if (opt_show & SHOW_PROCESSES) {
+		if (opt_json)
+			json_seperator(outf);
+
 		struct process *processes = NULL;
 		size_t nprocesses = 0;
 

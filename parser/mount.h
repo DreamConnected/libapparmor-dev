@@ -35,7 +35,7 @@
 #define MS_DEV		0
 #define MS_NOEXEC	(1 << 3)
 #define MS_EXEC		0
-#define MS_SYNC		(1 << 4)
+#define MS_SYNCHRONOUS		(1 << 4)
 #define MS_ASYNC	0
 #define MS_REMOUNT	(1 << 5)
 #define MS_MAND		(1 << 6)
@@ -78,7 +78,7 @@
 #define MS_RSHARED	(MS_SHARED | MS_REC)
 
 #define MS_ALL_FLAGS	(MS_RDONLY | MS_NOSUID | MS_NODEV | MS_NOEXEC | \
-			 MS_SYNC | MS_REMOUNT | MS_MAND | MS_DIRSYNC | \
+			 MS_SYNCHRONOUS | MS_REMOUNT | MS_MAND | MS_DIRSYNC | \
 			 MS_NOSYMFOLLOW | \
 			 MS_NOATIME | MS_NODIRATIME | MS_BIND | MS_RBIND | \
 			 MS_MOVE | MS_VERBOSE | MS_ACL | \

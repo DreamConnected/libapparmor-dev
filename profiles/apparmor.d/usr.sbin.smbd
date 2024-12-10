@@ -14,6 +14,7 @@ profile smbd /usr/{bin,sbin}/smbd {
   include <abstractions/wutmp>
 
   capability audit_write,
+  capability chown,
   capability dac_override,
   capability dac_read_search,
   capability fowner,

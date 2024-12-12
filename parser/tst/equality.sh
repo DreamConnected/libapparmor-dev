@@ -649,14 +649,24 @@ do
 	             "pix -> b" "Pix -> b" "cux -> b" "Cux -> b" \
 	             "cix -> b" "Cix -> b"
 	do
+
+		# Fixme: have to do special handling for -> b, as this
+		# creates an entry in the transition table. However
+		# priority rules can make it so the reference to the
+		# transition table is removed, but the parser still keeps
+		# the tranition. This can lead to a situation where the
+		# test dfa with a "-> b" transition is functionally equivalent
+		# but will fail equality comparison.
+		# fix this by adding a pivot_root -> b, rule which add
+		# add an xtable entry that is deduped with the xrule
 		if [ "$perm1" == "$perm2" ] || priority_gt "$p1" "" ; then
 			verify_binary_equality "'$p1'x'$p2' Exec perm \"${perm1}\" - most specific match: same as glob" \
-				"/t { $p1 /* ${perm1}, /f ${perm2}, }" \
-				"/t { $p2 /* ${perm1}, }"
+				"/t { $p1 /* ${perm1}, /f ${perm2}, pivot_root -> b, }" \
+				"/t { $p2 /* ${perm1}, pivot_root -> b, }"
 		else
 			verify_binary_inequality "'$p1'x'$p2' Exec \"${perm1}\" vs \"${perm2}\" - most specific match: different from glob" \
-				"/t { $p1 /* ${perm1}, /f ${perm2}, }" \
-				"/t { $p2 /* ${perm1}, }"
+				"/t { $p1 /* ${perm1}, /f ${perm2}, pivot_root -> b, }" \
+				"/t { $p2 /* ${perm1}, pivot_root -> b, }"
 		fi
 	done
 	verify_binary_inequality "'$p1'x'$p2' Exec \"${perm1}\" vs deny x - most specific match: different from glob" \

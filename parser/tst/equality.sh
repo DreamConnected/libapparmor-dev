@@ -649,7 +649,6 @@ do
 	             "pix -> b" "Pix -> b" "cux -> b" "Cux -> b" \
 	             "cix -> b" "Cix -> b"
 	do
-
 		# Fixme: have to do special handling for -> b, as this
 		# creates an entry in the transition table. However
 		# priority rules can make it so the reference to the
@@ -657,16 +656,19 @@ do
 		# the tranition. This can lead to a situation where the
 		# test dfa with a "-> b" transition is functionally equivalent
 		# but will fail equality comparison.
-		# fix this by adding a pivot_root -> b, rule which add
-		# add an xtable entry that is deduped with the xrule
+		# fix this by adding two none overlapping x rules to add
+		# xtable entries
+		# /c -> /t//b, for cx rules being converted to px -> /t//b
+		# /a -> b, for px rules
+		# the rules must come last guarantee xtable order
 		if [ "$perm1" == "$perm2" ] || priority_gt "$p1" "" ; then
 			verify_binary_equality "'$p1'x'$p2' Exec perm \"${perm1}\" - most specific match: same as glob" \
-				"/t { $p1 /* ${perm1}, /f ${perm2}, pivot_root -> b, }" \
-				"/t { $p2 /* ${perm1}, pivot_root -> b, }"
+				"/t { $p1 /f* ${perm1}, /f ${perm2}, /a px -> b, /c px -> /t//b, }" \
+				"/t { $p2 /f* ${perm1}, /a px -> b, /c px -> /t//b, }"
 		else
 			verify_binary_inequality "'$p1'x'$p2' Exec \"${perm1}\" vs \"${perm2}\" - most specific match: different from glob" \
-				"/t { $p1 /* ${perm1}, /f ${perm2}, pivot_root -> b, }" \
-				"/t { $p2 /* ${perm1}, pivot_root -> b, }"
+				"/t { $p1 /f* ${perm1}, /f ${perm2}, /a px -> b, /c px -> /t//b, }" \
+				"/t { $p2 /f* ${perm1}, /a px -> b, /c px -> /t//b, }"
 		fi
 	done
 	verify_binary_inequality "'$p1'x'$p2' Exec \"${perm1}\" vs deny x - most specific match: different from glob" \

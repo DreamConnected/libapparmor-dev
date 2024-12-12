@@ -51,15 +51,61 @@ mkdir ${overlayfs_workdir}
 
 mount -t overlay -o lowerdir=${overlayfs_lower},upperdir=${overlayfs_upper},workdir=${overlayfs_workdir} none ${mount_target}|| fatalerror 'Unable to set up overlayfs'
 
-fallocate -l 16K ${overlayfs_lower}/a_file
+fallocate -l 16K ${overlayfs_lower}/lower_file
+touch ${overlayfs_lower}/lower_file_2
+fallocate -l 16K ${overlayfs_upper}/upper_file
+touch ${overlayfs_upper}/upper_file_2
+fallocate -l 16K ${mount_target}/overlay_file
 # echo is also a builtin, making things a bit more complicated
-cp $(type -P echo) ${overlayfs_upper}/echo
+cp $(type -P echo) ${overlayfs_lower}/lower_echo
+cp $(type -P echo) ${overlayfs_upper}/upper_echo
 
 settest overlayfs "${bin}/complain"
 
-genprofile ${mount_target}/a_file:r ${mount_target}/echo:ix
-runchecktest "Read file in overlayfs mount" pass read ${mount_target}/a_file
-runchecktest "Exec in overlayfs mount" pass exec ${mount_target}/echo PASS
+genprofile ${mount_target}/lower_file:r ${mount_target}/upper_file:r ${mount_target}/overlay_file:r
+runchecktest "Read file in overlayfs mount (lower)" pass read ${mount_target}/lower_file
+runchecktest "Stat file in overlayfs mount (lower)" pass stat ${mount_target}/lower_file
+runchecktest "Xattr file in overlayfs mount (lower)" pass xattr ${mount_target}/lower_file
+runchecktest "Read file in overlayfs mount (upper)" pass read ${mount_target}/upper_file
+runchecktest "Stat file in overlayfs mount (upper)" pass stat ${mount_target}/upper_file
+runchecktest "Xattr file in overlayfs mount (upper)" pass xattr ${mount_target}/upper_file
+runchecktest "Read file in overlayfs mount (overlay)" pass read ${mount_target}/overlay_file
+runchecktest "Stat file in overlayfs mount (overlay)" pass stat ${mount_target}/overlay_file
+runchecktest "Xattr file in overlayfs mount (overlay)" pass xattr ${mount_target}/overlay_file
+
+genprofile ${mount_target}/lower_file:w ${mount_target}/upper_file:w ${mount_target}/overlay_file:w ${mount_target}/overlay_file_new:w
+runchecktest "Write file in overlayfs mount (lower)" pass write ${mount_target}/lower_file
+runchecktest "Write file in overlayfs mount (upper)" pass write ${mount_target}/upper_file
+runchecktest "Write file in overlayfs mount (creat)" pass write ${mount_target}/overlay_file_new
+
+genprofile ${mount_target}/old_overlay_file:w ${mount_target}/new_overlay_file:w
+touch ${mount_target}/old_overlay_file
+runchecktest "Rename file in overlayfs mount (overlay)" pass rename ${mount_target}/old_overlay_file ${mount_target}/new_overlay_file
+rm -f ${mount_target}/old_overlay_file ${mount_target}/new_overlay_file
+
+genprofile ${mount_target}/lower_file:w ${mount_target}/lower_mv_file:w
+runchecktest "Rename file in overlayfs mount (lower)" pass rename ${mount_target}/lower_file ${mount_target}/lower_mv_file
+genprofile ${mount_target}/upper_file:w ${mount_target}/upper_mv_file:w
+runchecktest "Rename file in overlayfs mount (upper)" pass rename ${mount_target}/upper_file ${mount_target}/upper_mv_file
+
+genprofile ${mount_target}/lower_file_2:w
+runchecktest "Remove file in overlayfs mount (lower)" pass unlink ${mount_target}/lower_file_2
+rm -f ${mount_target}/lower_file_2
+
+genprofile ${mount_target}/upper_file_2:w
+runchecktest "Remove file in overlayfs mount (upper)" pass unlink ${mount_target}/upper_file_2
+rm -f ${mount_target}/upper_file_2
+
+touch ${mount_target}/overlay_file_new # in case the write (creat) test failed
+genprofile ${mount_target}/overlay_file_new:w
+runchecktest "Remove file in overlayfs mount (overlay)" pass unlink ${mount_target}/overlay_file_new
+rm -f ${mount_target}/overlay_file_new
+
+cp --preserve=all ${mount_target}/upper_echo ${mount_target}/overlay_echo
+genprofile "${mount_target}/*_echo:ix"
+runchecktest "Exec in overlayfs mount (lower)" pass exec ${mount_target}/lower_echo PASS
+runchecktest "Exec in overlayfs mount (upper)" pass exec ${mount_target}/upper_echo PASS
+runchecktest "Exec in overlayfs mount (overlay)" pass exec ${mount_target}/overlay_echo PASS
 
 umount ${mount_target} && rmdir ${mount_target}
 umount ${loop_device_lower} && rm -r ${overlayfs_lower}

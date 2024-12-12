@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
             return 1;
         }
     } else if (strcmp(argv[1], "unlink") == 0) {
-        if (unlink(argv[1]) == -1) {
+        if (unlink(argv[2]) == -1) {
             perror("FAIL: Could not perform file removal");
             return 1;
         }

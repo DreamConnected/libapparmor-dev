@@ -31,8 +31,8 @@ swap_file=$tmpdir/swapfile
 
 # check if we can run the test in tmpdir
 fstype=$(stat -f --format '%T' "${tmpdir}")
-if [ "${fstype}" = "tmpfs" ] ; then
-	# create a mountpoint not tmpfs
+if [ "${fstype}" = "tmpfs" ] || [ "${fstype}" = "zfs" ] ; then
+	# create a mountpoint not tmpfs or zfs
 	mount_file=$tmpdir/mountfile
 	mount_point=$tmpdir/mountpoint
 	fstype="ext2"

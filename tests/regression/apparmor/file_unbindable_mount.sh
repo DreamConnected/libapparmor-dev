@@ -11,8 +11,8 @@
 # Verifies that file rules work across unbindable mounts
 #=END
 
-pwd=`dirname $0`
-pwd=`cd $pwd ; /bin/pwd`
+pwd=$(dirname "$0")
+pwd=$(cd "$pwd" || exit ; /bin/pwd)
 
 bin=$pwd
 
@@ -21,25 +21,25 @@ bin=$pwd
 backing_file="$tmpdir/loop_file"
 mount_target="$tmpdir/mount_target"
 
-mkdir ${mount_target}
-fallocate -l 512K ${backing_file}
-mkfs.fat -F 32 ${backing_file} > /dev/null 2> /dev/null
+mkdir "${mount_target}"
+fallocate -l 512K "${backing_file}"
+mkfs.fat -F 32 "${backing_file}" > /dev/null 2> /dev/null
 
-losetup -f ${backing_file} || fatalerror 'Unable to set up a loop device'
-loop_device="$(/sbin/losetup -n -O NAME -l -j ${backing_file})"
+losetup -f "${backing_file}" || fatalerror 'Unable to set up a loop device'
+loop_device="$(/sbin/losetup -n -O NAME -l -j "${backing_file}")"
 
-mount --make-unbindable ${loop_device} ${mount_target}
-fallocate -l 16K ${mount_target}/a_file
+mount --make-unbindable "${loop_device}" "${mount_target}"
+fallocate -l 16K "${mount_target}/a_file"
 # echo is also a builtin, making things a bit more complicated
-cp $(type -P echo) ${mount_target}/echo
+cp "$(type -P echo)" "${mount_target}/echo"
 
 settest file_unbindable_mount "${bin}/complain"
 
-genprofile ${mount_target}/a_file:r ${mount_target}/echo:ix
-runchecktest "Read file in unbindable mount" pass read ${mount_target}/a_file
-runchecktest "Exec in unbindable mount" pass exec ${mount_target}/echo PASS
+genprofile "${mount_target}/a_file:r" "${mount_target}/echo:ix"
+runchecktest "Read file in unbindable mount" pass read "${mount_target}/a_file"
+runchecktest "Exec in unbindable mount" pass exec "${mount_target}/echo" PASS
 
-umount ${loop_device}
+umount "${loop_device}"
 
-losetup -d ${loop_device}
-rm ${backing_file}
+losetup -d "${loop_device}"
+rm "${backing_file}"

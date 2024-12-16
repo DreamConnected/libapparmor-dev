@@ -33,7 +33,7 @@ swap_file=$tmpdir/swapfile
 fstype=$(stat -f --format '%T' "${tmpdir}")
 if [ "${fstype}" = "tmpfs" ] || [ "${fstype}" = "zfs" ] \
 		|| [ "${fstype}" = "btrfs" ]; then
-	# create a mountpoint not tmpfs or zfs
+	# create a mountpoint not tmpfs, zfs, or btrfs
 	mount_file=$tmpdir/mountfile
 	mount_point=$tmpdir/mountpoint
 	fstype="ext2"

@@ -313,10 +313,16 @@ static struct mnt_keyword_table mnt_conds_table[] = {
 static ostream &dump_flags(ostream &os,
 			    pair <unsigned int, unsigned int> flags)
 {
+	bool is_first = true;
 	for (int i = 0; mnt_opts_table[i].keyword; i++) {
 		if ((flags.first & mnt_opts_table[i].set) ||
-		    (flags.second & mnt_opts_table[i].clear))
+		    (flags.second & mnt_opts_table[i].clear)) {
+			if (!is_first) {
+				os << ", ";
+			}
+			is_first = false;
 			os << mnt_opts_table[i].keyword;
+		}
 	}
 	return os;
 }

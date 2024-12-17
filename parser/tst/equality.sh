@@ -686,20 +686,49 @@ do
 done
 
 #Test deny carves out permission
-verify_binary_inequality "'$p1'x'$p2' Deny removes r perm" \
+if priority_gt "$p1" "" ; then
+	verify_binary_equality "'$p1'x'$p2' Deny removes r perm" \
 		       "/t { $p1 /foo/[abc] r, audit deny /foo/b r, }" \
 		       "/t { $p2 /foo/[abc] r, }"
 
-verify_binary_equality "'$p1'x'$p2' Deny removes r perm" \
+	verify_binary_inequality "'$p1'x'$p2' Deny removes r perm" \
 		       "/t { $p1 /foo/[abc] r, audit deny /foo/b r, }" \
 		       "/t { $p2 /foo/[ac] r, }"
 
 #this one may not be true in the future depending on if the compiled profile
 #is explicitly including deny permissions for dynamic composition
-verify_binary_equality "'$p1'x'$p2' Deny of ungranted perm" \
+	verify_binary_equality "'$p1'x'$p2' Deny of ungranted perm" \
 		       "/t { $p1 /foo/[abc] r, audit deny /foo/b w, }" \
 		       "/t { $p2 /foo/[abc] r, }"
+elif priority_eq "$p1" "" ; then
+	verify_binary_inequality "'$p1'x'$p2' Deny removes r perm" \
+		       "/t { $p1 /foo/[abc] r, audit deny /foo/b r, }" \
+		       "/t { $p2 /foo/[abc] r, }"
 
+	verify_binary_equality "'$p1'x'$p2' Deny removes r perm" \
+		       "/t { $p1 /foo/[abc] r, audit deny /foo/b r, }" \
+		       "/t { $p2 /foo/[ac] r, }"
+
+#this one may not be true in the future depending on if the compiled profile
+#is explicitly including deny permissions for dynamic composition
+	verify_binary_equality "'$p1'x'$p2' Deny of ungranted perm" \
+		       "/t { $p1 /foo/[abc] r, audit deny /foo/b w, }" \
+		       "/t { $p2 /foo/[abc] r, }"
+else
+	verify_binary_inequality "'$p1'x'$p2' Deny removes r perm" \
+		       "/t { $p1 /foo/[abc] r, audit deny /foo/b r, }" \
+		       "/t { $p2 /foo/[abc] r, }"
+
+	verify_binary_equality "'$p1'x'$p2' Deny removes r perm" \
+		       "/t { $p1 /foo/[abc] r, audit deny /foo/b r, }" \
+		       "/t { $p2 /foo/[ac] r, }"
+
+#this one may not be true in the future depending on if the compiled profile
+#is explicitly including deny permissions for dynamic composition
+	verify_binary_inequality "'$p1'x'$p2' Deny of ungranted perm" \
+		       "/t { $p1 /foo/[abc] r, audit deny /foo/b w, }" \
+		       "/t { $p2 /foo/[abc] r, }"
+fi
 
 verify_binary_equality "'$p1'x'$p2' change_profile == change_profile -> **" \
 		       "/t { $p1 change_profile, }" \

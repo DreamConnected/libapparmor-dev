@@ -671,9 +671,17 @@ do
 				"/t { $p2 /f* ${perm1}, /a px -> b, /c px -> /t//b, }"
 		fi
 	done
-	verify_binary_inequality "'$p1'x'$p2' Exec \"${perm1}\" vs deny x - most specific match: different from glob" \
-		"/t { $p1 /* ${perm1}, audit deny /f x, }" \
-		"/t { $p2 /* ${perm1}, }"
+	if priority_gt "$p1" "" ; then
+		# priority stops permission carve out
+		verify_binary_equality "'$p1'x'$p2' Exec \"${perm1}\" vs deny x - most specific match: different from glob" \
+			"/t { $p1 /* ${perm1}, audit deny /f x, }" \
+			"/t { $p2 /* ${perm1}, }"
+	else
+		# deny rule carves out some of the match
+		verify_binary_inequality "'$p1'x'$p2' Exec \"${perm1}\" vs deny x - most specific match: different from glob" \
+			"/t { $p1 /* ${perm1}, audit deny /f x, }" \
+			"/t { $p2 /* ${perm1}, }"
+	fi
 
 done
 

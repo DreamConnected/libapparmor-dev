@@ -108,7 +108,13 @@
 #define MS_MOVE_FLAGS (MS_MOVE)
 
 #define MS_CMDS (MS_MOVE | MS_REMOUNT | MS_BIND | MS_RBIND | MS_MAKE_CMDS)
-#define MS_REMOUNT_FLAGS (MS_ALL_FLAGS & ~(MS_CMDS & ~MS_REMOUNT & ~MS_BIND & ~MS_RBIND))
+/*
+ * This allows MS_MAKE_CMDS, by design: while remount and make-* shouldn't be
+ * used together, real-world applications do use them together, and the Linux
+ * kernel ignores the make-* flags when doing a remount instead of returning
+ * EINVAL. See https://bugs.launchpad.net/apparmor/+bug/2091424 for an example.
+ */
+#define MS_REMOUNT_FLAGS (MS_ALL_FLAGS & ~MS_MOVE_FLAGS)
 #define MS_NEW_FLAGS (MS_ALL_FLAGS & ~MS_CMDS)
 
 #define MNT_SRC_OPT 1

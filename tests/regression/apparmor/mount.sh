@@ -573,6 +573,15 @@ else
 	runchecktest "MOUNT (confined cap bind mount with deny mount that doesn't overlap)" pass mount ${mount_point2} ${mount_point} -o bind
 	remove_mnt
 
+	# MR:https://gitlab.com/apparmor/apparmor/-/merge_requests/1466
+	# https://bugs.launchpad.net/apparmor/+bug/2091424
+	# Specify mount propgatation with remount, a conflict that we still allow
+	# The kernel ignored the conflict and us disallowing it broke userspace
+	genprofile cap:sys_admin "mount:ALL"
+	runchecktest "MOUNT (confined cap bind mount rprivate conflict)" pass mount ${mount_point2} ${mount_point} -o bind,rprivate,noexec
+	runchecktest "MOUNT (confined cap bind mount remount rprivate conflict)" pass mount ${mount_point2} ${mount_point} -o remount,bind,rprivate,noexec
+	remove_mnt
+
 	test_options
 
         # test new mount interface

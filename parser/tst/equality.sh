@@ -103,7 +103,7 @@ hash_binary_policy()
 	printf %s "$2" | ${APPARMOR_PARSER} --features-file "${_SCRIPTDIR}/features_files/$features_file" ${flags} > "$tmpdir/$1.bin" 2>"$dump"
 	rc=$?
 	if [ $rc -eq 0 ] ; then
-		hash=$(md5sum "${tmpdir}/$1.bin" | cut -d ' ' -f 1)
+		hash=$(sha256sum "${tmpdir}/$1.bin" | cut -d ' ' -f 1)
 		rc=$?
 	fi
 

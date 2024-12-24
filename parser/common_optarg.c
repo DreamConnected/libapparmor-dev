@@ -49,6 +49,7 @@ optflag_table_t dumpflag_table[] = {
 	{ 1, "dfa-states-post-filter", "Dump dfa state immediately after filtering deny", DUMP_DFA_STATES_POST_FILTER },
 	{ 1, "dfa-states-post-minimize", "Dump dfa state immediately after initial build", DUMP_DFA_STATES_POST_MINIMIZE },
 	{ 1, "dfa-states-post-unreachable", "Dump dfa state immediately after filtering deny", DUMP_DFA_STATES_POST_UNREACHABLE },
+	{ 1, "dfa-perms-build", "Dump permission being built from accept node", DUMP_DFA_PERMS },
 	{ 1, "dfa-graph", "Dump dfa dot (graphviz) graph", DUMP_DFA_GRAPH },
 	{ 1, "dfa-minimize", "Dump dfa minimization", DUMP_DFA_MINIMIZE },
 	{ 1, "dfa-unreachable", "Dump dfa unreachable states",

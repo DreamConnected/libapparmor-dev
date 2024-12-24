@@ -52,37 +52,26 @@ ostream &operator<<(ostream &os, State &state);
 
 class perms_t {
 public:
-	perms_t(void): priority(MIN_INTERNAL_PRIORITY), allow(0), deny(0), prompt(0), audit(0), quiet(0), exact(0) { };
+	perms_t(void): allow(0), deny(0), prompt(0), audit(0), quiet(0), exact(0) { };
 
 	bool is_accept(void) { return (allow | deny | prompt | audit | quiet); }
 
 	void dump_header(ostream &os)
 	{
-		os << "priority (allow/deny/prompt/audit/quiet)";
+		os << "(allow/deny/prompt/audit/quiet)";
 	}
 	void dump(ostream &os)
 	{
-		os << " " << priority << " (0x " << hex
+		os << "(0x " << hex
 		   << allow << "/" << deny << "/" << "/" << prompt << "/" << audit << "/" << quiet
 		   << ')' << dec;
 	}
 
 	void clear(void) {
-		priority = MIN_INTERNAL_PRIORITY;
-		allow = deny = prompt = audit = quiet = exact = 0;
-	}
-	void clear(int p) {
-		priority = p;
 		allow = deny = prompt = audit = quiet = exact = 0;
 	}
 	void add(perms_t &rhs, bool filedfa)
 	{
-		if (priority > rhs.priority)
-			return;
-		if (priority < rhs.priority) {
-			*this = rhs;
-			return;
-		} //else if (rhs.priority == priority) {
 		deny |= rhs.deny;
 
 		if (filedfa && !is_merged_x_consistent(allow & ALL_USER_EXEC,
@@ -156,8 +145,6 @@ public:
 
 	bool operator<(perms_t const &rhs)const
 	{
-		if (priority < rhs.priority)
-			return priority < rhs.priority;
 		if (allow < rhs.allow)
 			return allow < rhs.allow;
 		if (deny < rhs.deny)
@@ -169,7 +156,6 @@ public:
 		return quiet < rhs.quiet;
 	}
 
-	int priority;
 	perm32_t allow, deny, prompt, audit, quiet, exact;
 };
 

@@ -508,11 +508,6 @@ DFA::DFA(Node *root, optflags const &opts, bool buildfiledfa): root(root), filed
 	 */
 	nnodes_cache.clear();
 	node_map.clear();
-	/* once created the priority information is no longer needed and
-	 * can prevent sets with the same perms and different priorities
-	 * from being merged during minimization
-	 */
-	clear_priorities();
 }
 
 DFA::~DFA()
@@ -665,13 +660,6 @@ int DFA::apply_and_clear_deny(void)
 
 	return c;
 }
-
-void DFA::clear_priorities(void)
-{
-	for (Partition::iterator i = states.begin(); i != states.end(); i++)
-		(*i)->perms.priority = 0;
-}
-
 
 
 /* minimize the number of dfa states */
@@ -1405,7 +1393,7 @@ int accept_perms(NodeVec *state, perms_t &perms, bool filedfa)
 {
 	int error = 0;
 	perms_t exact;
-
+	int priority = MIN_INTERNAL_PRIORITY;
 	perms.clear();
 
 	if (!state)
@@ -1416,12 +1404,13 @@ int accept_perms(NodeVec *state, perms_t &perms, bool filedfa)
 			continue;
 
 		MatchFlag *match = static_cast<MatchFlag *>(*i);
-		if (perms.priority > match->priority)
+		if (priority > match->priority)
 			continue;
 
-		if (perms.priority < match->priority) {
-			perms.clear(match->priority);
-			exact.clear(match->priority);
+		if (priority < match->priority) {
+			priority = match->priority;
+			perms.clear();
+			exact.clear();
 		}
 		if (match->is_type(NODE_TYPE_EXACTMATCHFLAG)) {
 			/* exact match only ever happens with x */

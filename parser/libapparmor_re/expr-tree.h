@@ -245,6 +245,7 @@ ostream &operator<<(ostream &os, Node &node);
 #define NODE_TYPE_MATCHFLAG		(1 << 18)
 #define NODE_TYPE_EXACTMATCHFLAG	(1 << 19)
 #define NODE_TYPE_DENYMATCHFLAG		(1 << 20)
+#define NODE_TYPE_PROMPTMATCHFLAG	(1 << 21)
 
 /* An abstract node in the syntax tree. */
 class Node {
@@ -915,7 +916,10 @@ public:
 
 class PromptMatchFlag: public MatchFlag {
 public:
-	PromptMatchFlag(int priority, perm32_t prompt, perm32_t audit): MatchFlag(priority, prompt, audit) {}
+	PromptMatchFlag(int priority, perm32_t prompt, perm32_t audit): MatchFlag(priority, prompt, audit)
+	{
+		type_flags |= NODE_TYPE_PROMPTMATCHFLAG;
+	}
 };
 
 

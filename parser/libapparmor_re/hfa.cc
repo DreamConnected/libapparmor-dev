@@ -1433,7 +1433,7 @@ int accept_perms(NodeVec *state, perms_t &perms, bool filedfa)
 		} else if (match->is_type(NODE_TYPE_DENYMATCHFLAG)) {
 			perms.deny |= match->perms;
 			perms.quiet |= match->audit;
-		} else if (dynamic_cast<PromptMatchFlag *>(match)) {
+		} else if (match->is_type(NODE_TYPE_PROMPTMATCHFLAG)) {
 			perms.prompt |= match->perms;
 			perms.audit |= match->audit;
 		} else {

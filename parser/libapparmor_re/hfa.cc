@@ -317,7 +317,8 @@ static void split_node_types(NodeSet *nodes, NodeSet **anodes, NodeSet **nnodes
 	*nnodes = nodes;
 }
 
-State *DFA::add_new_state(NodeSet *anodes, NodeSet *nnodes, State *other)
+State *DFA::add_new_state(optflags const &opts, NodeSet *anodes,
+			  NodeSet *nnodes, State *other)
 {
 	NodeVec *nnodev, *anodev;
 	nnodev = nnodes_cache.insert(nnodes);
@@ -325,7 +326,7 @@ State *DFA::add_new_state(NodeSet *anodes, NodeSet *nnodes, State *other)
 
 	ProtoState proto;
 	proto.init(nnodev, anodev);
-	State *state = new State(node_map.size(), proto, other, filedfa);
+	State *state = new State(opts, node_map.size(), proto, other, filedfa);
 	pair<NodeMap::iterator,bool> x = node_map.insert(proto, state);
 	if (x.second == false) {
 		delete state;
@@ -337,7 +338,7 @@ State *DFA::add_new_state(NodeSet *anodes, NodeSet *nnodes, State *other)
 	return x.first->second;
 }
 
-State *DFA::add_new_state(NodeSet *nodes, State *other)
+State *DFA::add_new_state(optflags const &opts, NodeSet *nodes, State *other)
 {
 	/* The splitting of nodes should probably get pushed down into
 	 * follow(), ie. put in separate lists from the start
@@ -345,12 +346,12 @@ State *DFA::add_new_state(NodeSet *nodes, State *other)
 	NodeSet *anodes, *nnodes;
 	split_node_types(nodes, &anodes, &nnodes);
 
-	State *state = add_new_state(anodes, nnodes, other);
+	State *state = add_new_state(opts, anodes, nnodes, other);
 
 	return state;
 }
 
-void DFA::update_state_transitions(State *state)
+void DFA::update_state_transitions(optflags const &opts, State *state)
 {
 	/* Compute possible transitions for state->nodes.  This is done by
 	 * iterating over all the nodes in state->nodes and combining the
@@ -373,7 +374,8 @@ void DFA::update_state_transitions(State *state)
 
 	/* check the default transition first */
 	if (cases.otherwise)
-		state->otherwise = add_new_state(cases.otherwise, nonmatching);
+		state->otherwise = add_new_state(opts, cases.otherwise,
+						 nonmatching);
 	else
 		state->otherwise = nonmatching;
 
@@ -382,7 +384,7 @@ void DFA::update_state_transitions(State *state)
 	 */
 	for (Cases::iterator j = cases.begin(); j != cases.end(); j++) {
 		State *target;
-		target = add_new_state(j->second, nonmatching);
+		target = add_new_state(opts, j->second, nonmatching);
 
 		/* Don't insert transition that the otherwise transition
 		 * already covers
@@ -429,7 +431,7 @@ void DFA::process_work_queue(const char *header, optflags const &opts)
 		/* Update 'from's transitions, and if it transitions to any
 		 * unknown State create it and add it to the work_queue
 		 */
-		update_state_transitions(from);
+		update_state_transitions(opts, from);
 	}  /* while (!work_queue.empty()) */
 }
 
@@ -459,8 +461,8 @@ DFA::DFA(Node *root, optflags const &opts, bool buildfiledfa): root(root), filed
 		(*i)->compute_followpos();
 	}
 
-	nonmatching = add_new_state(new NodeSet, NULL);
-	start = add_new_state(new NodeSet(root->firstpos), nonmatching);
+	nonmatching = add_new_state(opts, new NodeSet, NULL);
+	start = add_new_state(opts, new NodeSet(root->firstpos), nonmatching);
 
 	/* the work_queue contains the states that need to have their
 	 * transitions computed.  This could be done with a recursive
@@ -1391,85 +1393,186 @@ static inline int diff_qualifiers(perm32_t perm1, perm32_t perm2)
 		(perm1 & AA_EXEC_TYPE) != (perm2 & AA_EXEC_TYPE));
 }
 
+/* update a single permission based on priority - only called if match->perm | match-> audit bit set */
+static int pri_update_perm(optflags const &opts, vector<int> &priority, int i,
+			   MatchFlag *match, perms_t &perms, perms_t &exact,
+			   bool filedfa)
+{
+	if (priority[i] > match->priority) {
+		if (opts.dump & DUMP_DFA_PERMS)
+			cerr << "    " << match << "[" << i << "]=" << priority[i] << " > " << match->priority << " SKIPPING " << hex << (match->perms) << "/" << (match->audit) << dec << "\n";
+		return 0;
+	}
+
+	perm32_t xmask = 0;
+	perm32_t mask = 1 << i;
+	perm32_t amask = mask;
+
+	// drop once we move the xindex out of the perms in the front end
+	if (filedfa) {
+		if (mask & AA_USER_EXEC) {
+			xmask = AA_USER_EXEC_TYPE;
+			// ix implies EXEC_MMAP
+			if (match->perms & AA_EXEC_INHERIT) {
+				xmask |= AA_USER_EXEC_MMAP;
+				//USER_EXEC_MAP = 6
+				if (priority[6] < match->priority)
+					priority[6] = match->priority;
+			}
+			amask = mask | xmask;
+		} else if (mask & AA_OTHER_EXEC) {
+			xmask = AA_OTHER_EXEC_TYPE;
+			// ix implies EXEC_MMAP
+			if (match->perms & AA_OTHER_EXEC_INHERIT) {
+				xmask |= AA_OTHER_EXEC_MMAP;
+				//OTHER_EXEC_MAP = 20
+				if (priority[20] < match->priority)
+					priority[20] = match->priority;
+			}
+			amask = mask | xmask;
+		} else if (((mask & AA_USER_EXEC_MMAP) &&
+			   (match->perms & AA_USER_EXEC_INHERIT)) ||
+			   ((mask & AA_OTHER_EXEC_MMAP) &&
+			    (match->perms & AA_OTHER_EXEC_INHERIT))) {
+			// if exec && ix we handled mmp above
+			if (opts.dump & DUMP_DFA_PERMS)
+				cerr << "    " << match << "[" << i << "]=" << priority[i] << " <= " << match->priority << " SKIPPING mmap unmasked " << hex << match->perms << "/" << match->audit << " masked " << (match->perms & amask) << "/" << (match->audit & amask) << " data " << (perms.allow & mask) << "/" << (perms.audit & mask) << " exact " << (exact.allow & mask) << "/" << (exact.audit & mask) << dec << "\n";
+			return 0;
+		}
+	}
+
+	if (opts.dump & DUMP_DFA_PERMS)
+		cerr << "  " << match << "[" << i << "]=" << priority[i] <<  " vs. " << match->priority << " mask: " << hex << mask << " xmask: " << xmask << " amask: " << amask << dec << "\n";
+	if (priority[i] < match->priority) {
+		if (opts.dump & DUMP_DFA_PERMS)
+			cerr << "    " << match << "[" << i << "]=" << priority[i] <<  " < " << match->priority << " clearing " << hex << (perms.allow & amask) << "/" << (perms.audit & amask) << " -> " << dec;
+		priority[i] = match->priority;
+		perms.clear_bits(amask);
+		exact.clear_bits(amask);
+		if (opts.dump & DUMP_DFA_PERMS)
+			cerr << hex << (perms.allow & amask) << "/" << (perms.audit & amask) << dec << "\n";
+	}
+
+	// the if conditions in order of permission priority
+	if (match->is_type(NODE_TYPE_DENYMATCHFLAG)) {
+		if (opts.dump & DUMP_DFA_PERMS)
+			cerr << "    " << match << "[" << i << "]=" << priority[i] << " <= " << match->priority << " deny " << hex << (match->perms & amask) << "/" << (match->audit & amask) << dec << "\n";
+		perms.deny |= match->perms & amask;
+		perms.quiet |= match->audit & amask;
+
+		perms.allow &= ~amask;
+		perms.audit &= ~amask;
+		perms.prompt &= ~amask;
+	} else if (match->is_type(NODE_TYPE_EXACTMATCHFLAG)) {
+		/* exact match only asserts dominance on the XTYPE */
+		if (opts.dump & DUMP_DFA_PERMS)
+			cerr << "    " << match << "[" << i << "]=" << priority[i] <<  " <= " << match->priority << " exact " << hex << (match->perms & amask) << "/" << (match->audit & amask) << dec << "\n";
+		if (filedfa &&
+		    !is_merged_x_consistent(exact.allow, match->perms & amask)) {
+			if (opts.dump & DUMP_DFA_PERMS)
+				cerr << "    " << match << "[" << i << "]=" << priority[i] <<  " <= " << match->priority << " exact match conflict" << "\n";
+			return 1;
+		}
+		exact.allow |= match->perms & amask;
+		exact.audit |= match->audit & amask;
+
+		// dominance is only done for XTYPE so only clear that
+		// note xmask only set if setting x perm bit, so this
+		// won't clear for other bit types
+		perms.allow &= ~xmask;
+		perms.audit &= ~xmask;
+		perms.prompt &= ~xmask;
+
+		perms.allow |= match->perms & amask;
+		perms.audit |= match->audit & amask;
+		// can't specify exact prompt atm
+
+	} else if (!match->is_type(NODE_TYPE_PROMPTMATCHFLAG)) {
+		// allow perms, if exact has been encountered will already be set
+		// if overlaps x here, don't conflict, because exact will override
+		if (opts.dump & DUMP_DFA_PERMS)
+			cerr << "    " << match << "[" << i << "]=" << priority[i] <<  " <= " << match->priority << " allow " << hex << (match->perms & amask) << "/" << (match->audit & amask) << dec << "\n";
+		if (filedfa && !(exact.allow & mask) &&
+		    !is_merged_x_consistent(perms.allow, match->perms & amask)) {
+			if (opts.dump & DUMP_DFA_PERMS)
+				cerr << "    " << match << "[" << i << "]=" << priority[i] <<  " <= " << match->priority << " allow match conflict" << "\n";
+			return 1;
+		}
+		// mask off if XTYPE in xmatch
+		if ((exact.allow | exact.audit) & mask) {
+			// mask == amask & ~xmask
+			perms.allow |= match->perms & mask;
+			perms.audit |= match->audit & mask;
+		} else {
+			perms.allow |= match->perms & amask;
+			perms.audit |= match->audit & amask;
+		}
+	} else { // if (match->is_type(NODE_TYPE_PROMPTMATCHFLAG)) {
+		if (opts.dump & DUMP_DFA_PERMS)
+			cerr << "    " << match << "[" << i << "]=" << priority[i] <<  " <= " << match->priority << " promt " << hex << (match->perms & amask) << "/" << (match->audit & amask) << dec << "\n";
+		if (filedfa && !((exact.allow | perms.allow) & mask) &&
+		    !is_merged_x_consistent(perms.allow, match->perms & amask)) {
+			if (opts.dump & DUMP_DFA_PERMS)
+				cerr << "    " << match << "[" << i << "]=" << priority[i] <<  " <= " << match->priority << " prompt match conflict" << "\n";
+			return 1;
+		}
+		if ((exact.allow | exact.audit | perms.allow | perms.audit) & mask) {
+			// mask == amask & ~xmask
+			perms.prompt |= match->perms & mask;
+			perms.audit |= match->audit & mask;
+		} else {
+			perms.prompt |= match->perms & amask;
+			perms.audit |= match->audit & amask;
+		}
+	}
+
+	return 0;
+}
+
 /**
  * Compute the permission flags that this state corresponds to. If we
  * have any exact matches, then they override the execute and safe
  * execute flags.
  */
-int accept_perms(NodeVec *state, perms_t &perms, bool filedfa)
+int accept_perms(optflags const &opts, NodeVec *state, perms_t &perms,
+		 bool filedfa)
 {
 	int error = 0;
 	perms_t exact;
-	int priority = MIN_INTERNAL_PRIORITY;
+	// size of vector needs to be number of bits in the data type
+	// being used for the permission set.
+	std::vector<int>  priority(sizeof(perm32_t)*8,  MIN_INTERNAL_PRIORITY);
 	perms.clear();
 
 	if (!state)
 		return error;
-
+	if (opts.dump & DUMP_DFA_PERMS)
+		cerr << "Building\n";
 	for (NodeVec::iterator i = state->begin(); i != state->end(); i++) {
 		if (!(*i)->is_type(NODE_TYPE_MATCHFLAG))
 			continue;
 
 		MatchFlag *match = static_cast<MatchFlag *>(*i);
-		if (priority > match->priority)
-			continue;
 
-		if (priority < match->priority) {
-			priority = match->priority;
-			perms.clear();
-			exact.clear();
-		}
-		if (match->is_type(NODE_TYPE_EXACTMATCHFLAG)) {
-			/* exact match only ever happens with x */
-			if (filedfa &&
-			    !is_merged_x_consistent(exact.allow, match->perms))
-				error = 1;
-			exact.allow |= match->perms;
-			exact.audit |= match->audit;
-		} else if (match->is_type(NODE_TYPE_DENYMATCHFLAG)) {
-			perms.deny |= match->perms;
-			perms.quiet |= match->audit;
-		} else if (match->is_type(NODE_TYPE_PROMPTMATCHFLAG)) {
-			perms.prompt |= match->perms;
-			perms.audit |= match->audit;
-		} else {
-			if (filedfa &&
-			    !is_merged_x_consistent(perms.allow, match->perms))
-				error = 1;
-			perms.allow |= match->perms;
-			perms.audit |= match->audit;
+		perm32_t bit = 1;
+		perm32_t check = match->perms | match->audit;
+		if (filedfa)
+			check &= ~ALL_AA_EXEC_TYPE;
+
+		for (int i = 0;  check; i++) {
+			if (check & bit) {
+				error = pri_update_perm(opts, priority, i, match, perms, exact, filedfa);
+				if (error)
+					goto out;
+			}
+			check &= ~bit;
+			bit <<= 1;
 		}
 	}
-
-	if (filedfa) {
-		perms.allow |= exact.allow & ~(ALL_AA_EXEC_TYPE);
-		perms.prompt |= exact.prompt & ~(ALL_AA_EXEC_TYPE);
-		perms.audit |= exact.audit & ~(ALL_AA_EXEC_TYPE);
-	} else {
-		perms.allow |= exact.allow;
-		perms.prompt |= exact.prompt;
-		perms.audit |= exact.audit;
+	if (opts.dump & DUMP_DFA_PERMS) {
+		cerr << "  computed: ";  perms.dump(cerr); cerr << "\n";
 	}
-	if (exact.allow & AA_USER_EXEC) {
-		perms.allow = (exact.allow & AA_USER_EXEC_TYPE) |
-			(perms.allow & ~AA_USER_EXEC_TYPE);
-		perms.exact = AA_USER_EXEC_TYPE;
-	}
-	if (exact.allow & AA_OTHER_EXEC) {
-		perms.allow = (exact.allow & AA_OTHER_EXEC_TYPE) |
-			(perms.allow & ~AA_OTHER_EXEC_TYPE);
-		perms.exact |= AA_OTHER_EXEC_TYPE;
-	}
-	if (filedfa && (AA_USER_EXEC & perms.deny))
-		perms.deny |= AA_USER_EXEC_TYPE;
-
-	if (filedfa && (AA_OTHER_EXEC & perms.deny))
-		perms.deny |= AA_OTHER_EXEC_TYPE;
-
-	perms.allow &= ~perms.deny;
-	perms.quiet &= perms.deny;
-	perms.prompt &= ~perms.deny;
-	perms.prompt &= ~perms.allow;
+out:
 	if (error)
 		fprintf(stderr, "profile has merged rule with conflicting x modifiers\n");
 

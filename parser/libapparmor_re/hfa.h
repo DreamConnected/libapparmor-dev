@@ -70,6 +70,17 @@ public:
 	void clear(void) {
 		allow = deny = prompt = audit = quiet = exact = 0;
 	}
+
+	void clear_bits(perm32_t bits)
+	{
+		allow &= ~bits;
+		deny &= ~bits;
+		prompt &= ~bits;
+		audit &= ~bits;
+		quiet &= ~bits;
+		exact &= ~bits;
+	}
+
 	void add(perms_t &rhs, bool filedfa)
 	{
 		deny |= rhs.deny;
@@ -159,7 +170,8 @@ public:
 	perm32_t allow, deny, prompt, audit, quiet, exact;
 };
 
-int accept_perms(NodeVec *state, perms_t &perms, bool filedfa);
+int accept_perms(optflags const &opts, NodeVec *state, perms_t &perms,
+		 bool filedfa);
 
 /*
  * ProtoState - NodeSet and ancillery information used to create a state
@@ -223,7 +235,8 @@ struct DiffDag {
  */
 class State {
 public:
-	State(int l, ProtoState &n, State *other, bool filedfa):
+	State(optflags const &opts, int l, ProtoState &n, State *other,
+	      bool filedfa):
 		label(l), flags(0), idx(0), perms(), trans()
 	{
 		int error;
@@ -236,7 +249,7 @@ public:
 		proto = n;
 
 		/* Compute permissions associated with the State. */
-		error = accept_perms(n.anodes, perms, filedfa);
+		error = accept_perms(opts, n.anodes, perms, filedfa);
 		if (error) {
 			//cerr << "Failing on accept perms " << error << "\n";
 			throw error;
@@ -340,9 +353,11 @@ typedef map<const State *, size_t> Renumber_Map;
 /* Transitions in the DFA. */
 class DFA {
 	void dump_node_to_dfa(void);
-	State *add_new_state(NodeSet *nodes, State *other);
-	State *add_new_state(NodeSet *anodes, NodeSet *nnodes, State *other);
-	void update_state_transitions(State *state);
+	State *add_new_state(optflags const &opts, NodeSet *nodes,
+			     State *other);
+	State *add_new_state(optflags const &opts,NodeSet *anodes,
+			     NodeSet *nnodes, State *other);
+	void update_state_transitions(optflags const &opts, State *state);
 	void process_work_queue(const char *header, optflags const &);
 	void dump_diff_chain(ostream &os, map<State *, Partition> &relmap,
 			     Partition &chain, State *state,

@@ -182,6 +182,8 @@ public:
 	{
 		bool output = true;
 
+		if (priority != 0)
+			os << "priority=" << priority << " ";
 		switch (audit) {
 		case AUDIT_FORCE:
 			os << "audit";

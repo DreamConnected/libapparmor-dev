@@ -258,6 +258,9 @@ CHFA *aare_rules::create_chfa(int *min_match_len,
 		if (opts.dump & DUMP_DFA_UNIQ_PERMS)
 			dfa.dump_uniq_perms("dfa");
 
+		if (opts.dump & DUMP_DFA_STATES_INIT)
+			dfa.dump(cerr);
+
 		/* since we are building a chfa, use the info about
 		 * whether the chfa supports extended perms to help
 		 * determine whether we clear the deny info.
@@ -265,18 +268,24 @@ CHFA *aare_rules::create_chfa(int *min_match_len,
 		 * information supported by the backed
 		 */
 		if (!extended_perms ||
-		    ((opts.control & CONTROL_DFA_FILTER_DENY)))
+		    ((opts.control & CONTROL_DFA_FILTER_DENY))) {
 			dfa.apply_and_clear_deny();
-
+			if (opts.dump & DUMP_DFA_STATES_POST_FILTER)
+				dfa.dump(cerr);
+		}
 		if (opts.control & CONTROL_DFA_MINIMIZE) {
 			dfa.minimize(opts);
 			if (opts.dump & DUMP_DFA_MIN_UNIQ_PERMS)
 				dfa.dump_uniq_perms("minimized dfa");
+			if (opts.dump & DUMP_DFA_STATES_POST_MINIMIZE)
+				dfa.dump(cerr);
 		}
 
-		if (opts.control & CONTROL_DFA_REMOVE_UNREACHABLE)
+		if (opts.control & CONTROL_DFA_REMOVE_UNREACHABLE) {
 			dfa.remove_unreachable(opts);
-
+			if (opts.dump & DUMP_DFA_STATES_POST_UNREACHABLE)
+				dfa.dump(cerr);
+		}
 		if (opts.dump & DUMP_DFA_STATES)
 			dfa.dump(cerr);
 

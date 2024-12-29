@@ -30,11 +30,102 @@ errors=0
 verbose="${VERBOSE:-}"
 default_features_file="features.all"
 features_file=$default_features_file
+retain=0
+dumpdfa=0
+testtype=""
+description="Manually run test"
+tmpdir=$(mktemp -d /tmp/eq.$$-XXXXXX)
+chmod 755 ${tmpdir}
+export tmpdir
+
+map_priority()
+{
+    if [ -z "$1" -o "$1" == "priority=0" ] ; then
+	echo "0";
+    elif [ "$1" == "priority=-1" ] ; then
+	echo "-1"
+    elif [ "$1" == "priority=1" ] ;then
+	echo "1"
+    else
+	echo "unknown priority '$1'"
+	exit 1
+    fi
+}
+
+priority_eq()
+{
+	local p1=$(map_priority "$1")
+	local p2=$(map_priority "$2")
+
+	if [ $p1 -eq $p2 ] ; then
+		return 0
+	fi
+
+	return 1
+}
+
+priority_lt()
+{
+	local p1=$(map_priority "$1")
+	local p2=$(map_priority "$2")
+
+	if [ $p1 -lt $p2 ] ; then
+		return 0
+	fi
+
+	return 1
+}
+
+priority_gt()
+{
+	local p1=$(map_priority "$1")
+	local p2=$(map_priority "$2")
+
+	if [ $p1 -gt $p2 ] ; then
+		return 0
+	fi
+
+	return 1
+}
 
 hash_binary_policy()
 {
-	printf %s "$1" | ${APPARMOR_PARSER} --features-file "${_SCRIPTDIR}/features_files/$features_file" -qS 2>/dev/null| md5sum | cut -d ' ' -f 1
-	return $?
+	local hash="parser_failure"
+	local dump="/dev/null"
+	local flags="-QKSq"
+	local rc=0
+
+	if [ $dumpdfa -ne 0 ] ; then
+		flags="$flags -D rule-exprs -D dfa-states"
+		dump="${tmpdir}/$1.state"
+	fi
+
+	printf %s "$2" | ${APPARMOR_PARSER} --features-file "${_SCRIPTDIR}/features_files/$features_file" ${flags} > "$tmpdir/$1.bin" 2>"$dump"
+	rc=$?
+	if [ $rc -eq 0 ] ; then
+		hash=$(sha256sum "${tmpdir}/$1.bin" | cut -d ' ' -f 1)
+		rc=$?
+	fi
+
+	printf %s $hash
+	if [ $retain -eq 0 -a $rc -ne 0 ] ; then
+		rm ${tmpdir}/*
+	else
+		mv "${tmpdir}/$1.bin" "${tmpdir}/$1.bin.$hash"
+		if [ $dumpdfa -ne 0 ] ; then
+			mv "${tmpdir}/$1.state" "$tmpdir/$1.state.$hash"
+		fi
+	fi
+
+	return $rc
+}
+
+check_retain()
+{
+	if [ ${retain} -ne 0 ] ; then
+		printf "  files retained in \"%s/\"\n" ${tmpdir} 1>&2
+		exit $ret
+	fi
 }
 
 # verify_binary - compares the binary policy of multiple profiles
@@ -64,20 +155,21 @@ verify_binary()
 		((errors++))
 		return $((ret + 1))
 	fi
+	rm -f $tmpdir/*
 
 	if [ -n "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
-	if ! good_hash=$(hash_binary_policy "$good_profile")
-	then
+	if ! good_hash=$(hash_binary_policy "known" "$good_profile") ; then
 		if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
 		printf "\nERROR: Error hashing the following \"known-good\" profile:\n%s\n\n" \
 		       "$good_profile" 1>&2
 		((errors++))
+		rm -f ${tmpdir}/*
 		return $((ret + 1))
 	fi
 
 	for profile in "$@"
 	do
-		if ! hash=$(hash_binary_policy "$profile")
+		if ! hash=$(hash_binary_policy "test" "$profile")
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
 			printf "\nERROR: Error hashing the following profile:\n%s\n\n" \
@@ -87,42 +179,52 @@ verify_binary()
 		elif [ "$t" == "equality" ] && [ "$hash" != "$good_hash" ]
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
-			printf "\nFAIL: Hash values do not match\n" 2>&1
+			printf "\nFAIL: Hash values do not match\n" 1>&2
+			printf "parser: %s -QKSq --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 1>&2
 			printf "known-good (%s) != profile-under-test (%s) for the following profiles:\nknown-good         %s\nprofile-under-test %s\n\n" \
 				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
 			((ret++))
+			check_retain
 		elif [ "$t" == "xequality" ] && [ "$hash" == "$good_hash" ]
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
-			printf "\nunexpected PASS: equality test with known problem, Hash values match\n" 2>&1
+			printf "\nunexpected PASS: equality test with known problem, Hash values match\n" 1>&2
+			printf "parser: %s -QKSq --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 1>&2
 			printf "known-good (%s) == profile-under-test (%s) for the following profile:\nknown-good         %s\nprofile-under-test %s\n\n" \
 				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
 			((ret++))
+			check_retain
 		elif [ "$t" == "xequality" ] && [ "$hash" != "$good_hash" ]
 		then
 		    printf "\nknown problem %s %s: unchanged" "$t" "$desc" 1>&2
 		elif [ "$t" == "inequality" ] && [ "$hash" == "$good_hash" ]
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
-			printf "\nFAIL: Hash values match\n" 2>&1
+			printf "\nFAIL: Hash values match\n" 1>&2
+			printf "parser: %s -QKSq --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 1>&2
 			printf "known-good (%s) == profile-under-test (%s) for the following profiles:\nknown-good         %s\nprofile-under-test %s\n\n" \
 				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
 			((ret++))
+			check_retain
 		elif [ "$t" == "xinequality" ] && [ "$hash" != "$good_hash" ]
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
-			printf "\nunexpected PASS: inequality test with known problem, Hash values do not match\n" 2>&1
+			printf "\nunexpected PASS: inequality test with known problem, Hash values do not match\n" 1>&2
+			printf "parser: %s -QKSq --features-file %s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file" 1>&2
 			printf "known-good (%s) != profile-under-test (%s) for the following profile:\nknown-good         %s\nprofile-under-test %s\n\n" \
 				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
 			((ret++))
+			check_retain
 		elif [ "$t" == "xinequality" ] && [ "$hash" == "$good_hash" ]
 		then
-		    printf "\nknown problem %s %s: unchanged" "$t" "$desc" 1>&2
+			printf "\nknown problem %s %s: unchanged" "$t" "$desc" 1>&2
+			printf "parser: %s -QKSq --features-file=%s\n" "${APPARMOR_PARSER}" "${_SCRIPTDIR}/features_files/$features_file"  1>&2
 		fi
+		rm -f ${tmpdir}/test*
 	done
 
 	if [ $ret -eq 0 ]
@@ -199,7 +301,7 @@ verify_set()
 {
     local p1="$1"
     local p2="$2"
-    echo -e "\n   equality $e of '$p1' vs '$p2'\n"
+    [ -n "${verbose}" ] && echo -e "\n   equality $e of '$p1' vs '$p2'\n"
 
 verify_binary_equality "'$p1'x'$p2' dbus send" \
 	"/t { $p1 dbus send, }" \
@@ -547,37 +649,86 @@ do
 	             "pix -> b" "Pix -> b" "cux -> b" "Cux -> b" \
 	             "cix -> b" "Cix -> b"
 	do
-		if [ "$perm1" == "$perm2" ] ; then
+		# Fixme: have to do special handling for -> b, as this
+		# creates an entry in the transition table. However
+		# priority rules can make it so the reference to the
+		# transition table is removed, but the parser still keeps
+		# the tranition. This can lead to a situation where the
+		# test dfa with a "-> b" transition is functionally equivalent
+		# but will fail equality comparison.
+		# fix this by adding two none overlapping x rules to add
+		# xtable entries
+		# /c -> /t//b, for cx rules being converted to px -> /t//b
+		# /a -> b, for px rules
+		# the rules must come last guarantee xtable order
+		if [ "$perm1" == "$perm2" ] || priority_gt "$p1" "" ; then
 			verify_binary_equality "'$p1'x'$p2' Exec perm \"${perm1}\" - most specific match: same as glob" \
-				"/t { $p1 /* ${perm1}, /f ${perm2}, }" \
-				"/t { $p2 /* ${perm1}, }"
+				"/t { $p1 /f* ${perm1}, /f ${perm2}, /a px -> b, /c px -> /t//b, }" \
+				"/t { $p2 /f* ${perm1}, /a px -> b, /c px -> /t//b, }"
 		else
 			verify_binary_inequality "'$p1'x'$p2' Exec \"${perm1}\" vs \"${perm2}\" - most specific match: different from glob" \
-				"/t { $p1 /* ${perm1}, /f ${perm2}, }" \
-				"/t { $p2 /* ${perm1}, }"
+				"/t { $p1 /f* ${perm1}, /f ${perm2}, /a px -> b, /c px -> /t//b, }" \
+				"/t { $p2 /f* ${perm1}, /a px -> b, /c px -> /t//b, }"
 		fi
 	done
-	verify_binary_inequality "'$p1'x'$p2' Exec \"${perm1}\" vs deny x - most specific match: different from glob" \
-		"/t { $p1 /* ${perm1}, audit deny /f x, }" \
-		"/t { $p2 /* ${perm1}, }"
+	if priority_gt "$p1" "" ; then
+		# priority stops permission carve out
+		verify_binary_equality "'$p1'x'$p2' Exec \"${perm1}\" vs deny x - most specific match: different from glob" \
+			"/t { $p1 /* ${perm1}, audit deny /f x, }" \
+			"/t { $p2 /* ${perm1}, }"
+	else
+		# deny rule carves out some of the match
+		verify_binary_inequality "'$p1'x'$p2' Exec \"${perm1}\" vs deny x - most specific match: different from glob" \
+			"/t { $p1 /* ${perm1}, audit deny /f x, }" \
+			"/t { $p2 /* ${perm1}, }"
+	fi
 
 done
 
 #Test deny carves out permission
-verify_binary_inequality "'$p1'x'$p2' Deny removes r perm" \
+if priority_gt "$p1" "" ; then
+	verify_binary_equality "'$p1'x'$p2' Deny removes r perm" \
 		       "/t { $p1 /foo/[abc] r, audit deny /foo/b r, }" \
 		       "/t { $p2 /foo/[abc] r, }"
 
-verify_binary_equality "'$p1'x'$p2' Deny removes r perm" \
+	verify_binary_inequality "'$p1'x'$p2' Deny removes r perm" \
 		       "/t { $p1 /foo/[abc] r, audit deny /foo/b r, }" \
 		       "/t { $p2 /foo/[ac] r, }"
 
 #this one may not be true in the future depending on if the compiled profile
 #is explicitly including deny permissions for dynamic composition
-verify_binary_equality "'$p1'x'$p2' Deny of ungranted perm" \
+	verify_binary_equality "'$p1'x'$p2' Deny of ungranted perm" \
 		       "/t { $p1 /foo/[abc] r, audit deny /foo/b w, }" \
 		       "/t { $p2 /foo/[abc] r, }"
+elif priority_eq "$p1" "" ; then
+	verify_binary_inequality "'$p1'x'$p2' Deny removes r perm" \
+		       "/t { $p1 /foo/[abc] r, audit deny /foo/b r, }" \
+		       "/t { $p2 /foo/[abc] r, }"
 
+	verify_binary_equality "'$p1'x'$p2' Deny removes r perm" \
+		       "/t { $p1 /foo/[abc] r, audit deny /foo/b r, }" \
+		       "/t { $p2 /foo/[ac] r, }"
+
+#this one may not be true in the future depending on if the compiled profile
+#is explicitly including deny permissions for dynamic composition
+	verify_binary_equality "'$p1'x'$p2' Deny of ungranted perm" \
+		       "/t { $p1 /foo/[abc] r, audit deny /foo/b w, }" \
+		       "/t { $p2 /foo/[abc] r, }"
+else
+	verify_binary_inequality "'$p1'x'$p2' Deny removes r perm" \
+		       "/t { $p1 /foo/[abc] r, audit deny /foo/b r, }" \
+		       "/t { $p2 /foo/[abc] r, }"
+
+	verify_binary_equality "'$p1'x'$p2' Deny removes r perm" \
+		       "/t { $p1 /foo/[abc] r, audit deny /foo/b r, }" \
+		       "/t { $p2 /foo/[ac] r, }"
+
+#this one may not be true in the future depending on if the compiled profile
+#is explicitly including deny permissions for dynamic composition
+	verify_binary_inequality "'$p1'x'$p2' Deny of ungranted perm" \
+		       "/t { $p1 /foo/[abc] r, audit deny /foo/b w, }" \
+		       "/t { $p2 /foo/[abc] r, }"
+fi
 
 verify_binary_equality "'$p1'x'$p2' change_profile == change_profile -> **" \
 		       "/t { $p1 change_profile, }" \
@@ -657,9 +808,25 @@ verify_binary_equality "'$p1'x'$p2' @{profile_name} is literal in peer with esc 
 # the "write" permission in the second profile and the test will fail.
 # If the parser is adding the change_hat proc attr rules then the
 # rules should merge and be equivalent.
-verify_binary_equality "'$p1'x'$p2' change_hat rules automatically inserted"\
-		       "/t { $p1 owner /proc/[0-9]*/attr/{apparmor/,}current a, ^test { $p2 owner /proc/[0-9]*/attr/{apparmor/,}current a, /f r, }}" \
+#
+# if priorities are different then the implied rule priority then the
+# implied rule will completely override or completely be overriden.
+# (the change_hat implied rule has a priority of 0)
+# because of the difference in 'a' vs 'w' permission the two rules should
+# only be equal when the append rule has the same priority as the implied
+# rule (allowing them to combine) AND the other rule is not overridden by
+# the implied rule, or both being overridden by the implied rule
+# the implied rule
+if { priority_lt "$p1" "" && priority_lt "$p2" "" ; } ||
+   { priority_eq "$p1" "" && ! priority_lt "$p2" "" ; }; then
+    verify_binary_equality "'$p1'x'$p2' change_hat rules automatically inserted"\
+		       "/t { $p1 owner /proc/[0-9]*/attr/{apparmor/,}current a, ^test { $p1 owner /proc/[0-9]*/attr/{apparmor/,}current a, /f r, }}" \
 		       "/t { $p2 owner /proc/[0-9]*/attr/{apparmor/,}current w, ^test { $p2 owner /proc/[0-9]*/attr/{apparmor/,}current w, /f r, }}"
+else
+    verify_binary_inequality "'$p1'x'$p2' change_hat rules automatically inserted"\
+		       "/t { $p1 owner /proc/[0-9]*/attr/{apparmor/,}current a, ^test { $p1 owner /proc/[0-9]*/attr/{apparmor/,}current a, /f r, }}" \
+		       "/t { $p2 owner /proc/[0-9]*/attr/{apparmor/,}current w, ^test { $p2 owner /proc/[0-9]*/attr/{apparmor/,}current w, /f r, }}"
+fi
 
 # verify slash filtering for unix socket address paths.
 # see https://bugs.launchpad.net/apparmor/+bug/1856738
@@ -747,7 +914,7 @@ verify_binary_equality "'$p1'x'$p2' mount specific deny doesn't affect non-overl
 
 if [ $fails -ne 0 ] || [ $errors -ne 0 ]
 then
-	printf "ERRORS: %d\nFAILS: %d\n" $errors $fails 2>&1
+	printf "ERRORS: %d\nFAILS: %d\n" $errors $fails 1>&2
 	exit $((fails + errors))
 fi
 
@@ -828,12 +995,14 @@ verify_binary_equality "'$p1'x'$p2' dbus slash filtering for paths" \
 }
 
 
-printf "Equality Tests:\n"
+run_tests()
+{
+	printf "Equality Tests:\n"
 
-#rules that don't support priority
+	#rules that don't support priority
 
-# verify rlimit data conversions
-verify_binary_equality "set rlimit rttime <= 12 weeks" \
+	# verify rlimit data conversions
+	verify_binary_equality "set rlimit rttime <= 12 weeks" \
                        "/t { set rlimit rttime <= 12 weeks, }" \
                        "/t { set rlimit rttime <= $((12 * 7)) days, }" \
                        "/t { set rlimit rttime <= $((12 * 7 * 24)) hours, }" \
@@ -843,7 +1012,7 @@ verify_binary_equality "set rlimit rttime <= 12 weeks" \
                        "/t { set rlimit rttime <= $((12 * 7 * 24 * 60 * 60 * 1000 * 1000)) us, }" \
                        "/t { set rlimit rttime <= $((12 * 7 * 24 * 60 * 60 * 1000 * 1000)), }"
 
-verify_binary_equality "set rlimit cpu <= 42 weeks" \
+	verify_binary_equality "set rlimit cpu <= 42 weeks" \
                        "/t { set rlimit cpu <= 42 weeks, }" \
                        "/t { set rlimit cpu <= $((42 * 7)) days, }" \
                        "/t { set rlimit cpu <= $((42 * 7 * 24)) hours, }" \
@@ -851,20 +1020,20 @@ verify_binary_equality "set rlimit cpu <= 42 weeks" \
                        "/t { set rlimit cpu <= $((42 * 7 * 24 * 60 * 60)) seconds, }" \
                        "/t { set rlimit cpu <= $((42 * 7 * 24 * 60 * 60)), }"
 
-verify_binary_equality "set rlimit memlock <= 2GB" \
+	verify_binary_equality "set rlimit memlock <= 2GB" \
                        "/t { set rlimit memlock <= 2GB, }" \
                        "/t { set rlimit memlock <= $((2 * 1024)) MB, }" \
                        "/t { set rlimit memlock <= $((2 * 1024 * 1024)) KB, }" \
                        "/t { set rlimit memlock <= $((2 * 1024 * 1024 * 1024)) , }"
 
-run_port_range=$(kernel_features network_v8/af_inet)
-if [ "$run_port_range" != "true" ]; then
-    echo -e "\nSkipping network af_inet tests. $run_port_range\n"
-else
-    # network port range
-    # select features file that contains netv8 af_inet
-    features_file="features.af_inet"
-    verify_binary_equality "network port range" \
+	run_port_range=$(kernel_features network_v8/af_inet)
+	if [ "$run_port_range" != "true" ]; then
+	    echo -e "\nSkipping network af_inet tests. $run_port_range\n"
+	else
+	    # network port range
+	    # select features file that contains netv8 af_inet
+	    features_file="features.af_inet"
+	    verify_binary_equality "network port range" \
 			   "/t { network port=3456-3460, }" \
 			   "/t { network port=3456, \
 				 network port=3457, \
@@ -872,7 +1041,7 @@ else
 				 network port=3459, \
 				 network port=3460, }"
 
-    verify_binary_equality "network peer port range" \
+	    verify_binary_equality "network peer port range" \
 			   "/t { network peer=(port=3456-3460), }" \
 			   "/t { network peer=(port=3456), \
 				 network peer=(port=3457), \
@@ -880,64 +1049,180 @@ else
 				 network peer=(port=3459), \
 				 network peer=(port=3460), }"
 
-    verify_binary_inequality "network port range allows more than single port" \
+	    verify_binary_inequality "network port range allows more than single port" \
 			     "/t { network port=3456-3460, }" \
 			     "/t { network port=3456, }"
 
-    verify_binary_inequality "network peer port range allows more than single port" \
+	    verify_binary_inequality "network peer port range allows more than single port" \
 			     "/t { network peer=(port=3456-3460), }" \
 			     "/t { network peer=(port=3456), }"
-    # return to default
-    features_file=$default_features_file
-fi
-
-# Equality tests that set explicit priority level
-# TODO: priority handling for file paths is currently broken
-
-# This test is not actually correct due to two subtle interactions:
-# - /* is special-cased to expand to /[^/\x00]+ with at least one character
-# - Quieting of [^a] in the DFA is different and cannot be manually fixed
-
-#verify_binary_xequality "file rule carveout regex vs priority" \
-#	"/t { deny /[^a]* rwxlk, /a r, }" \
-#	"/t { priority=-1 deny /* rwxlk, /a r, }" \
-
-# Not grouping all three together because parser correctly handles
-# the equivalence of carveout regex and default audit deny
-verify_binary_xequality "file rule carveout regex vs priority (audit)" \
-	"/t { audit deny /[^a]* rwxlk, /a r, }" \
-	"/t { priority=-1 audit deny /* rwxlk, /a r, }" \
-
-verify_binary_xequality "file rule default audit deny vs audit priority carveout" \
-	"/t { /a r, }" \
-	"/t { priority=-1 audit deny /* rwxlk, /a r, }" \
-
-# verify combinations of different priority levels
-# for single rule comparisons, rules should keep same expected result
-# even when the priorities are different.
-# different priorities within a profile comparison resulting in
-# different permission could affected expected results
-
-
-priorities="none 0 1 -1"
-
-for pri1 in $priorities ; do
-    if [ "$pri1" = "none" ] ; then
-	priority1=""
-    else
-	priority1="priority=$pri1"
-    fi
-    for pri2 in $priorities  ; do
-	if [ "$pri2" = "none" ] ; then
-	    priority2=""
-	else
-	    priority2="priority=$pri2"
+	    # return to default
+	    features_file=$default_features_file
 	fi
 
-	verify_set "$priority1" "$priority2"
-    done
+	# Equality tests that set explicit priority level
+	# TODO: priority handling for file paths is currently broken
+
+	# This test is not actually correct due to two subtle
+	# interactions: - /* is special-cased to expand to /[^/\x00]+
+	# with at least one character - Quieting of [^a] in the DFA is
+	# different and cannot be manually fixed
+
+	#verify_binary_xequality "file rule carveout regex vs priority" \
+	#	"/t { deny /[^a]* rwxlk, /a r, }" \
+	#	"/t { priority=-1 deny /* rwxlk, /a r, }" \
+
+	# Not grouping all three together because parser correctly handles
+	# the equivalence of carveout regex and default audit deny
+	verify_binary_equality "file rule carveout regex vs priority (audit)" \
+			"/t { audit deny /[^a]* rwxlk, /a r, }" \
+			"/t { priority=-1 audit deny /* rwxlk, /a r, }"
+
+	verify_binary_equality "file rule default audit deny vs audit priority carveout" \
+			"/t { /a r, }" \
+			"/t { priority=-1 audit deny /* rwxlk, /a r, }"
+
+	# verify combinations of different priority levels
+	# for single rule comparisons, rules should keep same expected result
+	# even when the priorities are different.
+	# different priorities within a profile comparison resulting in
+	# different permission could affected expected results
+
+
+	priorities="none 0 1 -1"
+
+	for pri1 in $priorities ; do
+	    if [ "$pri1" = "none" ] ; then
+		priority1=""
+	    else
+		priority1="priority=$pri1"
+	    fi
+	    for pri2 in $priorities  ; do
+		if [ "$pri2" = "none" ] ; then
+		    priority2=""
+		else
+		    priority2="priority=$pri2"
+		fi
+
+		verify_set "$priority1" "$priority2"
+	    done
+	done
+
+	[ -z "${verbose}" ] && printf "\n"
+	printf "PASS\n"
+	exit 0
+}
+
+
+usage()
+{
+	local progname="$0"
+	local rc="$1"
+	local msg="usage: ${progname} [Options]
+
+Run the equality tests if no options given, otherwise run as directed
+by the options.
+
+Options:
+  -h, --help	display this help
+  -e base args	run an equality test on the following args
+  -n base args	run an inequality test on the following args
+  -xequality	run a known proble equality test
+  -xinequality	run a known proble inequality test
+  -r		on failure retain failed test output and abort
+  -d		include dfa dumps with failed test output
+  -f arg	features file to use
+  -p arg	parser to invoke
+  --description	description to print with test
+  -v		verbose
+examples:
+$ equality.sh
+...
+$ equality.sh -r
+....
+inary equality 'priority=1'x'' Exec perm \"ux\" - most specific match: same as glob
+FAIL: Hash values do not match
+parser: ../apparmor_parser --config-file=./parser.conf --features-file=./features_files/features.all
+known-good (0344cd377ccb239aba4cce768b818010961d68091d8c7fae72c755cfcb48d4a2) != profile-under-test (33fdf4575322a036c2acb75f93a7154179036f1189ef68ab9f1ae98e7f865780) for the following profiles:
+known-good         /t { priority=1 /* ux, /f px -> b, }
+profile-under-test /t {  /* ux, }
+
+$ equality.sh -e \"/t { priority=1 /* Px -> b, /f Px, }\" \"/t {  /* Px, }\"
+$ equality.sh -e \"/t { priority=1 /* Px -> b, /f Px, }\" \"/t {  /* Px, }\""
+
+	echo "$msg"
+}
+
+
+POSITIONAL_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+	-h|--help)
+	  usage
+	  exit 0
+	  ;;
+	-e|--equality)
+	    testtype="equality"
+	    shift # past argument
+	    ;;
+	--xequality)
+	    testtype="xequality"
+	    shift # past argument
+	    ;;
+	-n|--inequality)
+	    testtype="inequality"
+	    shift # past argument
+	    ;;
+	--xinequality)
+	    testtype="xinequality"
+	    shift # past argument
+	    ;;
+	-d|--dfa)
+	    dumpdfa=1
+	    shift # past argument
+	    ;;
+	-r|--retain)
+	    retain=1
+	    shift # past argument
+	    ;;
+	-v|--verbose)
+	    verbos=1
+	    shift # past argument
+	    ;;
+	-f|--feature-file)
+	    features_file="$2"
+	    shift # past argument
+	    shift # past option
+	    ;;
+	--description)
+	    description="$2"
+	    shift # past argument
+	    shift # past option
+	    ;;
+	-p|--parser)
+	    APPARMOR_PARSER="$2"
+	    shift # past argument
+	    shift # past option
+	    ;;
+	-*|--*)
+	    echo "Unknown option $1"
+	    exit 1
+	    ;;
+	*)
+	    POSITIONAL_ARGS+=("$1") # save positional arg
+	    shift # past argument
+	    ;;
+    esac
 done
 
-[ -z "${verbose}" ] && printf "\n"
-printf "PASS\n"
-exit 0
+set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
+
+if [ $# -eq 0 -o -z $testtype] ; then
+	run_tests "$@"
+	exit $?
+fi
+
+for profile in "$@" ; do
+	verify_binary "$testtype" "$description" "$known" "$profile"
+done

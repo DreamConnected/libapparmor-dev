@@ -349,6 +349,8 @@ public:
 	}
 };
 
+typedef map<const State *, size_t> Renumber_Map;
+
 /* Transitions in the DFA. */
 class DFA {
 	void dump_node_to_dfa(void);
@@ -385,7 +387,7 @@ public:
 	void undiff_encode(void);
 	void dump_diff_encode(ostream &os);
 
-	void dump(ostream &os);
+	void dump(ostream &os, Renumber_Map *renum);
 	void dump_dot_graph(ostream &os);
 	void dump_uniq_perms(const char *s);
 

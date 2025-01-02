@@ -546,6 +546,14 @@ void DFA::dump_uniq_perms(const char *s)
 	//TODO: add prompt
 }
 
+// make sure work_queue and reachable insertion are always done together
+static void push_reachable(set<State *> &reachable, list<State *> &work_queue,
+		    State *state)
+{
+	work_queue.push_back(state);
+	reachable.insert(state);
+}
+
 /* Remove dead or unreachable states */
 void DFA::remove_unreachable(optflags const &opts)
 {
@@ -553,19 +561,18 @@ void DFA::remove_unreachable(optflags const &opts)
 
 	/* find the set of reachable states */
 	reachable.insert(nonmatching);
-	work_queue.push_back(start);
+	push_reachable(reachable, work_queue, start);
 	while (!work_queue.empty()) {
 		State *from = work_queue.front();
 		work_queue.pop_front();
-		reachable.insert(from);
 
 		if (from->otherwise != nonmatching &&
 		    reachable.find(from->otherwise) == reachable.end())
-			work_queue.push_back(from->otherwise);
+			push_reachable(reachable, work_queue, from->otherwise);
 
 		for (StateTrans::iterator j = from->trans.begin(); j != from->trans.end(); j++) {
 			if (reachable.find(j->second) == reachable.end())
-				work_queue.push_back(j->second);
+				push_reachable(reachable, work_queue, j->second);
 		}
 	}
 

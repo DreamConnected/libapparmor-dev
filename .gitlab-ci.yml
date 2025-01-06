@@ -51,6 +51,21 @@ build-all:
     - make -C changehat/pam_apparmor
     - make -C profiles
 
+# If musl CI fails, mention fossdd <fossdd@pwned.life> (@fossdd on GitLab.com).
+build-all-musl:
+  stage: build
+  allow_failure: true
+  image: alpine:latest
+  script:
+    - apk add build-base autoconf autoconf-archive automake bash bison flex gettext-dev libtool linux-headers linux-pam-dev perl-dev py3-setuptools python3-dev sed swig
+    - cd libraries/libapparmor && ./autogen.sh && ./configure --with-perl --with-python --prefix=/usr && make -j $(nproc) && cd ../.. || { cat config.log ; exit 1 ; }
+    - make -C parser -j $(nproc)
+    - make -C binutils -j $(nproc)
+    - make -C utils
+    - make -C profiles
+    - make -C changehat/pam_apparmor
+    - make -C utils/vim
+
 test-libapparmor:
   stage: test
   needs: ["build-all"]

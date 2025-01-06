@@ -33,7 +33,7 @@ profile tshark /usr/bin/tshark {
   file r /{var,run}/log/journal/{,**},
 
   # Site-specific additions and overrides. See local/README for details.
-  include if exists <local/usr.bin.tshark>
+  include if exists <local/tshark>
 
   profile dumpcap {
     include <abstractions/base>

@@ -21,6 +21,7 @@
 #include <cstdint>
 #include <list>
 #include <ostream>
+#include <sys/types.h>
 
 #include "perms.h"
 #include "policydb.h"

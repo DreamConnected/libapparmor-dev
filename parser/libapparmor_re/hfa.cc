@@ -1334,8 +1334,7 @@ void DFA::compute_perms_table(vector <aa_perms> &perms_table, bool prompt)
 	perms_table.resize(states.size() * mult);
 
 	// nonmatching and start need to be 0 and 1 so handle outside of loop
-	if (filedfa)
-	  compute_perms_table_ent(nonmatching, 0, perms_table, prompt);
+	compute_perms_table_ent(nonmatching, 0, perms_table, prompt);
 	compute_perms_table_ent(start, 1, perms_table, prompt);
 
 	for (Partition::iterator i = states.begin(); i != states.end(); i++) {

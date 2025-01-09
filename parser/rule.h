@@ -252,9 +252,9 @@ public:
 		tmp = (int) rule_mode - (int) rhs.rule_mode;
 		if (tmp != 0)
 			return tmp;
-		if ((uint) owner < (uint) rhs.owner)
+		if ((unsigned int) owner < (unsigned int) rhs.owner)
 			return -1;
-		if ((uint) owner > (uint) rhs.owner)
+		if ((unsigned int) owner > (unsigned int) rhs.owner)
 			return 1;
 		return 0;
 	}

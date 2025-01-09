@@ -219,6 +219,7 @@ tests/regression/apparmor/chgrp
 tests/regression/apparmor/chmod
 tests/regression/apparmor/chown
 tests/regression/apparmor/clone
+tests/regression/apparmor/complain
 tests/regression/apparmor/dbus_eavesdrop
 tests/regression/apparmor/dbus_message
 tests/regression/apparmor/dbus_service

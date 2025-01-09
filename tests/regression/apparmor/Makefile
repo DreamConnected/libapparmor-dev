@@ -67,6 +67,21 @@ system aa-exec by adding USE_SYSTEM=1 to your make command.${nl}\
   LDLIBS += -Wl,-Bstatic -lapparmor -Wl,-Bdynamic -lpthread
 endif # USE_SYSTEM
 
+# the test suite is run as root but many of the tests restrict root
+# capabilities like dac_override and dac_readsearch so the test
+# suite needs recursive other rx perms from / on all dirs not owned by
+# root
+DIRCHECK_MESSAGE = $(shell ./check_dac_perms.sh)
+ifneq ($(strip $(DIRCHECK_MESSAGE)),)
+    DIR_PERM_ERROR_MESSAGE = $(error ${nl}\
+************************************************************************${nl}\
+The regression test suite at times is run as root but with restricted${nl}\
+capabilities. In these situations it needs to be able to still access${nl}\
+the test suite files.${nl}\
+${DIRCHECK_MESSAGE}${nl}\
+************************************************************************${nl})
+endif
+
 SYSCTL_INCLUDE="\#include <sys/sysctl.h>"
 USE_SYSCTL:=$(shell echo $(SYSCTL_INCLUDE) | cpp -dM >/dev/null 2>/dev/null && echo true)
 
@@ -320,6 +335,9 @@ libapparmor_check: ; $(LIBAPPARMOR_ERROR_MESSAGE)
 
 aa_exec_check: ; $(AA_EXEC_ERROR_MESSAGE)
 
+dirperm_check: ; $(DIR_PERM_ERROR_MESSAGE)
+
+
 all: libapparmor_check aa_exec_check $(EXEC) changehat.h uservars.inc
 
 uservars.inc: uservars.inc.source uservars.inc.system
@@ -417,7 +435,7 @@ build-dep:
 tests: RISKY_TESTS=
 tests: alltests
 
-alltests: all
+alltests: all dirperm_check check_dac_perms.sh
 	@if [ `whoami` = "root" ] ;\
 	then \
 		rc=0; \

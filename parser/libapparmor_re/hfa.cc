@@ -83,6 +83,21 @@ ostream &operator<<(ostream &os, State &state)
 	return os;
 }
 
+ostream &operator<<(ostream &os,
+		    const std::pair<State * const, Renumber_Map *> &p)
+{
+	/* dump the state label */
+	if (p.second && (*p.second)[p.first] != (size_t) p.first->label) {
+		os << '{';
+		os << (*p.second)[p.first];
+		os << " == " << *(p.first);
+		os << '}';
+	} else {
+		os << *(p.first);
+	}
+	return os;
+}
+
 /**
  * diff_weight - Find differential compression distance between @rel and @this
  * @rel: State to compare too
@@ -1082,11 +1097,11 @@ void DFA::dump_diff_encode(ostream &os)
 /**
  * text-dump the DFA (for debugging).
  */
-void DFA::dump(ostream & os)
+void DFA::dump(ostream &os, Renumber_Map *renum)
 {
 	for (Partition::iterator i = states.begin(); i != states.end(); i++) {
 		if (*i == start || (*i)->perms.is_accept()) {
-			os << **i;
+			os << make_pair(*i, renum);
 			if (*i == start) {
 				os << " <== ";
 				(*i)->perms.dump_header(os);
@@ -1109,7 +1124,7 @@ void DFA::dump(ostream & os)
 			} else {
 				if (first) {
 					first = false;
-					os << **i << " perms: ";
+					os << make_pair(*i, renum) << " perms: ";
 					if ((*i)->perms.is_accept())
 						(*i)->perms.dump(os);
 					else
@@ -1117,7 +1132,7 @@ void DFA::dump(ostream & os)
 					os << "\n";
 				}
 				os << "    "; j->first.dump(os) << " -> " <<
-					*(j)->second;
+					make_pair(j->second, renum);
 				if ((j)->second->perms.is_accept())
 					os << " ", (j->second)->perms.dump(os);
 				os << "\n";
@@ -1127,7 +1142,7 @@ void DFA::dump(ostream & os)
 		if ((*i)->otherwise != nonmatching) {
 			if (first) {
 				first = false;
-				os << **i << " perms: ";
+				os << make_pair(*i, renum) << " perms: ";
 				if ((*i)->perms.is_accept())
 					(*i)->perms.dump(os);
 				else
@@ -1142,7 +1157,7 @@ void DFA::dump(ostream & os)
 					os << *k;
 				}
 			}
-			os << "] -> " << *(*i)->otherwise;
+			os << "] -> " << make_pair((*i)->otherwise, renum);
 			if ((*i)->otherwise->perms.is_accept())
 				os << " ", (*i)->otherwise->perms.dump(os);
 			os << "\n";

@@ -15,17 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* aalogparse_error now requires visibility of the aa_log_record type
+ * Also include in a %code requires block to add it to the header
+ */
+%code requires{
+	#include <aalogparse.h>
+}
 
 %{
 
-/* set the following to non-zero to get bison to emit debugging
- * information about tokens given and rules matched.
- * Also:
- *   Uncomment the %defines
- *   parse.error
- *   parse.trace
- */
-#define YYDEBUG 0
 #include <string.h>
 #include <aalogparse.h>
 #include "parser.h"
@@ -41,12 +39,10 @@
 #define debug_unused_ unused_
 #endif
 
-aa_log_record *ret_record;
-
 /* Since we're a library, on any errors we don't want to print out any
  * error messages. We should probably add a debug interface that does
  * emit messages when asked for. */
-void aalogparse_error(unused_ void *scanner, debug_unused_ char const *s)
+void aalogparse_error(unused_ void *scanner, aa_log_record *ret_record, debug_unused_ char const *s)
 {
 #if (YYDEBUG != 0)
 	printf("ERROR: %s\n", s);
@@ -89,9 +85,10 @@ aa_record_event_type lookup_aa_event(unsigned int type)
 %define parse.trace
 */
 
-%define api.pure
+%define api.pure full
 %lex-param{void *scanner}
 %parse-param{void *scanner}
+%parse-param{aa_log_record *ret_record}
 
 %union
 {
@@ -284,8 +281,9 @@ audit_user_msg: TOK_KEY_MSG TOK_EQUALS audit_id audit_user_msg_tail
 
 audit_id: TOK_AUDIT TOK_OPEN_PAREN TOK_AUDIT_DIGITS TOK_PERIOD TOK_AUDIT_DIGITS TOK_COLON TOK_AUDIT_DIGITS TOK_CLOSE_PAREN TOK_COLON
 	{
-		if (!asprintf(&ret_record->audit_id, "%s.%s:%s", $3, $5, $7))
-			yyerror(scanner, YY_("Out of memory"));
+		if (!asprintf(&ret_record->audit_id, "%s.%s:%s", $3, $5, $7)) {
+			yyerror(scanner, ret_record, YY_("Out of memory"));
+		}
 		ret_record->epoch = atol($3);
 		ret_record->audit_sub_id = atoi($7);
 		free($3);
@@ -477,31 +475,3 @@ protocol: TOK_QUOTED_STRING
 	}
 	;
 %%
-
-aa_log_record *
-_parse_yacc(char *str)
-{
-	/* yydebug = 1;  */
-	YY_BUFFER_STATE lex_buf;
-	yyscan_t scanner;
-
-	ret_record = NULL;
-	ret_record = malloc(sizeof(aa_log_record));
-
-	_init_log_record(ret_record);
-
-	if (ret_record == NULL)
-		return NULL;
-
-#if (YYDEBUG != 0)
-	yydebug = 1;
-#endif
-
-	aalogparse_lex_init(&scanner);
-	lex_buf = aalogparse__scan_string(str, scanner);
-	/* Ignore return value to return an AA_RECORD_INVALID event */
-	(void)aalogparse_parse(scanner);
-	aalogparse__delete_buffer(lex_buf, scanner);
-	aalogparse_lex_destroy(scanner);
-	return ret_record;
-}

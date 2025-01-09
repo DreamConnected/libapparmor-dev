@@ -44,7 +44,7 @@ include $(COMMONDIR)/Make.rules
 
 BUILT_SOURCES = grammar.h scanner.h af_protos.h
 AM_LFLAGS = -v
-AM_YFLAGS = -d -p aalogparse_
+AM_YFLAGS = -Wno-yacc -d -p aalogparse_
 AM_CPPFLAGS = -D_GNU_SOURCE -I$(top_srcdir)/include/
 scanner.h: scanner.l
 	$(LEX) -v $<
@@ -73,6 +73,10 @@ CLEANFILES = libapparmor.pc
 tst_aalogmisc_SOURCES = tst_aalogmisc.c
 tst_aalogmisc_LDADD = .libs/libapparmor.a
 
+tst_aalogparse_reentrancy_SOURCES = tst_aalogparse_reentrancy.c
+tst_aalogparse_reentrancy_LDADD = .libs/libapparmor.a
+tst_aalogparse_reentrancy_LDFLAGS = -pthread
+
 tst_features_SOURCES = tst_features.c
 tst_features_LDADD = .libs/libapparmor.a
 
@@ -80,7 +84,7 @@ tst_kernel_SOURCES = tst_kernel.c
 tst_kernel_LDADD = .libs/libapparmor.a
 tst_kernel_LDFLAGS = -pthread
 
-check_PROGRAMS = tst_aalogmisc tst_features tst_kernel
+check_PROGRAMS = tst_aalogmisc tst_aalogparse_reentrancy tst_features tst_kernel
 TESTS = $(check_PROGRAMS)
 
 .PHONY: check-local

@@ -19,8 +19,14 @@
 #ifndef __AA_LOG_PARSER_H__
 #define __AA_LOG_PARSER_H__
 
+// Internal-only type
+struct string_buf {
+	char *buf;
+	unsigned int buf_len;
+	unsigned int buf_alloc;
+};
+
 extern void _init_log_record(aa_log_record *record);
-extern aa_log_record *_parse_yacc(char *str);
 extern char *hex_to_string(char *str);
 extern char *ipproto_to_string(unsigned int proto);
 

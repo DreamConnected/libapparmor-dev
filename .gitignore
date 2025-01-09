@@ -120,6 +120,10 @@ libraries/libapparmor/src/tst_aalogmisc
 libraries/libapparmor/src/tst_aalogmisc.log
 libraries/libapparmor/src/tst_aalogmisc.o
 libraries/libapparmor/src/tst_aalogmisc.trs
+libraries/libapparmor/src/tst_aalogparse_reentrancy
+libraries/libapparmor/src/tst_aalogparse_reentrancy.log
+libraries/libapparmor/src/tst_aalogparse_reentrancy.o
+libraries/libapparmor/src/tst_aalogparse_reentrancy.trs
 libraries/libapparmor/src/tst_features
 libraries/libapparmor/src/tst_features.log
 libraries/libapparmor/src/tst_features.o

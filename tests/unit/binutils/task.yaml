@@ -1,0 +1,3 @@
+summary: Run unit tests of AppArmor binary utilities
+execute: |
+    make -C "$SPREAD_PATH"/binutils check

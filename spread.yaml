@@ -1,0 +1,138 @@
+project: apparmor
+backends:
+    garden:
+        # The garden backend relies on https://gitlab.com/zygoon/image-garden
+        # TODO: Switch to a released version for better stability.
+        type: adhoc
+        # Use just enough RAM to link the parser on a virtual system with two
+        # cores. Using more cores may easily consume more memory, due to make
+        # -j$(nproc, used below than a small CI/CD system is typically granted.
+        # It is better to have more workers than to have one big worker with
+        # lots of resources.
+        allocate: ADDRESS "$(QEMU_MEM_OPTION="-m 1536" QEMU_SMP_OPTION="-smp 2" image-garden allocate "$SPREAD_SYSTEM".$(uname -m))"
+        discard: image-garden discard "$SPREAD_SYSTEM_ADDRESS"
+        systems:
+            # All systems except for the one Ubuntu system are marked as
+            # manual. This way we don't accidentally spin up everything when
+            # someone runs spread without knowing better.
+            - opensuse-cloud-tumbleweed:
+                  username: opensuse
+                  password: opensuse
+                  workers: 4
+                  manual: true
+            - debian-cloud-12:
+                  username: debian
+                  password: debian
+                  workers: 4
+                  manual: true
+            - debian-cloud-13:
+                  username: debian
+                  password: debian
+                  workers: 4
+                  manual: true
+            - ubuntu-cloud-22.04:
+                  username: ubuntu
+                  password: ubuntu
+                  workers: 4
+                  manual: true
+            - ubuntu-cloud-24.04:
+                  username: ubuntu
+                  password: ubuntu
+                  workers: 4
+                  manual: true
+            - ubuntu-cloud-24.10:
+                  username: ubuntu
+                  password: ubuntu
+                  workers: 4
+
+exclude:
+    - .git
+    - "*.o"
+    # Files related to spread and image-garden.
+    - "*.qcow2"
+    - "*.iso"
+    - "*.img"
+    - "*.log"
+    - "*.run"
+    - "*.lock"
+    - spread-logs
+    - spread-artifacts
+
+# Copy the project to this path on the test system.
+# This is also available as $SPREAD_PATH.
+path: /tmp/apparmor
+
+prepare: |
+    # Configure libapparmor but only if a makefile is not already present.
+    # This makes repeated iteration with -reuse much faster, as the chain of
+    # invocations of make below are efficient if nothing needs to be done.
+    if [ ! -f "$SPREAD_PATH"/libraries/libapparmor/Makefile ]; then
+      (
+        cd $SPREAD_PATH/libraries/libapparmor
+        sh ./autogen.sh && sh ./configure --prefix=/usr --with-perl --with-python
+      )
+    fi
+    # Build libapparmor.
+    make -C $SPREAD_PATH/libraries/libapparmor -j"$(nproc)"
+    # Build apparmor_parser.
+    make -C $SPREAD_PATH/parser -j"$(nproc)"
+    # Build binary utilities (aa-exec and firends).
+    make -C $SPREAD_PATH/binutils -j"$(nproc)"
+    # Build python utilities.
+    make -C $SPREAD_PATH/utils -j"$(nproc)"
+
+# In case of failure, include the kernel version in the log.
+debug-each: |
+    uname -a
+
+suites:
+    utils/:
+        summary: Unit tests for the Python utilities.
+        prepare: |
+            # Generate apparmor profiles that the tests rely on.
+            make -C "$SPREAD_PATH"/parser/tst gen_xtrans gen_dbus
+            # Spread does not support programmatically generated test variants.
+            # Ensure that the list baked into utils/test/task.yaml contains all
+            # the files matching utils/test/test-*.py
+            fail=0
+            for V in $SPREAD_PATH/utils/test/test-*.py; do
+              Vdash="$(basename "$V" | sed -e 's,^test-,,' -e 's,\.py$,,')"
+              Vunder="$(basename "$V" | sed -e 's,^test-,,' -e 's,\.py$,,' -e 's,-,_,g')"
+              if ! grep -xF '    TEST/'"$Vunder"': '"$Vdash" "$SPREAD_PATH"/utils/test/task.yaml; then
+                echo "utils/test/task.yaml: missing test variant: TEST/$Vunder: $Vdash" >&2
+                fail=1
+              fi
+            done
+            if [ "$fail" -ne 0 ]; then
+              echo "exiting due to missing variants listed above" >&2
+              exit 1
+            fi
+    tests/unit/:
+        summary: Unit tests that do not exercise the kernel layer.
+    tests/regression/:
+        summary: Regression tests for parser-kernel interaction.
+        prepare: |
+            # Spread does not support programmatically generated test variants.
+            # Ensure that the list baked into tests/regression/apparmor/task.yaml
+            # contains all the tests defined in tests/regression/apparmor/Makefile.
+            echo '$(foreach t,$(TESTS),$(info TEST/$t))' | \
+              make -n -f "$SPREAD_PATH"/tests/regression/apparmor/Makefile -f /dev/stdin | \
+              grep -F TEST/ | \
+              cut -d / -f 2 | \
+              tee apparmor-regression-tests.txt
+            fail=0
+            while read -r V; do
+              if ! grep -xF '    TEST/'"$V"': 1' "$SPREAD_PATH"/tests/regression/apparmor/task.yaml; then
+                echo "tests/regression/task.yaml: missing test variant: TEST/$V" >&2
+                fail=1
+              fi
+            done <apparmor-regression-tests.txt
+            if [ "$fail" -ne 0 ]; then
+              echo "exiting due to missing variants listed above" >&2
+              exit 1
+            fi
+
+            # Build all the apparmor regression test programs.
+            make -C "$SPREAD_PATH"/tests/regression/apparmor -j"$(nproc)"
+        restore: |
+            rm -f apparmor-regression-tests.txt

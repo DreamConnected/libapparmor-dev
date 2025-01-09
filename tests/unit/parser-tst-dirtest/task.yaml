@@ -1,0 +1,3 @@
+summary: Run apparmor_parser dirtest test from parser/tst
+execute: |
+    make -C "$SPREAD_PATH"/parser/tst -j"$(nproc)" dirtest

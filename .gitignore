@@ -295,3 +295,15 @@ tests/regression/apparmor/xattrs_profile
 tests/regression/apparmor/coredump
 **/__pycache__/
 *.orig
+
+# Patterns related to spread integration tests
+*.img
+*.iso
+*.lock
+*.log
+*.qcow2
+*.run
+.spread-reuse.yaml
+.spread-reuse.*.yaml
+spread-artifacts/
+spread-logs/

@@ -84,6 +84,16 @@ clean:
 check: __libapparmor __parser
 	export PYTHONPATH=$(PYTHONPATH) LD_LIBRARY_PATH=$(LD_LIBRARY_PATH) LC_ALL=C __AA_CONFDIR=$(CONFDIR) __AA_BASEDIR=$(BASEDIR) __AA_PARSER=$(PARSER) ; $(foreach test, $(wildcard test-*.py), echo ; echo === $(test) === ; $(call pyalldo, $(test)))
 
+# FIXME: passing -v to test-$*.py below makes some tests fail.
+#
+# This is a static pattern rule that allows running individual tests via the
+# check-one-test-NAME target, where NAME matches an exciting file test-NAME.py.
+# The way it is coded allows make <tab><tab> to complete it, making it easier
+# to use interactively.
+check-one-test-%: PYTHON ?= python3
+$(foreach t,$(wildcard test-*.py),check-one-test-$(patsubst test-%.py,%,$t)): check-one-test-%: __libapparmor __parser
+	PYTHONPATH=$(PYTHONPATH) LD_LIBRARY_PATH=$(LD_LIBRARY_PATH) LC_ALL=C __AA_CONFDIR=$(CONFDIR) __AA_BASEDIR=$(BASEDIR) __AA_PARSER=$(PARSER) $(PYTHON) test-$*.py
+
 .coverage: $(wildcard ../aa-* ../apparmor/*.py test-*.py) __libapparmor __parser
 	export PYTHONPATH=$(PYTHONPATH) LD_LIBRARY_PATH=$(LD_LIBRARY_PATH) LC_ALL=C __AA_CONFDIR=$(CONFDIR) __AA_BASEDIR=$(BASEDIR) __AA_PARSER=$(PARSER) ; $(COVERAGE_IGNORE_FAILURES_CMD) ; $(foreach test, $(wildcard test-*.py), echo ; echo === $(test) === ; $(PYTHON) -m coverage run --branch -p $(test); )
 	$(PYTHON) -m coverage combine

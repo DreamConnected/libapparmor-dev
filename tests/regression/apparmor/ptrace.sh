@@ -21,7 +21,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 # Read permission was required for a confined process to be able to be traced 
 # using ptrace.  This stopped being required or functioning correctly 
@@ -56,7 +56,7 @@ runchecktest "test 2 -hc prog" pass -h -c -n 100 $helper ${bin_true}
 
 
 if [ "$(kernel_features ptrace)" = "true" -a "$(parser_supports 'ptrace,')" = "true" ] ; then
-	. $bin/ptrace_v6.inc
+	. "$bin/ptrace_v6.inc"
 else
-	. $bin/ptrace_v5.inc
+	. "$bin/ptrace_v5.inc"
 fi

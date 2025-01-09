@@ -16,7 +16,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 requires_kernel_features namespaces/mask/userns_create
 requires_parser_support "userns,"
@@ -68,7 +68,7 @@ do_test()
 	runchecktest "$desc unshare - root" $expect_root -u # unshare
 
 	$generate_setns_profile
-	runchecktest "$desc setns - root" $expect_setns_root -s $userns_setns_bin -p $pipe # setns
+	runchecktest "$desc setns - root" $expect_setns_root -s "$userns_setns_bin" -p $pipe # setns
 
 	settest -u "foo" userns # run tests as user foo
 	$generate_profile # settest removes the profile, so load it here
@@ -76,7 +76,7 @@ do_test()
 	runchecktest "$desc unshare - user" $expect_user -u # unshare
 
 	$generate_setns_profile
-	runchecktest "$desc setns - user" $expect_setns_user -s $userns_setns_bin -p $pipe # setns
+	runchecktest "$desc setns - user" $expect_setns_user -s "$userns_setns_bin" -p $pipe # setns
 }
 
 if [ -e $unprivileged_userns_clone_path ] && [ $unprivileged_userns_clone -eq 0 ]; then
@@ -152,9 +152,9 @@ detail="apparmor_restrict_unprivileged_userns enabled"
 do_test "unconfined $detail" pass $user_testresult pass pass
 
 # it should work when running as user with cap_sys_admin
-setcap cap_sys_admin+pie $bin/userns
+setcap cap_sys_admin+pie "$bin/userns"
 do_test "unconfined cap_sys_admin $detail" pass pass pass pass
 # remove cap_sys_admin from binary
-setcap cap_sys_admin= $bin/userns
+setcap cap_sys_admin= "$bin/userns"
 
 run_confined_tests "$detail"

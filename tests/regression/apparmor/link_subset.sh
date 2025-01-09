@@ -20,13 +20,13 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 target=$tmpdir/target_
 linkfile=$tmpdir/link_
 
-tfiles=`$bin/link_subset --filenames $target`
-lfiles=`$bin/link_subset --filenames $linkfile`
+tfiles=`"$bin/link_subset" --filenames $target`
+lfiles=`"$bin/link_subset" --filenames $linkfile`
 
 # unconfined test - no target file
 #runchecktest "unconfined - no target" fail $target $linkfile

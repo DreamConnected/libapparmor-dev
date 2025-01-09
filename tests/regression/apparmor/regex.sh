@@ -22,7 +22,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 file=$tmpdir/file
 file2=$tmpdir/filealpha

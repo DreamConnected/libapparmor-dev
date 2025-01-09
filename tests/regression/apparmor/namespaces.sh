@@ -16,7 +16,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 requires_namespace_interface
 
 # unique_ns - Print a randomly generated, unused namespace identifier to stdout

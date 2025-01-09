@@ -17,7 +17,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 disk_img=$tmpdir/disk_img
 new_root=$tmpdir/new_root/
@@ -26,7 +26,7 @@ bad=$tmpdir/BAD/
 proc=$new_root/proc
 fstype="ext2"
 
-. $bin/mount.inc
+. "$bin/mount.inc"
 
 pivot_root_cleanup() {
 	mountpoint -q "$proc"

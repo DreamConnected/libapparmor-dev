@@ -26,8 +26,8 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
-. $bin/unix_socket.inc
+. "$bin/prologue.inc"
+. "$bin/unix_socket.inc"
 requires_kernel_features policy/versions/v7
 requires_kernel_features network/af_unix
 requires_parser_support "unix,"

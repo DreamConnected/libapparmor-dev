@@ -29,7 +29,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 file=$tmpdir/file
 inheritor=$bin/fd_inheritor
@@ -43,34 +43,34 @@ d3e773e2a4a0cc9d7e28eb217a4241ce
 1437d6c55ef788d3bcd27ab14e9382a9
 EOF
 
-runchecktest "fd inheritance; unconfined -> unconfined" pass $file $inheritor
+runchecktest "fd inheritance; unconfined -> unconfined" pass $file "$inheritor"
 
-genprofile $file:$okperm $inheritor:Ux
-runchecktest "fd inheritance; confined -> unconfined" pass $file $inheritor
+genprofile $file:$okperm "$inheritor:Ux"
+runchecktest "fd inheritance; confined -> unconfined" pass $file "$inheritor"
 
-genprofile $file:$badperm $inheritor:Ux
-runchecktest "fd inheritance; confined (bad perm) -> unconfined" fail $file $inheritor
+genprofile $file:$badperm "$inheritor:Ux"
+runchecktest "fd inheritance; confined (bad perm) -> unconfined" fail $file "$inheritor"
 
-genprofile $inheritor:Ux
-runchecktest "fd inheritance; confined (no perm) -> unconfined" fail $file $inheritor
+genprofile "$inheritor:Ux"
+runchecktest "fd inheritance; confined (no perm) -> unconfined" fail $file "$inheritor"
 
-genprofile image=$inheritor $file:$okperm
-runchecktest "fd inheritance; unconfined -> confined" pass $file $inheritor
+genprofile "image=$inheritor" $file:$okperm
+runchecktest "fd inheritance; unconfined -> confined" pass $file "$inheritor"
 
-genprofile image=$inheritor
-runchecktest "fd inheritance; unconfined -> confined (no perm)" pass $file $inheritor
+genprofile "image=$inheritor"
+runchecktest "fd inheritance; unconfined -> confined (no perm)" pass $file "$inheritor"
 
-genprofile $file:$okperm $inheritor:Px -- image=$inheritor $file:$okperm
-runchecktest "fd inheritance; confined -> confined" pass $file $inheritor
+genprofile $file:$okperm "$inheritor:Px" -- "image=$inheritor" $file:$okperm
+runchecktest "fd inheritance; confined -> confined" pass $file "$inheritor"
 
-genprofile $file:$badperm $inheritor:Px -- image=$inheritor $file:$okperm
-runchecktest "fd inheritance; confined (bad perm) -> confined" fail $file $inheritor
+genprofile $file:$badperm "$inheritor:Px" -- "image=$inheritor" $file:$okperm
+runchecktest "fd inheritance; confined (bad perm) -> confined" fail $file "$inheritor"
 
-genprofile $inheritor:Px -- image=$inheritor $file:$okperm
-runchecktest "fd inheritance; confined (no perm) -> confined" fail $file $inheritor
+genprofile "$inheritor:Px" -- "image=$inheritor" $file:$okperm
+runchecktest "fd inheritance; confined (no perm) -> confined" fail $file "$inheritor"
 
-genprofile $file:$okperm $inheritor:Px -- image=$inheritor $file:$badperm
-runchecktest "fd inheritance; confined -> confined (bad perm)" fail $file $inheritor
+genprofile $file:$okperm "$inheritor:Px" -- "image=$inheritor" $file:$badperm
+runchecktest "fd inheritance; confined -> confined (bad perm)" fail $file "$inheritor"
 
-genprofile $file:$okperm $inheritor:Px -- image=$inheritor
-runchecktest "fd inheritance; confined -> confined (no perm)" fail $file $inheritor
+genprofile $file:$okperm "$inheritor:Px" -- "image=$inheritor"
+runchecktest "fd inheritance; confined -> confined (no perm)" fail $file "$inheritor"

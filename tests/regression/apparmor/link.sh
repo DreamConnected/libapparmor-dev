@@ -20,7 +20,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 target=$tmpdir/target
 linkfile=$tmpdir/linkfile

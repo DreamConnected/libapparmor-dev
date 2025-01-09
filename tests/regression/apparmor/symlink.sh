@@ -14,7 +14,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 src=$tmpdir/src1
 target=$tmpdir/target

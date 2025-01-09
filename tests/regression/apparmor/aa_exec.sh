@@ -19,7 +19,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 ns=aa_exec_ns
 
@@ -42,7 +42,7 @@ $1 ${mode}{
 EOF
 }
 
-settest aa_exec_profile ${bin}/aa_exec_wrapper.sh
+settest aa_exec_profile "${bin}/aa_exec_wrapper.sh"
 
 genprofile_aa_exec "$test" 0
 runchecktest "unconfined" pass "$aa_exec" "unconfined"

@@ -20,7 +20,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 ##
 ## A. MOUNT
@@ -33,7 +33,7 @@ mount_bad=$tmpdir/mountbad
 loop_device="unset" 
 fstype="ext2"
 
-. $bin/mount.inc
+. "$bin/mount.inc"
 
 setup_mnt() {
 	/bin/mount -n -t${fstype} ${loop_device} ${mount_point}

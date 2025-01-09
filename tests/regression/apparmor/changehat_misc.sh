@@ -18,7 +18,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 file=$tmpdir/file
 subfile=$tmpdir/file2
@@ -77,7 +77,7 @@ runchecktest "CHANGEHAT (bad token)" signal9 ${subtest}
 
 settest changehat_wrapper
 
-genprofile hat:open addimage:${bin}/open ${file}:${okperm}
+genprofile hat:open "addimage:${bin}/open" ${file}:${okperm}
 
 runchecktest "CHANGEHAT (noexit subprofile (token=0))" pass --token=0 open ${file}
 runchecktest "CHANGEHAT (exit noexit subprofile (token=0))" fail --token=0 --exit_hat open ${file}

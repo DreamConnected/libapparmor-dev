@@ -20,7 +20,7 @@ sysctlbad=/proc/sys/kernel/sysrq
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 ##
 ## C. SYSCTL

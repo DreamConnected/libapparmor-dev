@@ -17,7 +17,7 @@ pwd=`cd $pwd ; /bin/pwd`
 
 bin=$pwd
 
-. $bin/prologue.inc
+. "$bin/prologue.inc"
 
 requires_kernel_features domain/stack
 settest transition

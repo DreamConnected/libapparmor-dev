@@ -60,5 +60,9 @@
 #define DUMP_RULE_MERGE			(1 << 22)
 #define DUMP_DFA_STATE32		(1 << 23)
 #define DUMP_DFA_FLAGS_TABLE		(1 << 24)
+#define DUMP_DFA_STATES_INIT 		(1 << 25)
+#define DUMP_DFA_STATES_POST_FILTER 	(1 << 26)
+#define DUMP_DFA_STATES_POST_MINIMIZE	(1 << 27)
+#define DUMP_DFA_STATES_POST_UNREACHABLE (1 << 28)
 
 #endif /* APPARMOR_RE_H */

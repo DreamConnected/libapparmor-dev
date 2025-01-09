@@ -54,6 +54,9 @@ static int file_comp(const void *c1, const void *c2)
 	if ((*e1)->audit != (*e2)->audit)
 		return (*e1)->audit < (*e2)->audit ? -1 : 1;
 
+	if ((*e1)->priority != (*e2)->priority)
+		return (*e2)->priority - (*e1)->priority;
+
 	return strcmp((*e1)->name, (*e2)->name);
 }
 

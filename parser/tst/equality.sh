@@ -88,16 +88,16 @@ verify_binary()
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
 			printf "\nFAIL: Hash values do not match\n" 2>&1
-			printf "known-good (%s) != profile-under-test (%s) for the following profile:\n%s\n\n" \
-				"$good_hash" "$hash" "$profile" 1>&2
+			printf "known-good (%s) != profile-under-test (%s) for the following profiles:\nknown-good         %s\nprofile-under-test %s\n\n" \
+				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
 			((ret++))
 		elif [ "$t" == "xequality" ] && [ "$hash" == "$good_hash" ]
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
 			printf "\nunexpected PASS: equality test with known problem, Hash values match\n" 2>&1
-			printf "known-good (%s) == profile-under-test (%s) for the following profile:\n%s\n\n" \
-				"$good_hash" "$hash" "$profile" 1>&2
+			printf "known-good (%s) == profile-under-test (%s) for the following profile:\nknown-good         %s\nprofile-under-test %s\n\n" \
+				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
 			((ret++))
 		elif [ "$t" == "xequality" ] && [ "$hash" != "$good_hash" ]
@@ -107,16 +107,16 @@ verify_binary()
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
 			printf "\nFAIL: Hash values match\n" 2>&1
-			printf "known-good (%s) == profile-under-test (%s) for the following profile:\n%s\n\n" \
-				"$good_hash" "$hash" "$profile" 1>&2
+			printf "known-good (%s) == profile-under-test (%s) for the following profiles:\nknown-good         %s\nprofile-under-test %s\n\n" \
+				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
 			((ret++))
 		elif [ "$t" == "xinequality" ] && [ "$hash" != "$good_hash" ]
 		then
 			if [ -z "$verbose" ] ; then printf "Binary %s %s" "$t" "$desc" ; fi
 			printf "\nunexpected PASS: inequality test with known problem, Hash values do not match\n" 2>&1
-			printf "known-good (%s) != profile-under-test (%s) for the following profile:\n%s\n\n" \
-				"$good_hash" "$hash" "$profile" 1>&2
+			printf "known-good (%s) != profile-under-test (%s) for the following profile:\nknown-good         %s\nprofile-under-test %s\n\n" \
+				"$good_hash" "$hash" "$good_profile" "$profile" 1>&2
 			((fails++))
 			((ret++))
 		elif [ "$t" == "xinequality" ] && [ "$hash" == "$good_hash" ]
@@ -890,6 +890,27 @@ else
     # return to default
     features_file=$default_features_file
 fi
+
+# Equality tests that set explicit priority level
+# TODO: priority handling for file paths is currently broken
+
+# This test is not actually correct due to two subtle interactions:
+# - /* is special-cased to expand to /[^/\x00]+ with at least one character
+# - Quieting of [^a] in the DFA is different and cannot be manually fixed
+
+#verify_binary_xequality "file rule carveout regex vs priority" \
+#	"/t { deny /[^a]* rwxlk, /a r, }" \
+#	"/t { priority=-1 deny /* rwxlk, /a r, }" \
+
+# Not grouping all three together because parser correctly handles
+# the equivalence of carveout regex and default audit deny
+verify_binary_xequality "file rule carveout regex vs priority (audit)" \
+	"/t { audit deny /[^a]* rwxlk, /a r, }" \
+	"/t { priority=-1 audit deny /* rwxlk, /a r, }" \
+
+verify_binary_xequality "file rule default audit deny vs audit priority carveout" \
+	"/t { /a r, }" \
+	"/t { priority=-1 audit deny /* rwxlk, /a r, }" \
 
 # verify combinations of different priority levels
 # for single rule comparisons, rules should keep same expected result

@@ -27,7 +27,7 @@ manually, or build against in-tree libapparmor.${nl}\
   endif # LIBAPPARMOR not set
   LDLIBS += $(LIBAPPARMOR)
 
-  AA_EXEC = $(shell which aa-exec)
+  AA_EXEC = $(shell command -v aa-exec)
   ifeq ($(AA_EXEC),)
     AA_EXEC_ERROR_MESSAGE = $(error ${nl}\
 ************************************************************************${nl}\
@@ -166,7 +166,7 @@ SRC+=syscall_sysctl.c
 endif
 
 # Only do xattrs_profile test if we have the required setfattr binary
-ifneq (,$(shell which -s setfattr && echo TRUE))
+ifneq (,$(shell command -v setfattr))
 SRC+=xattrs_profile.c
 else
 $(warning ${nl}\
@@ -295,7 +295,7 @@ TESTS=aa_exec \
       nfs
 
 # Only do xattrs_profile test if we have the required setfattr binary
-ifneq (,$(shell which -s setfattr && echo TRUE))
+ifneq (,$(shell command -v setfattr))
 TESTS+=xattrs_profile
 endif
 

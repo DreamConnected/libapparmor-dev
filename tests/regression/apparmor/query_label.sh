@@ -40,11 +40,12 @@ dbus_svc_query="session com.foo.baz"
 # granting anything specified in $@.
 genqueryprofile()
 {
-	genprofile --stdin <<EOF
+	genprofile image=$test --stdin <<EOF
 $test {
   file,
 }
-
+EOF
+	genprofile --append image=$qprof --stdin <<EOF
 $qprof {
   $@
 }

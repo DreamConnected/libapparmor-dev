@@ -9,7 +9,7 @@
 
 gendbusprofile()
 {
-	genprofile --stdin <<EOF
+	genprofile image=$test --stdin <<EOF
 ${__dbus_var_decl}
 $test {
   @{gen $test}

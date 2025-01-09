@@ -420,6 +420,7 @@ fi
 
 	complainflag=""
 	mkflags=""
+	append="false"
 	while /bin/true
 	do
 		case "$1" in
@@ -431,25 +432,31 @@ fi
 			      ;;
 			"-I") mkflags="${mkflags} -I"
 			      ;;
+			"--append") append="true"
+				    ;;
 			*) break
 			   ;;
 		esac
 		shift
 	done
 
-	# save previous profile
-	if [ -f $profile ]
-	then
-		mv $profile ${profile}.old
-		mv $profilenames ${profilenames}.old
-	fi
+	if [ "$append" = "false" ]; then
+		# save previous profile
+		if [ -f $profile ]
+		then
+			mv $profile ${profile}.old
+			mv $profilenames ${profilenames}.old
+		fi
 
-	echo "abi <kernel>," >$profile
-	num_emitted=0
+		echo "abi <kernel>," >$profile
+		num_emitted=0
+	else
+		num_emmited=$(wc -l < "$profilenames")
+	fi
 
 	while /bin/true
 	do
-		imagename=$test
+		imagename=$testbin
 
 		# image/subhat allows overriding of the default
 		# imagename which is based on the testname
@@ -457,7 +464,7 @@ fi
 		# it is most often used after --, in fact it is basically
 		# mandatory after --
 		case "$1" in
-			image=*) imagename=`echo $1 | sed 's/^image=\([^:]*\).*$/\1/'`
+			image=*) imagename=`echo $1 | sed 's/^image=\(.*\)$/\1/'`
 				 num_emitted=0
 				 shift
 				 ;;
@@ -495,9 +502,12 @@ fi
 		break
 	done
 
+	if [ $append == "true" ]
+	then
+		replaceprofile
 	# if old and new profiles consist of the same entries
 	# we can do a replace, else remove/reload
-	if [ $profileloaded -eq 1 ]
+	elif [ $profileloaded -eq 1 ]
 	then
 		names1=$tmpdir/sorted1
 		names2=$tmpdir/sorted2
@@ -507,13 +517,13 @@ fi
 		if cmp -s $names1 $names2
 		then
 			replaceprofile
-		else	
+		else
 			removeprofile ${profile}.old
 			loadprofile
 		fi
 
 		rm -f $names1 $names2
-	
+
 	else
 		loadprofile
 	fi
@@ -621,6 +631,11 @@ settest()
 	else
 		fatalerror "settest, illegal usage"
 	fi
+
+	# store testbin name from testexec so that testexec represents
+	# what will be executed - allowing for a change of username
+	# with sudo -u
+	testbin=$testexec
 
 	if [ ! -z "$username" ]
 	then

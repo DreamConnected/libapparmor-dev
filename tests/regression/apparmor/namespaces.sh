@@ -42,7 +42,7 @@ genprofile_ns() {
 
 	# override the sys_profiles variable with a bad path so that genprofile
 	# doesn't perform profile load checking in the wrong policy namespace
-	echo "${prefix}:${ns}:${prof} {}" | sys_profiles="${sys_profiles}XXX" genprofile --stdin
+	echo "${prefix}:${ns}:${prof} {}" | sys_profiles="${sys_profiles}XXX" genprofile image=:${ns}:${prof} --stdin
 	echo "$ns"
 }
 

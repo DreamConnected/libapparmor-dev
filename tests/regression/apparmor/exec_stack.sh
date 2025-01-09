@@ -111,14 +111,16 @@ ns="ns"
 prof="stackprofile"
 nstest=":${ns}:${prof}"
 # Verify file access and contexts by stacking a profile with a namespaced profile
-genprofile --stdin <<EOF
+genprofile image=$test --stdin <<EOF
 $test {
   file,
   audit deny $otherfile $okperm,
   audit deny $thirdfile $okperm,
   $test ix -> &$nstest,
 }
+EOF
 
+genprofile --append image=$nstest --stdin <<EOF
 $nstest {
   file,
   audit deny $file $okperm,

@@ -99,7 +99,7 @@ else
 
     #Verify that NNP allows stacking a new policy namespace
     #must use stdin with genprofile for namespaces
-    genprofile --stdin <<EOF
+    genprofile image=$test --stdin <<EOF
 $test {
     @{gen_bin $test}
     @{gen_def}
@@ -107,6 +107,8 @@ $test {
     /proc/*/attr/current w,
     change_profile-> &:nnp:unconfined,
 }
+EOF
+    genprofile --append image=:nnp:$bin/open --stdin <<EOF
 :nnp:$bin/open {
     @{gen_bin $bin/open}
     @{gen_def}
@@ -120,7 +122,7 @@ EOF
     runchecktest "NNP (stack :nnp:open - no NNP)" fail -p ":nnp:$bin/open" -f "$file"
     runchecktest "NNP (stack :nnp:open - NNP)" fail -n -p ":nnp:$bin/open" -f "$file"
 
-    genprofile --stdin <<EOF
+    genprofile image=$test --stdin <<EOF
 $test {
     @{gen_bin $test}
     @{gen_def}
@@ -128,6 +130,8 @@ $test {
     /proc/*/attr/current w,
     change_profile-> &:nnp:$bin/open,
 }
+EOF
+    genprofile --append image=:nnp:$bin/open --stdin <<EOF
 :nnp:$bin/open {
     @{gen_bin $bin/open}
     @{gen_def}

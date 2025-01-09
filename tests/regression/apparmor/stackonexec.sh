@@ -116,14 +116,16 @@ ns="ns"
 prof="stackonexec"
 nstest=":${ns}:${prof}"
 # Verify file access and contexts by stacking a profile with a namespaced profile
-genprofile --stdin <<EOF
+genprofile image=$test --stdin <<EOF
 $test {
   file,
   audit deny $otherfile $okperm,
   audit deny $thirdfile $okperm,
   change_profile -> &$nstest,
 }
+EOF
 
+genprofile --append image=$nstest --stdin <<EOF
 $nstest {
   file,
   audit deny $file $okperm,
@@ -166,8 +168,10 @@ runchecktest "STACKONEXEC (complain mode - okcon)" pass -o $othertest -- $test -
 
 # Verify that stacking with a bare namespace is handled. The process is placed
 # into the default profile of the namespace, which is unconfined.
-genprofile --stdin <<EOF
+genprofile image=$test --stdin <<EOF
 $test { file, change_profile, }
+EOF
+genprofile --append image=$nstest --stdin <<EOF
 $nstest { }
 EOF
 runchecktest "STACKONEXEC (bare :ns:)" pass -o ":${ns}:" -- $test -l unconfined -m "(null)"

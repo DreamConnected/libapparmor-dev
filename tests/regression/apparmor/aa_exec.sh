@@ -31,11 +31,12 @@ genprofile_aa_exec()
 			mode="(complain) "
 		fi
 	fi
-	genprofile --stdin <<EOF
+	genprofile image=$1 --stdin <<EOF
 $1 ${mode}{
   file,
 }
-
+EOF
+	genprofile --append image=:${ns}:${1} --stdin <<EOF
 :${ns}:${1} ${mode}{
   file,
 }
@@ -81,11 +82,12 @@ genprofile_aa_exec "$test" 0
 runchecktest "negative test: bad ns (--namespace=${ns}XXX)" fail "$aa_exec -n ${ns}XXX -p $test" "$test (enforce)"
 
 if [ "$(parser_supports 'all,')" = "true" ]; then
-    genprofile --stdin <<EOF
+    genprofile image=$test --stdin <<EOF
 $test {
   all,
 }
-
+EOF
+    genprofile --append image=:${ns}:${test} --stdin <<EOF
 :${ns}:${test} {
   all,
 }

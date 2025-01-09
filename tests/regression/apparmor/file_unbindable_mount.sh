@@ -22,14 +22,14 @@ backing_file="$tmpdir/loop_file"
 mount_target="$tmpdir/mount_target"
 
 mkdir "${mount_target}"
-fallocate -l 512K "${backing_file}"
+fallocate -l 4M "${backing_file}"
 mkfs.fat -F 32 "${backing_file}" > /dev/null 2> /dev/null
 
 losetup -f "${backing_file}" || fatalerror 'Unable to set up a loop device'
 loop_device="$(/sbin/losetup -n -O NAME -l -j "${backing_file}")"
 
 mount --make-unbindable "${loop_device}" "${mount_target}"
-fallocate -l 16K "${mount_target}/a_file"
+fallocate -l 2M "${mount_target}/a_file"
 # echo is also a builtin, making things a bit more complicated
 cp "$(type -P echo)" "${mount_target}/echo"
 

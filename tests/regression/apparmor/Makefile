@@ -267,6 +267,7 @@ TESTS=aa_exec \
       exec_qual \
       fchdir \
       fd_inheritance \
+      file_unbindable_mount \
       fork \
       i18n \
       link \

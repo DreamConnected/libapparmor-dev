@@ -136,3 +136,5 @@ suites:
             make -C "$SPREAD_PATH"/tests/regression/apparmor -j"$(nproc)"
         restore: |
             rm -f apparmor-regression-tests.txt
+    tests/snapd/:
+        summary: Tests exercising a subset of behavior of snapd

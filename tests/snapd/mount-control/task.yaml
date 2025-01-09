@@ -1,0 +1,69 @@
+summary: Tests mimicking what snapd mount-control interface is doing
+details: |
+    The mount-control interface allows snap applications to issue limited calls
+    to the mount system call. The set of file systems, flags, source and target
+    paths is carefully controlled. Snapd generates apparmor profiles with rules
+    that look like this:
+
+    mount fstype=(
+      aufs,autofs,btrfs,ext2,ext3,ext4,hfs,iso9660,jfs,msdos,ntfs,ramfs,
+      reiserfs,squashfs,tmpfs,ubifs,udf,ufs,vfat,xfs,zfs
+    ) options=(ro) "/dev/sda{0,1}" -> "/var/snap/consumer/common/**{,/}",
+
+    Verify that such profiles can be compiled and loaded into the kernel, and
+    that they allow mounts to actually happen.
+environment:
+    PROFILE: mount-tmpfs-rw.profile
+    PROFILE_NAME: test-mount-tmpfs-rw
+    MOUNT_FS: tmpfs
+    MOUNT_WHAT: none
+    MOUNT_OPTS: rw
+artifacts:
+    - parser.txt
+    - denials.txt
+prepare: |
+    rm -f parser.txt denials.txt
+    "$SPREAD_PATH"/parser/apparmor_parser --base="$SPREAD_PATH"/profiles/apparmor.d --warn=all --replace "$PROFILE" 2>parser.txt
+    if [ test -s parser.txt ]; then
+        echo "Parser produced warnings:"
+        cat parser.txt
+    fi
+    mkdir -p /tmp/dir
+    dmesg --clear # Clear ring buffer
+    sysctl --values kernel.printk_ratelimit >old-ratelimit.txt
+    sysctl --write kernel.printk_ratelimit=0
+
+    # TODO: if we actually add test systems with auditd pre-installed and
+    # running then either alter the test or stop the service in prepare and
+    # start again in restore.
+    if [ "$(systemctl is-active auditd.service)" != inactive ]; then
+        echo "This test does not work if auditd is active"
+        exit 1
+    fi
+execute: |
+    if ! "$SPREAD_PATH"/binutils/aa-exec -p "$PROFILE_NAME" mount -t "$MOUNT_FS" "$MOUNT_WHAT" /tmp/dir -o "$MOUNT_OPTS"; then
+        echo "Mount failed, looking for denials"
+        if dmesg | grep DENIED > denials.txt; then
+            echo "Profile caused fatal denials"
+            cat denials.txt
+        fi
+        exit 1
+    elif dmesg | grep DENIED > denials.txt; then
+        echo "Profile caused non-fatal denials"
+        cat denials.txt
+        exit 1
+    fi
+restore: |
+    if [ -f old-ratelimit.txt ]; then
+        sysctl -w kernel.printk_ratelimit="$(cat old-ratelimit.txt)"
+        rm -f old-ratelimit.txt
+    fi
+
+    "$SPREAD_PATH"/parser/apparmor_parser --base="$SPREAD_PATH"/profiles/apparmor.d --remove "$PROFILE"
+
+    if [ -d /tmp/dir ]; then
+        if mountpoint /tmp/dir; then
+            umount /tmp/dir
+        fi
+        rmdir /tmp/dir
+    fi

@@ -24,7 +24,7 @@ artifacts:
 prepare: |
     rm -f parser.txt denials.txt
     "$SPREAD_PATH"/parser/apparmor_parser --base="$SPREAD_PATH"/profiles/apparmor.d --warn=all --replace "$PROFILE" 2>parser.txt
-    if [ test -s parser.txt ]; then
+    if [ -s parser.txt ]; then
         echo "Parser produced warnings:"
         cat parser.txt
     fi

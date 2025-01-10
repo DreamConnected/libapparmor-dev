@@ -33,12 +33,9 @@ prepare: |
     sysctl --values kernel.printk_ratelimit >old-ratelimit.txt
     sysctl --write kernel.printk_ratelimit=0
 
-    # TODO: if we actually add test systems with auditd pre-installed and
-    # running then either alter the test or stop the service in prepare and
-    # start again in restore.
     if [ "$(systemctl is-active auditd.service)" != inactive ]; then
-        echo "This test does not work if auditd is active"
-        exit 1
+        systemctl stop auditd.service
+        touch did-stop-auditd.txt
     fi
 execute: |
     if ! "$SPREAD_PATH"/binutils/aa-exec -p "$PROFILE_NAME" mount -t "$MOUNT_FS" "$MOUNT_WHAT" /tmp/dir -o "$MOUNT_OPTS"; then
@@ -54,6 +51,10 @@ execute: |
         exit 1
     fi
 restore: |
+    if [ -f did-stop-auditd.txt ]; then
+        systemctl start auditd.service
+        rm -f did-stop-auditd.txt
+    fi
     if [ -f old-ratelimit.txt ]; then
         sysctl -w kernel.printk_ratelimit="$(cat old-ratelimit.txt)"
         rm -f old-ratelimit.txt

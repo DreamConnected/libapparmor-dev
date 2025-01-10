@@ -71,6 +71,9 @@ backends:
                   username: ubuntu
                   password: ubuntu
                   workers: 4
+            - ubuntu-cloud-25.04:
+                  username: ubuntu
+                  password: ubuntu
             - fedora-cloud-41:
                   username: fedora
                   password: fedora

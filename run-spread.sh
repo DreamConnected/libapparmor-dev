@@ -22,7 +22,8 @@ for system in \
 	debian-cloud-13 \
 	ubuntu-cloud-22.04 \
 	ubuntu-cloud-24.04 \
-	ubuntu-cloud-24.10; do
+	ubuntu-cloud-24.10 \
+	ubuntu-cloud-25.04; do
 	if ! spread -artifacts ./spread-artifacts -v "$system" | tee spread-logs/"$system".log; then
 		echo "Spread exited with code $?" >spread-logs/"$system".failed
 	fi

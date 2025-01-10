@@ -2,7 +2,26 @@ abi <abi/4.0>,
 
 profile "test-mount-tmpfs-rw" flags=(attach_disconnected,mediate_deleted) {
   # See parser/mount.cc for implementation details.
+  #
+  # Note that on newer kernels, e.g. on Debian 13, with new-enough libmount,
+  # this will be a sequence of fsopen, mount_setattr, fsconfig, fsmount,
+  # mount_setattr and mount_move.  As such we need to allow the move flag for
+  # the final operation and we need to allow the source of the move to be the
+  # empty string. The following strace log illustrates the details:
+  #
+  # fsopen("tmpfs", FSOPEN_CLOEXEC)         = 3
+  # mount_setattr(-1, NULL, 0, NULL, 0)     = -1 EINVAL (Invalid argument)
+  # fsconfig(3, FSCONFIG_SET_STRING, "source", "none", 0) = 0
+  # fsconfig(3, FSCONFIG_SET_FLAG, "rw", NULL, 0) = 0
+  # fsconfig(3, FSCONFIG_CMD_CREATE, NULL, NULL, 0) = 0
+  # fsmount(3, FSMOUNT_CLOEXEC, 0)          = 4
+  # statx(4, "", AT_STATX_SYNC_AS_STAT|AT_EMPTY_PATH, STATX_MNT_ID, {stx_mask=STATX_BASIC_STATS|STATX_MNT_ID, stx_attributes=STATX_ATTR_MOUNT_ROOT, stx_mode=S_IFDIR|S_ISVTX|0777, stx_size=40, ...}) = 0
+  # mount_setattr(4, "", AT_EMPTY_PATH, {attr_set=0, attr_clr=MOUNT_ATTR_RDONLY, propagation=0 /* MS_??? */, userns_fd=0}, 32) = 0
+  # move_mount(4, "", AT_FDCWD, "/tmp/dir", MOVE_MOUNT_F_EMPTY_PATH) = 0
+  # close(3)                                = 0
+  # close(4)                                = 0
   mount fstype=tmpfs options=(rw) none -> /tmp/**,
+  mount options=(rw, move) -> /tmp/**,
 
   capability sys_admin,
 

@@ -1,3 +1,3 @@
 summary: Run apparmor_parser caching test from parser/tst
 execute: |
-    make -C "$SPREAD_PATH"/parser/tst -j"$(nproc)" caching
+    make -C "$SPREAD_PATH"/parser/tst -j"$(nproc)" caching VERBOSE=1

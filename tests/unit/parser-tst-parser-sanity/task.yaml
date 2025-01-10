@@ -8,4 +8,4 @@ kill-timeout: 30m
 # Start this task sooner rather than later.
 priority: 100
 execute: |
-    make -C "$SPREAD_PATH"/parser/tst -j"$(nproc)" parser_sanity
+    make -C "$SPREAD_PATH"/parser/tst -j"$(nproc)" parser_sanity VERBOSE=1

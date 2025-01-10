@@ -10,7 +10,7 @@ environment:
     TEST/tst_lib: 1
 prepare: |
     # The test relies on make to build a binary.
-    make -C "$SPREAD_PATH"/parser -j"$(nproc)" "$SPREAD_VARIANT"
+    make -C "$SPREAD_PATH"/parser -j"$(nproc)" "$SPREAD_VARIANT" VERBOSE=1
 execute: |
     cd "$SPREAD_PATH"/parser
     ./"$SPREAD_VARIANT"

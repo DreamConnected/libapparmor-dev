@@ -15,6 +15,7 @@ packages:
 - bison
 - build-essential
 - dejagnu
+- dosfstools
 - flake8
 - flex
 - gettext
@@ -46,6 +47,7 @@ packages:
 - bison
 - dbus-1-devel
 - dejagnu
+- dosfstools
 - flex
 - gcc
 - gcc-c++

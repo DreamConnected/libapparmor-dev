@@ -15,6 +15,7 @@ packages:
 - bison
 - build-essential
 - dejagnu
+- dosfstools
 - flake8
 - flex
 - gettext
@@ -46,6 +47,7 @@ packages:
 - bison
 - dbus-1-devel
 - dejagnu
+- dosfstools
 - flex
 - gcc
 - gcc-c++
@@ -55,6 +57,7 @@ packages:
 - liburing2-devel
 - make
 - pkg-config
+- python3-devel
 - python3-flake8
 - python3-notify2
 - python3-psutil
@@ -62,7 +65,6 @@ packages:
 - python3-setuptools
 - python3-tk
 - python311
-- python3-devel
 - python311-devel
 - swig
 endef

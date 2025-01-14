@@ -1,0 +1,22 @@
+summary: Spread tests for gcc
+environment:
+  # Check that gcc works
+  TEST/simple_test: "gcc --version"
+
+  # Check that we can compile with gcc
+  TEST/compile_test: "echo 'void main(){}'|gcc -xc -"
+
+  # We cannot compile in protected directories
+  TEST/invalid_dir: "echo 'void main(){}'|gcc -xc -o /etc/out - 2>/dev/null"
+  EXPECT_DENIALS/invalid_dir: 'operation=\"mknod\".*profile=\"gcc\".*name=\"/etc/out\".*denied_mask=\"c\"'
+
+  # This command is a potentially dangerous privesc (spawns a shell code), it should be blocked
+  TEST/privesc: "gcc -c a.c -wrapper 'bash,-s' 2>/dev/null"
+  EXPECT_DENIALS/privesc: 'operation=\"exec\".*profile=\"gcc\".*name=\"/usr/bin/bash\".*denied_mask=\"x\"'
+
+execute: |
+    if [ -z ${EXPECT_DENIALS:-} ] ; then
+        eval $TEST
+    else
+        ! eval $TEST
+    fi

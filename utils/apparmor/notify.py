@@ -15,10 +15,33 @@
 
 import os
 import struct
+import sqlite3
 
 from apparmor.common import AppArmorBug, DebugLogger
 
 debug_logger = DebugLogger('apparmor.notify')
+
+
+def get_last_login_timestamp(username, filename='/var/log/wtmp', lastlog2_db='/var/lib/lastlog/lastlog2.db'):
+    """Get last login for user as epoch timestamp"""
+
+    if os.access(lastlog2_db, os.R_OK):
+        return get_last_login_timestamp_lastlog2(username, lastlog2_db)
+    else:
+        return get_last_login_timestamp_wtmp(username, filename)
+
+
+def get_last_login_timestamp_lastlog2(username, lastlog2_db='/var/lib/lastlog/lastlog2.db'):
+    """Execute lastlog2 and get last login for user as epoch timestamp"""
+
+    db = sqlite3.connect('file:%s?mode=ro' % lastlog2_db, uri=True)
+    cur = db.cursor()
+    timestamp = cur.execute('SELECT Time FROM Lastlog2 WHERE Name == ?;', [username]).fetchone()
+
+    if timestamp:
+        return timestamp[0]
+    else:
+        return 0
 
 
 def sane_timestamp(timestamp):
@@ -32,7 +55,7 @@ def sane_timestamp(timestamp):
     return True
 
 
-def get_last_login_timestamp(username, filename='/var/log/wtmp'):
+def get_last_login_timestamp_wtmp(username, filename='/var/log/wtmp'):
     """Directly read wtmp and get last login for user as epoch timestamp"""
     timestamp = 0
     last_login = 0

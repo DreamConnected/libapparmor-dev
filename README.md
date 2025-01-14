@@ -381,6 +381,7 @@ The aa-notify tool's Python dependencies can be satisfied by installing the
 following packages (Debian package names, other distros may vary):
 * python3-notify2
 * python3-psutil
+* python3-sqlite (part of the python3.NN-stdlib package)
 * python3-tk
 * python3-ttkthemes
 * python3-gi

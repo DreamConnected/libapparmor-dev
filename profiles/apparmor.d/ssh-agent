@@ -1,0 +1,42 @@
+#------------------------------------------------------------------
+#    Copyright (C) 2024 Canonical Ltd.
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+# vim: ft=apparmor
+#
+abi <abi/4.0>,
+
+include <tunables/global>
+
+profile ssh-agent /usr/bin/ssh-agent {
+  include <abstractions/base>
+  include <abstractions/nameservice>
+
+  capability setgid,
+
+  # Enable commands to run as a subprocess by ssh-agent
+  file mrix /usr/bin/dash,
+  file mrix /usr/bin/bash,
+
+  # Common commands run as a subprocess by ssh-agent
+  file Pix /usr/bin/ssh-keygen,
+  file Pix /usr/bin/ssh-add,
+  file Pix /usr/bin/ssh-keyscan,
+  file rw /dev/tty,
+
+  # Common SSH file locations
+  file rw @{etc_rw}/ssh/{,**},
+  file rw @{HOME}/.ssh/{,**},
+
+  # Allow executable mapping and read for the binary
+  file mr /usr/bin/ssh-agent,
+
+  # UNIX-domain sockets 
+  file rw /tmp/ssh-[0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z]/{,**},
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/ssh-agent>
+}

@@ -10,6 +10,199 @@ aare_rules.{h,cc} - code to that binds parse -> expr-tree -> hfa generation
                     -> chfa generation into a basic interface for converting
 		    rules to a runtime ready state machine.
 
+Notes on the compiler pipeline order
+============================================
+
+Front End: Program driver logic and policy text parsing into an
+           abstract syntax tree.
+Middle Layer: Transforms and operations on the abstract syntax tree.
+              Converts syntax tree into expression tree for back end.
+Back End: transforms of syntax tree, and creation of policy HFA from
+          expression trees and HFAs.
+
+
+Basic order of the backend of the compiler pipe line and where the
+dump information occurs in the pipeline.
+
+===== Front End (parse -> AST ================
+       |
+       v
+    yyparse
+       |
++--->--+-->-+
+|           |
+|  +-->---- +---------------------------<-----------------------+
+|  |        |                                                   |
+|  |        v                                                   |
+|  |      yylex                                                 |
+|  |        |                                                   |
+|  ^   token match                                              |
+|  |        |                                                   |
+|  |        +----------------------------+                      |
+|  |        |                            |                      ^
+|  |        v                            v                      |
+|  +-<- rule match?                  preprocess                 |
+|           |                            |                      |
+|    early var expansion      +----------+-----------+          |
+|           |                 |          |           |          |
+^           v                 v          v           v          |
+|   new rule() / new ent   include   variable   conditional     |
+|           |                 |          |           |          |
+|           v                 +---->-----+----->-----+----->----+
+| new rule semantic check
+|           |
++-----<-----+
+            |
+----------- | ------ End of Parse --------------------
+            |
+            v
+post_parse_profile semantic check
+       |
+       v
+  post_process
+           |
+           v
+     add implied rules()
+           |
+           v
+  process_profile_variables()
+                    |
+                    v
+                  rule->expand_variables()
+                    |
+           +--------+
+           |
+           v
+   replace aliases (to be moved to backend rewrite)
+           |
+           v
+      merge rules
+           |
+           v
+       profile->merge_rules()
+                        |
+                        v
+                +-->--rule->is_mergeable()
+                |                |
+                ^                v
+                |           add to table
+                |                |
+                +-------+--------+
+                        |
+                        v
+                      sort->cmp()/oper<()
+                        |
+                      rule->merge()
+                        |
+           +------------+
+           |
+           v
+  process_profile_rules
+                   |
+                   v
+                 rule->gen_policy_re()
+                            |
+                            v
+===== Mid layer (AST -> expr tree) =================
+                            |
+                     +-> add_rule()			(aare_rules.{h,cc})
+                     |      |
+                     |      v
+                     |  rule parse			(parse.y)
+                     |      |    |
+                     |      |    v
+                     |      |   expr tree		(expr-tree.{h,cc})
+                     |      |       |
+                     |      v       |
+                     | unique perms |		(aare_rules.{h,cc})
+                     |      |       |
+                     |      +------ +
+                     |      |
+                     |      v
+                     |  add to rules expr tree	(aare_rules.{h,c})
+                     |      |
+                     +------+
+                            |
+         +------------------+
+         |
+         v
+    create_dfablob()
+         |
+         v
+      expr tree
+         |
+         v
+  create_chfa()		(aare_rules.cc)
+         |
+         v
+  expr normalization	(expr-tree.{h,cc})
+         |
+         v
+  expr simplification	(expr-tree.{h,c})
+         |
+         +- D expr-tree
+         |
+         +- D expr-simplified
+         |
+==== Back End - Create cHFA out of expr tree and other HFAs ====
+         v
+    hfa creation	(hfa.{h,cc})
+         |
+         +- D dfa-node-map
+         |
+         +- D dfa-uniq-perms
+         |
+         +- D dfa-states-initial
+         |
+         v
+    hfa rewrite		(not yet implemented)
+         |
+         v
+    filter deny		(hfa.{h,cc})
+         |
+         +- D dfa-states-post-filter
+         |
+         v
+    minimization	(hfa.{h,cc})
+         |
+         +- D dfa-minimize-partitions
+         |
+         +- D dfa-minimize-uniq-perms
+         |
+         +- D dfa-states-post-minimize
+         |
+         v
+   unreachable state removal	(hfa.{h,cc})
+         |
+         +- D dfa-states-post-unreachable
+         |
+         +- D dfa-states	constructed hfa
+         |
+         +- D dfa-graph
+         |
+         v
+equivalence class construction
+         |
+         +- D equiv
+         |
+     diff encode		(hfa.{h,cc})
+         |
+         +- D diff-encode
+         |
+compute perms table
+         |
+         +- D compressed-dfa == perm table dump
+         |
+   compressed hfa			(chfa.{h,cc}
+         |
+         +- D compressed-dfa == transition tables
+         |
+         +- D dfa-compressed-states    - compress HFA in state form
+         |
+         v
+  Return to Mid Layer
+
+
 Notes on the compress hfa file format (chfa)
 ==============================================
 

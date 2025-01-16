@@ -579,6 +579,7 @@ def get_more_info_about_event(rl, ev, special_profiles, header='', get_clean_rul
 # TODO reuse more code from aa-logprof in callbacks
 def cb_more_info(notification, action, _args):
     (ev, rl, special_profiles) = _args
+    args.wait = args.min_wait
     notification.close()
 
     out, profile_path, clean_rule = get_more_info_about_event(rl, ev, special_profiles, _('Operation denied by AppArmor\n\n'), get_clean_rule=True)
@@ -664,6 +665,7 @@ def allow_all(clean_rules):
 # TODO reuse more code from aa-logprof in callbacks
 def cb_more_info_aggregated(notification, action, _args):
     (to_display, aggregated, clean_rules) = _args
+    args.wait = args.min_wait
     res = ShowMoreGUIAggregated(to_display, aggregated, clean_rules).show()
     if res == 'allow_all':
         allow_all(clean_rules)
@@ -671,6 +673,7 @@ def cb_more_info_aggregated(notification, action, _args):
 
 def cb_add_to_profile(notification, action, _args):
     (ev, rl, special_profiles) = _args
+    args.wait = args.min_wait
     notification.close()
 
     rule = rl.create_rule_from_ev(ev)
@@ -1081,7 +1084,12 @@ def main():
 
         if args.merge_notifications:
             if not args.wait or args.wait == 0:
+                # args.wait now uses an exponential backoff.
+                # If there is several notifications on a time period, the time period doubles to avoid flooding.
+                # If there is no notification on a time period, the time period is divided by two.
                 args.wait = 5
+            args.min_wait = args.wait
+            args.max_wait = args.wait * 2**5  # Arbitrary power of two (2 minutes 40 if args.wait is 5 seconds)
 
             old_time = int(time.time())
             while True:
@@ -1094,11 +1102,16 @@ def main():
                     ev = rl.parse_record(raw_ev)
                     display_notification(ev, rl, format_event(raw_ev, logfile), userns_special_profiles)
                 elif len(raw_evs) > 1:
+                    if args.wait < args.max_wait:
+                        args.wait *= 2
                     aggregated = defaultdict(lambda: {'count': 0, 'values': defaultdict(lambda: defaultdict(int)), 'events': []})
                     for raw_ev in raw_evs:
                         ev = rl.parse_record(raw_ev)
                         aggregate_event(aggregated, ev, keys_to_aggregate)
                     display_aggregated_notification(rl, aggregated, maximum_number_notification_profiles, keys_to_aggregate, userns_special_profiles)
+                else:
+                    if args.wait > args.min_wait:
+                        args.wait /= 2
 
                 old_time = int(time.time())
 
@@ -1107,6 +1120,7 @@ def main():
                 raise_privileges()
                 time.sleep(args.wait)
         else:
+            args.min_wait = args.wait
             # At this point this script needs to be able to read 'logfile' but once
             # the for loop starts, privileges can be dropped since the file descriptor
             # has been opened and access granted. Further reads of the file will not

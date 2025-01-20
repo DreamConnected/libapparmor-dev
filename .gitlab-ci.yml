@@ -146,11 +146,11 @@ shellcheck:
   extends:
     - .ubuntu-before_script
   script:
-  - apt-get install --no-install-recommends -y python3-minimal file shellcheck xmlstarlet
-  - shellcheck --version
-  - './tests/bin/shellcheck-tree --format=checkstyle
-       | xmlstarlet tr tests/checkstyle2junit.xslt
-       > shellcheck.xml'
+    - apt-get install --no-install-recommends -y python3-minimal file shellcheck xmlstarlet
+    - shellcheck --version
+    - "./tests/bin/shellcheck-tree --format=checkstyle
+      | xmlstarlet tr tests/checkstyle2junit.xslt
+      > shellcheck.xml"
   artifacts:
     when: always
     reports:
@@ -188,15 +188,15 @@ coverity:
     variables:
       - $CI_PROJECT_PATH == "apparmor/apparmor"
   script:
-      - apt-get install --no-install-recommends -y curl git texlive-latex-recommended
-      - *install-c-build-deps
-      - curl -o /tmp/cov-analysis-linux64.tgz https://scan.coverity.com/download/linux64
-        --form project=$COVERITY_SCAN_PROJECT_NAME --form token=$COVERITY_SCAN_TOKEN
-      - tar xfz /tmp/cov-analysis-linux64.tgz
-      - COV_VERSION=$(ls -dt cov-analysis-linux64-* | head -1)
-      - PATH=$PATH:$(pwd)/$COV_VERSION/bin
-      - make coverity
-      - *send-to-coverity
+    - apt-get install --no-install-recommends -y curl git texlive-latex-recommended
+    - *install-c-build-deps
+    - curl -o /tmp/cov-analysis-linux64.tgz https://scan.coverity.com/download/linux64
+      --form project=$COVERITY_SCAN_PROJECT_NAME --form token=$COVERITY_SCAN_TOKEN
+    - tar xfz /tmp/cov-analysis-linux64.tgz
+    - COV_VERSION=$(ls -dt cov-analysis-linux64-* | head -1)
+    - PATH=$PATH:$(pwd)/$COV_VERSION/bin
+    - make coverity
+    - *send-to-coverity
   artifacts:
     paths:
       - "apparmor-*.tar.gz"

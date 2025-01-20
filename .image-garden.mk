@@ -39,6 +39,8 @@ UBUNTU_CLOUD_INIT_USER_DATA_TEMPLATE=$(DEBIAN_CLOUD_INIT_USER_DATA_TEMPLATE)
 # This is the cloud-init user-data profile for openSUSE Tumbleweed.
 define OPENSUSE_tumbleweed_CLOUD_INIT_USER_DATA_TEMPLATE
 $(CLOUD_INIT_USER_DATA_TEMPLATE)
+- sed -i -e 's/security=selinux/security=apparmor/g' /etc/default/grub
+- update-bootloader
 packages:
 - attr
 - autoconf

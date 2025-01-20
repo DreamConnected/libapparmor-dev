@@ -8,6 +8,7 @@
 define DEBIAN_CLOUD_INIT_USER_DATA_TEMPLATE
 $(CLOUD_INIT_USER_DATA_TEMPLATE)
 packages:
+- apache2-dev
 - attr
 - autoconf
 - autoconf-archive
@@ -20,6 +21,7 @@ packages:
 - flex
 - gettext
 - libdbus-1-dev
+- libpam0g-dev
 - libtool
 - liburing-dev
 - pkg-config
@@ -42,6 +44,7 @@ $(CLOUD_INIT_USER_DATA_TEMPLATE)
 - sed -i -e 's/security=selinux/security=apparmor/g' /etc/default/grub
 - update-bootloader
 packages:
+- apache2-devel
 - attr
 - autoconf
 - autoconf-archive
@@ -58,6 +61,7 @@ packages:
 - libtool
 - liburing2-devel
 - make
+- pam-devel
 - pkg-config
 - python3-devel
 - python3-flake8

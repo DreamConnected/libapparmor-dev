@@ -178,11 +178,6 @@ coverity:
   stage: .post
   extends:
     - .ubuntu-before_script
-  only:
-    refs:
-      - master
-    variables:
-      - $CI_PROJECT_PATH == "apparmor/apparmor"
   script:
       - apt-get install --no-install-recommends -y curl git texlive-latex-recommended
       - *install-c-build-deps
@@ -196,3 +191,5 @@ coverity:
   artifacts:
     paths:
       - "apparmor-*.tar.gz"
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PROJECT_PATH == "apparmor/apparmor"

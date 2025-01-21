@@ -17,6 +17,7 @@ stages:
 .ubuntu-common:
   before_script:
     # Install build-dependencies by loading the package list from the ubuntu/debian cloud-init profile.
+    - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" install_deps "Installing dependencies..."
     - apt-get update -qq
     - apt-get install --yes yq make lsb-release
     - |
@@ -24,6 +25,7 @@ stages:
       | make -f - nothing \
       | yq '.packages | .[]' \
       | xargs apt-get install --yes --no-install-recommends
+    - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" install_deps
   after_script:
     # Inspect the kernel and lsb-release.
     - lsb_release -a
@@ -88,7 +90,9 @@ test-utils:
     - make -C utils --touch
 
     # TODO: move those to cloud-init list?
+    - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" install_extra_deps "Installing additional dependencies..."
     - apt-get install --no-install-recommends -y libc6-dev libjs-jquery libjs-jquery-throttle-debounce libjs-jquery-isonscreen libjs-jquery-tablesorter flake8 python3-coverage python3-notify2 python3-psutil python3-setuptools python3-tk python3-ttkthemes python3-gi
+    - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" install_extra_deps
 
     # See apparmor/apparmor#221
     - make -C parser/tst gen_dbus
@@ -130,7 +134,9 @@ test-build-regression:
     - .ubuntu-common
   script:
     # Additional dependencies required by regression tests
+    - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" install_extra_deps "Installing additional dependencies..."
     - apt-get install --no-install-recommends -y attr libdbus-1-dev liburing-dev
+    - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" install_extra_deps
     - make -C tests/regression/apparmor -j $(nproc)
 
 shellcheck:
@@ -139,7 +145,9 @@ shellcheck:
   extends:
     - .ubuntu-common
   script:
+  - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" install_extra_deps "Installing additional dependencies..."
   - apt-get install --no-install-recommends -y python3-minimal file shellcheck xmlstarlet
+  - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" install_extra_deps
   - shellcheck --version
   - './tests/bin/shellcheck-tree --format=checkstyle
        | xmlstarlet tr tests/checkstyle2junit.xslt
@@ -170,7 +178,9 @@ coverity:
   extends:
     - .ubuntu-common
   script:
+      - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" install_extra_deps "Installing additional dependencies..."
       - apt-get install --no-install-recommends -y curl git texlive-latex-recommended
+      - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" install_extra_deps
       - curl -o /tmp/cov-analysis-linux64.tgz https://scan.coverity.com/download/linux64
         --form project=$COVERITY_SCAN_PROJECT_NAME --form token=$COVERITY_SCAN_TOKEN
       - tar xfz /tmp/cov-analysis-linux64.tgz

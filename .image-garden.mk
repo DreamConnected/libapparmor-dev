@@ -74,3 +74,29 @@ packages:
 - python311-devel
 - swig
 endef
+
+define FEDORA_CLOUD_INIT_USER_DATA_TEMPLATE
+$(CLOUD_INIT_USER_DATA_TEMPLATE)
+packages:
+- attr
+- autoconf
+- autoconf-archive
+- automake
+- bison
+- dbus-devel
+- dejagnu
+- dosfstools
+- flex
+- gettext
+- libstdc++-static
+- libtool
+- liburing-devel
+- perl
+- pkg-config
+- python3-devel
+- python3-flake8
+- python3-gobject-base
+- python3-notify2
+- python3-tkinter
+- swig
+endef

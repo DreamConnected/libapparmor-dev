@@ -72,6 +72,9 @@ backends:
                   username: ubuntu
                   password: ubuntu
                   workers: 4
+            - fedora-cloud-41:
+                  username: fedora
+                  password: fedora
 
 exclude:
     - .git
@@ -145,6 +148,9 @@ suites:
         summary: Unit tests that do not exercise the kernel layer.
     tests/regression/:
         summary: Regression tests for parser-kernel interaction.
+        systems:
+            # AppArmor is not enabled in the kernel.
+            - -fedora-cloud-*
         prepare: |
             # Spread does not support programmatically generated test variants.
             # Ensure that the list baked into tests/regression/apparmor/task.yaml
@@ -172,3 +178,6 @@ suites:
             rm -f apparmor-regression-tests.txt
     tests/snapd/:
         summary: Tests exercising a subset of behavior of snapd
+        systems:
+            # AppArmor is not enabled in the kernel.
+            - -fedora-cloud-*

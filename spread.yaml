@@ -102,18 +102,26 @@ prepare: |
     # invocations of make below are efficient if nothing needs to be done.
     if [ ! -f "$SPREAD_PATH"/libraries/libapparmor/Makefile ]; then
       (
-        cd $SPREAD_PATH/libraries/libapparmor
-        sh ./autogen.sh && sh ./configure --prefix=/usr --with-perl --with-python
+        cd "$SPREAD_PATH"/libraries/libapparmor || exit 1
+        if ! sh ./autogen.sh; then
+            echo "The autogen.sh script has failed"
+            exit 1
+        fi
+        if ! sh ./configure --prefix=/usr --with-perl --with-python; then
+            echo "The generated configure script has failed"
+            cat config.log
+            exit 1
+        fi
       )
     fi
     # Build libapparmor.
-    make -C $SPREAD_PATH/libraries/libapparmor -j"$(nproc)"
+    make -C "$SPREAD_PATH"/libraries/libapparmor -j"$(nproc)"
     # Build apparmor_parser.
-    make -C $SPREAD_PATH/parser -j"$(nproc)"
+    make -C "$SPREAD_PATH"/parser -j"$(nproc)"
     # Build binary utilities (aa-exec and firends).
-    make -C $SPREAD_PATH/binutils -j"$(nproc)"
+    make -C "$SPREAD_PATH"/binutils -j"$(nproc)"
     # Build python utilities.
-    make -C $SPREAD_PATH/utils -j"$(nproc)"
+    make -C "$SPREAD_PATH"/utils -j"$(nproc)"
     # Build apache and pam modules.
     make -C "$SPREAD_PATH"/changehat/mod_apparmor -j"$(nproc)"
     make -C "$SPREAD_PATH"/changehat/pam_apparmor -j"$(nproc)"

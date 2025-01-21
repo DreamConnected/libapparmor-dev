@@ -78,14 +78,14 @@ runchecktest "Write file in overlayfs mount (lower)" pass write "${mount_target}
 runchecktest "Write file in overlayfs mount (upper)" pass write "${mount_target}/upper_file"
 runchecktest "Write file in overlayfs mount (creat)" pass write "${mount_target}/overlay_file_new"
 
-genprofile "${mount_target}/old_overlay_file:w" "${mount_target}/new_overlay_file:w"
+genprofile "${mount_target}/old_overlay_file:rw" "${mount_target}/new_overlay_file:w"
 touch "${mount_target}/old_overlay_file"
 runchecktest "Rename file in overlayfs mount (overlay)" pass rename "${mount_target}/old_overlay_file" "${mount_target}/new_overlay_file"
 rm -f "${mount_target}/old_overlay_file" "${mount_target}/new_overlay_file"
 
-genprofile "${mount_target}/lower_file:w" "${mount_target}/lower_mv_file:w"
+genprofile "${mount_target}/lower_file:rw" "${mount_target}/lower_mv_file:w"
 runchecktest "Rename file in overlayfs mount (lower)" pass rename "${mount_target}/lower_file" "${mount_target}/lower_mv_file"
-genprofile "${mount_target}/upper_file:w" "${mount_target}/upper_mv_file:w"
+genprofile "${mount_target}/upper_file:rw" "${mount_target}/upper_mv_file:w"
 runchecktest "Rename file in overlayfs mount (upper)" pass rename "${mount_target}/upper_file" "${mount_target}/upper_mv_file"
 
 genprofile "${mount_target}/lower_file_2:w"

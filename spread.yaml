@@ -111,6 +111,9 @@ prepare: |
     make -C $SPREAD_PATH/binutils -j"$(nproc)"
     # Build python utilities.
     make -C $SPREAD_PATH/utils -j"$(nproc)"
+    # Build apache and pam modules.
+    make -C "$SPREAD_PATH"/changehat/mod_apparmor -j"$(nproc)"
+    make -C "$SPREAD_PATH"/changehat/pam_apparmor -j"$(nproc)"
 
 # In case of failure, include the kernel version in the log.
 debug-each: |

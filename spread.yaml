@@ -123,6 +123,72 @@ debug-each: |
     uname -a
 
 suites:
+    tests/profiles/:
+        summary: Tests that exercise specific application profiles
+        # variables:
+        #     PROFILE_NAME: name of the profile on disk
+        #     PROGRAM_NAME: name of the program to execute
+        prepare-each: |
+            rm -f denials.txt
+
+            # Disable rate-limiting so that we see all denials.
+            sysctl --values kernel.printk_ratelimit >old-ratelimit.txt
+            sysctl --write kernel.printk_ratelimit=0
+
+            # Stop auditd so that all denials end up in the ring buffer.
+            if [ "$(systemctl is-active auditd.service)" != inactive ]; then
+                systemctl stop auditd.service
+                touch did-stop-auditd.txt
+            fi
+
+            # Clear the kernel ring buffer.
+            dmesg --clear
+
+            # Compute profile name from the name of the task.
+            echo "PROFILE_NAME=${PROFILE_NAME:=$(basename "$SPREAD_TASK")}"
+
+            "$SPREAD_PATH"/parser/apparmor_parser \
+                --warn=all \
+                --replace \
+                --skip-cache \
+                --base="$SPREAD_PATH"/profiles/apparmor.d \
+                "$SPREAD_PATH"/profiles/apparmor.d/"$PROFILE_NAME" 2>parser.txt
+            if [ -s parser.txt ]; then
+                echo "Parser produced warnings:"
+                cat parser.txt
+                exit 1
+            fi
+
+        restore-each: |
+            # Compute profile name from the name of the task.
+            echo "PROFILE_NAME=${PROFILE_NAME:=$(basename "$SPREAD_TASK")}"
+
+            "$SPREAD_PATH"/parser/apparmor_parser \
+                --base="$SPREAD_PATH"/profiles/apparmor.d \
+                --remove \
+                "$SPREAD_PATH"/profiles/apparmor.d/"$PROFILE_NAME"
+
+            # Restore auditd and old rate-limit.
+            if [ -f did-stop-auditd.txt ]; then
+                systemctl start auditd.service
+                rm -f did-stop-auditd.txt
+            fi
+            if [ -f old-ratelimit.txt ]; then
+                sysctl -w kernel.printk_ratelimit="$(cat old-ratelimit.txt)"
+                rm -f old-ratelimit.txt
+            fi
+
+            # Check if running the test resulted in any logged denials.
+            if dmesg | grep DENIED > denials.txt; then
+                echo "Denials were emitted during the test"
+                cat denials.txt
+                exit 1
+            fi
+
+        debug-each: |
+            echo "PROGRAM_NAME=${PROGRAM_NAME:=$(basename "$SPREAD_TASK")}"
+            command -v "$PROGRAM_NAME"
+
     utils/:
         summary: Unit tests for the Python utilities.
         prepare: |

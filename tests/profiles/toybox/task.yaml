@@ -1,0 +1,11 @@
+summary: smoke test for the toybox profile
+systems:
+    # Toybox is not packaged on openSUSE
+    - -opensuse-*
+execute: |
+    # Toybox works (this is a very basic test).
+    test "$(toybox id -u)" -eq 0
+    # The profile may be used explicitly.
+    aa-exec -p toybox toybox cat /proc/self/attr/current | MATCH 'toybox \(unconfined\)'
+    # The profile is attached implicitly based on path name.
+    toybox cat /proc/self/attr/current | MATCH 'toybox \(unconfined\)'

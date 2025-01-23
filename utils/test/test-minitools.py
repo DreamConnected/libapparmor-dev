@@ -14,12 +14,16 @@
 import os
 import shutil
 import subprocess
+import sys
 import unittest
 
 import apparmor.aa as apparmor
 from common_test import AATest, read_file, write_file, setup_aa, setup_all_loops
 
-python_interpreter = 'python3'
+# Use the same python as the one this script is being run with
+python_interpreter = sys.executable
+if not python_interpreter:
+    python_interpreter = 'python3'
 
 
 class MinitoolsTest(AATest):

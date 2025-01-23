@@ -89,9 +89,11 @@ packages:
 - dosfstools
 - flex
 - gettext
+- httpd-devel
 - libstdc++-static
 - libtool
 - liburing-devel
+- pam-devel
 - perl
 - pkg-config
 - python3-devel

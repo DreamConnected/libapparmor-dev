@@ -1,0 +1,9 @@
+#!/bin/sh
+exec gdb \
+	--quiet \
+	--batch \
+	--eval-command='set breakpoint pending on' \
+	--eval-command='break _start' \
+	--eval-command='run' \
+	--eval-command='python import os; os.fdopen(3, "wt").write(open("/proc/{}/attr/current".format(gdb.selected_inferior().pid), "rt").read())' \
+	"$@" 3>/dev/stdout 1>/dev/null 2>/dev/null

@@ -125,6 +125,9 @@ debug-each: |
 suites:
     tests/profiles/:
         summary: Tests that exercise specific application profiles
+        systems:
+            # AppArmor is not enabled in the kernel.
+            - -fedora-cloud-*
         # variables:
         #     PROFILE_NAME: name of the profile on disk
         #     PROGRAM_NAME: name of the program to execute

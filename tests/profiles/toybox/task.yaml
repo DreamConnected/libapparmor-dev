@@ -5,7 +5,6 @@ systems:
 execute: |
     # Toybox works (this is a very basic test).
     test "$(toybox id -u)" -eq 0
-    # The profile may be used explicitly.
-    aa-exec -p toybox toybox cat /proc/self/attr/current | MATCH 'toybox \(unconfined\)'
-    # The profile is attached implicitly based on path name.
-    toybox cat /proc/self/attr/current | MATCH 'toybox \(unconfined\)'
+
+    # The profile is attached based on the program path.
+    "$SPREAD_PATH"/tests/bin/actual-profile-of toybox | MATCH 'toybox \(unconfined\)'

@@ -21,16 +21,17 @@ COMMONDIR=../../common/
 include $(COMMONDIR)/Make.rules
 
 ifdef USE_SYSTEM
-    LD_LIBRARY_PATH=
-    PYTHONPATH=
+    LD_LIBRARY_PATH?=
+    PYTHONPATH?=
     CONFDIR=
     BASEDIR=
     PARSER=
 else
-    PYTHON_DIST_BUILD_PATH = ../../libraries/libapparmor/swig/python/build/$$($(PYTHON) ../../libraries/libapparmor/swig/python/test/buildpath.py)
-    LIBAPPARMOR_PATH=../../libraries/libapparmor/src/.libs/
-    LD_LIBRARY_PATH=$(LIBAPPARMOR_PATH):$(PYTHON_DIST_BUILD_PATH)
-    PYTHONPATH=..:$(PYTHON_DIST_BUILD_PATH)
+    LIBAPPARMOR_BASEDIR?=../../libraries/libapparmor
+    PYTHON_DIST_BUILD_PATH ?= $(LIBAPPARMOR_BASEDIR)/swig/python/build/$$($(PYTHON) $(LIBAPPARMOR_BASEDIR)/swig/python/test/buildpath.py)
+    LIBAPPARMOR_PATH?=$(LIBAPPARMOR_BASEDIR)/src/.libs/
+    LD_LIBRARY_PATH:=$(LD_LIBRARY_PATH):$(LIBAPPARMOR_PATH):$(PYTHON_DIST_BUILD_PATH)
+    PYTHONPATH:=$(PYTHONPATH):..:$(PYTHON_DIST_BUILD_PATH)
     CONFDIR=$(CURDIR)
     BASEDIR=../../profiles/apparmor.d
     PARSER=../../parser/apparmor_parser

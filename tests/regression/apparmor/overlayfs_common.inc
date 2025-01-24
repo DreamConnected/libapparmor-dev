@@ -11,6 +11,12 @@
 # Verifies that file rules work in an overlayfs
 #=END
 
+if [ "$1" != "kernel" ] && [ "$1" != "fuse" ]; then
+    echo "FAIL: no parameter/invalid parameter specified"
+    echo "(expected 'kernel' or 'fuse')"
+    exit 1
+fi
+
 pwd=$(dirname "$0")
 pwd=$(cd "$pwd" || exit ; /bin/pwd)
 
@@ -49,7 +55,11 @@ mount "${loop_device_other}" "${overlayfs_other}"
 mkdir "${overlayfs_upper}"
 mkdir "${overlayfs_workdir}"
 
-mount -t overlay -o lowerdir="${overlayfs_lower}",upperdir="${overlayfs_upper}",workdir="${overlayfs_workdir}" none "${mount_target}"|| fatalerror 'Unable to set up overlayfs'
+if [ "$1" == "fuse" ]; then
+    fuse-overlayfs -o lowerdir="${overlayfs_lower}",upperdir="${overlayfs_upper}",workdir="${overlayfs_workdir}" "${mount_target}"|| fatalerror 'Unable to set up overlayfs'
+else
+    mount -t overlay -o lowerdir="${overlayfs_lower}",upperdir="${overlayfs_upper}",workdir="${overlayfs_workdir}" none "${mount_target}"|| fatalerror 'Unable to set up overlayfs'
+fi
 
 fallocate -l 16K "${overlayfs_lower}/lower_file"
 touch "${overlayfs_lower}/lower_file_2"
@@ -107,7 +117,11 @@ runchecktest "Exec in overlayfs mount (lower)" pass exec "${mount_target}/lower_
 runchecktest "Exec in overlayfs mount (upper)" pass exec "${mount_target}/upper_echo" PASS
 runchecktest "Exec in overlayfs mount (overlay)" pass exec "${mount_target}/overlay_echo" PASS
 
-umount "${mount_target}" && rmdir "${mount_target}"
+if [ "$1" == "fuse" ]; then
+    fusermount -u "${mount_target}" && rmdir "${mount_target}"
+else
+    umount "${mount_target}" && rmdir "${mount_target}"
+fi
 umount "${loop_device_lower}" && rm -r "${overlayfs_lower}"
 umount "${loop_device_other}" && rm -r "${overlayfs_other}"
 

@@ -27,7 +27,7 @@ profile mbsync /usr/bin/mbsync {
   @{etc_ro}/ssl/openssl.cnf r,
   /usr/bin/mbsync r,
   owner @{HOME}/.mbsyncrc r,
-  owner @{HOME}/Mail/**/ r,
+  owner @{HOME}/Mail/**/ rw,
   owner @{HOME}/Mail/**/.mbsyncstate rw,
   owner @{HOME}/Mail/**/.mbsyncstate.journal rw,
   owner @{HOME}/Mail/**/.mbsyncstate.lock wk,

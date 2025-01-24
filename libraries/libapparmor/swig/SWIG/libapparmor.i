@@ -124,8 +124,8 @@ warnings.warn("free_record is now a no-op as the record's memory is handled auto
 }
 %typemap(freearg,match="in") (char **label, char **mode) ""
 %typemap(argout,noblock=1,fragment="SWIG_FromCharPtr") (char **label, char **mode) {
-  %append_output(SWIG_FromCharPtr(*$1));
-  %append_output(SWIG_FromCharPtr(*$2));
+  ISVOID_APPEND_OUTPUT(SWIG_FromCharPtr(*$1));
+  ISVOID_APPEND_OUTPUT(SWIG_FromCharPtr(*$2));
   free(*$1);
 }
 
@@ -156,7 +156,7 @@ warnings.warn("free_record is now a no-op as the record's memory is handled auto
 %typemap(argout,noblock=1,fragment="SWIG_FromCharPtr") (char *con, char **mode) {
   /*
    * aa_splitcon returns either con or NULL so we don't need to explicitly
-   * append it to the output
+   * append it to the output, and we don't need the ISVOID helper here
    * 
    * SWIG_FromCharPtr does NULL checks for us
    */
@@ -337,14 +337,14 @@ extern int aa_getpeercon(int fd, char **label, char **mode);
   $1 = &temp;
 }
 %typemap(argout) int *allowed {
-  %append_output(PyBool_FromLong(*$1));
+  ISVOID_APPEND_OUTPUT(PyBool_FromLong(*$1));
 }
 
 %typemap(in, numinputs=0) int *audited (int temp) {
   $1 = &temp;
 }
 %typemap(argout) int *audited {
-  %append_output(PyBool_FromLong(*$1));
+  ISVOID_APPEND_OUTPUT(PyBool_FromLong(*$1));
 }
 #else
 %apply int *OUTPUT { int *allowed };

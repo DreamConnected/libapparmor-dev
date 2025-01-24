@@ -55,20 +55,25 @@ mount "${loop_device_other}" "${overlayfs_other}"
 mkdir "${overlayfs_upper}"
 mkdir "${overlayfs_workdir}"
 
+# The behavior when changing the contents of lowerdir or upperdir
+# after mounting the overlay is described as "undefined"
+# Hopefully this isn't UB in the C standard/compiler sense
+# Concretely: kernel overlayfs propagates changes, fuse-overlayfs doesn't
+fallocate -l 16K "${overlayfs_lower}/lower_file"
+touch "${overlayfs_lower}/lower_file_2"
+fallocate -l 16K "${overlayfs_upper}/upper_file"
+touch "${overlayfs_upper}/upper_file_2"
+# echo is also a builtin, making things a bit more complicated
+cp "$(type -P echo)" "${overlayfs_lower}/lower_echo"
+cp "$(type -P echo)" "${overlayfs_upper}/upper_echo"
+
 if [ "$1" == "fuse" ]; then
     fuse-overlayfs -o lowerdir="${overlayfs_lower}",upperdir="${overlayfs_upper}",workdir="${overlayfs_workdir}" "${mount_target}"|| fatalerror 'Unable to set up overlayfs'
 else
     mount -t overlay -o lowerdir="${overlayfs_lower}",upperdir="${overlayfs_upper}",workdir="${overlayfs_workdir}" none "${mount_target}"|| fatalerror 'Unable to set up overlayfs'
 fi
 
-fallocate -l 16K "${overlayfs_lower}/lower_file"
-touch "${overlayfs_lower}/lower_file_2"
-fallocate -l 16K "${overlayfs_upper}/upper_file"
-touch "${overlayfs_upper}/upper_file_2"
 fallocate -l 16K "${mount_target}/overlay_file"
-# echo is also a builtin, making things a bit more complicated
-cp "$(type -P echo)" "${overlayfs_lower}/lower_echo"
-cp "$(type -P echo)" "${overlayfs_upper}/upper_echo"
 
 settest overlayfs "${bin}/complain"
 

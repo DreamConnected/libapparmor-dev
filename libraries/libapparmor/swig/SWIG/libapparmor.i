@@ -280,8 +280,20 @@ extern int aa_change_hatv(const char *subprofiles[], unsigned long token);
 extern int aa_stack_profile(const char *profile);
 extern int aa_stack_onexec(const char *profile);
 
-/* aa_find_mountpoint mnt is an output pointer to a heap-allocated string */
-%cstring_output_allocate(char **mnt, free(*$1));
+/*
+ * aa_find_mountpoint mnt is an output pointer to a heap-allocated string
+ *
+ * This is a replica of %cstring_output_allocate(char **mnt, free(*$1))
+ * that uses the ISVOID helper to work correctly on SWIG 4.3 or later.
+ */
+%typemap(in,noblock=1,numinputs=0) (char **mnt) ($*1_ltype temp_mnt = 0) {
+  $1 = &temp_mnt;
+}
+%typemap(freearg,match="in") (char **mnt) ""
+%typemap(argout,noblock=1,fragment="SWIG_FromCharPtr") (char **mnt) {
+  ISVOID_APPEND_OUTPUT(SWIG_FromCharPtr(*$1));
+  free(*$1);
+}
 /* The other errno-based functions should not always be returning the int value:
  * - Python exceptions signal success/failure status instead via the %exception 
  *   handler above.

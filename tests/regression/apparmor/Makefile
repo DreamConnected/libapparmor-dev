@@ -191,6 +191,15 @@ Install attr or equivalent package to build and run this test${nl}\
 ************************************************************************${nl})
 endif
 
+# Only do overlayfs_fuse test if we have the required fuse-overlayfs binary
+ifeq (,$(shell command -v fuse-overlayfs))
+$(warning ${nl}\
+************************************************************************${nl}\
+No fuse-overlayfs skipping overlayfs_fuse tests ...${nl}\
+Install fuse-overlayfs or equivalent package to build and run this test${nl}\
+************************************************************************${nl})
+endif
+
 #only do dbus if proper libs are installl
 ifneq (,$(shell pkg-config --exists dbus-1 && echo TRUE))
 SRC+=dbus_eavesdrop.c dbus_message.c dbus_service.c dbus_unrequested_reply.c
@@ -279,7 +288,7 @@ TESTS=aa_exec \
       named_pipe \
       namespaces \
       net_raw \
-      overlayfs \
+      overlayfs_kernel \
       open \
       openat \
       pipe \
@@ -310,6 +319,11 @@ TESTS=aa_exec \
       xattrs\
       longpath \
       nfs
+
+# Only do overlayfs_fuse test if we have the required fuse-overlayfs binary
+ifneq (,$(shell command -v fuse-overlayfs))
+TESTS+=overlayfs_fuse
+endif
 
 # Only do xattrs_profile test if we have the required setfattr binary
 ifneq (,$(shell command -v setfattr))

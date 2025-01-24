@@ -17,6 +17,29 @@
 %include <stdint.i>
 %include <exception.i>
 
+/*
+ * SWIG 4.3 included https://github.com/swig/swig/pull/2907 to distinguish
+ * between Py_None being returned as a default void and Py_None being returned
+ * as the equivalent of C NULL. Unfortunately, this turns into an API breaking
+ * change with our use of %append_output when we want the Python function to
+ * return something even when the C function has a void return type. Thus, we
+ * need an additional macro to smooth over the differences. Include all affected
+ * languages, even ones we don't build bindings for, for completeness.
+ */
+#if SWIG_VERSION >= 0x040300
+#ifdef SWIGPYTHON
+#define ISVOID_APPEND_OUTPUT(value) {$result = SWIG_Python_AppendOutput($result, value, 1);}
+#elif defined(SWIGRUBY)
+#define ISVOID_APPEND_OUTPUT(value) {$result = SWIG_Ruby_AppendOutput($result, value, 1);}
+#elif defined(SWIGPHP)
+#define ISVOID_APPEND_OUTPUT(value) {$result = SWIG_Php_AppendOutput($result, value, 1);}
+#else
+#define ISVOID_APPEND_OUTPUT(value) %append_output(value)
+#endif
+#else
+#define ISVOID_APPEND_OUTPUT(value) %append_output(value)
+#endif
+
 %newobject parse_record;
 %delobject free_record;
 /*

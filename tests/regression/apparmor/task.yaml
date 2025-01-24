@@ -47,6 +47,7 @@ environment:
     TEST/onexec: 1
     TEST/open: 1
     TEST/openat: 1
+    TEST/overlayfs_fuse: 1
     TEST/overlayfs_kernel: 1
     TEST/pipe: 1
     TEST/pivot_root: 1

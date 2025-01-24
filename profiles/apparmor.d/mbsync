@@ -24,6 +24,7 @@ profile mbsync /usr/bin/mbsync {
   network inet6 stream,
   network netlink raw,
 
+  @{etc_ro}/gss/mech.d/ r,
   @{etc_ro}/ssl/openssl.cnf r,
   /usr/bin/mbsync r,
   owner @{HOME}/.mbsyncrc r,

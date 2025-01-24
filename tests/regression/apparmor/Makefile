@@ -279,7 +279,7 @@ TESTS=aa_exec \
       named_pipe \
       namespaces \
       net_raw \
-      overlayfs \
+      overlayfs_kernel \
       open \
       openat \
       pipe \

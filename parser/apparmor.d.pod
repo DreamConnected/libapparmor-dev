@@ -1339,8 +1339,9 @@ pivot_root(2) is optionally specified in the 'pivot_root' rule using the
 'oldroot=' prefix.
 
 AppArmor 'pivot_root' rules can specify a profile transition to occur during
-the pivot_root(2) system call. Note that AppArmor will only transition the
-process calling pivot_root(2) to the new profile.
+the pivot_root(2) system call. Note that currently, this feature is not
+supported by any kernel. When this feature will be supported, AppArmor will
+only transition the process calling pivot_root(2) to the new profile.
 
 The paths specified in 'pivot_root' rules must end with '/' since they are
 directories.

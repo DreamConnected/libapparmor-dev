@@ -21,7 +21,7 @@ DESTDIR=/
 BINDIR=${DESTDIR}/usr/bin
 SBINDIR=${DESTDIR}/usr/sbin
 LOCALEDIR=/usr/share/locale
-MANPAGES=aa-enabled.1 aa-exec.1 aa-features-abi.1 aa-status.8
+MANPAGES=aa-enabled.1 aa-exec.1 aa-features-abi.1 aa-load.8 aa-status.8
 
 WARNINGS = -Wall
 CPP_WARNINGS =

@@ -309,9 +309,8 @@ static int load_arg(char *arg)
 
 static void print_usage(const char *command)
 {
-	printf("Usage: %s [OPTIONS] (cache file|cache dir|cache base dir)]*\n"
-	       "Load Precompiled AppArmor policy from a cache location or \n"
-	       "locations.\n\n"
+	printf("Usage: %s [OPTIONS] (cache file|cache dir|cache base dir)+\n"
+	       "Load precompiled AppArmor policy from cache location(s)\n\n"
 	       "Options:\n"
 	       "  -f, --force     load policy even if abi does not match the kernel\n"
 	       "  -d, --debug     display debug messages\n"

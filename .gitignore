@@ -7,6 +7,7 @@ binutils/aa-exec.1
 binutils/aa-features-abi
 binutils/aa-features-abi.1
 binutils/aa-load
+binutils/aa-load.8
 binutils/aa-status
 binutils/aa-status.8
 binutils/cJSON.o

@@ -1,0 +1,15 @@
+START
+File: testcase36.in
+Event type: AA_RECORD_AUDIT
+Audit ID: 1737963096.225:3240
+Operation: getattr
+Mask: r
+fsuid: 122
+ouid: 122
+Profile: /usr/sbin/mosquitto
+Name: /etc/mosquitto/pwfile
+Command: mosquitto
+PID: 8119
+Class: file
+Epoch: 1737963096
+Audit subid: 3240

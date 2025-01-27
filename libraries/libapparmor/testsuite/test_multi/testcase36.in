@@ -1,0 +1,1 @@
+2025-01-27T13:01:36.226987+05:30 sec-plucky-amd64 kernel: audit: type=1400 audit(1737963096.225:3240): apparmor="AUDIT" operation="getattr" class="file" profile="/usr/sbin/mosquitto" name="/etc/mosquitto/pwfile" pid=8119 comm="mosquitto" requested_mask="r" fsuid=122 ouid=122

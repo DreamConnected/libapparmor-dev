@@ -131,7 +131,7 @@ class ReadLog:
             return 'pivot_root'
         elif e['class'] and e['class'] == 'net' and e['family'] and e['family'] == 'unix':
             return 'unix'
-        elif self.op_type(e) == 'file':
+        elif e['class'] == 'file' or self.op_type(e) == 'file':
             return 'file'
         elif e['operation'] == 'capable':
             return 'capability'
@@ -337,7 +337,7 @@ class ReadLog:
             UnixRule.hashlog_from_event(self.hashlog[aamode][full_profile]['unix'], e)
             return
 
-        elif self.op_type(e) == 'file':
+        elif e['class'] == 'file' or self.op_type(e) == 'file':
             FileRule.hashlog_from_event(self.hashlog[aamode][full_profile]['file'], e)
 
         elif e['operation'] == 'capable':

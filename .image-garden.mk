@@ -19,6 +19,7 @@ packages:
 - dosfstools
 - flake8
 - flex
+- fuse-overlayfs
 - gdb
 - gettext
 - libdbus-1-dev
@@ -56,6 +57,7 @@ packages:
 - dejagnu
 - dosfstools
 - flex
+- fuse-overlayfs
 - gcc
 - gcc-c++
 - gdb

@@ -144,11 +144,21 @@ Feb  4 13:40:38 XPS-13-9370 kernel: [128552.880347] audit: type=1400 audit({epoc
 
             return_code, output = cmd(['last', username, '--time-format', 'iso'])
             output = output.split('\n')[0]  # the first line is enough
-            # example of output:
+            # example of output (util-linux last command):
             # ubuntu  tty7         :0               2024-01-05T14:29:11-03:00   gone - no logout
+            # example of output (wtmpdb last command, local login):
+            # ubuntu  tty7                          2025-01-15T09:32:49-0800   - still logged in
+            # example of output (wtmpdb last command, remote login)
+            # ubuntu  tty7         192.168.122.1    2024-01-05T14:29:11-03:00   gone - no logout
             if output.startswith(username):
-                last_login = output.split()[3]
-                last_login_epoch = datetime.fromisoformat(last_login).timestamp()
+                # Check both possible columns for the date
+                try:
+                    last_login = output.split()[3]
+                    last_login_epoch = datetime.fromisoformat(last_login).timestamp()
+                except (IndexError, ValueError):
+                    last_login = output.split()[2]
+                    last_login_epoch = datetime.fromisoformat(last_login).timestamp()
+
                 # add 60 seconds to the epoch so that the time in the logs are AFTER login time
                 last_login_contents = self.create_logfile_contents(last_login_epoch + 60)
                 file_last_login.write(last_login_contents)

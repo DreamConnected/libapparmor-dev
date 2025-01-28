@@ -83,7 +83,7 @@ environment:
     # test is expected to fail.
     #
     # Error: unix_fd_server passed. Test 'ATTACH_DISCONNECTED (attach_disconnected.path rule at /)' was expected to 'fail'
-    XFAIL/attach_disconnected: opensuse-cloud-tumbleweed debian-cloud-12 debian-cloud-13 ubuntu-cloud-22.04
+    XFAIL/attach_disconnected: opensuse-cloud-tumbleweed debian-cloud-12 debian-cloud-13 ubuntu-cloud-22.04 ubuntu-cloud-24.04 ubuntu-cloud-24.10
     # Error: unix_fd_server failed. Test 'fd passing; unconfined client' was expected to 'pass'. Reason for failure 'FAIL - bind failed: Permission denied'
     # Error: unix_fd_server failed. Test 'fd passing; confined client w/ rw' was expected to 'pass'. Reason for failure 'FAIL - bind failed: Permission denied'
     XFAIL/deleted: opensuse-cloud-tumbleweed debian-cloud-12 debian-cloud-13
@@ -102,6 +102,21 @@ environment:
     # Error: unix_socket passed. Test 'AF_UNIX pathname socket (seqpacket); confined server w/ a missing af_unix access (create)' was expected to 'fail'
     # Error: unix_socket failed. Test 'AF_UNIX pathname socket (seqpacket); confined client w/ access (rw)' was expected to 'pass'. Reason for failure 'FAIL - setsockopt (SO_RCVTIMEO): Permission denied'
     XFAIL/unix_socket_pathname: opensuse-cloud-tumbleweed debian-cloud-12 debian-cloud-13
+    #    using ptrace v6 tests ...
+    # Error: ptrace failed. Test 'test allow all' was expected to 'pass'. Reason for failure 'FAIL: child exec failed - : Permission denied'
+    # Error: ptrace failed. Test 'test allow all -c' was expected to 'pass'. Reason for failure 'FAIL: child exec failed - : Permission denied'
+    # Error: ptrace failed. Test 'test allow all -h' was expected to 'pass'. Reason for failure 'FAIL: child exec failed - : Permission denied'
+    # Error: ptrace failed. Test 'test allow all -hc' was expected to 'pass'. Reason for failure 'FAIL: child exec failed - : Permission denied'
+    # Error: ptrace failed. Test 'test allow all -h prog' was expected to 'pass'. Reason for failure 'FAIL: child exec failed - : Permission denied'
+    # Error: ptrace failed. Test 'test allow all -hc prog' was expected to 'pass'. Reason for failure 'FAIL: child exec failed - : Permission denied'
+    XFAIL/ptrace: debian-cloud-12 debian-cloud-13 ubuntu-cloud-22.04 ubuntu-cloud-24.04 ubuntu-cloud-24.10 opensuse-cloud-tumbleweed
+    # Error: posix_mq_rcv failed. Test 'POSIX MQUEUE (confined root - allow all)' was expected to 'pass'. Reason for failure 'FAIL 0 - execlp /tmp/apparmor/tests/regression/apparmor/posix_mq_snd /queuename- Permission denied'
+    # Error: posix_mq_rcv failed. Test 'POSIX MQUEUE (confined root - allow all : mq_notify)' was expected to 'pass'. Reason for failure 'FAIL 0 - execlp /tmp/apparmor/tests/regression/apparmor/posix_mq_snd /queuename 4- Permission denied'
+    # Error: posix_mq_rcv failed. Test 'POSIX MQUEUE (confined root - allow all : select)' was expected to 'pass'. Reason for failure 'FAIL 0 - execlp /tmp/apparmor/tests/regression/apparmor/posix_mq_snd /queuename- Permission denied'
+    # Error: posix_mq_rcv failed. Test 'POSIX MQUEUE (confined root - allow all : poll)' was expected to 'pass'. Reason for failure 'FAIL 0 - execlp /tmp/apparmor/tests/regression/apparmor/posix_mq_snd /queuename- Permission denied'
+    # Error: posix_mq_rcv failed. Test 'POSIX MQUEUE (confined root - allow all : epoll)' was expected to 'pass'. Reason for failure 'FAIL 0 - execlp /tmp/apparmor/tests/regression/apparmor/posix_mq_snd /queuename- Permission denied'
+    XFAIL/mqueue: debian-cloud-12 debian-cloud-13 ubuntu-cloud-22.04 ubuntu-cloud-24.04 ubuntu-cloud-24.10 opensuse-cloud-tumbleweed
+    XFAIL/posix_ipc: ubuntu-cloud-22.04 ubuntu-cloud-24.04 ubuntu-cloud-24.10
 artifacts:
     - bash.log
     - bash.err

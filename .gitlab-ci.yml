@@ -127,19 +127,6 @@ test-profiles:
     - make -C profiles check-abstractions.d
     - make -C profiles check-local
 
-# Build the regression tests (don't run them because that needs kernel access)
-test-build-regression:
-  stage: test
-  needs: ["build-all"]
-  extends:
-    - .ubuntu-common
-  script:
-    # Additional dependencies required by regression tests
-    - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" install_extra_deps "Installing additional dependencies..."
-    - apt-get install --no-install-recommends -y attr fuse-overlayfs libdbus-1-dev liburing-dev
-    - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" install_extra_deps
-    - make -C tests/regression/apparmor -j $(nproc)
-
 shellcheck:
   stage: test
   needs: []

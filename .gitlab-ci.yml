@@ -185,13 +185,50 @@ coverity:
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PROJECT_PATH == "apparmor/apparmor"
 
-.spread:
+.image-garden:
   stage: spread
   # TODO: use tagged release once container tagging is improved upstream.
   image: registry.gitlab.com/zygoon/image-garden:latest
   variables:
     ARCH: x86_64 # for cache key :/
     GARDEN_DL_DIR: dl
+    CACHE_POLICY: pull-push
+  before_script:
+    # Prepare the image in dry-run mode. This helps in debugging cache misses
+    # when files are not cached correctly by the runner, causing the build section
+    # below to always do hevy-duty work.
+    - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" prepare_image_dry_run "Prepare image (dry run)"
+    - image-garden make --dry-run --debug "$GARDEN_SYSTEM.$ARCH.run"
+    - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" prepare_image_dry_run
+  script:
+    # Prepare the image, for real.
+    - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" prepare_image "Prepare image"
+    - image-garden make "$GARDEN_SYSTEM.$ARCH.run"
+    - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" prepare_image
+  cache:
+    # Cache the base image (pre-customization).
+    - key: image-garden-base-${GARDEN_SYSTEM}.${ARCH}
+      policy: $CACHE_POLICY
+      when: always
+      paths:
+        - $GARDEN_DL_DIR
+        # Those are never mutated so they are safe to share.
+        - efi-code.*.img
+        - efi-vars.*.img
+    # Cache the customized system. This cache depends on .image-garden.mk file
+    # so that any customization updates are immediately acted upon.
+    - key:
+        prefix: image-garden-custom-${GARDEN_SYSTEM}.${ARCH}-
+        files:
+          - .image-garden.mk
+      policy: $CACHE_POLICY
+      when: always
+      paths:
+        - $GARDEN_SYSTEM.*
+
+.spread:
+  extends: .image-garden
+  variables:
     # GitLab project identifier of zygoon/spread-dist can be seen on
     # https://gitlab.com/zygoon/spread-dist, under the three-dot menu on
     # top-right.
@@ -203,18 +240,6 @@ coverity:
     # Run all the tasks for a given system.
     SPREAD_ARGS: "garden:$GARDEN_SYSTEM:"
   before_script:
-    # Prepare the image in dry-run mode. This helps in debugging cache misses
-    # when files are not cached correctly by the runner, causing the build section
-    # below to always do hevy-duty work.
-    - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" prepare_image_dry_run "Prepare image (dry run)"
-    - image-garden make --dry-run --debug "$GARDEN_SYSTEM.$ARCH.run"
-    - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" prepare_image_dry_run
-
-    # Prepare the image, for real.
-    - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" prepare_image "Prepare image"
-    - image-garden make "$GARDEN_SYSTEM.$ARCH.run"
-    - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" prepare_image
-
     # Install the selected revision of spread.
     - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" install_spread "Installing spread..."
     # Install pre-built spread from https://gitlab.com/zygoon/spread-dist generic package repository.
@@ -230,72 +255,47 @@ coverity:
       split --number=l/${CI_NODE_INDEX:-1}/"${CI_NODE_TOTAL:-1}" |
       xargs --verbose ./spread -v -artifacts ./spread-artifacts -v | tee spread-logs/"$GARDEN_SYSTEM".log
     - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" run_spread
-  cache:
-    # Cache the base image (pre-customization).
-    - key: image-garden-base-${GARDEN_SYSTEM}.${ARCH}
-      policy: $POLICY
-      when: always
-      paths:
-        - $GARDEN_DL_DIR
-        # Those are never mutated so they are safe to share.
-        - efi-code.*.img
-        - efi-vars.*.img
-    # Cache the customized system. This cache depends on .image-garden.mk file
-    # so that any customization updates are immediately acted upon.
-    - key:
-        prefix: image-garden-custom-${GARDEN_SYSTEM}.${ARCH}-
-        files:
-          - .image-garden.mk
-      policy: $POLICY
-      when: always
-      paths:
-        - $GARDEN_SYSTEM.*
   artifacts:
     paths:
       - spread-logs
       - spread-artifacts
     when: always
-  rules:
-    # Due to default cache protection logic in GitLab, pipelines running in
-    # protected branches (like master in the AppArmor project) do not get
-    # access, even read access, to protected cache. As such we need to allow
-    # non-protected branches to push the cache sometimes, or we'd pay the cost
-    # of never using cache on unprotected branches.
-    #
-    # As such disable the first rule below and only consider CI_NODE_TOTAL and
-    # CI_NODE_INDEX in cache pull/pull-push preference.
-    #
-    # - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
-    #  variables:
-    #    # Dependencies change rarely so not having to worry about pushes from other branches removes complexity.
-    #    POLICY: pull
-    - if: $CI_NODE_TOTAL == "1"
-      variables:
-        # For sequential jobs we can always push to the cache.
-        POLICY: pull-push
-    - if: $CI_NODE_INDEX == "1"
-      variables:
-        # For parallel jobs, only the first job pushes to the cache.
-        POLICY: pull-push
-    - if: $CI_NODE_TOTAL != "1" && $CI_NODE_INDEX != "1"
-      variables:
-        POLICY: pull
 
-.spread-x86_64:
+# This job builds and caches the image that the job below looks at.
+image-ubuntu-cloud-24.04-x86_64:
+  extends: .image-garden
+  tags:
+    - linux
+    - x86_64
+    - kvm
+  variables:
+    GARDEN_SYSTEM: ubuntu-cloud-24.04
+    ARCH: x86_64
+  needs: []
+  dependencies: []
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_BRANCH
+      changes:
+        paths:
+          - .image-garden.mk
+          - spread.yaml
+        compare_to: "refs/heads/master"
+
+spread-ubuntu-cloud-24.04-x86_64:
   extends: .spread
   tags:
     - linux
     - x86_64
     - kvm
   variables:
-    SPREAD_GOARCH: amd64
-    ARCH: x86_64
-
-spread-ubuntu-cloud-24.04-x86_64:
-  extends: .spread-x86_64
-  variables:
     GARDEN_SYSTEM: ubuntu-cloud-24.04
+    ARCH: x86_64
+    SPREAD_GOARCH: amd64
     SPREAD_ARGS: garden:$GARDEN_SYSTEM:tests/regression/ garden:$GARDEN_SYSTEM:tests/profiles/
-  needs: []
+    CACHE_POLICY: pull
   dependencies: []
+  needs:
+    - job: image-ubuntu-cloud-24.04-x86_64
+      optional: true
   parallel: 4

@@ -185,12 +185,16 @@ coverity:
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PROJECT_PATH == "apparmor/apparmor"
 
-.image-garden:
+.image-garden-x86_64:
   stage: spread
   # TODO: use tagged release once container tagging is improved upstream.
   image: registry.gitlab.com/zygoon/image-garden:latest
+  tags:
+    - linux
+    - x86_64
+    - kvm
   variables:
-    ARCH: x86_64 # for cache key :/
+    ARCH: x86_64
     GARDEN_DL_DIR: dl
     CACHE_POLICY: pull-push
     CACHE_COMPRESSION_LEVEL: fastest
@@ -227,8 +231,23 @@ coverity:
       paths:
         - $GARDEN_SYSTEM.*
 
-.spread:
-  extends: .image-garden
+# This job builds and caches the image that the job below looks at.
+image-ubuntu-cloud-24.04-x86_64:
+  extends: .image-garden-x86_64
+  variables:
+    GARDEN_SYSTEM: ubuntu-cloud-24.04
+  needs: []
+  dependencies: []
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_BRANCH
+      changes:
+        paths:
+          - .image-garden.mk
+        compare_to: "refs/heads/master"
+
+.spread-x86_64:
+  extends: .image-garden-x86_64
   variables:
     # GitLab project identifier of zygoon/spread-dist can be seen on
     # https://gitlab.com/zygoon/spread-dist, under the three-dot menu on
@@ -240,6 +259,7 @@ coverity:
     SPREAD_REV: 413817eda7bec07a3885e0717c178b965f8924e1
     # Run all the tasks for a given system.
     SPREAD_ARGS: "garden:$GARDEN_SYSTEM:"
+    SPREAD_GOARCH: amd64
   before_script:
     # Install the selected revision of spread.
     - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" install_spread "Installing spread..."
@@ -262,37 +282,10 @@ coverity:
       - spread-artifacts
     when: always
 
-# This job builds and caches the image that the job below looks at.
-image-ubuntu-cloud-24.04-x86_64:
-  extends: .image-garden
-  tags:
-    - linux
-    - x86_64
-    - kvm
-  variables:
-    GARDEN_SYSTEM: ubuntu-cloud-24.04
-    ARCH: x86_64
-  needs: []
-  dependencies: []
-  rules:
-    - if: $CI_COMMIT_TAG
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_BRANCH
-      changes:
-        paths:
-          - .image-garden.mk
-          - spread.yaml
-        compare_to: "refs/heads/master"
-
 spread-ubuntu-cloud-24.04-x86_64:
-  extends: .spread
-  tags:
-    - linux
-    - x86_64
-    - kvm
+  extends: .spread-x86_64
   variables:
     GARDEN_SYSTEM: ubuntu-cloud-24.04
-    ARCH: x86_64
-    SPREAD_GOARCH: amd64
     SPREAD_ARGS: garden:$GARDEN_SYSTEM:tests/regression/ garden:$GARDEN_SYSTEM:tests/profiles/
     CACHE_POLICY: pull
   dependencies: []

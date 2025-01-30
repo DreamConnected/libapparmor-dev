@@ -203,12 +203,12 @@ coverity:
     # when files are not cached correctly by the runner, causing the build section
     # below to always do hevy-duty work.
     - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" prepare_image_dry_run "Prepare image (dry run)"
-    - image-garden make --dry-run --debug "$GARDEN_SYSTEM.$ARCH.run"
+    - image-garden make --dry-run --debug "$GARDEN_SYSTEM.$ARCH.run" "$GARDEN_SYSTEM.$ARCH.qcow2" "$GARDEN_SYSTEM.seed.iso" "$GARDEN_SYSTEM.user-data" "$GARDEN_SYSTEM.meta-data"
     - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" prepare_image_dry_run
   script:
     # Prepare the image, for real.
     - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" prepare_image "Prepare image"
-    - image-garden make "$GARDEN_SYSTEM.$ARCH.run"
+    - image-garden make "$GARDEN_SYSTEM.$ARCH.run" "$GARDEN_SYSTEM.$ARCH.qcow2" "$GARDEN_SYSTEM.seed.iso" "$GARDEN_SYSTEM.user-data" "$GARDEN_SYSTEM.meta-data"
     - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" prepare_image
   cache:
     # Cache the base image (pre-customization).
@@ -230,6 +230,9 @@ coverity:
       when: always
       paths:
         - $GARDEN_SYSTEM.*
+        - $GARDEN_SYSTEM.seed.iso
+        - $GARDEN_SYSTEM.meta-data
+        - $GARDEN_SYSTEM.user-data
 
 # This job builds and caches the image that the job below looks at.
 image-ubuntu-cloud-24.04-x86_64:
@@ -244,6 +247,7 @@ image-ubuntu-cloud-24.04-x86_64:
       changes:
         paths:
           - .image-garden.mk
+          - .gitlab-ci.yml
         compare_to: "refs/heads/master"
 
 .spread-x86_64:
@@ -265,7 +269,7 @@ image-ubuntu-cloud-24.04-x86_64:
     # when files are not cached correctly by the runner, causing the build section
     # below to always do hevy-duty work.
     - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" prepare_image_dry_run "Prepare image (dry run)"
-    - image-garden make --dry-run --debug "$GARDEN_SYSTEM.$ARCH.run"
+    - image-garden make --dry-run --debug "$GARDEN_SYSTEM.$ARCH.run" "$GARDEN_SYSTEM.$ARCH.qcow2" "$GARDEN_SYSTEM.seed.iso" "$GARDEN_SYSTEM.user-data" "$GARDEN_SYSTEM.meta-data"
     - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" prepare_image_dry_run
     # Install the selected revision of spread.
     - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" install_spread "Installing spread..."

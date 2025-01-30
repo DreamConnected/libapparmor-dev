@@ -190,9 +190,7 @@ coverity:
   # TODO: use tagged release once container tagging is improved upstream.
   image: registry.gitlab.com/zygoon/image-garden:latest
   tags:
-    - linux
-    - x86_64
-    - kvm
+    - saas-linux-medium-amd64
   variables:
     ARCH: x86_64
     GARDEN_DL_DIR: dl

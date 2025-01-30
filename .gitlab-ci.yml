@@ -193,6 +193,7 @@ coverity:
     ARCH: x86_64 # for cache key :/
     GARDEN_DL_DIR: dl
     CACHE_POLICY: pull-push
+    CACHE_COMPRESSION_LEVEL: fastest
   before_script:
     # Prepare the image in dry-run mode. This helps in debugging cache misses
     # when files are not cached correctly by the runner, causing the build section

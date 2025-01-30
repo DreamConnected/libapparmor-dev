@@ -13,6 +13,7 @@ workflow:
 stages:
   - build
   - test
+  - spread
 
 .ubuntu-common:
   before_script:
@@ -196,3 +197,106 @@ coverity:
       - "apparmor-*.tar.gz"
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PROJECT_PATH == "apparmor/apparmor"
+
+.spread:
+  stage: spread
+  # TODO: use tagged release once container tagging is improved upstream.
+  image: registry.gitlab.com/zygoon/image-garden:latest
+  variables:
+    ARCH: x86_64 # for cache key :/
+    GARDEN_DL_DIR: dl
+    # GitLab project identifier of zygoon/spread-dist can be seen on
+    # https://gitlab.com/zygoon/spread-dist, under the three-dot menu on
+    # top-right.
+    SPREAD_GITLAB_PROJECT_ID: "65375371"
+    # Git revision of spread to install.
+    # This must have been built via spread-dist.
+    # TODO: switch to upstream 1.0 release when available.
+    SPREAD_REV: 413817eda7bec07a3885e0717c178b965f8924e1
+    # Run all the tasks for a given system.
+    SPREAD_ARGS: "garden:$GARDEN_SYSTEM:"
+  before_script:
+    # Prepare the image in dry-run mode. This helps in debugging cache misses
+    # when files are not cached correctly by the runner, causing the build section
+    # below to always do hevy-duty work.
+    - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" prepare_image_dry_run "Prepare image (dry run)"
+    - image-garden make --dry-run --debug "$GARDEN_SYSTEM.$ARCH.run"
+    - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" prepare_image_dry_run
+
+    # Prepare the image, for real.
+    - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" prepare_image "Prepare image"
+    - image-garden make "$GARDEN_SYSTEM.$ARCH.run"
+    - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" prepare_image
+
+    # Install the selected revision of spread.
+    - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" install_spread "Installing spread..."
+    # Install pre-built spread from https://gitlab.com/zygoon/spread-dist generic package repository.
+    - |
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --location --output spread "${CI_API_V4_URL}/projects/${SPREAD_GITLAB_PROJECT_ID}/packages/generic/spread/${SPREAD_REV}/spread.${SPREAD_GOARCH}"
+    - chmod +x spread
+    - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" install_spread
+  script:
+    - printf '\e[0K%s:%s:%s\r\e[0K%s\n' section_start "$(date +%s)" run_spread "Running spread for $GARDEN_SYSTEM..."
+    # TODO: transform to inject ^...$ to properly select jobs to run.
+    - mkdir -p spread-logs spread-artifacts
+    - ./spread -list $SPREAD_ARGS |
+      split --number=l/${CI_NODE_INDEX:-1}/"${CI_NODE_TOTAL:-1}" |
+      xargs --verbose ./spread -v -artifacts ./spread-artifacts -v | tee spread-logs/"$GARDEN_SYSTEM".log
+    - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" run_spread
+  cache:
+    # Cache the base image (pre-customization).
+    - key: image-garden-base-${GARDEN_SYSTEM}.${ARCH}
+      policy: $POLICY
+      when: always
+      paths:
+        - $GARDEN_DL_DIR
+        # Those are never mutated so they are safe to share.
+        - efi-code.*.img
+        - efi-vars.*.img
+    # Cache the customized system. This cache depends on .image-garden.mk file
+    # so that any customization updates are immediately acted upon.
+    - key:
+        prefix: image-garden-custom-${GARDEN_SYSTEM}.${ARCH}-
+        files:
+          - .image-garden.mk
+      policy: $POLICY
+      when: always
+      paths:
+        - $GARDEN_SYSTEM.*
+  artifacts:
+    paths:
+      - spread-logs
+      - spread-artifacts
+    when: always
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      variables:
+        # Dependencies change rarely so not having to worry about pushes from other branches removes complexity.
+        POLICY: pull
+    - if: $CI_NODE_TOTAL == "1"
+      variables:
+        # For sequential jobs we can always push to the cache.
+        POLICY: pull-push
+    - if: $CI_NODE_INDEX == "1"
+      variables:
+        # For parallel jobs, only the first job pushes to the cache.
+        POLICY: pull-push
+
+.spread-x86_64:
+  extends: .spread
+  tags:
+    - linux
+    - x86_64
+    - kvm
+  variables:
+    SPREAD_GOARCH: amd64
+    ARCH: x86_64
+
+spread-ubuntu-cloud-24.04-x86_64:
+  extends: .spread-x86_64
+  variables:
+    GARDEN_SYSTEM: ubuntu-cloud-24.04
+    SPREAD_ARGS: garden:$GARDEN_SYSTEM:tests/regression/ garden:$GARDEN_SYSTEM:tests/profiles/
+  needs: []
+  dependencies: []
+  parallel: 4

@@ -256,10 +256,19 @@ coverity:
       - spread-artifacts
     when: always
   rules:
-    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
-      variables:
-        # Dependencies change rarely so not having to worry about pushes from other branches removes complexity.
-        POLICY: pull
+    # Due to default cache protection logic in GitLab, pipelines running in
+    # protected branches (like master in the AppArmor project) do not get
+    # access, even read access, to protected cache. As such we need to allow
+    # non-protected branches to push the cache sometimes, or we'd pay the cost
+    # of never using cache on unprotected branches.
+    #
+    # As such disable the first rule below and only consider CI_NODE_TOTAL and
+    # CI_NODE_INDEX in cache pull/pull-push preference.
+    #
+    # - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+    #  variables:
+    #    # Dependencies change rarely so not having to worry about pushes from other branches removes complexity.
+    #    POLICY: pull
     - if: $CI_NODE_TOTAL == "1"
       variables:
         # For sequential jobs we can always push to the cache.
@@ -268,6 +277,9 @@ coverity:
       variables:
         # For parallel jobs, only the first job pushes to the cache.
         POLICY: pull-push
+    - if: $CI_NODE_TOTAL != "1" && $CI_NODE_INDEX != "1"
+      variables:
+        POLICY: pull
 
 .spread-x86_64:
   extends: .spread

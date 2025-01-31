@@ -191,11 +191,39 @@ suites:
 
             # Check if running the test resulted in any logged denials.
             if dmesg | grep DENIED > denials.txt; then
-                echo "Denials were emitted during the test"
-                cat denials.txt
-                exit 1
-            fi
+                if [ -z "${EXPECT_DENIALS:-}" ]; then
+                    echo "Denials were emitted during the test."
+                    cat denials.txt
+                    exit 1
+                else
+                    readarray -t regexes <<< $(printf "%b" "$EXPECT_DENIALS")
+                    declare -a found_regex_array
 
+                    # Check if all generated denials match the expected ones
+                    while read denial; do
+                        found=0
+                        for i in "${!regexes[@]}"; do
+                            if grep -E -q "${regexes[i]}" <<< "$denial"; then
+                                found_regex_array[$i]=1
+                                found=1
+                            fi
+                        done
+
+                        if [ $found -eq 0 ]; then
+                            echo "Unexpected denial: $denial"
+                            exit 1
+                        fi
+                    done <denials.txt
+
+                    # Check if all denials correspond to a regex
+                    for i in "${!regexes[@]}"; do
+                        if [ -z ${found_regex_array[$i]:-} ] ; then
+                            echo "Exected denial ${regexes[i]} was not found"
+                            exit 1
+                        fi
+                    done
+                fi
+            fi
         debug-each: |
             echo "PROGRAM_NAME=${PROGRAM_NAME:=$(basename "$SPREAD_TASK")}"
             command -v "$PROGRAM_NAME"

@@ -1,0 +1,9 @@
+summary: smoke test for the lsusb profile
+execute: |
+    # lsusb works (this is a very basic test).
+    # try printing the physical USB device hierarchy as a tree
+    lsusb -t
+    # be verbose
+    lsusb -v
+    # The profile is attached based on the program path.
+    "$SPREAD_PATH"/tests/bin/actual-profile-of lsusb | MATCH 'lsusb \(enforce\)'

@@ -1024,7 +1024,7 @@ If a conditional is specified using '=', then the rule only grants permission
 for mounts matching the exactly specified options. For example, an AppArmor
 policy with the following rule:
 
-    mount options=ro /dev/foo -E<gt> /mnt/,
+    mount options=ro /dev/foo -> /mnt/,
 
 Would match:
 
@@ -1071,7 +1071,7 @@ grants permission for each set of options. This provides a shorthand when
 writing mount rules which might help to logically break up a conditional. For
 example, if an AppArmor policy has the following rule:
 
-    mount options=ro options=atime
+    mount options=ro options=atime,
 
 both of these mount commands will match:
 
@@ -1319,7 +1319,7 @@ Example IO_URING rules:
 =over 4
 
   # Allow io_uring operations
-  io_ring,
+  io_uring,
 
   # Allow creation of a polling thread
   io_uring sqpoll,

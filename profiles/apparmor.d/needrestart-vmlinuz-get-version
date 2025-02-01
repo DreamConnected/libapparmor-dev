@@ -6,30 +6,21 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-@{exec_path} = @{lib}/needrestart/vmlinuz-get-version
-profile needrestart-vmlinuz-get-version @{exec_path} {
+profile needrestart-vmlinuz-get-version /{usr/,}lib/needrestart/vmlinuz-get-version {
   include <abstractions/base>
   include <abstractions/consoles>
+  include <abstractions/user-tmp>
 
-  @{exec_path} mr,
+  /{usr/,}lib/needrestart/vmlinuz-get-version mr,
 
-  @{sh_path}                   rix,
-  @{bin}/bzip2                 rix,
-  @{bin}/grep                  rix,
-  @{bin}/gunzip                rix,
-  @{bin}/gzip                  rix,
-  @{bin}/lzop                  rix,
-  @{bin}/mktemp                rix,
-  @{bin}/rm                    rix,
-  @{bin}/tail                  rix,
-  @{bin}/tr                    rix,
-  @{bin}/which{,.debianutils}  rix,
-  @{bin}/xz                    rix,
+  /{usr/,}bin/{dash,sh} rix,
+  /{usr/,}bin/{bzip2,gunzip,gzip,lzop,xz} rix,
+  /{usr/,}bin/{grep,mktemp,rm,tail,tr} rix,
+  /{usr/,}bin/which{,.debianutils}  rix,
 
-  /boot/intel-ucode.img r,
+  # was included in the apparmor.d project's version but doesn't seem to be referenced anywhere in the script
+  # /boot/intel-ucode.img r,
   /boot/vmlinuz* r,
-
-  owner @{tmp}/tmp.@{rand10} rw,
 
   include if exists <local/needrestart-vmlinuz-get-version>
 }

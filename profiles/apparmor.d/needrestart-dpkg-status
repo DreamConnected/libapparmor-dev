@@ -6,18 +6,16 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-@{exec_path} = @{lib}/needrestart/dpkg-status
-profile needrestart-dpkg-status @{exec_path} {
+profile needrestart-dpkg-status /{usr/,}lib/needrestart/dpkg-status {
   include <abstractions/base>
   include <abstractions/consoles>
 
   capability  dac_read_search,
 
-  @{exec_path} mr,
+  /{usr/,}lib/needrestart/dpkg-status mr,
 
-  @{sh_path}         rix,
-  @{bin}/mkdir       rix,
-  @{bin}/touch       rix,
+  /{usr/,}bin/{dash,sh}     rix,
+  /{usr/,}bin/{mkdir,touch} rix,
 
   @{run}/needrestart/{,**} rw,
 

@@ -6,21 +6,75 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-@{exec_path} = @{lib}/needrestart/apt-pinvoke
-profile needrestart-apt-pinvoke @{exec_path} {
+# taken from apparmor.d project's tunables/multiarch.d/system
+@{busname}=:1.[0-9]* :not.active.yet
+
+profile needrestart-apt-pinvoke /{usr/,}lib/needrestart/apt-pinvoke {
   include <abstractions/base>
-  include <abstractions/bus-system>
-  include <abstractions/bus/org.freedesktop.login1>
+  include <abstractions/dbus-strict>
   include <abstractions/consoles>
+  
+  # was part of apparmor.d project's abstractions/bus-system, but without the additional label
+  # our abstractions/dbus-strict includes the other rules
+  dbus send
+       bus=system
+       path=/org/freedesktop/DBus
+       interface=org.freedesktop.DBus
+       member={RequestName,ReleaseName}
+       peer=(name=org.freedesktop.DBus),
+       
+  # from apparmor.d project's abstractions/bus/org.freedesktop.login1
+  # The following rules had label=systemd-logind but we don't have a profile for it currently
+  dbus send
+       bus=system
+       path=/org/freedesktop/login1
+       interface=org.freedesktop.DBus.Properties
+       member={Get,GetAll}
+       peer=(name="{@{busname},org.freedesktop.login1}"),
+
+  dbus receive
+       bus=system
+       path=/org/freedesktop/login1
+       interface=org.freedesktop.DBus.Properties
+       member=PropertiesChanged
+       peer=(name="{@{busname},org.freedesktop.login1}"),
+
+  dbus send
+       bus=system
+       path=/org/freedesktop/login1
+       interface=org.freedesktop.login1.Manager
+       member={Inhibit,CanHibernate,CanHybridSleep,CanPowerOff,CanReboot,CanSuspend,CreateSession,GetSessionByPID}
+       peer=(name="{@{busname},org.freedesktop.login1}"),
+
+  dbus receive
+       bus=system
+       path=/org/freedesktop/login1
+       interface=org.freedesktop.login1.Manager
+       member={SessionNew,SessionRemoved,UserNew,UserRemoved,SeatNew,PrepareFor*}
+       peer=(name="{@{busname},org.freedesktop.login1}"),
+
+  dbus send
+       bus=system
+       path=/org/freedesktop/login1
+       interface=org.freedesktop.DBus.Introspectable
+       member=Introspect
+       peer=(name="{@{busname},org.freedesktop.login1}"),
+
+  dbus send
+       bus=system
+       path=/org/freedesktop/login1/session/*
+       interface=org.freedesktop.login1.Session
+       member=PauseDeviceComplete
+       peer=(name=org.freedesktop.login1),
 
   capability dac_read_search,
 
-  @{exec_path} mr,
+  /{usr/,}lib/needrestart/apt-pinvoke mr,
 
-  @{sh_path}              rix,
-  @{bin}/dbus-send        rix,
-  @{bin}/needrestart      rPx,
-  @{bin}/rm               rix,
+  /{usr/,}bin/{dash,sh} rix,
+  /{usr/,}bin/dbus-send rix,
+  /{usr/,}sbin/needrestart rPx,
+  /{usr/,}bin/rm rix,
 
   @{run}/needrestart/{,**} rw,
 

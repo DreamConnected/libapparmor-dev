@@ -1,0 +1,38 @@
+# vim:syntax=apparmor
+# ------------------------------------------------------------------
+#
+#    Copyright (C) 2025 Canonical Ltd.
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#
+# ------------------------------------------------------------------
+
+abi <abi/4.0>,
+
+include <tunables/global>
+
+profile minicom /usr/bin/minicom {
+  include <abstractions/base>
+
+  @{etc_ro}/nsswitch.conf r,
+  @{etc_ro}/passwd r,
+
+  # minicom configuration files
+  @{etc_ro}/minicom/minirc.* rw,
+
+  # minicom executables
+  /usr/bin/minicom mr,
+  /usr/bin/runscript mr,
+
+  # devices and lock files
+  /dev/{tty,pts,pty}** rw,
+  /run/lock/LCK..{tty,pts,pty}** w,
+
+  # Dialing directory
+  @{HOME}/.dialdir rw,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/minicom>
+}

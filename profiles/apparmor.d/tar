@@ -1,0 +1,37 @@
+#------------------------------------------------------------------
+#    Copyright (C) 2024 Canonical Ltd.
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+# vim: ft=apparmor
+
+abi <abi/4.0>,
+
+include <tunables/global>
+
+profile tar /usr/bin/tar {
+  include <abstractions/base>
+
+  # used to extract user files as root
+  capability chown,
+
+  # used to compress user files as root
+  capability dac_override,
+  capability dac_read_search,
+
+  file rwl /**,
+
+  # tar can be made to filter archives through an arbitrary program
+  /{usr{/local,},}/{bin,sbin}/* ix,
+  /opt/** ix,
+
+  # tar can compress/extract files over rsh/ssh
+  network stream ip=127.0.0.1,
+  network stream ip=::1,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/tar>
+}
+

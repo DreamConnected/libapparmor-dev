@@ -1,0 +1,13 @@
+summary: smoke test for the tar profile
+execute: |
+    # tar works (this is a very basic test).
+    # create a text file, archive it and delete the original file
+    echo "test" > file.txt
+    tar -czf archive.tar file.txt
+    rm file.txt
+    # extract archive, assert content is correct
+    tar -xzf archive.tar
+    test "$(cat file.txt)" = "test"
+
+    # The profile is attached based on the program path.
+    "$SPREAD_PATH"/tests/bin/actual-profile-of tar | MATCH 'tar \(enforce\)'

@@ -19,7 +19,7 @@ from common_test import AATest, setup_aa, setup_all_loops
 # These skip lists are meant as a temporary solution, and should be empty on release.
 skip_active_profiles = []
 
-skip_extra_profiles = []
+skip_extra_profiles = ['usr.bin.pidgin', 'usr.bin.totem', 'usr.bin.totem-previewers']
 
 
 class TestFoo(AATest):

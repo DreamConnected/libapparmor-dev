@@ -7,35 +7,52 @@
 #------------------------------------------------------------------
 # vim: ft=apparmor
 #
+# Copyright (C) 2018-2021 Mikhail Morfikov
+# Copyright (C) 2021-2024 Alexandre Pujol <alexandre@pujol.io>
+#
 abi <abi/4.0>,
 
 include <tunables/global>
 
 profile ssh-agent /usr/bin/ssh-agent {
   include <abstractions/base>
-  include <abstractions/nameservice>
+  include <abstractions/consoles>
+  include <abstractions/nameservice-strict>
 
   capability setgid,
+
+  # Network access for ssh-keyscan
+  network inet dgram,
+  network inet6 dgram,
+  network inet stream,
+  network inet6 stream,
+
+  signal (receive) set=(term),
 
   # Enable commands to run as a subprocess by ssh-agent
   file mrix /usr/bin/dash,
   file mrix /usr/bin/bash,
 
   # Common commands run as a subprocess by ssh-agent
-  file Pix /usr/bin/ssh-keygen,
+  file Px /usr/bin/gpg-agent,
+  file Px /usr/bin/ssh-keygen,
   file Pix /usr/bin/ssh-add,
   file Pix /usr/bin/ssh-keyscan,
-  file rw /dev/tty,
 
   # Common SSH file locations
   file rw @{etc_rw}/ssh/{,**},
-  file rw @{HOME}/.ssh/{,**},
-
-  # Allow executable mapping and read for the binary
-  file mr /usr/bin/ssh-agent,
+  file r @{HOME}/.ssh/{,**},
+  file w @{HOME}/.xsession-errors,
+  file rw @{run}/user/@{uid}/keyring/.ssh,
+  file rw @{run}/user/@{uid}/openssh_agent,
+  file w @{run}/user/@{uid}/ssh-agent.[0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z],
+  file w @{run}/user/@{uid}/gcr/.ssh,
 
   # UNIX-domain sockets 
   file rw /tmp/ssh-[0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z]/{,**},
+
+  # Allow executable mapping and read for the binary
+  file mr /usr/bin/ssh-agent,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/ssh-agent>

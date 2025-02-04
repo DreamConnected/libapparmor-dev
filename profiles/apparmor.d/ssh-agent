@@ -1,4 +1,6 @@
 #------------------------------------------------------------------
+#    Copyright (C) 2018-2021 Mikhail Morfikov
+#    Copyright (C) 2021-2024 Alexandre Pujol <alexandre@pujol.io>
 #    Copyright (C) 2024 Canonical Ltd.
 #
 #    This program is free software; you can redistribute it and/or
@@ -6,9 +8,6 @@
 #    License published by the Free Software Foundation.
 #------------------------------------------------------------------
 # vim: ft=apparmor
-#
-# Copyright (C) 2018-2021 Mikhail Morfikov
-# Copyright (C) 2021-2024 Alexandre Pujol <alexandre@pujol.io>
 #
 abi <abi/4.0>,
 
@@ -41,15 +40,15 @@ profile ssh-agent /usr/bin/ssh-agent {
 
   # Common SSH file locations
   file rw @{etc_rw}/ssh/{,**},
-  file r @{HOME}/.ssh/{,**},
-  file w @{HOME}/.xsession-errors,
-  file rw @{run}/user/@{uid}/keyring/.ssh,
-  file rw @{run}/user/@{uid}/openssh_agent,
-  file w @{run}/user/@{uid}/ssh-agent.[0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z],
-  file w @{run}/user/@{uid}/gcr/.ssh,
+  owner r @{HOME}/.ssh/{,**},
+  owner w @{HOME}/.xsession-errors,
+  owner rw @{run}/user/@{uid}/keyring/.ssh,
+  owner rw @{run}/user/@{uid}/openssh_agent,
+  owner w @{run}/user/@{uid}/ssh-agent.[0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z],
+  owner w @{run}/user/@{uid}/gcr/.ssh,
 
   # UNIX-domain sockets 
-  file rw /tmp/ssh-[0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z]/{,**},
+  owner rw /tmp/ssh-[0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z][0-9a-zA-Z]/{,**},
 
   # Allow executable mapping and read for the binary
   file mr /usr/bin/ssh-agent,

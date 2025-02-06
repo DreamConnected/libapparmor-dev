@@ -1,0 +1,38 @@
+#------------------------------------------------------------------
+#    Copyright (C) 2024 Canonical Ltd.
+#
+#    Author: Hlib Korzhynskyy <hlib.korzhynskyy@canonical.com>
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+# vim: ft=apparmor
+#
+
+abi <abi/4.0>,
+include <tunables/global>
+
+profile lsblk /usr/bin/lsblk {
+  include <abstractions/base>
+  include <abstractions/consoles>
+  include <abstractions/nameservice-strict>
+
+  @{sys}/block/ r,
+  @{sys}/class/block/ r,
+  @{sys}/dev/block/ r,
+
+  @{sys}/devices/pci[0-9]*:[0-9]*/** r,
+  @{sys}/devices/virtual/** r,
+  @{sys}/devices/platform/** r,
+
+  /dev/sr[0-9]* rk,
+
+  @{run}/udev/data/** r,
+
+  @{run}/mount/** r,
+  @{PROC}/swaps r,
+  owner @{PROC}/@{pid}/mountinfo r,
+
+  include if exists <local/lsblk>
+}

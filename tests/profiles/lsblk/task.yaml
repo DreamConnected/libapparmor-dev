@@ -1,0 +1,7 @@
+summary: smoke test for the lsblk profile
+execute: |
+    # The lsblk program seems to work.
+    lsblk | MATCH vda1
+
+    # The profile is attached based on the program path.
+    "$SPREAD_PATH"/tests/bin/actual-profile-of lsblk | MATCH 'lsblk \(enforce\)'

@@ -1,0 +1,27 @@
+#------------------------------------------------------------------
+#    Copyright (C) 2024 Canonical Ltd.
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+# vim: ft=apparmor
+#
+abi <abi/4.0>,
+
+include <tunables/global>
+
+/usr/bin/ssh-keygen flags=(enforce) {
+  include <abstractions/base>
+  
+  file r /etc/passwd,
+  file r /etc/nsswitch.conf,
+
+  # Terminal for the current process
+  file rw /dev/tty,
+
+  # Common SSH file locations
+  file rw @{etc_rw}/ssh/{,**},
+  file rw @{HOME}/.ssh/{,**},
+
+ }

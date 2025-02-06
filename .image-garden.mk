@@ -35,6 +35,7 @@ packages:
 - python3-tk
 - python3-ttkthemes
 - swig
+- tinyproxy
 - toybox
 endef
 

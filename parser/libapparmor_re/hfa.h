@@ -52,37 +52,37 @@ ostream &operator<<(ostream &os, State &state);
 
 class perms_t {
 public:
-	perms_t(void): priority(MIN_INTERNAL_PRIORITY), allow(0), deny(0), prompt(0), audit(0), quiet(0), exact(0) { };
+	perms_t(void): allow(0), deny(0), prompt(0), audit(0), quiet(0), exact(0) { };
 
 	bool is_accept(void) { return (allow | deny | prompt | audit | quiet); }
 
 	void dump_header(ostream &os)
 	{
-		os << "priority (allow/deny/prompt/audit/quiet)";
+		os << "(allow/deny/prompt/audit/quiet)";
 	}
 	void dump(ostream &os)
 	{
-		os << " " << priority << " (0x " << hex
+		os << "(0x " << hex
 		   << allow << "/" << deny << "/" << "/" << prompt << "/" << audit << "/" << quiet
 		   << ')' << dec;
 	}
 
 	void clear(void) {
-		priority = MIN_INTERNAL_PRIORITY;
 		allow = deny = prompt = audit = quiet = exact = 0;
 	}
-	void clear(int p) {
-		priority = p;
-		allow = deny = prompt = audit = quiet = exact = 0;
+
+	void clear_bits(perm32_t bits)
+	{
+		allow &= ~bits;
+		deny &= ~bits;
+		prompt &= ~bits;
+		audit &= ~bits;
+		quiet &= ~bits;
+		exact &= ~bits;
 	}
+
 	void add(perms_t &rhs, bool filedfa)
 	{
-		if (priority > rhs.priority)
-			return;
-		if (priority < rhs.priority) {
-			*this = rhs;
-			return;
-		} //else if (rhs.priority == priority) {
 		deny |= rhs.deny;
 
 		if (filedfa && !is_merged_x_consistent(allow & ALL_USER_EXEC,
@@ -156,8 +156,6 @@ public:
 
 	bool operator<(perms_t const &rhs)const
 	{
-		if (priority < rhs.priority)
-			return priority < rhs.priority;
 		if (allow < rhs.allow)
 			return allow < rhs.allow;
 		if (deny < rhs.deny)
@@ -169,11 +167,11 @@ public:
 		return quiet < rhs.quiet;
 	}
 
-	int priority;
 	perm32_t allow, deny, prompt, audit, quiet, exact;
 };
 
-int accept_perms(NodeVec *state, perms_t &perms, bool filedfa);
+int accept_perms(optflags const &opts, NodeVec *state, perms_t &perms,
+		 bool filedfa);
 
 /*
  * ProtoState - NodeSet and ancillery information used to create a state
@@ -237,7 +235,8 @@ struct DiffDag {
  */
 class State {
 public:
-	State(int l, ProtoState &n, State *other, bool filedfa):
+	State(optflags const &opts, int l, ProtoState &n, State *other,
+	      bool filedfa):
 		label(l), flags(0), idx(0), perms(), trans()
 	{
 		int error;
@@ -250,7 +249,7 @@ public:
 		proto = n;
 
 		/* Compute permissions associated with the State. */
-		error = accept_perms(n.anodes, perms, filedfa);
+		error = accept_perms(opts, n.anodes, perms, filedfa);
 		if (error) {
 			//cerr << "Failing on accept perms " << error << "\n";
 			throw error;
@@ -354,9 +353,11 @@ typedef map<const State *, size_t> Renumber_Map;
 /* Transitions in the DFA. */
 class DFA {
 	void dump_node_to_dfa(void);
-	State *add_new_state(NodeSet *nodes, State *other);
-	State *add_new_state(NodeSet *anodes, NodeSet *nnodes, State *other);
-	void update_state_transitions(State *state);
+	State *add_new_state(optflags const &opts, NodeSet *nodes,
+			     State *other);
+	State *add_new_state(optflags const &opts,NodeSet *anodes,
+			     NodeSet *nnodes, State *other);
+	void update_state_transitions(optflags const &opts, State *state);
 	void process_work_queue(const char *header, optflags const &);
 	void dump_diff_chain(ostream &os, map<State *, Partition> &relmap,
 			     Partition &chain, State *state,

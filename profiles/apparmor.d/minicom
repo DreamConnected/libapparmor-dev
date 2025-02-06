@@ -31,7 +31,7 @@ profile minicom /usr/bin/minicom {
   /run/lock/LCK..{tty,pts,pty}** w,
 
   # Dialing directory
-  @{HOME}/.dialdir rw,
+  owner @{HOME}/.dialdir rw,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/minicom>

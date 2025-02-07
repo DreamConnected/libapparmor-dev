@@ -1,0 +1,144 @@
+# -*- mode: apparmor; -*-
+# ------------------------------------------------------------------
+#
+#    Copyright (C) 2024 Canonical Ltd.
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#
+# ------------------------------------------------------------------
+# vim: ft=apparmor
+
+abi <abi/4.0>,
+
+include <tunables/global>
+include <tunables/rygel>
+
+profile rygel /usr/bin/rygel {
+  include <abstractions/base>
+  include <abstractions/dbus-session-strict>
+  include <abstractions/dconf>
+  include <abstractions/freedesktop.org>
+  include <abstractions/nameservice>
+
+  # gst-plugin-scanner tries to probe various things including display devices
+  # etc so allow those that are harmless but deny the rest
+  file r /dev/{,urandom,null},
+  file r /sys/,
+  file r /sys/{bus,class}/,
+  file r /sys/class/drm/,
+  deny file r /dev/dri/{,**},
+
+  file r @{etc_ro}/rygel.conf,
+
+  file mr /usr/bin/rygel,
+
+  file Cx /usr/libexec/rygel/mx-extract -> mx-extract,
+
+  file mrix /usr/lib/@{multiarch}/gstreamer1.0/gstreamer-1.0/gst-plugin-scanner,
+
+  file r /usr/share/gupnp-dlna-2.0/dlna-profiles/{,*},
+  file r /usr/share/gupnp-av/{,*},
+  file r /usr/share/rygel/{,**},
+
+  owner file rw  @{HOME}/.cache/gstreamer-1.0/{,*},
+
+  # config and cache
+  owner file rwk @{HOME}/.cache/rygel/{,*},
+  owner file rw  @{HOME}/.config/rygel.conf,
+  owner file rw  @{HOME}/.config/Rygel/{,*},
+
+  # thumbnails
+  owner file r @{HOME}/.cache/thumbnails/{,**},
+
+  # media files - see tunables/rygel
+  owner file r @{rygel_media_dirs}/{,**},
+
+  # dconf access
+  owner rw @{run}/user/*/dconf/user,
+
+  # liborc temporary files from gstreamer Orc Integration
+  owner file mrw @{HOME}/orcexec.*,
+  owner file mrw @{run}/user/*/orcexec.*,
+  owner file mrw /tmp/orcexec.*,
+
+  network netlink dgram,
+
+  # dbus access
+  # register on DBus
+  dbus (send)
+      bus=session
+      path=/org/freedesktop/DBus
+      interface=org.freedesktop.DBus
+      member="{Request,Release}Name"
+      peer=(name=org.freedesktop.DBus, label=unconfined),
+
+  # claim the org.gnome.Rygel[1] names
+  dbus bus=session
+      name="org.gnome.Rygel{,1}",
+
+  # Allow unconfined to introspect us
+  dbus (receive)
+      bus=session
+      interface=org.freedesktop.DBus.Introspectable
+      member=Introspect
+      peer=(label=unconfined),
+
+  # allow to respond to unconfined clients
+  dbus (receive)
+      bus=session
+      interface="org.gnome.Rygel1"
+      peer=(label=unconfined),
+
+  # allow us to respond to unconfined clients (eg, org.freedesktop.*,
+  # org.gtk.Application, etc)
+  dbus (receive)
+      bus=session
+      path="/org/gnome/Rygel{,1}"
+      peer=(label=unconfined),
+
+  # allow to enumerate mounts
+  dbus (send)
+    bus=session
+    path="/org/gtk/vfs/mounttracker"
+    interface="org.gtk.vfs.MountTracker"
+    member="ListMountableInfo"
+    peer=(label=unconfined),
+
+  profile mx-extract {
+    include <abstractions/base>
+    include <abstractions/dbus-session-strict>
+    include <abstractions/freedesktop.org>
+
+    # gst-plugin-scanner tries to probe various things including display devices
+    # etc so allow those that are harmless but deny the rest
+    file r /dev/{,urandom,null},
+    file r /sys/,
+    file r /sys/{bus,class}/,
+    file r /sys/class/drm/,
+    deny file r /dev/dri/{,**},
+
+    file mr /usr/libexec/rygel/mx-extract,
+
+    file r  /usr/share/gupnp-dlna-2.0/dlna-profiles/{,*},
+
+    file mrix /usr/lib/@{multiarch}/gstreamer1.0/gstreamer-1.0/gst-plugin-scanner,
+
+    file r /usr/share/gvfs/mounts/,
+
+    owner file r  @{HOME}/.cache/gstreamer-1.0/*,
+    owner file rw @{HOME}/.cache/media-art/{,*},
+
+    # media files - see tunables/rygel
+    owner file r  @{rygel_media_dirs}/{,**},
+
+    # liborc temporary files from gstreamer Orc Integration
+    owner file mrw @{HOME}/orcexec.*,
+    owner file mrw @{run}/user/*/orcexec.*,
+    owner file mrw /tmp/orcexec.*,
+  }
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/rygel>
+}

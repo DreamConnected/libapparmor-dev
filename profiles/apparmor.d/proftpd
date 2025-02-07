@@ -1,0 +1,69 @@
+abi <abi/4.0>,
+
+include <tunables/global>
+
+profile proftpd /usr/sbin/proftpd {
+  include <abstractions/base>
+  include <abstractions/nameservice>
+  include <abstractions/user-tmp>
+  include <abstractions/wutmp>
+
+  capability setgid,
+  capability setuid,
+  capability audit_write,
+  capability sys_chroot,
+
+  mqueue getattr type=posix /,
+  mqueue read type=posix /,
+
+  /proc/sys/kernel/random/boot_id r,
+
+  # DNS
+  /run/systemd/resolve/stub-resolv.conf r,
+
+  # Configuration files
+  /etc/ r,
+  /etc/ftpusers r,
+  /etc/group r,
+  /etc/host.conf r,
+  /etc/hosts r,
+  /etc/nsswitch.conf r,
+  /etc/passwd r,
+  /etc/protocols r,
+  /etc/services r,
+  /etc/shells r,
+  owner /etc/security/capability.conf r,
+  owner /etc/login.defs r,
+
+  # User/Group Records
+  /run/systemd/userdb/ r,
+  /run/systemd/userdb/io.systemd.DynamicUser rw,
+
+  # Password authentication
+  owner /etc/pam.d/* r,
+  owner /etc/shadow r,
+
+  # ProFTPD logs
+  /var/log/proftpd/** rw,
+  owner /etc/proftpd/** rw,
+
+  # Process info
+  owner /run/proftpd.delay rwk,
+  owner /run/proftpd.pid rwk,
+  owner /run/proftpd.scoreboard rwk,
+  owner /run/proftpd.scoreboard.lck rwk,
+  owner /run/proftpd/* rw,
+  owner /run/test.sock w,
+  owner /var/log/xferlog w,
+
+  # User login tracking
+  owner /proc/*/loginuid r,
+
+  # Need to be able to write to where FTP is configured
+  /home/** rw,
+  /srv/ftp/** rw,
+  /srv/www/** rw,
+  /var/ftp/** rw,
+  /var/www/** rw,
+
+}

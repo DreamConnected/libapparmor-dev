@@ -1,0 +1,77 @@
+#------------------------------------------------------------------
+#    Copyright (C) 2024 Canonical Ltd.
+#
+#    Author: Paulo Flabiano Smorigo <pfsmorigo@canonical.com>
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+# vim: ft=apparmor
+
+abi <abi/4.0>,
+
+include <tunables/global>
+
+profile remmina /usr/bin/remmina {
+  include <abstractions/base>
+  include <abstractions/fonts>
+  include <abstractions/freedesktop.org>
+  include <abstractions/gnome>
+  include <abstractions/dbus>
+  include <abstractions/dbus-session-strict>
+  include <abstractions/nameservice>
+  include <abstractions/openssl>
+  include <abstractions/ssl_certs>
+  include <abstractions/private-files-strict>
+  include <abstractions/dconf>
+
+  dbus (bind) bus=session name="org.remmina.Remmina",
+  dbus (send) bus=session path="/org/gtk/vfs/mounttracker" interface="org.gtk.vfs.MountTracker" member={ListMountableInfo,LookupMount} peer=(label=unconfined),
+  dbus (send) bus=session path="/org/freedesktop/secrets" interface="org.freedesktop.DBus.Properties" member=GetAll peer=(label=unconfined),
+  dbus (send) bus=session path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member={RequestName,ReleaseName} peer=(label=unconfined),
+  dbus (send) bus=session path="/org/freedesktop/secrets/collection/login" interface="org.freedesktop.DBus.Properties" member=GetAll peer=(label=unconfined),
+  dbus (send) bus=system path="/org/freedesktop/NetworkManager" interface="org.freedesktop.DBus.Properties" member=GetAll peer=(label=unconfined),
+
+  @{etc_ro}/fstab r,
+  /usr/bin/remmina mr,
+  /usr/share/remmina/{,**} r,
+  /var/lib/snapd/desktop/icons/{,**} r,
+
+  owner @{HOME}/.cache/org.remmina.Remmina/{,**} rw,
+  owner @{HOME}/.cache/remmina/{,**} rw,
+  owner @{HOME}/.cache/thumbnails/{,**} r,
+  owner @{HOME}/.config/autostart/remmina-applet.desktop r,
+  owner @{HOME}/.config/freerdp/known_hosts2 rwk,
+  owner @{HOME}/.config/glib-2.0/settings/keyfile rw,
+  owner @{HOME}/.config/remmina/{,**} rw,
+  owner @{HOME}/.ssh/{config,known_hosts} r,
+  owner @{HOME}/.local/share/remmina/{,**} rw,
+
+  ## In order to import and export profiles
+  owner @{HOME}/{,[^.]**} rw,
+
+  owner @{run}/user/@{uid}/gvfsd/socket-* rw,
+  owner @{PROC}/@{pid}/task/@{tid}/comm rw,
+  owner @{PROC}/@{pid}/mountinfo rw,
+
+  ## dconf abstraction is read-only, adding write access
+  owner @{run}/user/@{uid}/dconf/{,user} rw,
+
+  owner @{run}/user/@{uid}/at-spi/ rw,
+  owner @{run}/user/@{uid}/at-spi/bus{,_[0-9]*} rw,
+
+  /usr/bin/dash Px -> shell_browser,
+
+  include if exists <local/remmina>
+}
+
+profile shell_browser {
+  include <abstractions/base>
+  include <abstractions/consoles>
+  include <abstractions/ubuntu-helpers>
+  include <abstractions/ubuntu-browsers>
+  network tcp,
+
+  /usr/bin/dash r,
+}

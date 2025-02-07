@@ -38,7 +38,7 @@ class GUI:
             self.fg_color = style.lookup('TLabel', 'foreground')
             self.master.configure(background=self.bg_color)
         self.label_frame = ttk.Frame(self.master, padding=(20, 10))
-        self.label_frame.pack()
+        self.label_frame.pack(fill='both', expand=True)
 
         self.button_frame = ttk.Frame(self.master, padding=(10, 10))
         self.button_frame.pack(fill='x', expand=True)
@@ -86,6 +86,44 @@ class ShowMoreGUI(GUI):
             self.do_nothing_button.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
 
 
+class ProfileRules:
+    def __init__(self, raw_rules, selectable, profile_name, profile_path, is_userns_profile, bin_name, bin_path):
+        self.selectable = selectable
+        self.rules = []
+        self.profile_name = profile_name
+        self.profile_path = profile_path
+        self.is_userns_profile = is_userns_profile
+        self.bin_name = bin_name
+        self.bin_path = bin_path
+
+        for raw_rule in raw_rules:
+            self.rules.append(SelectableRule(raw_rule, self.selectable))
+
+    def get_writable_rules(self, template_path, allow_all=False):
+        out = ''
+        for rule in self.rules:
+            if allow_all or rule.selected.get():
+                if not self.is_userns_profile:
+                    out += 'add_rule\t{}\t{}\n'.format(rule.rule, self.profile_name)
+                else:
+                    out += 'create_userns\t{}\t{}\t{}\t{}\t{}\n'.format(template_path, self.profile_name, self.bin_path, self.profile_path, 'allow')
+        return out
+
+
+class SelectableRule:
+    def __init__(self, rule, selectable):
+        self.rule = rule
+        self.selectable = selectable
+        self.selected = None
+
+    def create_checkbox_rule(self, rules_frame):
+        self.selected = tk.IntVar(value=self.selectable)
+        return ttk.Checkbutton(rules_frame, text=self.rule, variable=self.selected, state=tk.DISABLED if not self.selectable else tk.ACTIVE)
+
+    def toggle(self):
+        self.selected.set(0 if self.selected else 1)
+
+
 class ShowMoreGUIAggregated(GUI):
     def __init__(self, summary, detailed_text, clean_rules):
         self.summary = summary
@@ -104,7 +142,6 @@ class ShowMoreGUIAggregated(GUI):
                 'btn_right': _('Show rules only')
             },
             'rules_only': {
-                'msg': self.clean_rules,
                 'btn_left': _('Show more details'),
                 'btn_right': _('Show summary')
             }
@@ -115,18 +152,28 @@ class ShowMoreGUIAggregated(GUI):
         super().__init__()
 
         self.master.title(_('AppArmor - More info'))
+        self.scrollbar = ttk.Scrollbar(self.label_frame)
+        self.scrollbar.pack(side='right', fill='y')
 
-        self.text_display = tk.Text(self.label_frame, height=40, width=100, wrap='word')
+        self.text_display = tk.Text(self.label_frame, wrap='word', height=40, width=100, yscrollcommand=self.scrollbar.set)
+
         if ttkthemes:
             self.text_display.configure(background=self.bg_color, foreground=self.fg_color)
-        self.text_display.insert('1.0', self.states[self.state]['msg'])
-        self.text_display['state'] = 'disabled'
+        self.canvas = tk.Canvas(
+            self.label_frame,
+            background=self.bg_color,
+            height=self.text_display.winfo_reqheight() - 4,  # The border are *inside* the canvas but *outside* the textbox. I need to remove 4px (2*the size of the borders) to get the same size
+            width=self.text_display.winfo_reqwidth() - 4,
+            borderwidth=self.text_display['borderwidth'],
+            relief=self.text_display['relief'],
+            yscrollcommand=self.scrollbar.set
+        )
 
-        self.scrollbar = ttk.Scrollbar(self.label_frame, command=self.text_display.yview)
-        self.text_display['yscrollcommand'] = self.scrollbar.set
+        self.inner_frame = ttk.Frame(self.canvas)
+        self.canvas.create_window((2, 2), window=self.inner_frame, anchor='nw')
 
-        self.scrollbar.pack(side='right', fill='y')
-        self.text_display.pack(side='left', fill='both', expand=True)
+        self.create_profile_rules_frame(self.inner_frame, self.clean_rules)
+        self.init_widgets()
 
         self.btn_left = ttk.Button(self.button_frame, text=self.states[self.state]['btn_left'], width=1, command=lambda: self.change_view('btn_left'))
         self.btn_left.grid(row=0, column=0, padx=5, pady=5, sticky="ew")
@@ -134,14 +181,48 @@ class ShowMoreGUIAggregated(GUI):
         self.btn_right = ttk.Button(self.button_frame, text=self.states[self.state]['btn_right'], width=1, command=lambda: self.change_view('btn_right'))
         self.btn_right.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
 
-        self.btn_allow_all = ttk.Button(self.button_frame, text="Allow All", width=1, command=lambda: self.set_result('allow_all'))
-        self.btn_allow_all.grid(row=0, column=2, padx=5, pady=5, sticky="ew")
+        self.btn_allow_selected = ttk.Button(self.button_frame, text="Allow Selected", width=1, command=lambda: self.set_result('allow_selected'))
+        self.btn_allow_selected.grid(row=0, column=2, padx=5, pady=5, sticky="ew")
 
         for i in range(3):
             self.button_frame.grid_columnconfigure(i, weight=1)
 
-    def change_view(self, action):
+    def init_widgets(self):
+        self.text_display.pack_forget()
+        self.canvas.pack_forget()
 
+        if self.state == 'rules_only':
+            self.scrollbar.config(command=self.canvas.yview)
+            self.canvas.pack(side='left', fill='both', expand=True)
+
+        else:
+            self.scrollbar.config(command=self.text_display.yview)
+            self.text_display['state'] = 'normal'
+            self.text_display.delete('1.0', 'end')
+            self.text_display.insert('1.0', self.states[self.state]['msg'])
+            self.text_display['state'] = 'disabled'
+            self.text_display.pack(side='left', fill='both', expand=True)
+
+    def create_profile_rules_frame(self, parent, clean_rules):
+        for profile_name, profile_rules in clean_rules.items():
+            label = ttk.Label(parent, text=profile_name, font=('Arial', 14, 'bold'))
+            label.pack(anchor='w', pady=(5, 0))
+            label.bind("<Button-1>", lambda event, rules=profile_rules: self.toggle_profile_rules(rules))
+
+            rules_frame = ttk.Frame(parent)
+            rules_frame.pack(fill='x', padx=20)
+
+            for rule in profile_rules.rules:
+                rule.create_checkbox_rule(rules_frame).pack(anchor='w')
+
+    @staticmethod
+    def toggle_profile_rules(profile_rules):
+        action = 0 if all(var.selected.get() for var in profile_rules.rules) else 1
+        for var in profile_rules.rules:
+            if var.selectable:
+                var.selected.set(action)
+
+    def change_view(self, action):
         if action == 'btn_left':
             self.state = 'detailed' if self.state != 'detailed' else 'summary'
         elif action == 'btn_right':
@@ -149,10 +230,14 @@ class ShowMoreGUIAggregated(GUI):
 
         self.btn_left['text'] = self.states[self.state]['btn_left']
         self.btn_right['text'] = self.states[self.state]['btn_right']
-        self.text_display['state'] = 'normal'
-        self.text_display.delete('1.0', 'end')
-        self.text_display.insert('1.0', self.states[self.state]['msg'])
-        self.text_display['state'] = 'disabled'
+
+        self.init_widgets()
+
+        if self.state != 'rules_only':
+            self.text_display['state'] = 'normal'
+            self.text_display.delete('1.0', 'end')
+            self.text_display.insert('1.0', self.states[self.state]['msg'])
+            self.text_display['state'] = 'disabled'
 
 
 class UsernsGUI(GUI):

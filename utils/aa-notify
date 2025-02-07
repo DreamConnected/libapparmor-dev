@@ -56,7 +56,7 @@ from apparmor.fail import enable_aa_exception_handler
 from apparmor.notify import get_last_login_timestamp
 from apparmor.translations import init_translation
 from apparmor.logparser import ReadLog
-from apparmor.gui import UsernsGUI, ErrorGUI, ShowMoreGUI, ShowMoreGUIAggregated, set_interface_theme
+from apparmor.gui import UsernsGUI, ErrorGUI, ShowMoreGUI, ShowMoreGUIAggregated, set_interface_theme, ProfileRules
 from apparmor.rule.file import FileRule
 
 from dbus import DBusException
@@ -532,9 +532,9 @@ def prompt_userns(ev):
         ask_for_user_ns_denied(ev['execpath'], ev['comm'])
 
 
-def get_more_info_about_event(rl, ev, special_profiles, header='', get_clean_rule=False):
+def get_more_info_about_event(rl, ev, special_profiles, profile_path, header=''):
     out = header
-    clean_rule = None
+    raw_rule = None
 
     for key, value in ev.items():
         if value:
@@ -549,31 +549,25 @@ def get_more_info_about_event(rl, ev, special_profiles, header='', get_clean_rul
             rule.exec_perms = 'Pix'
         aa.update_profiles()
         if customized_message['userns']['cond'](ev, special_profiles):
-            profile_path = None
             out += _('You may allow it through a dedicated unconfined profile for {}.').format(ev['comm'])
             userns_event_usable = can_leverage_userns_event(ev)
             if userns_event_usable == 'error_cannot_find_path':
-                clean_rule = _('# You may allow it through a dedicated unconfined profile for {0}. However, apparmor cannot find {0}. If you want to allow it, please create a profile for it manually.').format(ev['comm'])
+                raw_rule = _('# You may allow it through a dedicated unconfined profile for {0}. However, apparmor cannot find {0}. If you want to allow it, please create a profile for it manually.').format(ev['comm'])
             elif userns_event_usable == 'error_userns_profile_exists':
-                clean_rule = _('# You may allow it through a dedicated unconfined profile for {} ({}). However, a profile already exists with this name. If you want to allow it, please create a profile for it manually.').format(ev['comm'], ev['execpath'])
+                raw_rule = _('# You may allow it through a dedicated unconfined profile for {} ({}). However, a profile already exists with this name. If you want to allow it, please create a profile for it manually.').format(ev['comm'], ev['execpath'])
             elif userns_event_usable == 'ok':
-                clean_rule = _('# You may allow it through a dedicated unconfined profile for {} ({})').format(ev['comm'], ev['execpath'])
+                raw_rule = _('# You may allow it through a dedicated unconfined profile for {} ({})').format(ev['comm'], ev['execpath'])
         else:
-            profile_path = aa.get_profile_filename_from_profile_name(ev['profile'])
-            clean_rule = rule.get_clean()
+            raw_rule = rule.get_clean()
             if profile_path:
                 out += _('If you want to allow this operation you can add the line below in profile {}\n').format(profile_path)
-                out += clean_rule
+                out += raw_rule
             else:
                 out += _('However {profile} is not in {profile_dir}\nIt is likely that the profile was not stored in {profile_dir} or was removed.\n').format(profile=ev['profile'], profile_dir=aa.profile_dir)
     else:  # Should not happen
         out += _('ERROR: Could not create rule from event.')
-        profile_path = None
 
-    if get_clean_rule:
-        return out, profile_path, clean_rule
-    else:
-        return out, profile_path
+    return out, raw_rule
 
 
 # TODO reuse more code from aa-logprof in callbacks
@@ -582,12 +576,16 @@ def cb_more_info(notification, action, _args):
     args.wait = args.min_wait
     notification.close()
 
-    out, profile_path, clean_rule = get_more_info_about_event(rl, ev, special_profiles, _('Operation denied by AppArmor\n\n'), get_clean_rule=True)
+    profile_name = ev['profile']
+    profile_path = aa.get_profile_filename_from_profile_name(profile_name)
 
-    ans = ShowMoreGUI(profile_path, out, clean_rule, ev['profile'], profile_path is not None).show()
+    out, raw_rule, = get_more_info_about_event(rl, ev, special_profiles, profile_path, _('Operation denied by AppArmor\n\n'))
+
+    ans = ShowMoreGUI(profile_path, out, raw_rule, ev['profile'], profile_path is not None).show()
     if ans == 'add_rule':
-        add_to_profile(clean_rule, ev['profile'])
+        add_to_profile(raw_rule, ev['profile'])
     elif ans in {'allow', 'deny'}:
+        customized_message['userns']['cond'](ev, special_profiles)
         create_userns_profile(ev['comm'], ev['execpath'], ans)
 
 
@@ -624,7 +622,7 @@ def create_from_file(file_path):
             ErrorGUI(_('Failed to add some rules'), False).show()
 
 
-def allow_all(clean_rules):
+def allow_rules(clean_rules, allow_all=False):
     local_template_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'default_unconfined.template')
     if os.path.exists(local_template_path):  # We are using local aa-notify -> we use local template
         template_path = local_template_path
@@ -632,34 +630,15 @@ def allow_all(clean_rules):
         template_path = aa.CONFDIR + '/default_unconfined.template'
 
     tmp = tempfile.NamedTemporaryFile()
-    with open(tmp.name, mode='w') as f:
-        profile = None
-        for line in clean_rules.splitlines():
-            if line == '':
-                continue
-            elif line[0] == '#':
-                profile = None
-                pass
-            elif line[0] != '\t':
-                profile = line[8:-1]  # 8:-1 is to remove 'profile ' and ':'
-            else:
-                if line[1] == '#':  # Add to userns
-                    if line[-1] == '.':  # '.' <==> There is an error: we cannot add the profile automatically
-                        continue
-                    profile_name = line.split()[-2]  # line always finishes by <profile_name>
-                    bin_path = line.split()[-1][1:-1]  # 1:-1 to remove the parenthesis
-                    profile_path = aa.get_profile_filename_from_profile_name(profile_name, True)
-                    if not profile_path:
-                        ErrorGUI(_('Cannot get profile path for {}.').format(profile_name), False).show()
-                        continue
-                    f.write('create_userns\t{}\t{}\t{}\t{}\t{}\n'.format(template_path, profile_name, bin_path, profile_path, 'allow'))
-                else:
-                    if profile is not None:
-                        f.write('add_rule\t{}\t{}\n'.format(line[1:], profile))
-                    else:
-                        print(_("Rule {} cannot be added automatically").format(line[1:]), file=sys.stdout)
+    written = 0
 
-    create_from_file(tmp.name)
+    with open(tmp.name, mode='w') as f:
+
+        for profile_name, profile_rules in clean_rules.items():
+            written += f.write(profile_rules.get_writable_rules(template_path))
+
+    if written > 0:
+        create_from_file(tmp.name)
 
 
 # TODO reuse more code from aa-logprof in callbacks
@@ -667,8 +646,8 @@ def cb_more_info_aggregated(notification, action, _args):
     (to_display, aggregated, clean_rules) = _args
     args.wait = args.min_wait
     res = ShowMoreGUIAggregated(to_display, aggregated, clean_rules).show()
-    if res == 'allow_all':
-        allow_all(clean_rules)
+    if res == 'allow_selected':
+        allow_rules(clean_rules)
 
 
 def cb_add_to_profile(notification, action, _args):
@@ -731,7 +710,7 @@ def get_aggregated(rl, agg, max_nb_profiles, keys_to_aggregate, special_profiles
     notification = ''
     summary = ''
     more_info = ''
-    clean_rules = ''
+    clean_rules = dict()
     summary = _('Notifications were raised for profiles: {}\n').format(', '.join(list(agg.keys())))
 
     sorted_profiles = sorted(agg.items(), key=lambda item: item[1]['count'], reverse=True)
@@ -752,25 +731,49 @@ def get_aggregated(rl, agg, max_nb_profiles, keys_to_aggregate, special_profiles
 
         more_info += _('profile {}, {} events\n').format(profile, data['count'])
         rules_for_profiles = set()
-        found_profile = True
+
+        # Get common values using the first event
+        ev = data['events'][0]
+        profile_name = ev['profile']
+        profile_path = aa.get_profile_filename_from_profile_name(profile_name)
+        is_userns_profile = customized_message['userns']['cond'](ev, special_profiles)
+
+        if is_userns_profile:
+            bin_name = ev['comm']
+            bin_path = ev['execpath']
+            actionable = can_leverage_userns_event(ev) == 'ok'
+        else:
+            bin_name = None
+            bin_path = None
+            actionable = profile_path is not None
+
         for i, ev in enumerate(data['events']):
-            more_info_rule, profile_path, clean_rule = get_more_info_about_event(rl, ev, special_profiles, _(' - Event {} -\n').format(i + 1), get_clean_rule=True)
+            more_info_rule, raw_rule = get_more_info_about_event(rl, ev, special_profiles, profile_path, _(' - Event {} -\n').format(i + 1))
+
             if i != 0:
                 more_info += '\n\n'
-            if not profile_path:
-                found_profile = False
             more_info += more_info_rule
-            if clean_rule:
-                rules_for_profiles.add(clean_rule)
+            if raw_rule:
+                rules_for_profiles.add(raw_rule)
+
         if rules_for_profiles != set():
             if profile not in special_profiles:
-                if found_profile:
-                    clean_rules += _('profile {}:').format(profile)
+                if profile_path is not None:
+                    clean_rules_name = _('profile {}:').format(profile)
                 else:
-                    clean_rules += _('# Unknown profile {}').format(profile)
+                    clean_rules_name = _('# Unknown profile {}').format(profile)
             else:
-                clean_rules += _('# unprivileged userns denials ({}):').format(profile)
-            clean_rules += '\n\t' + '\n\t'.join(rules_for_profiles) + '\n'
+                clean_rules_name = _('# unprivileged userns denials ({}):').format(profile)
+            clean_rules[clean_rules_name] = ProfileRules(
+                raw_rules=rules_for_profiles,
+                selectable=actionable,
+                profile_name=profile,
+                profile_path=profile_path,
+                is_userns_profile=is_userns_profile,
+                bin_name=bin_name,
+                bin_path=bin_path,
+            )
+
     return notification, summary, more_info, clean_rules
 
 

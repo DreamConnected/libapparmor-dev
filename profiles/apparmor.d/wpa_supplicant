@@ -1,0 +1,65 @@
+#    Copyright (C) 2024 Canonical Ltd.
+#
+#    Author: sudhackar <sudhakar.verma@canonical.com>
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+# vim: ft=apparmor
+
+abi <abi/4.0>,
+
+include <tunables/global>
+
+profile wpa_supplicant /usr/sbin/wpa_supplicant {
+  include <abstractions/base>
+  include <abstractions/dbus-strict>
+
+  capability chown,
+  capability net_admin,
+  capability net_raw,
+
+  dbus (bind) bus=system name=fi.w1.wpa_supplicant1,
+  dbus (receive) 
+       bus=system
+       path=/fi/w1/wpa_supplicant1
+       interface=fi.w1.wpa_supplicant1
+       member={CreateInterface,ExpectDisconnect,GetInterface,InterfaceRemoved,RemoveInterface},
+    
+
+  dbus (receive) 
+        bus=system
+        path=/fi/w1/wpa_supplicant1/**
+        interface=org.freedesktop.DBus.Properties
+        member={GetAll,Set},
+  
+  dbus (receive)
+        bus=system
+        path=/fi/w1/wpa_supplicant1/Interfaces/**
+        interface=fi.w1.wpa_supplicant1.Interface
+        member={AbortScan,AddBlob,AddCred,AddNetwork,AddPersistentGroup,AddService,AutoScan,Cancel,Connect,DeleteService,Disconnect,EAPLogoff,EAPLogon,ExtendedListen,Find,Flush,FlushBSS,FlushService,GetBlob,GroupAdd,InterworkingSelect,Invite,Listen,NetworkReply,PresenceRequest,ProvisionDiscoveryRequest,Reassociate,Reattach,Reconnect,RejectPeer,RemoveAllCreds,RemoveAllNetworks,RemoveAllPersistentGroups,RemoveBlob,RemoveClient,RemoveCred,RemoveNetwork,RemovePersistentGroup,Roam,SaveConfig,Scan,SelectNetwork,ServiceDiscoveryCancelRequest,ServiceDiscoveryExternal,ServiceDiscoveryRequest,ServiceDiscoveryResponse,ServiceUpdate,SetPKCS11EngineAndModulePath,SignalPoll,Start,StopFind,SubscribeProbeReq,TDLSCancelChannelSwitch,TDLSChannelSwitch,TDLSDiscover,TDLSSetup,TDLSStatus,TDLSTeardown,UnsubscribeProbeReq,VendorElemAdd,VendorElemGet,VendorElemRem},
+
+  dbus (send)
+        bus=system
+        path=/fi/w1/wpa_supplicant1/Interfaces/**
+        interface=fi.w1.wpa_supplicant1.Interface
+        member={BSSAdded,BSSRemoved,BlobAdded,BlobRemoved,Certification,Credentials,DeviceFound,DeviceFoundProperties,DeviceLost,EAP,Event,FindStopped,GONegotiationFailure,GONegotiationRequest,GONegotiationSuccess,GroupFinished,GroupFormationFailure,GroupStarted,InterworkingAPAdded,InterworkingSelectDone,(receiveInvitationResult,MeshGroupRemoved,MeshGroupStarted,MeshPeerConnected,MeshPeerDisconnected,NetworkAdded,NetworkRemoved,NetworkRequest,NetworkSelected,PersistentGroupAdded,PersistentGroupRemoved,ProbeRequest,PropertiesChanged,ProvisionDiscoveryFailure,ProvisionDiscoveryPBCRequest,ProvisionDiscoveryPBCResponse,ProvisionDiscoveryRequestDisplayPin,ProvisionDiscoveryRequestEnterPin,ProvisionDiscoveryResponseDisplayPin,ProvisionDiscoveryResponseEnterPin,ScanDone,ServiceDiscoveryRequest,ServiceDiscoveryResponse,StaAuthorized,StaDeauthorized,StationAdded,StationRemoved,WpsFailed,PropertiesChanged},
+  
+  dbus (send)
+        bus=system
+        path=/org/freedesktop/DBus
+        interface=org.freedesktop.DBus
+        member={AddMatch,GetNameOwner,Hello,ReleaseName,RemoveMatch,RequestName,StartServiceByName},
+
+  owner /dev/rfkill r,
+  owner /etc/group r,
+  owner /etc/nsswitch.conf r,
+
+  owner @{PROC}/sys/net/ipv{4,6}/conf/** rw,
+
+  owner @{run}/wpa_supplicant/ w,
+  owner @{run}/wpa_supplicant/** rw,
+
+  include if exists <local/wpa_supplicant>
+}

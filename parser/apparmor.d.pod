@@ -2097,7 +2097,7 @@ An example AppArmor profile:
   	  /usr/lib/**         r,
   	  /tmp/foo.pid        wr,
   	  /tmp/foo.*          lrw,
-	  /@{HOME}/.foo_file  rw,
+	  @{HOME}/.foo_file  rw,
 	  /usr/bin/baz        Cx -> baz,
 
 	  # a comment about foo's hat (subprofile), bar.

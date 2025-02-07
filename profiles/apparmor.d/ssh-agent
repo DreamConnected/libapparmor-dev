@@ -27,6 +27,7 @@ profile ssh-agent /usr/bin/ssh-agent {
   file mrix /usr/bin/bash,
 
   # Common commands run as a subprocess by ssh-agent
+  file Px /usr/bin/im-launch,
   file Px /usr/bin/gpg-agent,
   file Px /usr/bin/ssh-add,
   file Px /usr/bin/ssh-keygen,

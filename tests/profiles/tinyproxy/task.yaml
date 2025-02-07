@@ -12,3 +12,6 @@ execute: |
     # check tinyproxy system service is confined
     cat /proc/$(pidof tinyproxy)/attr/apparmor/current | MATCH 'tinyproxy \(enforce\)'
 
+    # also check the profile is attached based on the program path since in the
+    # previous test it could possibly being done by systemd instead
+    "$SPREAD_PATH"/tests/bin/actual-profile-of tinyproxy | MATCH 'tinyproxy \(enforce\)'

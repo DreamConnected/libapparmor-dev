@@ -1,0 +1,55 @@
+#------------------------------------------------------------------
+#    Copyright (C) 2024 Canonical Ltd.
+#
+#    Author: Nishit Majithia (0xnishit)
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+# vim: ft=apparmor
+
+abi <abi/4.0>,
+
+include <tunables/global>
+
+profile socat /usr/bin/socat {
+  include <abstractions/base>
+  include <abstractions/nameservice-strict>
+  include <abstractions/ssl_certs>
+  include <abstractions/consoles>
+
+  capability dac_read_search,
+  capability dac_override,
+  capability net_raw,
+  capability net_admin,
+  capability sys_module,
+  capability sys_admin,
+  capability fsetid,
+  capability chown,
+  capability net_bind_service,
+  capability sys_resource,
+
+  # Allow creation of network sockets and `socat` uses dccp for some
+  # fuctionalities that is why it is necessary to allow whole `network`
+  network,
+
+  # Allow executable mapping and read for the binary
+  file mr /usr/bin/socat,
+
+  # Enable /dev/ptmx access for testsuite
+  # file rw /dev/ptmx,
+
+  # TUN/TAP device
+  file rw /dev/net/tun,
+
+  # Process-specific access
+  file rw @{PROC}/@{pid}/fdinfo/[0-9]*,
+  file r @{PROC}/@{pid}/stat,
+
+  # For bi-directional communication between vms and host/hypervisor
+  file r /dev/vsock,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/socat>
+}

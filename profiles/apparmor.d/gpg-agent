@@ -1,0 +1,40 @@
+#------------------------------------------------------------------
+#    Copyright (C) 2025 Canonical Ltd.
+#
+#    Author: Paulo Flabiano Smorigo <pfsmorigo@canonical.com>
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+# vim: ft=apparmor
+
+abi <abi/4.0>,
+
+include <tunables/global>
+
+profile gpg-agent /usr/bin/gpg-agent {
+  include <abstractions/base>
+  include <abstractions/consoles>
+  include <abstractions/nameservice-strict>
+
+  @{etc_ro}/gnupg r,
+
+  /usr/share/gnupg/{,**} r,
+  /usr/share/doc/gnupg/{,**} r,
+
+  /usr/lib/gnupg/{,**} r,
+
+  /usr/bin/gpg-agent mr,
+  /usr/bin/pinentry{,-gnome3,-curses,-gtk-2,-tty} rPx,
+  /usr/bin/scdaemon rPx,
+
+  @{PROC}/*/fd/ r,
+
+  owner @{run}/user/@{uid}/gnupg/{,d.**/}S.gpg-agent{,.browser,.extra,.ssh} rw,
+  owner @{run}/user/@{uid}/gnupg/{,d.**/}S.{scdaemon,keyboxd,sshcontrol} rw,
+  owner @{HOME}/.gnupg/{,**} rw,
+  owner @{HOME}/.config/gnupg/{,**} rw,
+
+  include if exists <local/gpg-agent>
+}

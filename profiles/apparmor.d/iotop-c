@@ -1,0 +1,22 @@
+abi <abi/4.0>,
+
+include <tunables/global>
+
+profile iotop-c /usr/sbin/iotop-c {
+  include <abstractions/base>
+  include <abstractions/bash>
+  include <abstractions/nameservice-strict>
+
+  capability net_admin,
+  capability sys_admin,
+
+  /proc/*/cmdline r,
+  /proc/*/task/ r,
+  /usr/sbin/iotop-c mr,
+  /proc/ r,
+  /proc/sys/kernel/task_delayacct rw,
+  /proc/vmstat r,
+  owner @{HOME}/.config/iotop/iotoprc rw,
+
+  include if exists <local/iotop-c>
+}

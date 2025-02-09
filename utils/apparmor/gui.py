@@ -7,6 +7,7 @@ import subprocess
 try:  # We use tk without themes as a fallback which makes the GUI uglier but functional.
     import ttkthemes
 except ImportError:
+    print(_("tksthemes not found. Install for best user experience."))
     ttkthemes = None
 
 

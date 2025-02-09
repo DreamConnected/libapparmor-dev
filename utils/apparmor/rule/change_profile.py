@@ -37,11 +37,11 @@ class ChangeProfileRule(BaseRule):
     _match_re = RE_PROFILE_CHANGE_PROFILE
 
     def __init__(self, execmode, execcond, targetprofile, audit=False, deny=False, allow_keyword=False,
-                 comment='', log_event=None):
+                 comment='', log_event=None, priority=None):
         """CHANGE_PROFILE RULE = 'change_profile' [ [ EXEC MODE ] EXEC COND ] [ -> PROGRAMCHILD ]"""
 
         super().__init__(audit=audit, deny=deny, allow_keyword=allow_keyword,
-                         comment=comment, log_event=log_event)
+                         comment=comment, log_event=log_event, priority=priority)
 
         if execmode:
             if execmode != 'safe' and execmode != 'unsafe':
@@ -80,7 +80,7 @@ class ChangeProfileRule(BaseRule):
     def _create_instance(cls, raw_rule, matches):
         """parse raw_rule and return instance of this class"""
 
-        audit, deny, allow_keyword, comment = parse_modifiers(matches)
+        priority, audit, deny, allow_keyword, comment = parse_modifiers(matches)
 
         execmode = matches.group('execmode')
 
@@ -95,7 +95,7 @@ class ChangeProfileRule(BaseRule):
             targetprofile = cls.ALL
 
         return cls(execmode, execcond, targetprofile,
-                   audit=audit, deny=deny, allow_keyword=allow_keyword, comment=comment)
+                   audit=audit, deny=deny, allow_keyword=allow_keyword, comment=comment, priority=priority)
 
     def get_clean(self, depth=0):
         """return rule (in clean/default formatting)"""

@@ -29,10 +29,10 @@ class AllRule(BaseRule):
     _match_re = RE_PROFILE_ALL
 
     def __init__(self, audit=False, deny=False, allow_keyword=False,
-                 comment='', log_event=None):
+                 comment='', log_event=None, priority=None):
 
         super().__init__(audit=audit, deny=deny, allow_keyword=allow_keyword,
-                         comment=comment, log_event=log_event)
+                         comment=comment, log_event=log_event, priority=priority)
 
         # no localvars -> nothing more to do
 
@@ -40,11 +40,11 @@ class AllRule(BaseRule):
     def _create_instance(cls, raw_rule, matches):
         """parse raw_rule and return instance of this class"""
 
-        audit, deny, allow_keyword, comment = parse_modifiers(matches)
+        priority, audit, deny, allow_keyword, comment = parse_modifiers(matches)
 
         return cls(audit=audit, deny=deny,
                    allow_keyword=allow_keyword,
-                   comment=comment)
+                   comment=comment, priority=priority)
 
     def get_clean(self, depth=0):
         """return rule (in clean/default formatting)"""

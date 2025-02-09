@@ -286,6 +286,10 @@ class WriteNetworkTestAATest(AATest):
         ('   network     stream    peer  =  (  ip=::1  port=22  )  ,',       'network stream peer=(ip=::1 port=22),'),
         ('   network   (  bind , listen  ) stream  ip  =  ::1 port  = 22 ,', 'network (bind, listen) stream ip=::1 port=22,'),
         ('   allow network         tcp      ,# foo bar',                     'allow network tcp, # foo bar'),
+        (' priority =  -02  allow network         tcp      ,# foo bar',       'priority=-2 allow network tcp, # foo bar'),
+        (' priority = 0     allow network         tcp      ,# foo bar',       'priority=0 allow network tcp, # foo bar'),
+        (' priority = 43    allow network         tcp      ,# foo bar',       'priority=43 allow network tcp, # foo bar'),
+        (' priority=+123    allow network         tcp      ,# foo bar',       'priority=123 allow network tcp, # foo bar'),
 
     )
 

@@ -47,7 +47,7 @@ class FileRule(BaseRule):
     _match_re = RE_PROFILE_FILE_ENTRY
 
     def __init__(self, path, perms, exec_perms, target, owner, file_keyword=False, leading_perms=False,
-                 audit=False, deny=False, allow_keyword=False, comment='', log_event=None):
+                 audit=False, deny=False, allow_keyword=False, comment='', log_event=None, priority=None):
         """Initialize object
 
            Parameters:
@@ -61,7 +61,7 @@ class FileRule(BaseRule):
         """
 
         super().__init__(audit=audit, deny=deny, allow_keyword=allow_keyword,
-                         comment=comment, log_event=log_event)
+                         comment=comment, log_event=log_event, priority=priority)
 
         #                                              rulepart  partperms  is_path  log_event
         self.path,   self.all_paths   = self._aare_or_all(path,   'path',   True,  log_event)  # noqa: E221
@@ -138,7 +138,7 @@ class FileRule(BaseRule):
     def _create_instance(cls, raw_rule, matches):
         """parse raw_rule and return instance of this class"""
 
-        audit, deny, allow_keyword, comment = parse_modifiers(matches)
+        priority, audit, deny, allow_keyword, comment = parse_modifiers(matches)
 
         owner = bool(matches.group('owner'))
 
@@ -183,7 +183,7 @@ class FileRule(BaseRule):
         file_keyword = bool(matches.group('file_keyword'))
 
         return cls(path, perms, exec_perms, target, owner, file_keyword, leading_perms,
-                   audit=audit, deny=deny, allow_keyword=allow_keyword, comment=comment)
+                   audit=audit, deny=deny, allow_keyword=allow_keyword, comment=comment, priority=priority)
 
     def get_clean(self, depth=0):
         """return rule (in clean/default formatting)"""

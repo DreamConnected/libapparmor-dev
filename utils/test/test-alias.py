@@ -30,10 +30,11 @@ exp = namedtuple('exp', ('comment', 'orig_path', 'target'))
 
 class AliasTest(AATest):
     def _compare_obj(self, obj, expected):
-        # aliases don't support the allow, audit or deny keyword
+        # aliases don't support the allow, audit, deny, or priority keyword
         self.assertEqual(False, obj.allow_keyword)
         self.assertEqual(False, obj.audit)
         self.assertEqual(False, obj.deny)
+        self.assertEqual(None, obj.priority)
 
         self.assertEqual(expected.orig_path, obj.orig_path)
         self.assertEqual(expected.target, obj.target)
@@ -113,6 +114,14 @@ class InvalidAliasInit(AATest):
     def test_invalid_deny(self):
         with self.assertRaises(AppArmorBug):
             AliasRule('/foo', '/bar', deny=True)
+
+    def test_invalid_priority_1(self):
+        with self.assertRaises(AppArmorBug):
+            AliasRule('/foo', '/bar', priority=1)
+
+    def test_invalid_priority_2(self):
+        with self.assertRaises(AppArmorBug):
+            AliasRule('/foo', '/bar', priority=0)
 
 
 class InvalidAliasTest(AATest):

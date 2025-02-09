@@ -28,12 +28,12 @@ class BooleanRule(BaseRule):
     _match_re = RE_PROFILE_BOOLEAN
 
     def __init__(self, varname, value, audit=False, deny=False, allow_keyword=False,
-                 comment='', log_event=None):
+                 comment='', log_event=None, priority=None):
 
         super().__init__(audit=audit, deny=deny, allow_keyword=allow_keyword,
-                         comment=comment, log_event=log_event)
+                         comment=comment, log_event=log_event, priority=priority)
 
-        # boolean variables don't support allow keyword, audit or deny
+        # boolean variables don't support priority, allow keyword, audit or deny
         self.ensure_modifiers_not_supported()
 
         if not isinstance(varname, str):
@@ -63,7 +63,7 @@ class BooleanRule(BaseRule):
         value = matches.group('value')
 
         return cls(varname, value,
-                   audit=False, deny=False, allow_keyword=False, comment=comment)
+                   audit=False, deny=False, allow_keyword=False, comment=comment, priority=None)
 
     def get_clean(self, depth=0):
         """return rule (in clean/default formatting)"""

@@ -80,10 +80,10 @@ class DbusRule(BaseRule):
     _match_re = RE_PROFILE_DBUS
 
     def __init__(self, access, bus, path, name, interface, member, peername, peerlabel,
-                 audit=False, deny=False, allow_keyword=False, comment='', log_event=None):
+                 audit=False, deny=False, allow_keyword=False, comment='', log_event=None, priority=None):
 
         super().__init__(audit=audit, deny=deny, allow_keyword=allow_keyword,
-                         comment=comment, log_event=log_event)
+                         comment=comment, log_event=log_event, priority=priority)
 
         self.access, self.all_access, unknown_items = check_and_split_list(access, access_keywords, self.ALL, type(self).__name__, 'access')
         if unknown_items:
@@ -112,7 +112,7 @@ class DbusRule(BaseRule):
     def _create_instance(cls, raw_rule, matches):
         """parse raw_rule and return instance of this class"""
 
-        audit, deny, allow_keyword, comment = parse_modifiers(matches)
+        priority, audit, deny, allow_keyword, comment = parse_modifiers(matches)
 
         rule_details = ''
         if matches.group('details'):
@@ -186,7 +186,8 @@ class DbusRule(BaseRule):
             peerlabel = cls.ALL
 
         return cls(access, bus, path, name, interface, member, peername, peerlabel,
-                   audit=audit, deny=deny, allow_keyword=allow_keyword, comment=comment)
+                   audit=audit, deny=deny, allow_keyword=allow_keyword, comment=comment,
+                   priority=priority)
 
     def get_clean(self, depth=0):
         """return rule (in clean/default formatting)"""

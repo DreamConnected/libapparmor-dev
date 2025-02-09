@@ -30,10 +30,11 @@ exp = namedtuple('exp', ('comment', 'varname', 'mode', 'values'))
 
 class VariableTest(AATest):
     def _compare_obj(self, obj, expected):
-        # variables don't support the allow, audit or deny keyword
+        # variables don't support the allow, audit, deny, or priority keyword
         self.assertEqual(False, obj.allow_keyword)
         self.assertEqual(False, obj.audit)
         self.assertEqual(False, obj.deny)
+        self.assertEqual(None, obj.priority)
 
         self.assertEqual(expected.varname, obj.varname)
         self.assertEqual(expected.mode, obj.mode)
@@ -165,6 +166,14 @@ class InvalidVariableInit(AATest):
     def test_invalid_deny(self):
         with self.assertRaises(AppArmorBug):
             VariableRule('@{foo}', '=', '/bar', deny=True)
+
+    def test_invalid_priority_1(self):
+        with self.assertRaises(AppArmorBug):
+            VariableRule('@{foo}', '=', '/bar', priority=98)
+
+    def test_invalid_priority_2(self):
+        with self.assertRaises(AppArmorBug):
+            VariableRule('@{foo}', '=', '/bar', priority=0)
 
 
 class InvalidVariableTest(AATest):

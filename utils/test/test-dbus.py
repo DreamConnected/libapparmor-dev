@@ -419,6 +419,10 @@ class WriteDbusTest(AATest):
         ('dbus receive peer=(label=foo),',                                   'dbus receive peer=(label=foo),'),
         ('dbus (send receive) peer=(name=/usr/bin/bar),',                    'dbus (receive send) peer=(name=/usr/bin/bar),'),
         ('dbus (,  receive  ,,, send  ,) interface=/sbin/baz,',              'dbus (receive send) interface=/sbin/baz,'),  # XXX leading and trailing ',' inside (...) causes error
+        ('  priority=123 deny dbus         send      interface = ( foo ),',  'priority=123 deny dbus send interface=foo,'),
+        ('  priority=0   deny dbus         send      interface = ( foo ),',  'priority=0 deny dbus send interface=foo,'),
+        ('  priority=-72 deny dbus         send      interface = ( foo ),',  'priority=-72 deny dbus send interface=foo,'),
+        ('  priority=+834 deny dbus         send      interface = ( foo ),', 'priority=834 deny dbus send interface=foo,'),
         # XXX add more complex rules
     )
 

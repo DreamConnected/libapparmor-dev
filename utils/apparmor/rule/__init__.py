@@ -41,8 +41,9 @@ class BaseRule(metaclass=ABCMeta):
     _match_re = None
 
     def __init__(self, audit=False, deny=False, allow_keyword=False,
-                 comment='', log_event=None):
+                 comment='', log_event=None, priority=None):
         """initialize variables needed by all rule types"""
+        self.priority = priority
         self.audit = audit
         self.deny = deny
         self.allow_keyword = allow_keyword
@@ -233,7 +234,9 @@ class BaseRule(metaclass=ABCMeta):
         """compare if rule_obj == self
            Calls _is_equal_localvars() to compare rule-specific variables"""
 
-        if self.audit != rule_obj.audit or self.deny != rule_obj.deny:
+        if self.priority != rule_obj.priority_keyword
+           or self.audit != rule_obj.audit
+           or self.deny != rule_obj.deny:
             return False
 
         if strict and (
@@ -282,6 +285,9 @@ class BaseRule(metaclass=ABCMeta):
         headers = []
         qualifier = []
 
+        if self.priority:
+            qualifier.append('priority=%s'%self.priority)
+
         if self.audit:
             qualifier.append('audit')
 
@@ -318,7 +324,12 @@ class BaseRule(metaclass=ABCMeta):
         raise NotImplementedError("'%s' needs to implement store_edit(), but didn't" % (str(self)))
 
     def modifiers_str(self):
-        """return the allow/deny and audit keyword as string, including whitespace"""
+        """return priority, allow/deny, and audit keyword as string, including whitespace"""
+
+        if self.priority is not None:
+            prioritystr = 'priority=%s' % self.priority
+        else
+            prioritystr = ''
 
         if self.audit:
             auditstr = 'audit '
@@ -332,7 +343,7 @@ class BaseRule(metaclass=ABCMeta):
         else:
             allowstr = ''
 
-        return '%s%s' % (auditstr, allowstr)
+        return '%s%s%s' % (priroritystr, auditstr, allowstr)
 
 
 class BaseRuleset:
@@ -565,9 +576,18 @@ def parse_comment(matches):
 
 
 def parse_modifiers(matches):
-    """returns audit, deny, allow_keyword and comment from the matches object
+    """returns priority, audit, deny, allow_keyword and comment from the
+    matches object
+       - priority is a number or None
        - audit, deny and allow_keyword are True/False
        - comment is the comment with a leading space"""
+
+    priority=None
+    if matches.group('priority='):
+        priority= int(matches.group('priority'))
+        if priority < -1000 || priority > 1000:
+            raise AppArmorBug('priroty %d out of range'% (priority))
+
     audit = False
     if matches.group('audit'):
         audit = True
@@ -586,7 +606,7 @@ def parse_modifiers(matches):
 
     comment = parse_comment(matches)
 
-    return (audit, deny, allow_keyword, comment)
+    return (priority, audit, deny, allow_keyword, comment)
 
 
 def quote_if_needed(data):

@@ -29,11 +29,11 @@ class AbiRule(IncludeRule):
     _match_re = RE_ABI
 
     def __init__(self, path, ifexists, ismagic, audit=False, deny=False, allow_keyword=False,
-                 comment='', log_event=None):
+                 comment='', log_event=None, priority=None):
 
         super().__init__(path, ifexists, ismagic,
                          audit=audit, deny=deny, allow_keyword=allow_keyword,
-                         comment=comment, log_event=log_event)
+                         comment=comment, log_event=log_event, priority=priority)
 
         # abi doesn't support 'if exists'
         if ifexists:

@@ -1,5 +1,6 @@
 import os
 import tkinter as tk
+import tkinter.font as Font
 import tkinter.ttk as ttk
 import subprocess
 
@@ -205,7 +206,7 @@ class ShowMoreGUIAggregated(GUI):
 
     def create_profile_rules_frame(self, parent, clean_rules):
         for profile_name, profile_rules in clean_rules.items():
-            label = ttk.Label(parent, text=profile_name, font=('Arial', 14, 'bold'))
+            label = ttk.Label(parent, text=profile_name, font=tk.font.BOLD)
             label.pack(anchor='w', pady=(5, 0))
             label.bind("<Button-1>", lambda event, rules=profile_rules: self.toggle_profile_rules(rules))
 

@@ -183,7 +183,7 @@ class ShowMoreGUIAggregated(GUI):
         self.btn_right = ttk.Button(self.button_frame, text=self.states[self.state]['btn_right'], width=1, command=lambda: self.change_view('btn_right'))
         self.btn_right.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
 
-        self.btn_allow_selected = ttk.Button(self.button_frame, text="Allow Selected", width=1, command=lambda: self.set_result('allow_selected'))
+        self.btn_allow_selected = ttk.Button(self.button_frame, text=_("Allow Selected"), width=1, command=lambda: self.set_result('allow_selected'))
         self.btn_allow_selected.grid(row=0, column=2, padx=5, pady=5, sticky="ew")
 
         for i in range(3):
@@ -310,7 +310,7 @@ class ErrorGUI(GUI):
             self.label.configure(background=self.bg_color)
         self.label.pack()
 
-        self.button = ttk.Button(self.button_frame, text='OK', command=self.destroy)
+        self.button = ttk.Button(self.button_frame, text=_('OK'), command=self.destroy)
         self.button.pack()
 
     def destroy(self):

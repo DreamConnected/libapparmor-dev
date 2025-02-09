@@ -761,7 +761,7 @@ def get_aggregated(rl, agg, max_nb_profiles, keys_to_aggregate, special_profiles
                 if profile_path is not None:
                     clean_rules_name = _('profile {}:').format(profile)
                 else:
-                    clean_rules_name = _('# Unknown profile {}').format(profile)
+                    clean_rules_name = _('# Unknown profile "{}" can not be modified:').format(profile)
             else:
                 clean_rules_name = _('# unprivileged userns denials ({}):').format(profile)
             clean_rules[clean_rules_name] = ProfileRules(

@@ -352,7 +352,6 @@ def parse_logdata(logsource):
 
     # Pre-filter log lines so that we hand over only relevant lines to LibAppArmor parsing
     re_log_all = re.compile('(' + '|'.join(re_log_parts) + ')')
-
     for entry in logsource:
 
         # Check the start of the log line and only process lines from AppArmor
@@ -760,6 +759,8 @@ def get_aggregated(rl, agg, max_nb_profiles, keys_to_aggregate, special_profiles
             if profile not in special_profiles:
                 if profile_path is not None:
                     clean_rules_name = _('profile {}:').format(profile)
+                elif re_snap.match(profile):
+                    clean_rules_name = _('profile "{}" managed by snapd can not be modified:').format(profile)
                 else:
                     clean_rules_name = _('# Unknown profile "{}" can not be modified:').format(profile)
             else:
@@ -801,6 +802,9 @@ def main():
     """
     global _, debug_logger, config, args
     global debug_docs_url, nobody_user, original_effective_user, timeformat
+    global re_snap
+
+    re_snap = re.compile("^snap[.]")
 
     debug_docs_url = "https://wiki.ubuntu.com/DebuggingApparmor"
     nobody_user = "nobody"

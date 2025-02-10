@@ -1796,6 +1796,61 @@ F</etc/apparmor.d/tunables/xdg-user-dirs.d> for B<@{XDG_*}>.
 The special B<@{profile_name}> variable is set to the profile name and may be
 used in all policy.
 
+=head3 Notes on variable expansion and the / character
+
+It is important to note that how AppArmor performs variable expansion
+depends on the context where a variable is used. When a variable is
+expanded it can result in a string with multiple path characters
+next to each other, in a way that is not evident when looking at
+policy.
+
+Eg.
+
+=over 4
+
+Given the following variable definition and rule
+
+@{HOME}=/home/*/
+file rw @{HOME}/*,
+
+The variable expansion results in a rule of
+
+file rw /home/*//*.
+
+=back
+
+When this occurs in a context where a path is expected, AppArmor will
+canonicalize the path by collapsing consecutive / characters into
+a single character. For the above example, this would be
+
+  file rw /home/*/*,
+
+There is one exception to this rule, when the consecutive / characters
+are at the beginning of a path, this indicates a posix namespace
+and the characters will not be collapsed.
+
+Eg.
+
+=over 4
+
+@{HOME}=/home/*/
+file rw /@{HOME}/*,
+
+will result in an expansion of
+
+file rw //home/*//*,
+
+which is collapsed to
+
+file rw //home/*/*,
+
+Note: that the leading // in the above example is not collapsed to a
+single /. However the second // (that was also seen in the first
+example) is collapsed.
+
+=back
+
+
 =head2 Alias rules
 
 AppArmor also provides alias rules for remapping paths for site-specific

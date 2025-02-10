@@ -16,21 +16,10 @@ profile proftpd /usr/sbin/proftpd {
   mqueue getattr type=posix /,
   mqueue read type=posix /,
 
-  /proc/sys/kernel/random/boot_id r,
-
-  # DNS
-  /run/systemd/resolve/stub-resolv.conf r,
 
   # Configuration files
   /etc/ r,
   /etc/ftpusers r,
-  /etc/group r,
-  /etc/host.conf r,
-  /etc/hosts r,
-  /etc/nsswitch.conf r,
-  /etc/passwd r,
-  /etc/protocols r,
-  /etc/services r,
   /etc/shells r,
   owner /etc/security/capability.conf r,
   owner /etc/login.defs r,

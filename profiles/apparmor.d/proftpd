@@ -18,7 +18,6 @@ profile proftpd /usr/sbin/proftpd {
 
 
   # Configuration files
-  /etc/ r,
   /etc/ftpusers r,
   /etc/shells r,
   owner /etc/security/capability.conf r,

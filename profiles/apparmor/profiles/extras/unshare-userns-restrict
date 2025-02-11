@@ -11,7 +11,6 @@
 #
 # disabled by default as it can break some use cases on a system that
 # doesn't have or has disable user namespace restrictions for unconfined
-# use aa-enforce to enable it
 
 abi <abi/4.0>,
 

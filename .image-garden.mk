@@ -19,6 +19,7 @@ packages:
 - dosfstools
 - flake8
 - flex
+- gdb
 - gettext
 - libdbus-1-dev
 - libpam0g-dev
@@ -57,6 +58,7 @@ packages:
 - flex
 - gcc
 - gcc-c++
+- gdb
 - gettext
 - gobject-introspection
 - libtool
@@ -88,6 +90,7 @@ packages:
 - dejagnu
 - dosfstools
 - flex
+- gdb
 - gettext
 - httpd-devel
 - libstdc++-static

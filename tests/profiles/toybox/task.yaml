@@ -2,6 +2,11 @@ summary: smoke test for the toybox profile
 systems:
     # Toybox is not packaged on openSUSE
     - -opensuse-*
+    # Those fail with:
+    # Warning from profile toybox (/tmp/apparmor/profiles/apparmor.d/toybox): userns rules not enforced
+    # TODO: consider passing different options so that unavailable kernel features do not emit warnings.
+    - -debian-cloud-13-
+    - -debian-cloud-12-
 execute: |
     # Toybox works (this is a very basic test).
     test "$(toybox id -u)" -eq 0

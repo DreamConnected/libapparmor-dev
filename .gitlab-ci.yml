@@ -158,6 +158,8 @@ coverity:
   only:
     refs:
       - master
+    variables:
+      - $CI_PROJECT_PATH == "apparmor/apparmor"
   script:
       - apt-get install --no-install-recommends -y curl git texlive-latex-recommended
       - *install-c-build-deps

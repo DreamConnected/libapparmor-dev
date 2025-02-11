@@ -14,21 +14,30 @@ stages:
   - build
   - test
 
-.ubuntu-before_script:
+.ubuntu-common:
   before_script:
-    - export DEBIAN_FRONTEND=noninteractive
+    # Install build-dependencies by loading the package list from the ubuntu/debian cloud-init profile.
+    - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" install_deps "Installing dependencies..."
     - apt-get update -qq
-    - apt-get install --no-install-recommends -y gcc perl liblocale-gettext-perl linux-libc-dev lsb-release make
+    - apt-get install --yes yq make lsb-release
+    - |
+      printf 'include .image-garden.mk\n$(info $(UBUNTU_CLOUD_INIT_USER_DATA_TEMPLATE))\n.PHONY: nothing\nnothing:\n' \
+      | make -f - nothing \
+      | yq '.packages | .[]' \
+      | xargs apt-get install --yes --no-install-recommends
+    - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" install_deps
+  after_script:
+    # Inspect the kernel and lsb-release.
     - lsb_release -a
     - uname -a
-
-.install-c-build-deps: &install-c-build-deps
-  - apt-get install --no-install-recommends -y build-essential apache2-dev autoconf autoconf-archive automake bison dejagnu flex libpam-dev libtool pkg-config python3-all-dev python3-setuptools ruby-dev swig zlib1g-dev
 
 build-all:
   stage: build
   extends:
-    - .ubuntu-before_script
+    - .ubuntu-common
+  script:
+    # Run the spread prepare section to build everything.
+    - yq -r '.prepare' <spread.yaml | SPREAD_PATH=. bash -xeu
   artifacts:
     name: ${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}
     expire_in: 30 days
@@ -41,23 +50,13 @@ build-all:
       - changehat/mod_apparmor/
       - changehat/pam_apparmor/
       - profiles/
-  script:
-    - *install-c-build-deps
-    - cd libraries/libapparmor && ./autogen.sh && ./configure --with-perl --with-python --prefix=/usr && make -j $(nproc) && cd ../.. || { cat config.log ; exit 1 ; }
-    - make -C parser -j $(nproc)
-    - make -C binutils -j $(nproc)
-    - make -C utils
-    - make -C changehat/mod_apparmor
-    - make -C changehat/pam_apparmor
-    - make -C profiles
 
 test-libapparmor:
   stage: test
   needs: ["build-all"]
   extends:
-    - .ubuntu-before_script
+    - .ubuntu-common
   script:
-    - *install-c-build-deps
     # This is to touch the built files in the test stage to avoid needless rebuilding
     - make -C libraries/libapparmor --touch
     - make -C libraries/libapparmor check
@@ -66,9 +65,8 @@ test-parser:
   stage: test
   needs: ["build-all"]
   extends:
-    - .ubuntu-before_script
+    - .ubuntu-common
   script:
-    - *install-c-build-deps
     # This is to touch the built files in the test stage to avoid needless rebuilding
     - make -C parser --touch
     - make -C parser -j $(nproc) tst_binaries
@@ -78,7 +76,7 @@ test-binutils:
   stage: test
   needs: ["build-all"]
   extends:
-    - .ubuntu-before_script
+    - .ubuntu-common
   script:
     - make -C binutils check
 
@@ -86,12 +84,15 @@ test-utils:
   stage: test
   needs: ["build-all"]
   extends:
-    - .ubuntu-before_script
+    - .ubuntu-common
   script:
     # This is to touch the built files in the test stage to avoid needless rebuilding
     - make -C utils --touch
 
+    # TODO: move those to cloud-init list?
+    - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" install_extra_deps "Installing additional dependencies..."
     - apt-get install --no-install-recommends -y libc6-dev libjs-jquery libjs-jquery-throttle-debounce libjs-jquery-isonscreen libjs-jquery-tablesorter flake8 python3-coverage python3-notify2 python3-psutil python3-setuptools python3-tk python3-ttkthemes python3-gi
+    - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" install_extra_deps
 
     # See apparmor/apparmor#221
     - make -C parser/tst gen_dbus
@@ -107,7 +108,7 @@ test-mod-apparmor:
   stage: test
   needs: ["build-all"]
   extends:
-    - .ubuntu-before_script
+    - .ubuntu-common
   script:
     # This is to touch the built files in the test stage to avoid needless rebuilding
     - make -C changehat/mod_apparmor --touch
@@ -117,7 +118,7 @@ test-profiles:
   stage: test
   needs: ["build-all"]
   extends:
-    - .ubuntu-before_script
+    - .ubuntu-common
   script:
     # This is to touch the built files in the test stage to avoid needless rebuilding
     - make -C profiles --touch
@@ -130,19 +131,23 @@ test-build-regression:
   stage: test
   needs: ["build-all"]
   extends:
-    - .ubuntu-before_script
+    - .ubuntu-common
   script:
-    - *install-c-build-deps
-      # Additional dependencies required by regression tests
+    # Additional dependencies required by regression tests
+    - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" install_extra_deps "Installing additional dependencies..."
     - apt-get install --no-install-recommends -y attr libdbus-1-dev liburing-dev
+    - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" install_extra_deps
     - make -C tests/regression/apparmor -j $(nproc)
+
 shellcheck:
   stage: test
   needs: []
   extends:
-    - .ubuntu-before_script
+    - .ubuntu-common
   script:
+  - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" install_extra_deps "Installing additional dependencies..."
   - apt-get install --no-install-recommends -y python3-minimal file shellcheck xmlstarlet
+  - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" install_extra_deps
   - shellcheck --version
   - './tests/bin/shellcheck-tree --format=checkstyle
        | xmlstarlet tr tests/checkstyle2junit.xslt
@@ -171,10 +176,11 @@ variables:
 coverity:
   stage: .post
   extends:
-    - .ubuntu-before_script
+    - .ubuntu-common
   script:
+      - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" install_extra_deps "Installing additional dependencies..."
       - apt-get install --no-install-recommends -y curl git texlive-latex-recommended
-      - *install-c-build-deps
+      - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" install_extra_deps
       - curl -o /tmp/cov-analysis-linux64.tgz https://scan.coverity.com/download/linux64
         --form project=$COVERITY_SCAN_PROJECT_NAME --form token=$COVERITY_SCAN_TOKEN
       - tar xfz /tmp/cov-analysis-linux64.tgz

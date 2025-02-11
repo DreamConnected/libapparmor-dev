@@ -259,7 +259,7 @@ CHFA *aare_rules::create_chfa(int *min_match_len,
 			dfa.dump_uniq_perms("dfa");
 
 		if (opts.dump & DUMP_DFA_STATES_INIT)
-			dfa.dump(cerr);
+			dfa.dump(cerr, NULL);
 
 		/* since we are building a chfa, use the info about
 		 * whether the chfa supports extended perms to help
@@ -271,23 +271,23 @@ CHFA *aare_rules::create_chfa(int *min_match_len,
 		    ((opts.control & CONTROL_DFA_FILTER_DENY))) {
 			dfa.apply_and_clear_deny();
 			if (opts.dump & DUMP_DFA_STATES_POST_FILTER)
-				dfa.dump(cerr);
+				dfa.dump(cerr, NULL);
 		}
 		if (opts.control & CONTROL_DFA_MINIMIZE) {
 			dfa.minimize(opts);
 			if (opts.dump & DUMP_DFA_MIN_UNIQ_PERMS)
 				dfa.dump_uniq_perms("minimized dfa");
 			if (opts.dump & DUMP_DFA_STATES_POST_MINIMIZE)
-				dfa.dump(cerr);
+				dfa.dump(cerr, NULL);
 		}
 
 		if (opts.control & CONTROL_DFA_REMOVE_UNREACHABLE) {
 			dfa.remove_unreachable(opts);
 			if (opts.dump & DUMP_DFA_STATES_POST_UNREACHABLE)
-				dfa.dump(cerr);
+				dfa.dump(cerr, NULL);
 		}
 		if (opts.dump & DUMP_DFA_STATES)
-			dfa.dump(cerr);
+			dfa.dump(cerr, NULL);
 
 		if (opts.dump & DUMP_DFA_GRAPH)
 			dfa.dump_dot_graph(cerr);
@@ -331,6 +331,8 @@ CHFA *aare_rules::create_chfa(int *min_match_len,
 		chfa = new CHFA(dfa, eq, opts, extended_perms, prompt);
 		if (opts.dump & DUMP_DFA_TRANS_TABLE)
 			chfa->dump(cerr);
+		if (opts.dump & DUMP_DFA_COMPTRESSED_STATES)
+			dfa.dump(cerr, &chfa->num);
 	}
 	catch(int error) {
 		return NULL;

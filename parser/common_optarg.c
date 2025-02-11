@@ -44,6 +44,7 @@ optflag_table_t dumpflag_table[] = {
 	  DUMP_DFA_PROGRESS | DUMP_DFA_STATS },
 	{ 1, "dfa-stats", "Dump dfa creation stats", DUMP_DFA_STATS },
 	{ 1, "dfa-states", "Dump final dfa state information", DUMP_DFA_STATES },
+	{ 1, "dfa-compressed-states", "Dump compressed dfa state information", DUMP_DFA_COMPTRESSED_STATES },
 	{ 1, "dfa-states-initial", "Dump dfa state immediately after initial build", DUMP_DFA_STATES_INIT },
 	{ 1, "dfa-states-post-filter", "Dump dfa state immediately after filtering deny", DUMP_DFA_STATES_POST_FILTER },
 	{ 1, "dfa-states-post-minimize", "Dump dfa state immediately after initial build", DUMP_DFA_STATES_POST_MINIMIZE },

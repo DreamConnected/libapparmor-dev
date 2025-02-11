@@ -107,7 +107,7 @@ int print_results(aa_log_record *record)
 		print_string("Name", record->name);
 		print_string("Command", record->comm);
 		print_string("Name2", record->name2);
-		print_string("Namespace", record->namespace);
+		print_string("Namespace", record->aa_namespace);
 		print_string("Attribute", record->attribute);
 		print_long("Task", record->task, 0);
 		print_long("Parent", record->parent, 0);
@@ -142,7 +142,7 @@ int print_results(aa_log_record *record)
 
 		print_string("Execpath", record->execpath);
 
-		print_string("Class", record->class);
+		print_string("Class", record->rule_class);
 
 		print_long("Epoch", record->epoch, 0);
 		print_long("Audit subid", (long) record->audit_sub_id, 0);

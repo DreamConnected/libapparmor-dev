@@ -306,7 +306,7 @@ key: TOK_KEY_OPERATION TOK_EQUALS TOK_QUOTED_STRING
 	| TOK_KEY_NAME TOK_EQUALS safe_string
 	{ ret_record->name = $3;}
 	| TOK_KEY_NAMESPACE TOK_EQUALS safe_string
-	{ ret_record->namespace = $3;}
+	{ ret_record->aa_namespace = $3;}
 	| TOK_KEY_NAME2 TOK_EQUALS safe_string
 	{ ret_record->name2 = $3;}
 	| TOK_KEY_MASK TOK_EQUALS TOK_QUOTED_STRING
@@ -438,7 +438,7 @@ key: TOK_KEY_OPERATION TOK_EQUALS TOK_QUOTED_STRING
 		ret_record->info = $1;
 	}
 	| TOK_KEY_CLASS TOK_EQUALS TOK_QUOTED_STRING
-	{ ret_record->class = $3; }
+	{ ret_record->rule_class = $3; }
 	;
 
 apparmor_event:

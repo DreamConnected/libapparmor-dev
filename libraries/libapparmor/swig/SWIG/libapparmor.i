@@ -17,6 +17,29 @@
 %include <stdint.i>
 %include <exception.i>
 
+/*
+ * SWIG 4.3 included https://github.com/swig/swig/pull/2907 to distinguish
+ * between Py_None being returned as a default void and Py_None being returned
+ * as the equivalent of C NULL. Unfortunately, this turns into an API breaking
+ * change with our use of %append_output when we want the Python function to
+ * return something even when the C function has a void return type. Thus, we
+ * need an additional macro to smooth over the differences. Include all affected
+ * languages, even ones we don't build bindings for, for completeness.
+ */
+#if SWIG_VERSION >= 0x040300
+#ifdef SWIGPYTHON
+#define ISVOID_APPEND_OUTPUT(value) {$result = SWIG_Python_AppendOutput($result, value, 1);}
+#elif defined(SWIGRUBY)
+#define ISVOID_APPEND_OUTPUT(value) {$result = SWIG_Ruby_AppendOutput($result, value, 1);}
+#elif defined(SWIGPHP)
+#define ISVOID_APPEND_OUTPUT(value) {$result = SWIG_Php_AppendOutput($result, value, 1);}
+#else
+#define ISVOID_APPEND_OUTPUT(value) %append_output(value)
+#endif
+#else
+#define ISVOID_APPEND_OUTPUT(value) %append_output(value)
+#endif
+
 %newobject parse_record;
 %delobject free_record;
 /*
@@ -101,8 +124,8 @@ warnings.warn("free_record is now a no-op as the record's memory is handled auto
 }
 %typemap(freearg,match="in") (char **label, char **mode) ""
 %typemap(argout,noblock=1,fragment="SWIG_FromCharPtr") (char **label, char **mode) {
-  %append_output(SWIG_FromCharPtr(*$1));
-  %append_output(SWIG_FromCharPtr(*$2));
+  ISVOID_APPEND_OUTPUT(SWIG_FromCharPtr(*$1));
+  ISVOID_APPEND_OUTPUT(SWIG_FromCharPtr(*$2));
   free(*$1);
 }
 
@@ -133,7 +156,7 @@ warnings.warn("free_record is now a no-op as the record's memory is handled auto
 %typemap(argout,noblock=1,fragment="SWIG_FromCharPtr") (char *con, char **mode) {
   /*
    * aa_splitcon returns either con or NULL so we don't need to explicitly
-   * append it to the output
+   * append it to the output, and we don't need the ISVOID helper here
    * 
    * SWIG_FromCharPtr does NULL checks for us
    */
@@ -257,8 +280,20 @@ extern int aa_change_hatv(const char *subprofiles[], unsigned long token);
 extern int aa_stack_profile(const char *profile);
 extern int aa_stack_onexec(const char *profile);
 
-/* aa_find_mountpoint mnt is an output pointer to a heap-allocated string */
-%cstring_output_allocate(char **mnt, free(*$1));
+/*
+ * aa_find_mountpoint mnt is an output pointer to a heap-allocated string
+ *
+ * This is a replica of %cstring_output_allocate(char **mnt, free(*$1))
+ * that uses the ISVOID helper to work correctly on SWIG 4.3 or later.
+ */
+%typemap(in,noblock=1,numinputs=0) (char **mnt) ($*1_ltype temp_mnt = 0) {
+  $1 = &temp_mnt;
+}
+%typemap(freearg,match="in") (char **mnt) ""
+%typemap(argout,noblock=1,fragment="SWIG_FromCharPtr") (char **mnt) {
+  ISVOID_APPEND_OUTPUT(SWIG_FromCharPtr(*$1));
+  free(*$1);
+}
 /* The other errno-based functions should not always be returning the int value:
  * - Python exceptions signal success/failure status instead via the %exception 
  *   handler above.
@@ -314,14 +349,14 @@ extern int aa_getpeercon(int fd, char **label, char **mode);
   $1 = &temp;
 }
 %typemap(argout) int *allowed {
-  %append_output(PyBool_FromLong(*$1));
+  ISVOID_APPEND_OUTPUT(PyBool_FromLong(*$1));
 }
 
 %typemap(in, numinputs=0) int *audited (int temp) {
   $1 = &temp;
 }
 %typemap(argout) int *audited {
-  %append_output(PyBool_FromLong(*$1));
+  ISVOID_APPEND_OUTPUT(PyBool_FromLong(*$1));
 }
 #else
 %apply int *OUTPUT { int *allowed };

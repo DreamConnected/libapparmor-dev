@@ -118,6 +118,9 @@ class AAPythonBindingsTests(unittest.TestCase):
                 # FIXME: out files should report log version?
                 # FIXME: or can we just deprecate v1 logs?
                 continue
+            elif key == "thisown":
+                # SWIG generates this key to track memory allocation
+                continue
             elif key in NO_VALUE_MAP:
                 if NO_VALUE_MAP[key] == value:
                     continue

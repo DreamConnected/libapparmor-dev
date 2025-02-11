@@ -8,6 +8,53 @@
 %}
 
 %include "typemaps.i"
+
+%newobject parse_record;
+%delobject free_record;
+/*
+ * Despite its name, %delobject does not hook up destructors to language
+ * deletion mechanisms. Instead, it sets flags so that manually calling the
+ * free function and then deleting by language mechanisms doesn't cause a
+ * double-free.
+ *
+ * Additionally, we can manually extend the struct with a C++-like
+ * destructor. This ensures that the record struct is freed 
+ * automatically when the high-level object goes out of scope.
+ */
+%extend aa_log_record {
+	~aa_log_record() {
+		free_record($self);
+	}
+}
+
+/*
+ * Generate a no-op free_record wrapper to avoid making a double-free footgun.
+ * Use rename directive to avoid colliding with the actual free_record, which
+ * we use above to clean up when the higher-level language deletes the object.
+ * 
+ * Ideally we would not expose a free_record at all, but we need to maintain
+ * backwards compatibility with the existing high-level code that uses it.
+ */
+%rename(free_record) noop_free_record;
+#ifdef SWIGPYTHON
+%pythonprepend noop_free_record %{
+import warnings
+warnings.warn("free_record is now a no-op as the record's memory is handled automatically", DeprecationWarning)
+%}
+#endif
+%feature("autodoc",
+  "This function used to free aa_log_record objects. Freeing is now handled "
+  "automatically, so this no-op function remains for backwards compatibility.") noop_free_record;
+%inline %{
+  void noop_free_record(aa_log_record *record) {(void) record;}
+%}
+
+/*
+ * Do not autogenerate a wrapper around free_record. This does not prevent us
+ * from calling it ourselves in %extend C code.
+ */
+%ignore free_record;
+
 %include <aalogparse.h>
 
 /**
@@ -31,8 +78,9 @@ extern int _aa_is_blacklisted(const char *name);
 %exception {
   $action
   if (result < 0) {
+    // Unfortunately SWIG_exception does not support OSError
     PyErr_SetFromErrno(PyExc_OSError);
-    return NULL;
+    SWIG_fail;
   }
 }
 #endif

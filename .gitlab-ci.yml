@@ -145,13 +145,13 @@ shellcheck:
   extends:
     - .ubuntu-common
   script:
-  - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" install_extra_deps "Installing additional dependencies..."
-  - apt-get install --no-install-recommends -y python3-minimal file shellcheck xmlstarlet
-  - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" install_extra_deps
-  - shellcheck --version
-  - './tests/bin/shellcheck-tree --format=checkstyle
-       | xmlstarlet tr tests/checkstyle2junit.xslt
-       > shellcheck.xml'
+    - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" install_extra_deps "Installing additional dependencies..."
+    - apt-get install --no-install-recommends -y python3-minimal file shellcheck xmlstarlet
+    - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" install_extra_deps
+    - shellcheck --version
+    - "./tests/bin/shellcheck-tree --format=checkstyle
+      | xmlstarlet tr tests/checkstyle2junit.xslt
+      > shellcheck.xml"
   artifacts:
     when: always
     reports:
@@ -178,19 +178,19 @@ coverity:
   extends:
     - .ubuntu-common
   script:
-      - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" install_extra_deps "Installing additional dependencies..."
-      - apt-get install --no-install-recommends -y curl git texlive-latex-recommended
-      - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" install_extra_deps
-      - curl -o /tmp/cov-analysis-linux64.tgz https://scan.coverity.com/download/linux64
-        --form project=$COVERITY_SCAN_PROJECT_NAME --form token=$COVERITY_SCAN_TOKEN
-      - tar xfz /tmp/cov-analysis-linux64.tgz
-      - COV_VERSION=$(ls -dt cov-analysis-linux64-* | head -1)
-      - PATH=$PATH:$(pwd)/$COV_VERSION/bin
-      - make coverity
-      - curl https://scan.coverity.com/builds?project=$COVERITY_SCAN_PROJECT_NAME
-        --form token=$COVERITY_SCAN_TOKEN --form email=$GITLAB_USER_EMAIL
-        --form file=@$(ls apparmor-*-cov-int.tar.gz) --form version="$(git describe --tags)"
-        --form description="$(git describe --tags) / $CI_COMMIT_TITLE / $CI_COMMIT_REF_NAME:$CI_PIPELINE_ID"
+    - printf '\e[0K%s:%s:%s[collapsed=true]\r\e[0K%s\n' section_start "$(date +%s)" install_extra_deps "Installing additional dependencies..."
+    - apt-get install --no-install-recommends -y curl git texlive-latex-recommended
+    - printf '\e[0K%s:%s:%s\r\e[0K\n' section_end "$(date +%s)" install_extra_deps
+    - curl -o /tmp/cov-analysis-linux64.tgz https://scan.coverity.com/download/linux64
+      --form project=$COVERITY_SCAN_PROJECT_NAME --form token=$COVERITY_SCAN_TOKEN
+    - tar xfz /tmp/cov-analysis-linux64.tgz
+    - COV_VERSION=$(ls -dt cov-analysis-linux64-* | head -1)
+    - PATH=$PATH:$(pwd)/$COV_VERSION/bin
+    - make coverity
+    - curl https://scan.coverity.com/builds?project=$COVERITY_SCAN_PROJECT_NAME
+      --form token=$COVERITY_SCAN_TOKEN --form email=$GITLAB_USER_EMAIL
+      --form file=@$(ls apparmor-*-cov-int.tar.gz) --form version="$(git describe --tags)"
+      --form description="$(git describe --tags) / $CI_COMMIT_TITLE / $CI_COMMIT_REF_NAME:$CI_PIPELINE_ID"
   artifacts:
     paths:
       - "apparmor-*.tar.gz"

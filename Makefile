@@ -59,7 +59,7 @@ coverity: snapshot
 		mv $(COVERITY_DIR)/build-log.txt $(COVERITY_DIR)/build-log-python-$(subst /,.,$(dir)).txt ;)
 	cov-build --dir $(COVERITY_DIR) -- sh -c \
 	"$(foreach dir, $(filter-out utils profiles tests, $(DIRS)), \
-		$(MAKE) -C $(SNAPSHOT_NAME)/$(dir);) "
+		$(MAKE) -j $$(nproc) -C $(SNAPSHOT_NAME)/$(dir);) "
 	tar -cvzf $(SNAPSHOT_NAME)-$(COVERITY_DIR).tar.gz $(COVERITY_DIR)
 
 .PHONY: export_dir

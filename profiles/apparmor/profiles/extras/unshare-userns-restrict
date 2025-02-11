@@ -18,10 +18,13 @@ abi <abi/4.0>,
 include <tunables/global>
 
 profile unshare /usr/bin/unshare flags=(attach_disconnected mediate_deleted) {
-  # not allow all, to allow for cix transition
-  # and to limit executable mapping to just unshare
+  # not allow all, to allow for pix stack on systems that don't support
+  # rule priority.
+  #
+  # sadly we have to allow 'm' every where to allow children to work under
+  # profile stacking atm.
   allow capability,
-  allow file rwlk /{**,},
+  allow file rwmlk /{**,},
   allow network,
   allow unix,
   allow ptrace,
@@ -33,33 +36,41 @@ profile unshare /usr/bin/unshare flags=(attach_disconnected mediate_deleted) {
   allow umount,
   allow pivot_root,
   allow dbus,
-  audit allow cx /** -> unpriv,
-
-  allow file m /usr/lib/@{multiarch}/libc.so.6,
-  allow file m /usr/bin/unshare,
+  # This will stack a target profile against unpriv_unshare
+  # Most of the comments for the pix transition in bwrap-userns-restrict
+  # also apply here, with the exception of unshare not using no-new-privs
+  # Thus, we only need a two-layer stack instead of a three-layer stack
+  audit allow pix /** -> &unpriv_unshare,
 
   # the local include should not be used without understanding the userns
   # restriction.
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/unshare-userns-restrict>
+}
 
-  profile unpriv flags=(attach_disconnected mediate_deleted) {
-    # not allow all, to allow for pix stack
-    allow file rwlkm /{**,},
-    allow network,
-    allow unix,
-    allow ptrace,
-    allow signal,
-    allow mqueue,
-    allow io_uring,
-    allow userns,
-    allow mount,
-    allow umount,
-    allow pivot_root,
-    allow dbus,
+profile unpriv_unshare flags=(attach_disconnected mediate_deleted) {
+  # not allow all, to allow for pix stack
+  allow file rwlkm /{**,},
+  allow network,
+  allow unix,
+  allow ptrace,
+  allow signal,
+  allow mqueue,
+  allow io_uring,
+  allow userns,
+  allow mount,
+  allow umount,
+  allow pivot_root,
+  allow dbus,
 
-    allow pix /** -> &unshare//unpriv,
+  # Maintain the stack against itself for further transitions
+  # If done recursively the stack will remove any duplicate
+  allow pix /** -> &unpriv_unshare,
 
-    audit deny capability,
-  }
+  audit deny capability,
+
+  # the local include should not be used without understanding the userns
+  # restriction.
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/unpriv_unshare>
 }

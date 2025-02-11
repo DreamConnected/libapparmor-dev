@@ -97,8 +97,6 @@ extern int aa_getprocattr(pid_t tid, const char *attr, char **label, char **mode
 extern int aa_gettaskcon(pid_t target, char **label, char **mode);
 extern int aa_getcon(char **label, char **mode);
 extern int aa_getpeercon(int fd, char **label, char **mode);
-extern int aa_query_label(uint32_t mask, char *query, size_t size, int *allowed,
-			  int *audited);
 extern int aa_query_file_path_len(uint32_t mask, const char *label,
 				  size_t label_len, const char *path,
 				  size_t path_len, int *allowed, int *audited);

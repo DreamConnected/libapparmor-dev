@@ -52,7 +52,7 @@ extern int aa_stack_profile(const char *profile);
 extern int aa_stack_onexec(const char *profile);
 extern int aa_getprocattr_raw(pid_t tid, const char *attr, char *buf, int len,
 			      char **mode);
-extern int aa_getprocattr(pid_t tid, const char *attr, char **buf, char **mode);
+extern int aa_getprocattr(pid_t tid, const char *attr, char **label, char **mode);
 extern int aa_gettaskcon(pid_t target, char **label, char **mode);
 extern int aa_getcon(char **label, char **mode);
 extern int aa_getpeercon_raw(int fd, char *buf, socklen_t *len, char **mode);

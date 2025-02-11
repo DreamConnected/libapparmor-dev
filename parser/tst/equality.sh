@@ -725,7 +725,7 @@ else
 
 #this one may not be true in the future depending on if the compiled profile
 #is explicitly including deny permissions for dynamic composition
-	verify_binary_inequality "'$p1'x'$p2' Deny of ungranted perm" \
+	verify_binary_equality "'$p1'x'$p2' Deny of ungranted perm" \
 		       "/t { $p1 /foo/[abc] r, audit deny /foo/b w, }" \
 		       "/t { $p2 /foo/[abc] r, }"
 fi
@@ -823,7 +823,7 @@ if { priority_lt "$p1" "" && priority_lt "$p2" "" ; } ||
 		       "/t { $p1 owner /proc/[0-9]*/attr/{apparmor/,}current a, ^test { $p1 owner /proc/[0-9]*/attr/{apparmor/,}current a, /f r, }}" \
 		       "/t { $p2 owner /proc/[0-9]*/attr/{apparmor/,}current w, ^test { $p2 owner /proc/[0-9]*/attr/{apparmor/,}current w, /f r, }}"
 else
-    verify_binary_inequality "'$p1'x'$p2' change_hat rules automatically inserted"\
+    verify_binary_equality "'$p1'x'$p2' change_hat rules automatically inserted"\
 		       "/t { $p1 owner /proc/[0-9]*/attr/{apparmor/,}current a, ^test { $p1 owner /proc/[0-9]*/attr/{apparmor/,}current a, /f r, }}" \
 		       "/t { $p2 owner /proc/[0-9]*/attr/{apparmor/,}current w, ^test { $p2 owner /proc/[0-9]*/attr/{apparmor/,}current w, /f r, }}"
 fi

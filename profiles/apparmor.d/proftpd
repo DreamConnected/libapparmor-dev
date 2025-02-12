@@ -48,7 +48,7 @@ profile proftpd /usr/sbin/proftpd {
   owner /proc/*/loginuid r,
 
   # Need to be able to write to where FTP is configured
-  /home/** rw,
+  owner /home/** rw,
   /srv/ftp/** rw,
   /srv/www/** rw,
   /var/ftp/** rw,

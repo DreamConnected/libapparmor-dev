@@ -25,7 +25,7 @@ profile ssh-keygen /usr/bin/ssh-keygen flags=(enforce) {
   file rw @{HOME}/.ssh/{,**},
   
   # Restric access to config file
-  deny @{HOME}/.ssh/config
+  deny @{HOME}/.ssh/config,
 
   # Needed path for snap 
   file rw /tmp/snapd@{int}/{,**},

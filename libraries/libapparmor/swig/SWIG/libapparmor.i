@@ -258,7 +258,13 @@ extern int aa_is_enabled(void);
  * allocation uninitialized (0) != SWIG_NEWOBJ
  */
 %#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
-  static_assert(SWIG_NEWOBJ != 0, "SWIG_NEWOBJ is 0");
+  /* 
+   * Some older versions of SWIG place this right after a goto label
+   * This would then be a label followed by a declaration, a C23 extension (!)
+   * To ensure this works for older SWIG versions and older compilers,
+   * make this a block element with curly braces.
+   */
+  {static_assert(SWIG_NEWOBJ != 0, "SWIG_NEWOBJ is 0");}
 %#endif
   if ($1 != NULL && alloc_tracking$argnum != NULL) {
     for (Py_ssize_t i=0; i<seq_len$argnum; i++) {

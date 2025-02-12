@@ -54,4 +54,5 @@ profile proftpd /usr/sbin/proftpd {
   /var/ftp/** rw,
   /var/www/** rw,
 
+  include if exists <local/proftpd>
 }

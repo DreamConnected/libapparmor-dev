@@ -11,9 +11,9 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-/usr/bin/ssh-keygen flags=(enforce) {
+profile ssh-keygen /usr/bin/ssh-keygen flags=(enforce) {
   include <abstractions/base>
-  
+
   file r /etc/passwd,
   file r /etc/nsswitch.conf,
 
@@ -23,5 +23,12 @@ include <tunables/global>
   # Common SSH file locations
   file rw @{etc_rw}/ssh/{,**},
   file rw @{HOME}/.ssh/{,**},
+  
+  # Restric access to config file
+  deny @{HOME}/.ssh/config
 
+  # Needed path for snap 
+  file rw /tmp/snapd@{int}/{,**},
+
+  include if exists <local/ssh-keygen>
  }

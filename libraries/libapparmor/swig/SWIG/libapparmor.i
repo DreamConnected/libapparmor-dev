@@ -258,7 +258,7 @@ extern int aa_is_enabled(void);
  * allocation uninitialized (0) != SWIG_NEWOBJ
  */
 %#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
-  static_assert(SWIG_NEWOBJ != 0);
+  static_assert(SWIG_NEWOBJ != 0, "SWIG_NEWOBJ is 0");
 %#endif
   if ($1 != NULL && alloc_tracking$argnum != NULL) {
     for (Py_ssize_t i=0; i<seq_len$argnum; i++) {
@@ -323,7 +323,8 @@ extern int aa_stack_onexec(const char *profile);
  */
 %typemap(in,noblock=1,fragment="SWIG_AsVal_long") pid_t (int conv_pid, long pid_large) {
 %#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
-  static_assert(sizeof(pid_t) <= sizeof(long));
+  static_assert(sizeof(pid_t) <= sizeof(long),
+    "pid_t type is too large to be stored in a long");
 %#endif
   conv_pid = SWIG_AsVal_long($input, &pid_large);
   if (!SWIG_IsOK(conv_pid)) {

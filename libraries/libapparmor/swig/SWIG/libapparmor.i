@@ -315,10 +315,16 @@ extern int aa_stack_onexec(const char *profile);
  * We can't use "typedef int pid_t" because we still support systems
  * with 16-bit PIDs and SWIG can't find sys/types.h
  *
- * Capture the passed-in value as an intmax_t because pid_t is guaranteed
- * to be a signed integer
+ * Capture the passed-in value as a long because pid_t is guaranteed
+ * to be a signed integer and because the aalogparse struct uses
+ * (unsigned) longs to store pid values. While intmax_t would be more
+ * technically correct, if sizeof(pid_t) > sizeof(long) then aalogparse
+ * itself would also need fixing.
  */
-%typemap(in,noblock=1,fragment="SWIG_AsVal_long") pid_t (int conv_pid, intmax_t pid_large) {
+%typemap(in,noblock=1,fragment="SWIG_AsVal_long") pid_t (int conv_pid, long pid_large) {
+%#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+  static_assert(sizeof(pid_t) <= sizeof(long));
+%#endif
   conv_pid = SWIG_AsVal_long($input, &pid_large);
   if (!SWIG_IsOK(conv_pid)) {
     %argument_fail(conv_pid, "pid_t", $symname, $argnum);
@@ -328,7 +334,7 @@ extern int aa_stack_onexec(const char *profile);
    * Technically this is implementation-defined behaviour but we should be fine
    */
   $1 = (pid_t) pid_large;
-  if ((intmax_t) $1 != pid_large) {
+  if ((long) $1 != pid_large) {
     SWIG_exception_fail(SWIG_OverflowError, "pid_t is too large");
   }
 }

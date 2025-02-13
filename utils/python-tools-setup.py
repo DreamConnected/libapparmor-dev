@@ -68,7 +68,7 @@ class Install(_install):
         print('changing mode of {} to 755'.format(update_profile_path))
         os.chmod(update_profile_path, 0o755)
 
-        pkexec_action_name = 'com.ubuntu.pkexec.aa-notify.policy'
+        pkexec_action_name = 'net.apparmor.pkexec.aa-notify.policy'
         print('Installing {} to /usr/share/polkit-1/actions/ mode 644'.format(pkexec_action_name))
         with open(pkexec_action_name, 'r') as f:
             polkit_template = f.read()

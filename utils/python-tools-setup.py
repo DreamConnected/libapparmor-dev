@@ -27,6 +27,14 @@ import sys
 from setuptools import setup
 from setuptools.command.install import install as _install
 
+# removeprefix is only in python 3.9+ support older python versions
+def replace_path_prefix(text, prefix):
+    if text.startswith(prefix):
+        suffix = text[len(prefix):]
+        if not suffix.startswith("/"):
+            suffix = "/" + suffix
+        return suffix
+    return text
 
 class Install(_install):
     """Override setuptools to install the files where we want them."""
@@ -65,7 +73,8 @@ class Install(_install):
         with open(pkexec_action_name, 'r') as f:
             polkit_template = f.read()
 
-        polkit = polkit_template.format(LIB_PATH=self.install_lib)
+        # don't leak the buildroot into the polkit files
+        polkit = polkit_template.format(LIB_PATH=replace_path_prefix(self.install_lib, prefix))
 
         if not os.path.exists(prefix + '/usr/share/polkit-1/actions/'):
             self.mkpath(prefix + '/usr/share/polkit-1/actions/')

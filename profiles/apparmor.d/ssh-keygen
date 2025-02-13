@@ -28,7 +28,7 @@ profile ssh-keygen /usr/bin/ssh-keygen flags=(enforce) {
   deny @{HOME}/.ssh/config w,
 
   # Needed path for snap 
-  file rw /tmp/snapd@{int}/{,**},
+  file rw /tmp/snapd*/{,**},
 
   include if exists <local/ssh-keygen>
  }

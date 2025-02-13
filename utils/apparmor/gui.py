@@ -2,7 +2,12 @@ import os
 import tkinter as tk
 import tkinter.ttk as ttk
 import subprocess
-import ttkthemes
+
+try:  # We use tk without themes as a fallback which makes the GUI uglier but functional.
+    import ttkthemes
+except ImportError:
+    ttkthemes = None
+
 
 import apparmor.aa as aa
 
@@ -26,12 +31,12 @@ class GUI:
             os._exit(1)
 
         self.result = None
-        style = ttkthemes.ThemedStyle(self.master)
-        style.theme_use(interface_theme)
-        self.bg_color = style.lookup('TLabel', 'background')
-        self.fg_color = style.lookup('TLabel', 'foreground')
-        self.master.configure(background=self.bg_color)
-
+        if ttkthemes:
+            style = ttkthemes.ThemedStyle(self.master)
+            style.theme_use(interface_theme)
+            self.bg_color = style.lookup('TLabel', 'background')
+            self.fg_color = style.lookup('TLabel', 'foreground')
+            self.master.configure(background=self.bg_color)
         self.label_frame = ttk.Frame(self.master, padding=(20, 10))
         self.label_frame.pack()
 
@@ -59,8 +64,9 @@ class ShowMoreGUI(GUI):
 
         self.master.title(_('AppArmor - More info'))
 
-        self.label = tk.Label(self.label_frame, background=self.bg_color, foreground=self.fg_color,
-                              text=self.msg, anchor='w', justify=tk.LEFT, wraplength=460)
+        self.label = tk.Label(self.label_frame, text=self.msg, anchor='w', justify=tk.LEFT, wraplength=460)
+        if ttkthemes:
+            self.label.configure(background=self.bg_color, foreground=self.fg_color)
         self.label.pack(pady=(0, 10) if not self.profile_found else (0, 0))
 
         if self.profile_found:
@@ -143,11 +149,11 @@ class ErrorGUI(GUI):
 
         self.master.title('AppArmor Error')
 
-        # Create label to display the error message
-        self.label = ttk.Label(self.label_frame, background=self.bg_color, text=self.msg, wraplength=460)
+        self.label = ttk.Label(self.label_frame, text=self.msg, wraplength=460)
+        if ttkthemes:
+            self.label.configure(background=self.bg_color)
         self.label.pack()
 
-        # Create a button to close the dialog
         self.button = ttk.Button(self.button_frame, text='OK', command=self.destroy)
         self.button.pack()
 

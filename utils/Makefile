@@ -39,10 +39,10 @@ all: docs
 docs: ${MANPAGES} ${HTMLMANPAGES}
 
 # need some better way of determining this
-DESTDIR=/
-BINDIR=${DESTDIR}/usr/sbin
-CONFDIR=${DESTDIR}/etc/apparmor
-PYPREFIX=/usr
+DESTDIR?=/
+BINDIR?=${DESTDIR}/usr/sbin
+CONFDIR?=${DESTDIR}/etc/apparmor
+PYPREFIX?=/usr
 
 
 po/${NAME}.pot: ${TOOLS} ${PYMODULES}

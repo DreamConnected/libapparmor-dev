@@ -139,7 +139,7 @@ ratelimit_saved = sysctl_read(ratelimit_sysctl)
 
 try:
     sysctl_write(ratelimit_sysctl, 0)
-except PermissionError:  # will fail in lxd
+except OSError:  # will fail in lxd
     warn("Can't set printk_ratelimit, some events might be lost")
 
 atexit.register(restore_ratelimit)

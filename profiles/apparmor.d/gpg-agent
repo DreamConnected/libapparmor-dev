@@ -7,34 +7,47 @@
 #    modify it under the terms of version 2 of the GNU General Public
 #    License published by the Free Software Foundation.
 #------------------------------------------------------------------
-# vim: ft=apparmor
 
 abi <abi/4.0>,
 
 include <tunables/global>
 
+@{GNUPG_DEFAULT}="@{HOME}/{.,.config/}gnupg"
+@{GNUPG_PACMAN}="{/etc/pacman.d/,/var/lib/*/{.,}}gnupg"
+@{GNUPG_ZYPPER}="/var/tmp/zypp.*"
+@{GNUPG_CONFIGS}="{@{GNUPG_DEFAULT},@{GNUPG_PACMAN},@{GNUPG_ZYPPER}}"
+
 profile gpg-agent /usr/bin/gpg-agent {
   include <abstractions/base>
   include <abstractions/consoles>
-  include <abstractions/nameservice-strict>
 
-  @{etc_ro}/gnupg r,
+  capability dac_read_search,
 
-  /usr/share/gnupg/{,**} r,
-  /usr/share/doc/gnupg/{,**} r,
-
+  @{etc_ro}/gnupg/*.conf r,
+  /usr/share/{,doc/}gnupg/{,**} r,
   /usr/lib/gnupg/{,**} r,
 
   /usr/bin/gpg-agent mr,
-  /usr/bin/pinentry{,-gnome3,-curses,-gtk-2,-tty} rPx,
-  /usr/bin/scdaemon rPx,
+  /usr/bin/pinentry-* rPix,
+  /usr/bin/scdaemon rPix,
+  /usr/lib/{,gnupg/}scdaemon rPix,
 
-  @{PROC}/*/fd/ r,
+  @{PROC}/@{pid}/fd/ r,
 
+  owner @{run}/user/@{uid}/gnupg/{*.conf,sshcontrol} r,
+  owner @{run}/user/@{uid}/gnupg/{,d.**/} rw,
   owner @{run}/user/@{uid}/gnupg/{,d.**/}S.gpg-agent{,.browser,.extra,.ssh} rw,
-  owner @{run}/user/@{uid}/gnupg/{,d.**/}S.{scdaemon,keyboxd,sshcontrol} rw,
-  owner @{HOME}/.gnupg/{,**} rw,
-  owner @{HOME}/.config/gnupg/{,**} rw,
+  owner @{run}/user/@{uid}/gnupg/{,d.**/}S.{dirmngr,keyboxd} rw,
+  owner @{run}/user/@{uid}/gnupg/private-keys-v1.d/{,**.key{,.tmp}} rw,
+
+  owner @{GNUPG_CONFIGS}/{,**} rw,
+  owner @{GNUPG_CONFIGS}/{*.conf,sshcontrol} r,
+  owner @{GNUPG_CONFIGS}/{,private-keys-v1.d/{,**.key{,.tmp}}} rw,
+  owner @{GNUPG_CONFIGS}/{,d.**/}S.gpg-agent{,.ssh,.browser,.extra} rw,
+
+  owner /dev/tty[0-9]* rw,
 
   include if exists <local/gpg-agent>
 }
+
+# vim: ft=apparmor

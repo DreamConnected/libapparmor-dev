@@ -1,0 +1,17 @@
+# ------------------------------------------------------------------
+#
+#    Copyright (C) 2025 Alexandre Pujol <alexandre@pujol.io>
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#
+# ------------------------------------------------------------------
+
+# Any digit
+@{d}=[0-9]
+
+# Integer up to 10 digits (0-9999999999)
+@{int}=@{d}{@{d},}{@{d},}{@{d},}{@{d},}{@{d},}{@{d},}{@{d},}{@{d},}{@{d},}
+
+include if exists <tunables/system.d>

@@ -4,7 +4,7 @@
   "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
 <policyconfig>
 
-  <action id="com.ubuntu.pkexec.aa-notify.modify_profile">
+  <action id="net.apparmor.pkexec.aa-notify.modify_profile">
     <description>AppArmor: modifying security profile</description>
     <message>To modify an AppArmor security profile, you need to authenticate.</message>
     <defaults>
@@ -15,7 +15,7 @@
     <annotate key="org.freedesktop.policykit.exec.path">{LIB_PATH}apparmor/update_profile.py</annotate>
     <annotate key="org.freedesktop.policykit.exec.argv1">add_rule</annotate>
   </action>
-  <action id="com.ubuntu.pkexec.aa-notify.create_userns">
+  <action id="net.apparmor.pkexec.aa-notify.create_userns">
     <description>AppArmor: adding userns profile</description>
     <message>To allow a program to use unprivileged user namespaces, you need to authenticate.</message>
     <defaults>
@@ -26,7 +26,7 @@
     <annotate key="org.freedesktop.policykit.exec.path">{LIB_PATH}apparmor/update_profile.py</annotate>
     <annotate key="org.freedesktop.policykit.exec.argv1">create_userns</annotate>
   </action>
-  <action id="com.ubuntu.pkexec.aa-notify.from_file">
+  <action id="net.apparmor.pkexec.aa-notify.from_file">
     <description>AppArmor: Modifying profile from file</description>
     <message>To modify an AppArmor security profile from file, you need to authenticate.</message>
     <defaults>

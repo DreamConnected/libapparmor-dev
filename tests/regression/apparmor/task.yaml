@@ -123,6 +123,8 @@ execute: |
       echo "Test execution logs are in the files bash.{log,err,trace} and are collected as artifacts"
       echo "Bash errors are listed below:"
       cat bash.err
+      echo "Tail of the trace is:"
+      tail bash.trace
       exit 1
     else
       for xfail in ${XFAIL:-}; do

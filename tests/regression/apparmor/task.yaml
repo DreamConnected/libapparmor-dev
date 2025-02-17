@@ -128,9 +128,6 @@ execute: |
       for xfail in ${XFAIL:-}; do
         if [ "$SPREAD_SYSTEM" = "$xfail" ]; then
           echo "Test $SPREAD_VARIANT has unexpectedly passed"
-          echo "Test execution logs are in the files bash.{log,err,trace} and are collected as artifacts"
-          echo "Bash errors are listed below:"
-          cat bash.err
           exit 1
         fi
       done

@@ -278,6 +278,35 @@ extern int aa_is_enabled(void);
 }
 #endif
 
+#ifdef SWIGPERL
+// Copied from perl's argcargv.i, which should be good enough for us
+%typemap(in) (const char *subprofiles[]) {
+  int i;
+  SSize_t len;
+  AV *av = (AV *)SvRV($input);
+  if (SvTYPE(av) != SVt_PVAV) {
+    SWIG_croak("in method '$symname', Expecting reference to argv array");
+    goto fail;
+  }
+  len = av_len(av) + 1;
+  $1 = (char **) malloc((len+1)*sizeof(char *));
+  for (i = 0; i < len; i++) {
+    SV **tv = av_fetch(av, i, 0);
+    $1[i] = SvPV_nolen(*tv);
+  }
+  $1[i] = NULL;
+}
+
+%typemap(typecheck, precedence=SWIG_TYPECHECK_STRING_ARRAY) (const char *subprofiles[]) {
+  AV *av = (AV *)SvRV($input);
+  $1 = SvTYPE(av) == SVt_PVAV;
+}
+
+%typemap(freearg) (const char *subprofiles[]) {
+  free((void *)$1);
+}
+#endif
+
 /* These should not receive the VOID_Object typemap */
 extern int aa_change_hat(const char *subprofile, unsigned long magic_token);
 extern int aa_change_profile(const char *profile);

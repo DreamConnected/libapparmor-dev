@@ -1,4 +1,4 @@
-# Last Modified: Mon Feb 17 11:21:28 2025
+# Last Modified: Tue Feb 18 09:50:40 2025
 abi <abi/4.0>,
 
 include <tunables/global>
@@ -16,7 +16,6 @@ profile debsums /usr/bin/debsums {
   include <abstractions/base>
   include <abstractions/consoles>
   include <abstractions/private-files-strict>
-  include <abstractions/user-tmp>
   include if exists <local/debsums>
 
   /** r,
@@ -28,6 +27,11 @@ profile debsums /usr/bin/debsums {
   /usr/bin/dpkg-query mrCx -> dpkg-query,
   /usr/bin/gawk Cx -> awk,
   /usr/bin/mawk Cx -> awk,
+  owner /tmp/*/ rw,
+  owner /tmp/*/DEBIAN/ rw,
+  owner /tmp/*/DEBIAN/control rw,
+  owner /tmp/*/DEBIAN/md5sums rw,
+  owner /tmp/*/DEBIAN/triggers rw,
 
 
   profile awk {
@@ -50,13 +54,14 @@ profile debsums /usr/bin/debsums {
 
   profile dpkg-deb {
     include <abstractions/base>
-    include <abstractions/private-files-strict>
-    include <abstractions/user-tmp>
 
     /usr/bin/dpkg-deb r,
     /usr/bin/rm mrPx -> debsums//rm,
     /usr/bin/tar mrPx -> debsums//tar,
     /var/cache/apt/archives/*.deb r,
+    owner /tmp/*/DEBIAN/ w,
+    owner /tmp/dpkg-deb.*/ w,
+    owner /tmp/dpkg-deb.*/control r,
 
   }
 
@@ -88,10 +93,12 @@ profile debsums /usr/bin/debsums {
 
   profile rm {
     include <abstractions/base>
-    include <abstractions/private-files-strict>
-    include <abstractions/user-tmp>
 
     /usr/bin/rm r,
+    owner /tmp/dpkg-deb.*/ rw,
+    owner /tmp/dpkg-deb.*/control w,
+    owner /tmp/dpkg-deb.*/md5sums w,
+    owner /tmp/dpkg-deb.*/triggers w,
 
   }
 
@@ -109,13 +116,19 @@ profile debsums /usr/bin/debsums {
 
   profile tar {
     include <abstractions/base>
-    include <abstractions/private-files-strict>
-    include <abstractions/user-tmp>
 
     /etc/group r,
     /etc/nsswitch.conf r,
     /etc/passwd r,
     /usr/bin/tar r,
+    owner /tmp/*/DEBIAN/ w,
+    owner /tmp/*/DEBIAN/control w,
+    owner /tmp/*/DEBIAN/md5sums w,
+    owner /tmp/*/DEBIAN/triggers w,
+    owner /tmp/dpkg-deb.*/ w,
+    owner /tmp/dpkg-deb.*/control w,
+    owner /tmp/dpkg-deb.*/md5sums w,
+    owner /tmp/dpkg-deb.*/triggers w,
 
   }
 }

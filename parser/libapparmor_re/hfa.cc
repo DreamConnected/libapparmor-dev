@@ -1502,7 +1502,7 @@ static int pri_update_perm(optflags const &opts, vector<int> &priority, int i,
 		}
 	} else { // if (match->is_type(NODE_TYPE_PROMPTMATCHFLAG)) {
 		if (opts.dump & DUMP_DFA_PERMS)
-			cerr << "    " << match << "[" << i << "]=" << priority[i] <<  " <= " << match->priority << " promt " << hex << (match->perms & amask) << "/" << (match->audit & amask) << dec << "\n";
+			cerr << "    " << match << "[" << i << "]=" << priority[i] <<  " <= " << match->priority << " prompt " << hex << (match->perms & amask) << "/" << (match->audit & amask) << dec << "\n";
 		if (filedfa && !((exact.allow | perms.allow) & mask) &&
 		    !is_merged_x_consistent(perms.allow, match->perms & amask)) {
 			if (opts.dump & DUMP_DFA_PERMS)

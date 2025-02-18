@@ -117,13 +117,13 @@ display only counts for selected information.
 =item --filter.mode=filter
 
 Allows specifying a posix regular expression filter that will be
-applied against the displayed processess and profiles apparmor profile
+applied against the displayed processes and profiles apparmor profile
 mode, reducing the output.
 
 =item --filter.profiles=filter
 
 Allows specifying a posix regular expression filter that will be
-applied against the displayed processess and profiles confining
+applied against the displayed processes and profiles confining
 profile, reducing the output.
 
 =item --filter.pid=filter

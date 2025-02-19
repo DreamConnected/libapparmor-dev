@@ -16,6 +16,7 @@ profile tar /usr/bin/tar {
 
   # used to extract user files as root
   capability chown,
+  capability fowner,
 
   # used to compress user files as root
   capability dac_override,

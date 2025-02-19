@@ -915,6 +915,7 @@ def ask_exec(hashlog):
 
                     if ans == 'CMD_IGNORE_ENTRY':
                         continue
+
                     if exec_mode and 'i' in exec_mode:
                         # For inherit we need mr
                         file_perm = 'mr'

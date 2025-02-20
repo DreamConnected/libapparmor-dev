@@ -9,12 +9,19 @@ profile fusermount3 /usr/bin/fusermount3 {
   capability sys_admin,
   capability dac_read_search,
 
+  # Allow both rw and ro type mounts (e.g. AppImage uses ro)
   mount fstype=@{fuse_types} options=(nosuid,nodev,rw) -> @{HOME}/**/,
   mount fstype=@{fuse_types} options=(nosuid,nodev,rw) -> /mnt/{,**/},
   mount fstype=@{fuse_types} options=(nosuid,nodev,rw) -> @{run}/user/@{uid}/*/,
   mount fstype=@{fuse_types} options=(nosuid,nodev,rw) -> /media/**/,
   mount fstype=@{fuse_types} options=(nosuid,nodev,rw) -> /tmp/**/,
  
+  mount fstype=@{fuse_types} options=(nosuid,nodev,ro) -> @{HOME}/**/,
+  mount fstype=@{fuse_types} options=(nosuid,nodev,ro) -> /mnt/{,**/},
+  mount fstype=@{fuse_types} options=(nosuid,nodev,ro) -> @{run}/user/@{uid}/*/,
+  mount fstype=@{fuse_types} options=(nosuid,nodev,ro) -> /media/**/,
+  mount fstype=@{fuse_types} options=(nosuid,nodev,ro) -> /tmp/**/,
+
   umount @{HOME}/**/,
   umount /mnt/{,**/},
   umount @{run}/user/@{uid}/*/,

@@ -30,8 +30,25 @@ profile minicom /usr/bin/minicom {
   /dev/{tty,pts,pty}** rw,
   /run/lock/LCK..{tty,pts,pty}** w,
 
+  # Allow read/write access to all files in @{HOME}, except
+  # toplevel hidden directories in @{HOME}.
+  owner @{HOME}/ r,
+  owner @{HOME}/[^.]** rw,
+
+  # Also allow read/write access to @{HOME}/.local/minicom
+  owner @{HOME}/.local/minicom rw,
+  owner @{HOME}/.local/minicom/{,**} rw,
+
+  # Disallow writes to the well-known directory included in
+  # the user's PATH on several distributions
+  audit deny @{HOME}/bin/{,**} wl,
+  audit deny @{HOME}/bin wl,
+
   # Dialing directory
   owner @{HOME}/.dialdir rw,
+
+  # Kermit program
+  /usr/bin/kermit mr,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/minicom>

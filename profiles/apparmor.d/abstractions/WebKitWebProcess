@@ -12,28 +12,22 @@
 
   abi <abi/4.0>,
 
-  @{etc_ro}/ld.so.cache r,
+  /usr/lib/@{multiarch}/webkitgtk-*/WebKitWebProcess m,
+
+  deny @{HOME}/.config/glib-*/ rw,
+  deny @{HOME}/.config/glib-*/settings/ rw,
+
   @{etc_ro}/glvnd/egl_vendor.d/ r,
   /.flatpak-info r,
-  owner @{HOME}/.config/glib-*/ rw,
-  owner @{HOME}/.config/glib-*/settings/ rw,
   @{PROC}/@{pid}/statm r,
   @{PROC}/filesystems r,
   @{PROC}/@{pid}/maps r,
   @{PROC}/@{pid}/smaps r,
-
 
   /usr/share/glvnd/egl_vendor.d/ r,
   /usr/share/glvnd/egl_vendor.d/50_mesa.json r,
   /usr/share/themes/Yaru/gtk-*/gtk.gresource r,
   /usr/share/themes/Yaru/gtk-*/gtk.css r,
   /usr/share/publicsuffix/public_suffix_list.dafsa r,
-
-  @{sys}/devices/pci**/uevent r,
-  @{sys}/devices/pci**/vendor r,
-  @{sys}/devices/pci**/device r,
-  @{sys}/devices/pci**/subsystem_vendor r,
-  @{sys}/devices/pci**/subsystem_device r,
-  @{sys}/devices/virtual/dmi/id/chassis_type r,
 
   include if exists <abstractions/WebKitWebProcess.d>

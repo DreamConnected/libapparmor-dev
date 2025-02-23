@@ -59,6 +59,8 @@ class TestHotkeyConflicts(AATest):
         # we also want to detect hotkey conflicts in the untranslated english strings
         self.languages.append('C')
 
+        conflicts = []
+
         for language in self.languages:
             with self.subTest(language=language):
                 t = gettext.translation(
@@ -67,14 +69,24 @@ class TestHotkeyConflicts(AATest):
                 )
 
                 keys = {}
+                all_keys = []
+                found_conflict = ''
+
                 for key in params:
                     text = t.gettext(CMDS[key])
+                    all_keys.append(text)
                     hotkey = get_translated_hotkey(text)
 
                     if keys.get(hotkey):
-                        raise Exception("Hotkey conflict: '{}' and '{}'".format(keys[hotkey], text))
+                        found_conflict = "Hotkey conflict for {}: '{}' and '{}'".format(language, keys[hotkey], text)
                     else:
                         keys[hotkey] = text
+
+                if found_conflict:
+                    conflicts.append("{}\n    {}'".format(found_conflict, '  '.join(all_keys)))
+
+        if conflicts:
+            raise Exception('\n'.join(conflicts))
 
 
 setup_all_loops(__name__)

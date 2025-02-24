@@ -13,14 +13,14 @@ msgstr ""
 "Project-Id-Version: apparmor-parser\n"
 "Report-Msgid-Bugs-To: <apparmor@lists.ubuntu.com>\n"
 "POT-Creation-Date: 2014-09-13 00:11-0700\n"
-"PO-Revision-Date: 2013-11-15 12:27+0000\n"
-"Last-Translator: yurchor <Unknown>\n"
+"PO-Revision-Date: 2020-05-19 21:52+0000\n"
+"Last-Translator: Nazarii Ritter <nazariy.ritter@gmail.com>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2019-04-18 05:33+0000\n"
-"X-Generator: Launchpad (build 18928)\n"
+"X-Launchpad-Export-Date: 2020-05-20 05:42+0000\n"
+"X-Generator: Launchpad (build 0385b538081bc4718df6fb844a3afc89729c94ce)\n"
 "Language: uk\n"
 
 #: ../parser_include.c:113 ../parser_include.c:111
@@ -747,27 +747,29 @@ msgstr "ПОМИЛКА заміри псевдонімів для профілю
 #: ../parser_interface.c:635 ../parser_interface.c:638
 #, c-format
 msgid "%s: Unable to write %s\n"
-msgstr ""
+msgstr "%s: Неможливо записати %s\n"
 
 #: ../parser_main.c:721
 #, c-format
 msgid "Error: Could not read binary profile or cache file %s: %s.\n"
 msgstr ""
+"Помилка: Не вдалося прочитати бінарний профіль або файл кешу %s: %s.\n"
 
 #: ../parser_main.c:811
 #, c-format
 msgid "Error: Could not read cache file '%s', skipping...\n"
-msgstr ""
+msgstr "Помилка: Не вдалося прочитати файл кешу '%s', пропуск…\n"
 
 #: ../parser_misc.c:575
 #, c-format
 msgid "Internal: unexpected %s mode character '%c' in input"
 msgstr ""
+"Внутрішня помилка: неочікуваний режим  %s символу «%c» у вхідних даних"
 
 #: ../parser_misc.c:599
 #, c-format
 msgid "Internal error generated invalid %s perm 0x%x\n"
-msgstr ""
+msgstr "Внутрішня помилка, спричинена невірним дозволом %s 0x%x\n"
 
 #: parser_yacc.y:703
 msgid "owner prefix not allowed on mount rules"

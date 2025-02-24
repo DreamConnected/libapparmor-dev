@@ -1,44 +1,49 @@
-# Romanian translation for apparmor
-# Copyright (c) 2020 Rosetta Contributors and Canonical Ltd 2020
+# Romanian translation for apparmor, "apparmor-utils" component.
+# Mesajele în limba română pentru pachetul „apparmor”, componenta „apparmor-utils”.
+# Copyright © 2020 Rosetta Contributors and Canonical Ltd.
+# Copyright © 2024 Canonical Ltd.
 # This file is distributed under the same license as the apparmor package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+# Daniel Slavu <Unknown>, apr-2020.
+# Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>, sep-2024.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apparmor\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"Project-Id-Version: apparmor-utils\n"
+"Report-Msgid-Bugs-To: <apparmor@lists.ubuntu.com>\n"
 "POT-Creation-Date: 2014-09-14 19:29+0530\n"
-"PO-Revision-Date: 2020-04-19 16:01+0000\n"
-"Last-Translator: Daniel Slavu <Unknown>\n"
-"Language-Team: Romanian <ro@li.org>\n"
+"PO-Revision-Date: 2024-09-23 22:45+0000\n"
+"Last-Translator: Remus-Gabriel Chelu <Unknown>\n"
+"Language-Team: Romanian <debian-l10n-romanian@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2020-04-20 06:09+0000\n"
-"X-Generator: Launchpad (build 2e26c9bbd21cdca248baaea29aeffb920afcc32a)\n"
+"X-Launchpad-Export-Date: 2024-09-25 04:33+0000\n"
+"X-Generator: Launchpad (build 1b1ed1ad2dbfc71ee62b5c5491c975135a771bf0)\n"
+"Language: ro\n"
 
 #: ../aa-genprof:56
 msgid "Generate profile for the given program"
-msgstr "Generați profilul pentru programul dat"
+msgstr "Generează profilul pentru programul dat"
 
 #: ../aa-genprof:57 ../aa-logprof:25 ../aa-cleanprof:24 ../aa-mergeprof:34
 #: ../aa-autodep:25 ../aa-audit:25 ../aa-complain:24 ../aa-enforce:24
 #: ../aa-disable:24
 msgid "path to profiles"
-msgstr "calea către profiluri"
+msgstr "ruta către profiluri"
 
 #: ../aa-genprof:58 ../aa-logprof:26
 msgid "path to logfile"
-msgstr "calea către fișierul de înregistrare"
+msgstr "ruta către fișierul de jurnalizare"
 
 #: ../aa-genprof:59
 msgid "name of program to profile"
-msgstr "numele programului la profil"
+msgstr "numele programului pentru profil"
 
 #: ../aa-genprof:69 ../aa-logprof:37
 #, python-format
 msgid "The logfile %s does not exist. Please check the path"
-msgstr "Fișierul de înregistrare %s nu există. Vă rugăm să verificați calea"
+msgstr "Fișierul de jurnal %s nu există. Vă rugăm să verificați ruta"
 
 #: ../aa-genprof:75 ../aa-logprof:43 ../aa-unconfined:36
 msgid ""
@@ -61,16 +66,16 @@ msgid ""
 "environment set up in order to find the fully-qualified path and\n"
 "use the full path as parameter."
 msgstr ""
-"Nu pot găsi %(profiling)s în lista căilor de sistem. Dacă numele aplicației\n"
-"este corect, vă rugăm să rulați 'cu care %(profiling)s' ca utilizator cu "
-"CALE corectă\n"
-"a mediului creat, pentru a găsi calea complet calificată și\n"
-"utiliza calea completă ca parametru."
+"Nu se poate găsi %(profiling)s în lista de rute a sistemului. Dacă numele\n"
+"aplicației este corect, vă rugăm să rulați «which %(profiling)s» ca "
+"utilizator\n"
+"cu variabila de mediu $PATH corect configurată pentru a găsi ruta complet\n"
+"calificată și a utiliza ruta completă ca parametru."
 
 #: ../aa-genprof:96
 #, python-format
 msgid "%s does not exists, please double-check the path."
-msgstr "%s nu există, vă rugăm verificați de două ori calea."
+msgstr "%s nu există, vă rugăm verificați de două ori ruta."
 
 #: ../aa-genprof:124
 msgid ""
@@ -81,10 +86,10 @@ msgid ""
 "more information:"
 msgstr ""
 "\n"
-"Înainte de a începe, poate vreți să verificați dacă\n"
-"profilul există deja pentru aplicația pe care o aveți,\n"
-"doriți să se limiteze. Consultați următoarea pagină wiki pentru\n"
-"mai multe informatii:"
+"Înainte de a începe, poate doriți să verificați\n"
+"dacă există deja un profil pentru aplicația pe\n"
+"care doriți să o confinați. Consultați următoarea\n"
+"pagină wiki pentru mai multe informații:"
 
 #: ../aa-genprof:126
 msgid ""
@@ -98,15 +103,14 @@ msgid ""
 "opportunity to choose whether the access should be \n"
 "allowed or denied."
 msgstr ""
-"Vă rugăm să porniți aplicația, pentru a fi creată\n"
-"o altă fereastră și unde acum vă exercitați funcționalitatea.\n"
+"Vă rugăm să porniți aplicația care urmează să fie profilată\n"
+"într-o altă fereastră și să îi exercitați funcționalitatea acum.\n"
 "\n"
-"Odată finalizată, selectați opțiunea de mai jos „Scanare” \n"
-"pentru a scana jurnalele sistemului și evenimentele AppArmor. \n"
+"După ce ați terminat, selectați opțiunea „Scanare” de mai jos,\n"
+"pentru a scana jurnalele de sistem pentru evenimentele AppArmor. \n"
 "\n"
-"Pentru fiecare eveniment AppArmor, vi se va da \n"
-"ocazia de a alege dacă accesul ar trebui să fie \n"
-"permis sau refuzat."
+"Pentru fiecare eveniment AppArmor, vi se va oferi posibilitatea\n"
+"de a alege dacă accesul trebuie permis sau refuzat."
 
 #: ../aa-genprof:147
 msgid "Profiling"
@@ -127,25 +131,26 @@ msgid ""
 "See the following wiki page for more information:"
 msgstr ""
 "\n"
-"Vă rugăm să luați în considerare contribuția noului dvs. profil!\n"
-"Vedeți următoarea pagină wiki pentru mai multe informații:"
+"Vă rugăm să luați în considerare posibilitatea de a contribui cu noul dvs. "
+"profil!\n"
+"Consultați următoarea pagină wiki pentru mai multe informații:"
 
 #: ../aa-genprof:167
 #, python-format
 msgid "Finished generating profile for %s."
-msgstr "Generarea profilului finalizat pentru %s."
+msgstr "S-a finalizat generarea profilului pentru %s."
 
 #: ../aa-logprof:24
 msgid "Process log entries to generate profiles"
-msgstr "Procesați intrările de jurnal pentru a genera profiluri"
+msgstr "Procesează intrările din jurnal pentru a genera profiluri"
 
 #: ../aa-logprof:27
 msgid "mark in the log to start processing after"
-msgstr "după ce marcați în jurnal va începe procesarea"
+msgstr "marcaj în jurnal pentru a începe procesarea după"
 
 #: ../aa-cleanprof:23
 msgid "Cleanup the profiles for the given programs"
-msgstr "Curățarea profilurilor pentru programele date"
+msgstr "Curăță profilurile pentru programele date"
 
 #: ../aa-cleanprof:25 ../aa-autodep:26 ../aa-audit:27 ../aa-complain:25
 #: ../aa-enforce:25 ../aa-disable:25
@@ -154,11 +159,11 @@ msgstr "numele programului"
 
 #: ../aa-cleanprof:26
 msgid "Silently overwrite with a clean profile"
-msgstr "Suprascrieți în tăcere cu un profil curat"
+msgstr "suprascrie în mod silențios cu un profil curat"
 
 #: ../aa-mergeprof:29
 msgid "Perform a 2-way or 3-way merge on the given profiles"
-msgstr "Efectuați o îmbinare cu 2 sau 3 căi pe profilurile date"
+msgstr "Efectuează o fuziune între 2 sau 3 variante pe profilurile date"
 
 #: ../aa-mergeprof:31
 msgid "your profile"
@@ -166,7 +171,7 @@ msgstr "profilul tău"
 
 #: ../aa-mergeprof:32
 msgid "base profile"
-msgstr "profil de bază"
+msgstr "profilul de bază"
 
 #: ../aa-mergeprof:33
 msgid "other profile"
@@ -176,11 +181,11 @@ msgstr "alt profil"
 msgid ""
 "The following local profiles were changed. Would you like to save them?"
 msgstr ""
-"Au fost modificate următoarele profiluri locale. Ați dori să le salvați?"
+"Următoarele profiluri locale au fost modificate. Doriți să le salvați?"
 
 #: ../aa-mergeprof:148 ../aa-mergeprof:430 ../apparmor/aa.py:1767
 msgid "Path"
-msgstr "Cale"
+msgstr "Ruta"
 
 #: ../aa-mergeprof:149
 msgid "Select the appropriate mode"
@@ -192,7 +197,7 @@ msgstr "Selecție necunoscută"
 
 #: ../aa-mergeprof:183 ../aa-mergeprof:209
 msgid "File includes"
-msgstr "Fișierul include"
+msgstr "Fișierul de includeri"
 
 #: ../aa-mergeprof:183 ../aa-mergeprof:209
 msgid "Select the ones you wish to add"
@@ -201,7 +206,7 @@ msgstr "Selectați cele pe care doriți să le adăugați"
 #: ../aa-mergeprof:195 ../aa-mergeprof:222
 #, python-format
 msgid "Adding %s to the file."
-msgstr "Adăugarea %s la fișier."
+msgstr "Se adaugă %s la fișier."
 
 #: ../aa-mergeprof:199 ../apparmor/aa.py:2258
 msgid "unknown"
@@ -212,7 +217,9 @@ msgstr "necunoscut"
 #: ../apparmor/aa.py:1859 ../apparmor/aa.py:1899 ../apparmor/aa.py:2012
 #, python-format
 msgid "Deleted %s previous matching profile entries."
-msgstr "Înregistrările profilului de potrivire anterioare %s șterse."
+msgstr ""
+"Au fost șterse %s intrări anterioare de profil ce coincideau cu modelul "
+"căutat."
 
 #: ../aa-mergeprof:244 ../aa-mergeprof:429 ../aa-mergeprof:629
 #: ../aa-mergeprof:656 ../apparmor/aa.py:992 ../apparmor/aa.py:1252
@@ -234,34 +241,34 @@ msgstr "Severitate"
 #: ../apparmor/aa.py:1857
 #, python-format
 msgid "Adding %s to profile."
-msgstr "Adăugarea %s la profil."
+msgstr "Se adaugă %s la profil."
 
 #: ../aa-mergeprof:282 ../apparmor/aa.py:1627
 #, python-format
 msgid "Adding capability %s to profile."
-msgstr "Adăugarea capacității %s la profil."
+msgstr "Se adaugă capacitatea %s la profil."
 
 #: ../aa-mergeprof:289 ../apparmor/aa.py:1634
 #, python-format
 msgid "Denying capability %s to profile."
-msgstr "Negarea capacității %s la profil."
+msgstr "Se refuză capacitatea %s pentru profil."
 
 #: ../aa-mergeprof:439 ../aa-mergeprof:470 ../apparmor/aa.py:1776
 #: ../apparmor/aa.py:1807
 msgid "(owner permissions off)"
-msgstr "(permisiunile proprietarului oprite)"
+msgstr "(permisiunile proprietarului sunt dezactivate)"
 
 #: ../aa-mergeprof:444 ../apparmor/aa.py:1781
 msgid "(force new perms to owner)"
-msgstr ""
+msgstr "(forțează noile permisiuni pentru proprietar)"
 
 #: ../aa-mergeprof:447 ../apparmor/aa.py:1784
 msgid "(force all rule perms to owner)"
-msgstr ""
+msgstr "(forțează toate permisiunile de regulă pentru proprietar)"
 
 #: ../aa-mergeprof:459 ../apparmor/aa.py:1796
 msgid "Old Mode"
-msgstr "Mod Vechi"
+msgstr "Mod vechi"
 
 #: ../aa-mergeprof:460 ../apparmor/aa.py:1797
 msgid "New Mode"
@@ -269,7 +276,7 @@ msgstr "Mod nou"
 
 #: ../aa-mergeprof:475 ../apparmor/aa.py:1812
 msgid "(force perms to owner)"
-msgstr ""
+msgstr "(forțează permisiunile pentru proprietar)"
 
 #: ../aa-mergeprof:478 ../apparmor/aa.py:1815
 msgid "Mode"
@@ -278,16 +285,16 @@ msgstr "Mod"
 #: ../aa-mergeprof:556
 #, python-format
 msgid "Adding %(path)s %(mod)s to profile"
-msgstr "Adăugarea %(path)s %(mod)s la profil"
+msgstr "Se adaugă %(path)s %(mod)s la profil"
 
 #: ../aa-mergeprof:574 ../apparmor/aa.py:1915
 msgid "Enter new path: "
-msgstr "Introduceți o cale nouă: "
+msgstr "Introduceți ruta nouă: "
 
 #: ../aa-mergeprof:630 ../aa-mergeprof:657 ../apparmor/aa.py:1959
 #: ../apparmor/aa.py:1995
 msgid "Network Family"
-msgstr "Familia Network"
+msgstr "Familia de rețea"
 
 #: ../aa-mergeprof:631 ../aa-mergeprof:658 ../apparmor/aa.py:1960
 #: ../apparmor/aa.py:1996
@@ -297,21 +304,23 @@ msgstr "Tip soclu"
 #: ../aa-mergeprof:673 ../apparmor/aa.py:2010
 #, python-format
 msgid "Adding %s to profile"
-msgstr "Adăugarea %s la profil"
+msgstr "Se adaugă %s la profil"
 
 #: ../aa-mergeprof:683 ../apparmor/aa.py:2020
 #, python-format
 msgid "Adding network access %(family)s %(type)s to profile."
-msgstr "Adăugarea accesului la rețea %(family)s %(type)s la profil."
+msgstr "Se adaugă accesul la rețea %(family)s %(type)s la profil."
 
 #: ../aa-mergeprof:689 ../apparmor/aa.py:2026
 #, python-format
 msgid "Denying network access %(family)s %(type)s to profile"
-msgstr "Refuzarea accesului la rețea %(family)s %(type)s la profil"
+msgstr "Se refuză accesul la rețea %(family)s %(type)s pentru profil"
 
 #: ../aa-autodep:23
 msgid "Generate a basic AppArmor profile by guessing requirements"
-msgstr "Generați un profil AppArmor de bază ghicind cerințele"
+msgstr ""
+"Generează un profil AppArmor de bază prin presupunerea cerințelor (ghicind "
+"cerințele)"
 
 #: ../aa-autodep:24
 msgid "overwrite existing profile"
@@ -319,75 +328,78 @@ msgstr "suprascrie profilul existent"
 
 #: ../aa-audit:24
 msgid "Switch the given programs to audit mode"
-msgstr "Comutați programele date în modul de audit"
+msgstr "Trece („comută”) programele date în modul audit"
 
 #: ../aa-audit:26
 msgid "remove audit mode"
-msgstr "eliminați modul audit"
+msgstr "elimină modul audit"
 
 #: ../aa-audit:28
 msgid "Show full trace"
-msgstr "Afișează urmă completă"
+msgstr "Afișează traseul complet al execuției"
 
 #: ../aa-complain:23
 msgid "Switch the given program to complain mode"
-msgstr "Comutați programul dat în modul de reclamație"
+msgstr ""
+"Trece („comută”) programul dat în modul de reclamație (pentru depanare)"
 
 #: ../aa-enforce:23
 msgid "Switch the given program to enforce mode"
-msgstr "Comutați programul dat în modul de aplicare"
+msgstr ""
+"Trece („comută”) programul dat în modul de punere în aplicare (a politicilor "
+"profilului)"
 
 #: ../aa-disable:23
 msgid "Disable the profile for the given programs"
-msgstr "Dezactivați profilul pentru programele date"
+msgstr "Dezactiveazăi profilul pentru programele date"
 
 #: ../aa-unconfined:28
 msgid "Lists unconfined processes having tcp or udp ports"
-msgstr "Listează procesele neconfigurate cu porturi tcp sau udp"
+msgstr "Listează procesele neconfinate care au porturi tcp sau udp"
 
 #: ../aa-unconfined:29
 msgid "scan all processes from /proc"
-msgstr "scanează toate procesele din /proc"
+msgstr "scanează toate procesele din „/proc”"
 
 #: ../aa-unconfined:81
 #, python-format
 msgid "%(pid)s %(program)s (%(commandline)s) not confined"
-msgstr "%(pid)s %(program)s (%(commandline)s) nu sunt limitate"
+msgstr "%(pid)s %(program)s (%(commandline)s) nu este confinat"
 
 #: ../aa-unconfined:85
 #, python-format
 msgid "%(pid)s %(program)s%(pname)s not confined"
-msgstr "%(pid)s %(program)s%(pname)s nu este limitat"
+msgstr "%(pid)s %(program)s%(pname)s nu este confinat"
 
 #: ../aa-unconfined:90
 #, python-format
 msgid "%(pid)s %(program)s (%(commandline)s) confined by '%(attribute)s'"
-msgstr "%(pid)s %(program)s (%(commandline)s) limitat de '%(attribute)s'"
+msgstr "%(pid)s %(program)s (%(commandline)s) confinat de „%(attribute)s”"
 
 #: ../aa-unconfined:94
 #, python-format
 msgid "%(pid)s %(program)s%(pname)s confined by '%(attribute)s'"
-msgstr "%(pid)s %(program)s%(pname)s limitat de '%(attribute)s'"
+msgstr "%(pid)s %(program)s%(pname)s confinat de „%(attribute)s”"
 
 #: ../apparmor/aa.py:196
 #, python-format
 msgid "Followed too many links while resolving %s"
-msgstr "A urmat prea multe legături în timp ce rezolvați %s"
+msgstr "A urmat prea multe legături în timpul rezolvării %s"
 
 #: ../apparmor/aa.py:252 ../apparmor/aa.py:259
 #, python-format
 msgid "Can't find %s"
-msgstr "Nu pot găsi %s"
+msgstr "Nu se poate găsi %s"
 
 #: ../apparmor/aa.py:264 ../apparmor/aa.py:548
 #, python-format
 msgid "Setting %s to complain mode."
-msgstr "Setarea %s în modul de reclamație."
+msgstr "Se pune %s în modul de reclamație."
 
 #: ../apparmor/aa.py:271
 #, python-format
 msgid "Setting %s to enforce mode."
-msgstr "Setarea %s la modul de aplicare."
+msgstr "Se pune %s în modul de aplicare."
 
 #: ../apparmor/aa.py:286
 #, python-format
@@ -397,12 +409,12 @@ msgstr "Imposibil de găsit numele de bază pentru %s."
 #: ../apparmor/aa.py:301
 #, python-format
 msgid "Could not create %(link)s symlink to %(filename)s."
-msgstr "Nu s-a putut crea %(link)s simbolistică la %(filename)s."
+msgstr "Nu s-a putut crea legătura simbolică %(link)s lla %(filename)s."
 
 #: ../apparmor/aa.py:314
 #, python-format
 msgid "Unable to read first line from %s: File Not Found"
-msgstr "Imposibil de citit prima linie din %s: Fișierul nu a fost găsit"
+msgstr "Nu se poate citi prima linie din %s: Fișierul NU a fost găsit"
 
 #: ../apparmor/aa.py:328
 #, python-format
@@ -410,22 +422,23 @@ msgid ""
 "Unable to fork: %(program)s\n"
 "\t%(error)s"
 msgstr ""
-"Imposibil de bifurcat: %(program)s\n"
+"Nu se poate bifurca: %(program)s\n"
 "\t%(error)s"
 
 #: ../apparmor/aa.py:449 ../apparmor/ui.py:303
 msgid ""
 "Are you sure you want to abandon this set of profile changes and exit?"
 msgstr ""
-"Sigur doriți să abandonați acest set de modificări de profil și să ieșiți?"
+"Sunteți sigur că doriți să renunțați la acest set de modificări de profil și "
+"să ieșiți?"
 
 #: ../apparmor/aa.py:451 ../apparmor/ui.py:305
 msgid "Abandoning all changes."
-msgstr "Abandonarea tuturor modificărilor."
+msgstr "Se abandonează toate modificările."
 
 #: ../apparmor/aa.py:464
 msgid "Connecting to repository..."
-msgstr "Conectarea la depozit ..."
+msgstr "Se efectuează conectarea depozit ..."
 
 #: ../apparmor/aa.py:470
 msgid "WARNING: Error fetching profiles from the repository"
@@ -470,11 +483,11 @@ msgstr ""
 
 #: ../apparmor/aa.py:833
 msgid "Uploaded changes to repository."
-msgstr "Modificări încărcate în depozit."
+msgstr "Modificările au fost încărcate în depozit."
 
 #: ../apparmor/aa.py:865
 msgid "Changelog Entry: "
-msgstr "Intrare Changelog: "
+msgstr "Intrare din jurnalul de modificări: "
 
 #: ../apparmor/aa.py:885
 msgid ""
@@ -490,21 +503,21 @@ msgstr ""
 
 #: ../apparmor/aa.py:995
 msgid "Default Hat"
-msgstr "Pălăria implicită"
+msgstr "„Hat” implicită"
 
 #: ../apparmor/aa.py:997
 msgid "Requested Hat"
-msgstr "Pălăria cerută"
+msgstr "„Hat” cerută"
 
 #: ../apparmor/aa.py:1218
 #, python-format
 msgid "%s has transition name but not transition mode"
-msgstr "%s are nume de tranziție, dar nu mod de tranziție"
+msgstr "%s are nume de tranziție, dar nu și mod de tranziție"
 
 #: ../apparmor/aa.py:1232
 #, python-format
 msgid "Target profile exists: %s\n"
-msgstr "Există un profil țintă: %s\n"
+msgstr "Profilul țintă există: %s\n"
 
 #: ../apparmor/aa.py:1254
 msgid "Program"
@@ -531,12 +544,11 @@ msgid ""
 "but some applications depend on the presence\n"
 "of LD_PRELOAD or LD_LIBRARY_PATH."
 msgstr ""
-"Dacă AppArmor igienizează mediul atunci când se face\n"
-"schimbarea profilurilor?\n"
+"Ar trebui AppArmor să curețe mediul atunci când\n"
+"se schimbă profilurile?\n"
 "\n"
-"Mediul de igienizare este mai sigur,\n"
-"dar unele aplicații depind de prezența\n"
-"din LD_PRELOAD sau LD_LIBRARY_PATH."
+"Curățarea mediului este mai sigură, dar unele aplicații\n"
+"depind de prezența LD_PRELOAD sau LD_LIBRARY_PATH."
 
 #: ../apparmor/aa.py:1310
 msgid ""
@@ -548,13 +560,13 @@ msgid ""
 "or LD_LIBRARY_PATH and sanitising the environment\n"
 "could cause functionality problems."
 msgstr ""
-"Dacă AppArmor igienizează mediul atunci când se face\n"
-"schimbarea profilurilor?\n"
+"Ar trebui AppArmor să curețe mediul atunci când\n"
+"se schimbă profilurile?\n"
 "\n"
-"Mediul de igienizare este mai sigur,\n"
-"dar această aplicație pare să folosească LD_PRELOAD\n"
-"sau LD_LIBRARY_PATH și igienizarea mediului\n"
-"ar putea cauza probleme de funcționalitate."
+"Curățarea mediului este mai sigură, dar această\n"
+"aplicație pare să utilizeze LD_PRELOAD sau\n"
+"LD_LIBRARY_PATH și curățarea mediului ar putea\n"
+"cauza probleme de funcționalitate."
 
 #: ../apparmor/aa.py:1318
 #, python-format
@@ -565,11 +577,11 @@ msgid ""
 "Are you absolutely certain you wish to remove all\n"
 "AppArmor protection when executing %s ?"
 msgstr ""
-"Lansarea proceselor într-o stare neconfigurată este foarte\n"
-"periculoasă și poate provoca gauri grave de securitate.\n"
+"Lansarea proceselor într-o stare neconfinată este o operație\n"
+"foarte periculoasă și poate cauza probleme grave de securitate.\n"
 "\n"
-"Sunteți absolut sigur că doriți să eliminați toate\n"
-"Protecție AppArmor la executare %s ?"
+"Sunteți absolut sigur că doriți să eliminați toată protecția\n"
+"AppArmor atunci când executați %s?"
 
 #: ../apparmor/aa.py:1320
 msgid ""
@@ -580,12 +592,12 @@ msgid ""
 "a program opens up significant security holes\n"
 "and should be avoided if at all possible."
 msgstr ""
-"Sigur AppArmor igienizează mediul atunci când\n"
-"rularea acestui program este neconfigurat?\n"
+"Ar trebui AppArmor să curețe mediul atunci când\n"
+"rulează acest program neconfinat?\n"
 "\n"
-"Nu igienizați mediul înconjurător\n"
-"când un program deschide gauri semnificative de securitate\n"
-"și ar trebui evitate dacă este posibil."
+"Ne curățarea mediului atunci când se scoate din\n"
+"confinare un program, deschide breșe de securitate\n"
+"semnificative și ar trebui evitată pe cât posibil."
 
 #: ../apparmor/aa.py:1396 ../apparmor/aa.py:1414
 #, python-format
@@ -593,12 +605,12 @@ msgid ""
 "A profile for %s does not exist.\n"
 "Do you want to create one?"
 msgstr ""
-"Un profil pentru %s nu exista.\n"
-"Vrei să creezi una?"
+"Nu există un profil pentru %s.\n"
+"Doriți să creați unul?"
 
 #: ../apparmor/aa.py:1523
 msgid "Complain-mode changes:"
-msgstr "Modificări în modul de sesizare:"
+msgstr "Modificări în modul de reclamație:"
 
 #: ../apparmor/aa.py:1525
 msgid "Enforce-mode changes:"
@@ -607,12 +619,12 @@ msgstr "Modificări în modul de aplicare:"
 #: ../apparmor/aa.py:1528
 #, python-format
 msgid "Invalid mode found: %s"
-msgstr "Modul nevalid este găsit: %s"
+msgstr "S-a găsit un mod nevalid: %s"
 
 #: ../apparmor/aa.py:1897
 #, python-format
 msgid "Adding %(path)s %(mode)s to profile"
-msgstr "Adăugarea %(path)s %(mode)s la profil"
+msgstr "Se adaugă %(path)s %(mode)s la profil"
 
 #: ../apparmor/aa.py:1918
 #, python-format
@@ -623,54 +635,55 @@ msgid ""
 "  Entered Path:  %(ans)s\n"
 "Do you really want to use this path?"
 msgstr ""
-"Calea specificată nu se potrivește cu această intrare de jurnal:\n"
+"Ruta specificată nu se potrivește cu această intrare de jurnal:\n"
 "\n"
 "  Intrare jurnal: %(path)s\n"
-"  Calea introdusă: %(ans)s\n"
-"Chiar vrei să folosești această cale?"
+"  Ruta introdusă: %(ans)s\n"
+"Doriți cu adevărat să folosiți această rută?"
 
 #: ../apparmor/aa.py:2251
 #, python-format
 msgid "Reading log entries from %s."
-msgstr "Citirea înregistrărilor din jurnal %s."
+msgstr "Se citesc înregistrările de jurnal din %s."
 
 #: ../apparmor/aa.py:2254
 #, python-format
 msgid "Updating AppArmor profiles in %s."
-msgstr "Actualizarea profilurilor AppArmor în %s."
+msgstr "Se actualizează profilurile AppArmor în %s."
 
 #: ../apparmor/aa.py:2323
 msgid ""
 "Select which profile changes you would like to save to the\n"
 "local profile set."
 msgstr ""
-"Selectați ce modificări de profil doriți să salvați în\n"
-"set de profil local"
+"Selectați modificările de profil pe care doriți să le\n"
+"salvați în setul local de profiluri."
 
 #: ../apparmor/aa.py:2324
 msgid "Local profile changes"
-msgstr "Profilurile locale se schimbă"
+msgstr "Modificări ale profilului local"
 
 #: ../apparmor/aa.py:2418
 msgid "Profile Changes"
-msgstr "Schimbări de profil"
+msgstr "Modificări de profil"
 
 #: ../apparmor/aa.py:2428
 #, python-format
 msgid "Can't find existing profile %s to compare changes."
-msgstr "Nu puteți găsi profilul existent %s pentru a compara modificările."
+msgstr "Nu se poate găsi profilul existent %s pentru a compara modificările."
 
 #: ../apparmor/aa.py:2566 ../apparmor/aa.py:2581
 #, python-format
 msgid "Can't read AppArmor profiles in %s"
-msgstr "Nu pot citi profilurile AppArmor în %s"
+msgstr "Nu se pot citi profilurile AppArmor din %s"
 
 #: ../apparmor/aa.py:2677
 #, python-format
 msgid ""
 "%(profile)s profile in %(file)s contains syntax errors in line: %(line)s."
 msgstr ""
-"%(profile)s profil în %(file)s conține erori de sintaxă în linie: %(line)s."
+"profilul %(profile)s din %(file)s conține erori de sintaxă în linia: "
+"%(line)s."
 
 #: ../apparmor/aa.py:2734
 #, python-format
@@ -678,7 +691,7 @@ msgid ""
 "Syntax Error: Unexpected End of Profile reached in file: %(file)s line: "
 "%(line)s"
 msgstr ""
-"Eroare sintaxă: Sfârșitul neașteptat al profilului găsit în fișier: %(file)s "
+"Eroare de sintaxă: sfârșit neașteptat de profil găsit în fișierul: %(file)s "
 "linia: %(line)s"
 
 #: ../apparmor/aa.py:2749
@@ -687,16 +700,16 @@ msgid ""
 "Syntax Error: Unexpected capability entry found in file: %(file)s line: "
 "%(line)s"
 msgstr ""
-"Eroare sintaxă: Intrarea neașteptată a capabilității găsită în fișier: "
-"%(file)s linia: %(line)s"
+"Eroare de sintaxă: s-a găsit o intrare neașteptată de capacitate în "
+"fișierul: %(file)s linia: %(line)s"
 
 #: ../apparmor/aa.py:2770
 #, python-format
 msgid ""
 "Syntax Error: Unexpected link entry found in file: %(file)s line: %(line)s"
 msgstr ""
-"Eroare sintaxă: Intrarea neașteptată a legăturii găsită în fișier: %(file)s "
-"linia: %(line)s"
+"Eroare de sintaxă: s-a găsit o intrare de legătură neașteptată în fișierul: "
+"%(file)s linia: %(line)s"
 
 #: ../apparmor/aa.py:2798
 #, python-format
@@ -704,16 +717,16 @@ msgid ""
 "Syntax Error: Unexpected change profile entry found in file: %(file)s line: "
 "%(line)s"
 msgstr ""
-"Eroare sintaxă: intrarea neașteptată a modificării profilului găsită în "
-"fișier: %(file)s linia: %(line)s"
+"Eroare de sintaxă: s-a găsit o intrare neașteptată de modificare a "
+"profilului în fișierul: %(file)s linia: %(line)s"
 
 #: ../apparmor/aa.py:2820
 #, python-format
 msgid ""
 "Syntax Error: Unexpected rlimit entry found in file: %(file)s line: %(line)s"
 msgstr ""
-"Eroare sintaxă: intrare neașteptată rlimit găsită în fișier: %(file)s linia: "
-"%(line)s"
+"Eroare de sintaxă: s-a găsit o intrare neașteptată rlimit în fișierul: "
+"%(file)s linia: %(line)s"
 
 #: ../apparmor/aa.py:2831
 #, python-format
@@ -721,8 +734,8 @@ msgid ""
 "Syntax Error: Unexpected boolean definition found in file: %(file)s line: "
 "%(line)s"
 msgstr ""
-"Eroare sintaxă: Definiție neașteptată booleană găsită în fișier: %(file)s "
-"linia: %(line)s"
+"Eroare de sintaxă: definiție booleană neașteptată găsită în fișierul: "
+"%(file)s linia: %(line)s"
 
 #: ../apparmor/aa.py:2871
 #, python-format
@@ -730,7 +743,7 @@ msgid ""
 "Syntax Error: Unexpected bare file rule found in file: %(file)s line: "
 "%(line)s"
 msgstr ""
-"Eroare sintaxă: Regula de fișier gol neașteptată găsită în fișier: %(file)s "
+"Eroare de sintaxă: regulă neașteptată de fișier găsită în fișierul: %(file)s "
 "linia: %(line)s"
 
 #: ../apparmor/aa.py:2894
@@ -738,59 +751,60 @@ msgstr ""
 msgid ""
 "Syntax Error: Unexpected path entry found in file: %(file)s line: %(line)s"
 msgstr ""
-"Eroare sintaxă : Intrare neașteptată a căii găsită în fișier: %(file)s "
-"linia: %(line)s"
+"Eroare de sintaxă: s-a găsit o intrare de rută neașteptată în fișierul: "
+"%(file)s linia: %(line)s"
 
 #: ../apparmor/aa.py:2922
 #, python-format
 msgid "Syntax Error: Invalid Regex %(path)s in file: %(file)s line: %(line)s"
 msgstr ""
-"Eroare sintaxă: Regex nevalid %(path)s în fișier: %(file)s linia: %(line)s"
+"Eroare de sintaxă: expresie regulată nevalidă %(path)s în fișierul: %(file)s "
+"linia: %(line)s"
 
 #: ../apparmor/aa.py:2925
 #, python-format
 msgid "Invalid mode %(mode)s in file: %(file)s line: %(line)s"
-msgstr "Mod nevalid %(mode)s în fișier: %(file)s linia: %(line)s"
+msgstr "Mod nevalid %(mode)s în fișierul: %(file)s linia: %(line)s"
 
 #: ../apparmor/aa.py:2977
 #, python-format
 msgid ""
 "Syntax Error: Unexpected network entry found in file: %(file)s line: %(line)s"
 msgstr ""
-"Eroare sintaxă: Intrarea neașteptată a rețelei găsită în fișier: %(file)s "
-"linia: %(line)s"
+"Eroare de sintaxă: s-a găsit o intrare de rețea neașteptată în fișierul: "
+"%(file)s linia: %(line)s"
 
 #: ../apparmor/aa.py:3007
 #, python-format
 msgid ""
 "Syntax Error: Unexpected dbus entry found in file: %(file)s line: %(line)s"
 msgstr ""
-"Eroare sintaxă: Intrare neașteptată dbus găsită în fișier: %(file)s linia: "
-"%(line)s"
+"Eroare de sintaxă: s-a găsit o intrare dbus neașteptată în fișierul: "
+"%(file)s linia: %(line)s"
 
 #: ../apparmor/aa.py:3030
 #, python-format
 msgid ""
 "Syntax Error: Unexpected mount entry found in file: %(file)s line: %(line)s"
 msgstr ""
-"Eroare sintaxă: Intrare neașteptată de montaj găsită în fișier: %(file)s "
-"linia: %(line)s"
+"Eroare de sintaxă: s-a găsit o intrare de montare neașteptată în fișierul: "
+"%(file)s linia: %(line)s"
 
 #: ../apparmor/aa.py:3052
 #, python-format
 msgid ""
 "Syntax Error: Unexpected signal entry found in file: %(file)s line: %(line)s"
 msgstr ""
-"Eroare sintaxă: Intrarea neașteptată a semnalului găsită în fișier: %(file)s "
-"linia: %(line)s"
+"Eroare de sintaxă: s-a găsit o intrare de semnal neașteptată în fișierul: "
+"%(file)s linia: %(line)s"
 
 #: ../apparmor/aa.py:3074
 #, python-format
 msgid ""
 "Syntax Error: Unexpected ptrace entry found in file: %(file)s line: %(line)s"
 msgstr ""
-"Eroare sintaxă: Intrare neașteptată ptrace găsită în fișier: %(file)s linia: "
-"%(line)s"
+"Eroare de sintaxă: intrare neașteptată ptrace găsită în fișierul: %(file)s "
+"linia: %(line)s"
 
 #: ../apparmor/aa.py:3096
 #, python-format
@@ -798,16 +812,16 @@ msgid ""
 "Syntax Error: Unexpected pivot_root entry found in file: %(file)s line: "
 "%(line)s"
 msgstr ""
-"Eroare sintaxă: Intrare neașteptată pivot_root găsită în fișier: %(file)s "
-"linia: %(line)s"
+"Eroare de sintaxă: s-a găsit o intrare pivot_root neașteptată în fișierul: "
+"%(file)s linia: %(line)s"
 
 #: ../apparmor/aa.py:3118
 #, python-format
 msgid ""
 "Syntax Error: Unexpected unix entry found in file: %(file)s line: %(line)s"
 msgstr ""
-"Eroare sintaxă: Intrare neașteptată unix găsită în fișier: %(file)s linia: "
-"%(line)s"
+"Eroare de sintaxă: s-a găsit o intrare unix neașteptată în fișierul: "
+"%(file)s linia: %(line)s"
 
 #: ../apparmor/aa.py:3140
 #, python-format
@@ -815,8 +829,8 @@ msgid ""
 "Syntax Error: Unexpected change hat declaration found in file: %(file)s "
 "line: %(line)s"
 msgstr ""
-"Eroare de sintaxă: Declarație neașteptată de schimbare pălărie găsită în "
-"fișier: %(file)s linia: %(line)s"
+"Eroare de sintaxă: declarație de modificare a „hat” neașteptată găsită în "
+"fișierul: %(file)s linia: %(line)s"
 
 #: ../apparmor/aa.py:3152
 #, python-format
@@ -824,25 +838,25 @@ msgid ""
 "Syntax Error: Unexpected hat definition found in file: %(file)s line: "
 "%(line)s"
 msgstr ""
-"Eroare de sintaxă: Definiția neașteptată a pălăriei găsită în fișier: "
-"%(file)s linia: %(line)s"
+"Eroare de sintaxă: definiție „hat” neașteptată găsită în fișierul: %(file)s "
+"linia: %(line)s"
 
 #: ../apparmor/aa.py:3168
 #, python-format
 msgid "Error: Multiple definitions for hat %(hat)s in profile %(profile)s."
 msgstr ""
-"Eroare: Definiții multiple pentru pălărie %(hat)s în profil %(profile)s."
+"Eroare: Definiții multiple pentru „hat” %(hat)s în profilul %(profile)s."
 
 #: ../apparmor/aa.py:3185
 #, python-format
 msgid "Warning: invalid \"REPOSITORY:\" line in %s, ignoring."
-msgstr "Avertisment: linie nevalidă în \"REPOSITORY:\"  ignorând, %s."
+msgstr "Avertisment: linie nevalidă „REPOSITORY:” în %s, se ignoră."
 
 #: ../apparmor/aa.py:3198
 #, python-format
 msgid "Syntax Error: Unknown line found in file: %(file)s line: %(line)s"
 msgstr ""
-"Eroare de sintaxă: Linie necunoscută găsită în fișier: %(file)s lina: "
+"Eroare de sintaxă: linie necunoscută găsită în fișierul: %(file)s lina: "
 "%(line)s"
 
 #: ../apparmor/aa.py:3211
@@ -851,20 +865,21 @@ msgid ""
 "Syntax Error: Missing '}' or ','. Reached end of file %(file)s while inside "
 "profile %(profile)s"
 msgstr ""
-"Eroare de sintaxă: Lipsește '}' sau ','. Capătul fișierului a fost atins "
+"Eroare de sintaxă: Lipsește „}” sau „,”. Sfârșittul fișierului a fost atins "
 "%(file)s în interiorul profilului %(profile)s"
 
 #: ../apparmor/aa.py:3277
 #, python-format
 msgid "Redefining existing variable %(variable)s: %(value)s in %(file)s"
-msgstr "Redefinirea variabilei existente %(variable)s: %(value)s in %(file)s"
+msgstr ""
+"Se redefinește variabila existentă %(variable)s: %(value)s în %(file)s"
 
 #: ../apparmor/aa.py:3282
 #, python-format
 msgid ""
 "Values added to a non-existing variable %(variable)s: %(value)s in %(file)s"
 msgstr ""
-"Valori adăugate unei variabile inexistente %(variable)s: %(value)s in "
+"Valori adăugate la o variabilă inexistentă %(variable)s: %(value)s în "
 "%(file)s"
 
 #: ../apparmor/aa.py:3284
@@ -873,27 +888,27 @@ msgid ""
 "Unknown variable operation %(operation)s for variable %(variable)s in "
 "%(file)s"
 msgstr ""
-"Operație variabilă necunoscută %(operation)s pentru variabilă %(variable)s "
-"în %(file)s"
+"Operație de variabilă necunoscută %(operation)s pentru variabila "
+"%(variable)s în %(file)s"
 
 #: ../apparmor/aa.py:3343
 #, python-format
 msgid "Invalid allow string: %(allow)s"
-msgstr "Șir de permis nevalid: %(allow)s"
+msgstr "Șir de permisiune nevalid: %(allow)s"
 
 #: ../apparmor/aa.py:3778
 msgid "Can't find existing profile to modify"
-msgstr "Nu pote fi găsit profilul existent pentru modificare"
+msgstr "Nu se poate găsi profilul existent pentru a-l modifica"
 
 #: ../apparmor/aa.py:4347
 #, python-format
 msgid "Writing updated profile for %s."
-msgstr "Scrierea unui profil actualizat pentru %s."
+msgstr "Se scrie profilul actualizat pentru %s."
 
 #: ../apparmor/aa.py:4481
 #, python-format
 msgid "File Not Found: %s"
-msgstr "Fișierul nu a fost găsit: %s"
+msgstr "Fișierul NU a fost găsit: %s"
 
 #: ../apparmor/aa.py:4591
 #, python-format
@@ -905,15 +920,15 @@ msgid ""
 "the corresponding entry in the [qualifiers] section in "
 "/etc/apparmor/logprof.conf."
 msgstr ""
-"%s este în prezent marcat ca un program care nu ar trebui să aibă propriul "
-"său\n"
-"profil. De obicei, programele sunt marcate în acest fel, dacă se creează un "
-"profil pentru \n"
-"programe, este probabil să rupă restul sistemului. Dacă știți ce\n"
-"faceți și sunteți sigur că doriți să creați un profil pentru acest program, "
+"%s este marcat în prezent ca un program care nu ar trebui să aibă propriul\n"
+"profil. De obicei, programele sunt marcate astfel în cazul în care crearea "
+"unui\n"
+"profil pentru acestea riscă să afecteze restul sistemului. Dacă știți ce "
+"faceți\n"
+"și sunteți sigur că doriți să creați un profil pentru acest program, "
 "editați\n"
-"intrarea corespunzătoare în secțiunea din [qualifiers] "
-"/etc/apparmor/logprof.conf."
+"intrarea corespunzătoare în secțiunea [qualifiers] din "
+"„/etc/apparmor/logprof.conf”."
 
 #: ../apparmor/logparser.py:127 ../apparmor/logparser.py:132
 #, python-format
@@ -929,45 +944,45 @@ msgid ""
 "environment set up in order to find the fully-qualified path and\n"
 "use the full path as parameter."
 msgstr ""
-"Nu pot găsi %(program)s în lista căilor de sistem. Dacă numele aplicației\n"
-"este corect, vă rugăm să rulați 'which %(program)s' ca utilizator cu PATH "
-"corect\n"
-"și mediu creat, pentru a găsi calea complet calificată,\n"
-"utilizați calea completă ca parametru."
+"Nu se poate găsi %(program)s în lista de rute a sistemului. Dacă numele\n"
+"aplicației este corect, vă rugăm să rulați „which %(program)s” ca "
+"utilizator\n"
+"cu variabila de mediu $PATH configurată corect pentru a găsi ruta complet\n"
+"calificată și a utiliza ruta completă ca parametru."
 
 #: ../apparmor/tools.py:86 ../apparmor/tools.py:102 ../apparmor/tools.py:128
 #, python-format
 msgid "%s does not exist, please double-check the path."
-msgstr "%s nu există, vă rugăm să verificați de două ori calea."
+msgstr "%s nu există, vă rugăm să verificați de două ori ruta."
 
 #: ../apparmor/tools.py:100
 msgid ""
 "The given program cannot be found, please try with the fully qualified path "
 "name of the program: "
 msgstr ""
-"Programul dat nu poate fi găsit, vă rugăm să încercați cu numele calificat "
-"complet al programului: "
+"Programul specificat nu poate fi găsit, vă rugăm să încercați cu numele "
+"complet calificat al rutei programului: "
 
 #: ../apparmor/tools.py:113 ../apparmor/tools.py:137 ../apparmor/tools.py:157
 #: ../apparmor/tools.py:175 ../apparmor/tools.py:193
 #, python-format
 msgid "Profile for %s not found, skipping"
-msgstr "Profil pentru %s nu a fost găsit, săriți"
+msgstr "Profil pentru %s nu a fost găsit, se omite"
 
 #: ../apparmor/tools.py:140
 #, python-format
 msgid "Disabling %s."
-msgstr "Dezactivarea %s.Setarea"
+msgstr "Se dezactivează %s."
 
 #: ../apparmor/tools.py:198
 #, python-format
 msgid "Setting %s to audit mode."
-msgstr "Setarea %s la modul de audit."
+msgstr "Punerea %s în modul de audit."
 
 #: ../apparmor/tools.py:200
 #, python-format
 msgid "Removing audit mode from %s."
-msgstr "Eliminarea modului de audit din %s."
+msgstr "Se elimină modul de audit din %s."
 
 #: ../apparmor/tools.py:212
 #, python-format
@@ -975,13 +990,13 @@ msgid ""
 "Please pass an application to generate a profile for, not a profile itself - "
 "skipping %s."
 msgstr ""
-"Vă rugăm să treceți de aplicație pentru a genera un profil, nu un profil în "
-"sine - săriți peste %s."
+"Vă rugăm să treceți o aplicație pentru care să generați un profil, nu un "
+"profil în sine - se omite %s."
 
 #: ../apparmor/tools.py:220
 #, python-format
 msgid "Profile for %s already exists - skipping."
-msgstr "Profil pentru %s există deja - săriți peste."
+msgstr "Profil pentru %s există deja - se omite."
 
 #: ../apparmor/tools.py:232
 #, python-format
@@ -990,7 +1005,7 @@ msgid ""
 "Deleted %s rules."
 msgstr ""
 "\n"
-"Reguli șterse %s."
+"S-au șters %s reguli."
 
 #: ../apparmor/tools.py:240
 #, python-format
@@ -998,8 +1013,8 @@ msgid ""
 "The local profile for %(program)s in file %(file)s was changed. Would you "
 "like to save it?"
 msgstr ""
-"Profilul local pentru %(program)s fișier %(file)s a fost modificat. Ați dori "
-"să îl salvați?"
+"Profilul local pentru %(program)s din fișierul %(file)s a fost modificat. "
+"Doriți să îl salvați?"
 
 #: ../apparmor/tools.py:260
 #, python-format
@@ -1008,7 +1023,7 @@ msgstr "Profilul pentru %s nu există. Nimic de curățat."
 
 #: ../apparmor/ui.py:61
 msgid "Invalid hotkey for"
-msgstr "Cheie rapidă nevalidă pentru"
+msgstr "Tastă de comandă rapidă nevalidă pentru"
 
 #: ../apparmor/ui.py:77 ../apparmor/ui.py:121 ../apparmor/ui.py:275
 msgid "(Y)es"
@@ -1028,240 +1043,241 @@ msgstr "(P)ermite"
 
 #: ../apparmor/ui.py:224
 msgid "(M)ore"
-msgstr "(M)ult"
+msgstr "(M)ai mult"
 
 #: ../apparmor/ui.py:225
 msgid "Audi(t)"
-msgstr "(V)erificare"
+msgstr "Audi(t)"
 
 #: ../apparmor/ui.py:226
 msgid "Audi(t) off"
-msgstr "(V)erificare oprită"
+msgstr "Audi(t)are oprită"
 
 #: ../apparmor/ui.py:227
 msgid "Audit (A)ll"
-msgstr "Verifică (T)ot"
+msgstr "Auditează (t)ot"
 
 #: ../apparmor/ui.py:229
 msgid "(O)wner permissions on"
-msgstr "Permisii de pr(O)prietar la"
+msgstr "Permisiunile pr(o)prietarului activate"
 
 #: ../apparmor/ui.py:230
 msgid "(O)wner permissions off"
-msgstr ""
+msgstr "Permisiunile pr(o)prietarului dezactivate"
 
 #: ../apparmor/ui.py:231
 msgid "(D)eny"
-msgstr ""
+msgstr "Refu(z)are"
 
 #: ../apparmor/ui.py:232
 msgid "Abo(r)t"
-msgstr ""
+msgstr "Abandona(r)e"
 
 #: ../apparmor/ui.py:233
 msgid "(F)inish"
-msgstr ""
+msgstr "(F)inalizare"
 
 #: ../apparmor/ui.py:234
 msgid "(I)nherit"
-msgstr ""
+msgstr "Moșten(i)re"
 
 #: ../apparmor/ui.py:235
 msgid "(P)rofile"
-msgstr ""
+msgstr "(P)rofil"
 
 #: ../apparmor/ui.py:236
 msgid "(P)rofile Clean Exec"
-msgstr ""
+msgstr "Executarea curată a (p)rofilului"
 
 #: ../apparmor/ui.py:237
 msgid "(C)hild"
-msgstr ""
+msgstr "(C)opil"
 
 #: ../apparmor/ui.py:238
 msgid "(C)hild Clean Exec"
-msgstr ""
+msgstr "Executarea curată a (c)opilului"
 
 #: ../apparmor/ui.py:239
 msgid "(N)amed"
-msgstr ""
+msgstr "(N)umit"
 
 #: ../apparmor/ui.py:240
 msgid "(N)amed Clean Exec"
-msgstr ""
+msgstr "Executarea curată a programului (n)umit"
 
 #: ../apparmor/ui.py:241
 msgid "(U)nconfined"
-msgstr ""
+msgstr "Nec(o)nfinat"
 
 #: ../apparmor/ui.py:242
 msgid "(U)nconfined Clean Exec"
-msgstr ""
+msgstr "Executarea curată a programului nec(o)nfinat"
 
 #: ../apparmor/ui.py:243
 msgid "(P)rofile Inherit"
-msgstr ""
+msgstr "Moștenire (p)rofil"
 
 #: ../apparmor/ui.py:244
 msgid "(P)rofile Inherit Clean Exec"
-msgstr ""
+msgstr "Executarea curată a (p)rofilului moștenit"
 
 #: ../apparmor/ui.py:245
 msgid "(C)hild Inherit"
-msgstr ""
+msgstr "Moștenire (c)opil"
 
 #: ../apparmor/ui.py:246
 msgid "(C)hild Inherit Clean Exec"
-msgstr ""
+msgstr "Executarea curată a (c)opilului moștenit"
 
 #: ../apparmor/ui.py:247
 msgid "(N)amed Inherit"
-msgstr ""
+msgstr "Moștenire (n)umit"
 
 #: ../apparmor/ui.py:248
 msgid "(N)amed Inherit Clean Exec"
-msgstr ""
+msgstr "Executarea curată a programului (n)umit moștenit"
 
 #: ../apparmor/ui.py:249
 msgid "(X) ix On"
-msgstr ""
+msgstr "(X) ix activat"
 
 #: ../apparmor/ui.py:250
 msgid "(X) ix Off"
-msgstr ""
+msgstr "(X) ix dezactivat"
 
 #: ../apparmor/ui.py:251 ../apparmor/ui.py:265
 msgid "(S)ave Changes"
-msgstr ""
+msgstr "(S)alvează modificările"
 
 #: ../apparmor/ui.py:252
 msgid "(C)ontinue Profiling"
-msgstr ""
+msgstr "(C)ontinuă crearea profilului"
 
 #: ../apparmor/ui.py:253
 msgid "(N)ew"
-msgstr ""
+msgstr "(N)ou"
 
 #: ../apparmor/ui.py:254
 msgid "(G)lob"
-msgstr ""
+msgstr "(G)lobal"
 
 #: ../apparmor/ui.py:255
 msgid "Glob with (E)xtension"
-msgstr ""
+msgstr "Global cu (e)xtensie"
 
 #: ../apparmor/ui.py:256
 msgid "(A)dd Requested Hat"
-msgstr ""
+msgstr "(A)daugă cererea „hat”"
 
 #: ../apparmor/ui.py:257
 msgid "(U)se Default Hat"
-msgstr ""
+msgstr "(U)tilizează „hat” implicit"
 
 #: ../apparmor/ui.py:258
 msgid "(S)can system log for AppArmor events"
-msgstr ""
+msgstr "(S)canează jurnalul sistemului pentru evenimentele AppArmor"
 
 #: ../apparmor/ui.py:259
 msgid "(H)elp"
-msgstr ""
+msgstr "(A)jutor"
 
 #: ../apparmor/ui.py:260
 msgid "(V)iew Profile"
-msgstr ""
+msgstr "(V)izualizare profil"
 
 #: ../apparmor/ui.py:261
 msgid "(U)se Profile"
-msgstr ""
+msgstr "(U)tilizează profilul"
 
 #: ../apparmor/ui.py:262
 msgid "(C)reate New Profile"
-msgstr ""
+msgstr "(C)reează un nou profil"
 
 #: ../apparmor/ui.py:263
 msgid "(U)pdate Profile"
-msgstr ""
+msgstr "Act(u)alizează profilul"
 
 #: ../apparmor/ui.py:264
 msgid "(I)gnore Update"
-msgstr ""
+msgstr "(I)gnoră actualizarea"
 
 #: ../apparmor/ui.py:266
 msgid "Save Selec(t)ed Profile"
-msgstr ""
+msgstr "Salvează profilul selec(t)at"
 
 #: ../apparmor/ui.py:267
 msgid "(U)pload Changes"
-msgstr ""
+msgstr "Î(n)cărcare modificări"
 
 #: ../apparmor/ui.py:268
 msgid "(V)iew Changes"
-msgstr ""
+msgstr "(V)izualizare modificări"
 
 #: ../apparmor/ui.py:269
 msgid "View Changes b/w (C)lean profiles"
-msgstr ""
+msgstr "Vizualizare modificări între profilurile (c)urățate"
 
 #: ../apparmor/ui.py:270
 msgid "(V)iew"
-msgstr ""
+msgstr "(V)izualizare"
 
 #: ../apparmor/ui.py:271
 msgid "(E)nable Repository"
-msgstr ""
+msgstr "Activ(e)ază depozitul"
 
 #: ../apparmor/ui.py:272
 msgid "(D)isable Repository"
-msgstr ""
+msgstr "(D)ezactivează depozitul"
 
 #: ../apparmor/ui.py:273
 msgid "(N)ever Ask Again"
-msgstr ""
+msgstr "(N)umai întreba din nou"
 
 #: ../apparmor/ui.py:274
 msgid "Ask Me (L)ater"
-msgstr ""
+msgstr "Întrea(b)ă mai târziu"
 
 #: ../apparmor/ui.py:277
 msgid "Allow All (N)etwork"
-msgstr ""
+msgstr "Permite toate rețe(l)ele"
 
 #: ../apparmor/ui.py:278
 msgid "Allow Network Fa(m)ily"
-msgstr ""
+msgstr "Permite fa(m)ilia de rețea"
 
 #: ../apparmor/ui.py:279
 msgid "(O)verwrite Profile"
-msgstr ""
+msgstr "S(u)prascrie profilul"
 
 #: ../apparmor/ui.py:280
 msgid "(K)eep Profile"
-msgstr ""
+msgstr "Păstrea(z)ă profilul"
 
 #: ../apparmor/ui.py:281
 msgid "(C)ontinue"
-msgstr ""
+msgstr "(C)ontinuă"
 
 #: ../apparmor/ui.py:282
 msgid "(I)gnore"
-msgstr ""
+msgstr "(I)gnoră"
 
 #: ../apparmor/ui.py:344
 #, python-format
 msgid "PromptUser: Unknown command %s"
-msgstr "Utilizator prompt: Comandă necunoscută %s"
+msgstr "PromptUser: comandă necunoscută %s"
 
 #: ../apparmor/ui.py:351
 #, python-format
 msgid "PromptUser: Duplicate hotkey for %(command)s: %(menutext)s "
 msgstr ""
-"Utilizator prompt: cheie rapidă duplicată pentru %(command)s: %(menutext)s "
+"PromptUser: tastă de comandă rapidă duplicată pentru %(command)s: "
+"%(menutext)s "
 
 #: ../apparmor/ui.py:363
 msgid "PromptUser: Invalid hotkey in default item"
-msgstr "Utilizator prompt: Cheie rapidă nevalidă în elementul implicit"
+msgstr "PromptUser: tastă de comandă rapidă nevalidă în elementul implicit"
 
 #: ../apparmor/ui.py:368
 #, python-format
 msgid "PromptUser: Invalid default %s"
-msgstr "Utilizator prompt: implicit nevalid %s"
+msgstr "PromptUser: valoare implicită nevalidă %s"

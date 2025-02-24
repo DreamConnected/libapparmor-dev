@@ -6,38 +6,38 @@ msgstr ""
 "Project-Id-Version: apparmor-parser\n"
 "Report-Msgid-Bugs-To: <apparmor@lists.ubuntu.com>\n"
 "POT-Creation-Date: 2014-09-13 00:11-0700\n"
-"PO-Revision-Date: 2013-11-26 03:48+0000\n"
-"Last-Translator: Monkey <monkey.libre@gmail.com>\n"
+"PO-Revision-Date: 2024-10-09 22:03+0000\n"
+"Last-Translator: Rodrigo Lledó <rodhos92@gmail.com>\n"
 "Language-Team: Novell Language <language@novell.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2019-04-18 05:32+0000\n"
-"X-Generator: Launchpad (build 18928)\n"
+"X-Launchpad-Export-Date: 2024-10-10 07:50+0000\n"
+"X-Generator: Launchpad (build 6341c735b243a0768c3cb66edf85737937cab327)\n"
 "Language: es\n"
 
 #: ../parser_include.c:113 ../parser_include.c:111
 msgid "Error: Out of memory.\n"
-msgstr "Error: memoria insuficiente.\n"
+msgstr "Error: Memoria insuficiente.\n"
 
 #: ../parser_include.c:123 ../parser_include.c:121
 #, c-format
 msgid "Error: basedir %s is not a directory, skipping.\n"
-msgstr "Error: el directorio base %s no es un directorio. Se va a omitir.\n"
+msgstr "Error: el directorio base %s no es un directorio. Será omitido.\n"
 
 #: ../parser_include.c:137
 #, c-format
 msgid "Error: Could not add directory %s to search path.\n"
 msgstr ""
-"Error: no se ha podido añadir el directorio %s a la vía de búsqueda.\n"
+"Error: No se ha podido añadir el directorio %s a la ruta de búsqueda.\n"
 
 #: ../parser_include.c:147 ../parser_include.c:151
 msgid "Error: Could not allocate memory.\n"
-msgstr "Error: no es posible asignar memoria.\n"
+msgstr "Error: la memoria no pudo ser asignada.\n"
 
 #: ../parser_interface.c:69 ../parser_interface.c:72 ../parser_interface.c:49
 msgid "Bad write position\n"
-msgstr "Posición de escritura incorrecta\n"
+msgstr "Escrito en el lugar equivocado.\n"
 
 #: ../parser_interface.c:72 ../parser_interface.c:75 ../parser_interface.c:52
 msgid "Permission denied\n"
@@ -45,15 +45,15 @@ msgstr "Permiso denegado\n"
 
 #: ../parser_interface.c:75 ../parser_interface.c:78 ../parser_interface.c:55
 msgid "Out of memory\n"
-msgstr "Memoria agotada\n"
+msgstr "Sin memoria.\n"
 
 #: ../parser_interface.c:78 ../parser_interface.c:81 ../parser_interface.c:58
 msgid "Couldn't copy profile: Bad memory address\n"
-msgstr "No se puede copiar el perfil. Dirección de memoria incorrecta\n"
+msgstr "No se pudo copiar el perfil. Dirección de memoria incorrecta.\n"
 
 #: ../parser_interface.c:81 ../parser_interface.c:84 ../parser_interface.c:61
 msgid "Profile doesn't conform to protocol\n"
-msgstr "El perfil no se ajusta al protocolo\n"
+msgstr "El perfil no cumple el protocolo.\n"
 
 #: ../parser_interface.c:84 ../parser_interface.c:87 ../parser_interface.c:64
 msgid "Profile does not match signature\n"
@@ -61,7 +61,7 @@ msgstr "El perfil no coincide con la firma\n"
 
 #: ../parser_interface.c:87 ../parser_interface.c:90 ../parser_interface.c:67
 msgid "Profile version not supported by Apparmor module\n"
-msgstr "La versión del perfil no se admite en el módulo de Apparmor.\n"
+msgstr "Versión del perfil no compatible con el módulo Apparmor.\n"
 
 #: ../parser_interface.c:90 ../parser_interface.c:93 ../parser_interface.c:70
 msgid "Profile already exists\n"
@@ -73,8 +73,7 @@ msgstr "El perfil no existe\n"
 
 #: ../parser_interface.c:96 ../parser_interface.c:99 ../parser_interface.c:76
 msgid "Permission denied; attempted to load a profile while confined?\n"
-msgstr ""
-"Permiso denegado. ¿Intentando cargar un perfil mientras estaba confinado?\n"
+msgstr "Permiso denegado. ¿Intentó cargar un perfil restringido?\n"
 
 #: ../parser_interface.c:99 ../parser_interface.c:102 ../parser_interface.c:79
 #, c-format
@@ -140,8 +139,7 @@ msgstr "Eliminación correcta de \"%s\".\n"
 #, c-format
 msgid "PANIC bad increment buffer %p pos %p ext %p size %d res %p\n"
 msgstr ""
-"PANIC: incremento de buffer incorrecto; pos %p; ext %p; tamaño %p; res %d "
-"%p\n"
+"PÁNICO: error en el aumento del búfer %p pos %p ext %p size %d res %p\n"
 
 #: ../parser_interface.c:656 ../parser_interface.c:658
 #: ../parser_interface.c:446
@@ -186,18 +184,18 @@ msgstr "no es posible poner en serie el perfil %s\n"
 #: ../parser_interface.c:582
 #, c-format
 msgid "%s: Unable to write entire profile entry\n"
-msgstr "%s: no es posible escribir todo el perfil\n"
+msgstr "%s: no es posible escribir el acceso al perfil completo\n"
 
 #: ../parser_interface.c:839 ../parser_interface.c:831
 #: ../parser_interface.c:593
 #, c-format
 msgid "%s: Unable to write entire profile entry to cache\n"
-msgstr "%s: Imposible escribir la entrada de perfil completa a la caché\n"
+msgstr "%s: no es posible escribir el acceso al perfil completo al caché\n"
 
 #: parser_lex.l:100 parser_lex.l:163 parser_lex.l:169
 #, c-format
 msgid "Could not open '%s'"
-msgstr "No se pudo abrir '%s'"
+msgstr "No se pudo abrir «%s»"
 
 #: parser_lex.l:104 parser_lex.l:167 parser_lex.l:173
 #, c-format
@@ -212,7 +210,7 @@ msgstr "opendir falló «%s»"
 #: parser_lex.l:152
 #, c-format
 msgid "stat failed for '%s'"
-msgstr ""
+msgstr "stat falló para «%s»"
 
 #: parser_lex.l:155 parser_lex.l:133 parser_lex.l:139
 #, c-format
@@ -223,11 +221,11 @@ msgstr "No se pudo abrir «%s» en «%s»"
 #: parser_lex.l:469 parser_lex.l:655 parser_lex.l:586 parser_lex.l:638
 #, c-format
 msgid "Found unexpected character: '%s'"
-msgstr "Se ha detectado un carácter inesperado: '%s'"
+msgstr "Se ha detectado un carácter inesperado: «%s»"
 
 #: parser_lex.l:386 parser_lex.l:418 parser_lex.l:428
 msgid "Variable declarations do not accept trailing commas"
-msgstr ""
+msgstr "Las declaraciones de variables no aceptan comas al final"
 
 #: parser_lex.l:420
 #, c-format
@@ -237,7 +235,7 @@ msgstr "(network_mode) Se ha encontrado un carácter inesperado: %s"
 #: ../parser_main.c:333 ../parser_common.c:61 ../parser_common.c:106
 #, c-format
 msgid "Warning from %s (%s%sline %d): %s"
-msgstr ""
+msgstr "Aviso desde %s (%s%slínea %d): %s"
 
 #: ../parser_main.c:531
 #, c-format
@@ -308,12 +306,12 @@ msgstr "Error de asignación de memoria."
 #: ../parser_main.c:740 ../parser_main.c:872 ../parser_main.c:757
 #, c-format
 msgid "Cached load succeeded for \"%s\".\n"
-msgstr ""
+msgstr "Se ha cargado caché con éxito para «%s».\n"
 
 #: ../parser_main.c:744 ../parser_main.c:876 ../parser_main.c:761
 #, c-format
 msgid "Cached reload succeeded for \"%s\".\n"
-msgstr ""
+msgstr "Se ha recargado caché con éxito para «%s».\n"
 
 #: ../parser_main.c:910 ../parser_main.c:1058 ../parser_main.c:967
 #, c-format
@@ -391,15 +389,18 @@ msgstr "No es posible fusionar las entradas. Memoria agotada\n"
 #, c-format
 msgid "profile %s: has merged rule %s with conflicting x modifiers\n"
 msgstr ""
+"el perfil %s: ha fusionado la regla %s con modificadores x en conflicto\n"
 
 #: parser_yacc.y:236 parser_yacc.y:277 parser_yacc.y:320
 msgid "Profile attachment must begin with a '/'."
-msgstr ""
+msgstr "El adjunto al perfil debe empezar con un «/»."
 
 #: parser_yacc.y:260 parser_yacc.y:302 parser_yacc.y:348
 msgid ""
 "Profile names must begin with a '/', namespace or keyword 'profile' or 'hat'."
 msgstr ""
+"Los nombres del perfil deben empezar con un «/», espacio de nombre o palabra "
+"clave «profile» o «hat»."
 
 #: parser_yacc.y:296 parser_yacc.y:338 parser_yacc.y:384
 #, c-format
@@ -409,19 +410,24 @@ msgstr "Error al crear el alias %s -> %s\n"
 #: parser_yacc.y:417 parser_yacc.y:460 parser_yacc.y:506
 msgid "Profile flag chroot_relative conflicts with namespace_relative"
 msgstr ""
+"La marca del perfi chroot_relative está en conflicto con namespace_relative"
 
 #: parser_yacc.y:421 parser_yacc.y:464 parser_yacc.y:510
 msgid "Profile flag mediate_deleted conflicts with delegate_deleted"
 msgstr ""
+"La marca del perfil mediate_deleted está en conflicto con delegate_deleted"
 
 #: parser_yacc.y:424 parser_yacc.y:467 parser_yacc.y:513
 msgid ""
 "Profile flag attach_disconnected conflicts with no_attach_disconnected"
 msgstr ""
+"La marca del perfil attach_disconnected está en conflicto con "
+"no_attach_disconnected"
 
 #: parser_yacc.y:427 parser_yacc.y:470 parser_yacc.y:516
 msgid "Profile flag chroot_attach conflicts with chroot_no_attach"
 msgstr ""
+"La marca del perfil chroot_attach está en conflicto con chroot_no_attach"
 
 #: parser_yacc.y:441 parser_yacc.y:484 parser_yacc.y:530
 msgid "Profile flag 'debug' is no longer valid."
@@ -516,12 +522,12 @@ msgstr "Característica no válida %s."
 #: parser_yacc.y:1066 parser_yacc.y:1269 parser_yacc.y:1525
 #, c-format
 msgid "AppArmor parser error for %s%s%s at line %d: %s\n"
-msgstr ""
+msgstr "Error del analizador AppArmor para %s%s%s en la línea %d: %s\n"
 
 #: parser_yacc.y:1072 parser_yacc.y:1275 parser_yacc.y:1531
 #, c-format
 msgid "AppArmor parser error,%s%s line %d: %s\n"
-msgstr ""
+msgstr "Error de análisis AppArmor,%s%s línea %d: %s\n"
 
 #: ../parser_regex.c:244
 #, c-format
@@ -565,7 +571,7 @@ msgstr "%s: no es posible analizar la línea de entrada '%s'\n"
 #: ../parser_regex.c:397 ../parser_regex.c:405 ../parser_regex.c:421
 #, c-format
 msgid "%s: Invalid profile name '%s' - bad regular expression\n"
-msgstr ""
+msgstr "%s: nombre de perfil no válido «%s» - expresión regular incorrecta\n"
 
 #: ../parser_policy.c:202 ../parser_policy.c:402 ../parser_policy.c:375
 #, c-format
@@ -631,161 +637,166 @@ msgstr ""
 #: parser_lex.l:180 parser_lex.l:186
 #, c-format
 msgid "Could not process include directory '%s' in '%s'"
-msgstr ""
+msgstr "No se pudo procesar la inclusión del directorio «%s» en «%s»"
 
 #: ../parser_main.c:660 ../parser_main.c:523
 msgid "Feature buffer full."
-msgstr ""
+msgstr "Buffer de características lleno."
 
 #: ../parser_main.c:1115 ../parser_main.c:1132 ../parser_main.c:1024
 #: ../parser_main.c:1041
 msgid "Out of memory"
-msgstr ""
+msgstr "Memoria agotada"
 
 #: ../parser_main.c:1182 ../parser_main.c:1091
 #, c-format
 msgid "Can't create cache directory: %s\n"
-msgstr ""
+msgstr "No se puede crear el directorio de antememoria: %s\n"
 
 #: ../parser_main.c:1185 ../parser_main.c:1094
 #, c-format
 msgid "File in cache directory location: %s\n"
-msgstr ""
+msgstr "Archivo en ubicación de directorio de caché: %s\n"
 
 #: ../parser_main.c:1188 ../parser_main.c:1097
 #, c-format
 msgid "Can't update cache directory: %s\n"
-msgstr ""
+msgstr "No se puede actualizar el directorio de caché: %s\n"
 
 #: ../parser_misc.c:833
 #, c-format
 msgid "Internal: unexpected DBus mode character '%c' in input"
-msgstr ""
+msgstr "Interno: carácter de modo DBUS «%c» inesperado en entrada"
 
 #: ../parser_misc.c:857
 #, c-format
 msgid "Internal error generated invalid DBus perm 0x%x\n"
-msgstr ""
+msgstr "Error interno generado perm DBus no válido 0x%x\n"
 
 #: parser_yacc.y:575 parser_yacc.y:621
 msgid "deny prefix not allowed"
-msgstr ""
+msgstr "prefijo de denegación no permitido"
 
 #: parser_yacc.y:612 parser_yacc.y:658
 msgid "owner prefix not allowed"
-msgstr ""
+msgstr "prefijo de propietario no permitido"
 
 #: parser_yacc.y:660
 msgid "owner prefix not allow on mount rules"
-msgstr ""
+msgstr "prefijo de propietario no permitido en reglas de montaje"
 
 #: parser_yacc.y:677
 msgid "owner prefix not allow on dbus rules"
-msgstr ""
+msgstr "prefijo de propietario no permitido en reglas dbus"
 
 #: parser_yacc.y:704
 msgid "owner prefix not allow on capability rules"
-msgstr ""
+msgstr "prefijo de priopietario no permitido en reglas de capacidades"
 
 #: parser_yacc.y:1357 parser_yacc.y:1613
 #, c-format
 msgid "invalid mount conditional %s%s"
-msgstr ""
+msgstr "condicional de montaje %s%s no válido"
 
 #: parser_yacc.y:1374 parser_yacc.y:1628
 msgid "bad mount rule"
-msgstr ""
+msgstr "regla de montaje errónea"
 
 #: parser_yacc.y:1381 parser_yacc.y:1635
 msgid "mount point conditions not currently supported"
-msgstr ""
+msgstr "condiciones de punto de montaje actualmente no soportadas"
 
 #: parser_yacc.y:1398 parser_yacc.y:1650
 #, c-format
 msgid "invalid pivotroot conditional '%s'"
-msgstr ""
+msgstr "condicional pivotroot no válido «%s»"
 
 #: ../parser_regex.c:241 ../parser_regex.c:236
 #, c-format
 msgid ""
 "%s: Regex grouping error: Invalid close ], no matching open [ detected\n"
 msgstr ""
+"%s: Error de agrupamiento regex: Cierre no válido ], no se detectó pareja de "
+"apertura [\n"
 
 #: ../parser_regex.c:257 ../parser_regex.c:256
 #, c-format
 msgid "%s: Regex grouping error: Exceeded maximum nesting of {}\n"
 msgstr ""
+"%s: Error de agrupamiento regex: Se excedió el máximo de anidado de {}\n"
 
 #: ../parser_policy.c:366 ../parser_policy.c:339
 #, c-format
 msgid "ERROR processing policydb rules for profile %s, failed to load\n"
 msgstr ""
+"ERROR al procesar reglas policydb para el perfil %s, falló al cargar\n"
 
 #: ../parser_policy.c:396 ../parser_policy.c:369
 #, c-format
 msgid "ERROR replacing aliases for profile %s, failed to load\n"
-msgstr ""
+msgstr "ERROR al reemplazar aliases para el perfil %s, falló al cargar\n"
 
 #: ../parser_interface.c:635 ../parser_interface.c:638
 #, c-format
 msgid "%s: Unable to write %s\n"
-msgstr ""
+msgstr "%s: no se pudo escribir %s\n"
 
 #: ../parser_main.c:721
 #, c-format
 msgid "Error: Could not read binary profile or cache file %s: %s.\n"
 msgstr ""
+"Error: no se pudo leer archivo de perfil binario o archivo de caché %s: %s.\n"
 
 #: ../parser_main.c:811
 #, c-format
 msgid "Error: Could not read cache file '%s', skipping...\n"
-msgstr ""
+msgstr "Error: no se pudo leer archivo de caché «%s», omitiendo...\n"
 
 #: ../parser_misc.c:575
 #, c-format
 msgid "Internal: unexpected %s mode character '%c' in input"
-msgstr ""
+msgstr "Interno: modo inesperado %s carácter «%c» en la entrada"
 
 #: ../parser_misc.c:599
 #, c-format
 msgid "Internal error generated invalid %s perm 0x%x\n"
-msgstr ""
+msgstr "Un error interno ha generado un %s perm no válido 0x%x\n"
 
 #: parser_yacc.y:703
 msgid "owner prefix not allowed on mount rules"
-msgstr ""
+msgstr "prefijo de propietario no permitido en reglas de montaje"
 
 #: parser_yacc.y:720
 msgid "owner prefix not allowed on dbus rules"
-msgstr ""
+msgstr "prefijo de propietario no permitido en reglas de dbus"
 
 #: parser_yacc.y:736
 msgid "owner prefix not allowed on signal rules"
-msgstr ""
+msgstr "prefijo de propietario no permitido en reglas de señal"
 
 #: parser_yacc.y:752
 msgid "owner prefix not allowed on ptrace rules"
-msgstr ""
+msgstr "prefijo de propietario no permitido en reglas de ptrace"
 
 #: parser_yacc.y:768
 msgid "owner prefix not allowed on unix rules"
-msgstr ""
+msgstr "prefijo de propietario no permitido en las reglas de Unix"
 
 #: parser_yacc.y:794
 msgid "owner prefix not allowed on capability rules"
-msgstr ""
+msgstr "prefijo de propietario no permitido en las reglas de capacidad"
 
 #: parser_yacc.y:1293
 #, c-format
 msgid "dbus rule: invalid conditional group %s=()"
-msgstr ""
+msgstr "regla dbus: grupo condicional no válido %s=()"
 
 #: parser_yacc.y:1371
 #, c-format
 msgid "unix rule: invalid conditional group %s=()"
-msgstr ""
+msgstr "regla unix: grupo condicional no válido %s=()"
 
 #: ../parser_regex.c:368
 #, c-format
 msgid "%s: Regex error: trailing '\\' escape character\n"
-msgstr ""
+msgstr "%s: Error regex: arrastrando carácter de escape «\\»\n"

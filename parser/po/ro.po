@@ -1,155 +1,174 @@
-# translation of apparmor-parser.ro.po to
-# Romanian message file for YaST2 (@memory@).
-# Copyright (C) 2005 SUSE Linux Products GmbH.
-# Copyright (C) 2003 SuSE Linux AG.
+# Romanian translation for apparmor, "apparmor-parser" component.
+# Mesajele în limba română pentru pachetul „apparmor”, componenta „apparmor-parser”.
+# Copyright © 2003 SuSE Linux AG.
+# Copyright © 2005 SUSE Linux Products GmbH.
+# Copyright © 2006, SUSE Linux GmbH, Nuremberg
+# Copyright © 2020 - 2024 Canonical Ltd.
+# This file is distributed under the same license as the apparmor package.
 #
 # Stanciu-Lixandru Alec <stanciulixandru@gmail.com>, 2007.
+# Daniel Slavu <Unknown>, feb-2020.
+# Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>, sep-2024.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: apparmor-parser\n"
 "Report-Msgid-Bugs-To: <apparmor@lists.ubuntu.com>\n"
 "POT-Creation-Date: 2014-09-13 00:11-0700\n"
-"PO-Revision-Date: 2020-02-21 19:30+0000\n"
-"Last-Translator: Daniel Slavu <Unknown>\n"
-"Language-Team: <ro@li.org>\n"
+"PO-Revision-Date: 2024-09-23 23:32+0000\n"
+"Last-Translator: Remus-Gabriel Chelu <Unknown>\n"
+"Language-Team: Romanian <debian-l10n-romanian@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2020-02-22 05:41+0000\n"
-"X-Generator: Launchpad (build 19413b719a8df7423ab1390528edadce9e0e4aca)\n"
+"X-Launchpad-Export-Date: 2024-09-25 04:33+0000\n"
+"X-Generator: Launchpad (build 1b1ed1ad2dbfc71ee62b5c5491c975135a771bf0)\n"
 "Language: ro\n"
 
-#: ../parser_include.c:113 ../parser_include.c:111
+#: ../parser_include.c:113 ../parser_include.c:111 ../parser_include.c:96
 msgid "Error: Out of memory.\n"
-msgstr "Eroare: Memorie insuficientă.\n"
+msgstr "Eroare: memorie insuficientă.\n"
 
-#: ../parser_include.c:123 ../parser_include.c:121
+#: ../parser_include.c:123 ../parser_include.c:121 ../parser_include.c:106
 #, c-format
 msgid "Error: basedir %s is not a directory, skipping.\n"
-msgstr "Eroare: basedir %s nu este un director, trec peste.\n"
+msgstr "Eroare: directorul de bază %s nu este un director, se omite.\n"
 
-#: ../parser_include.c:137
+#: ../parser_include.c:137 ../parser_include.c:122
 #, c-format
 msgid "Error: Could not add directory %s to search path.\n"
-msgstr "Eroare: Nu pot adăuga directorul %s la calea de căutare.\n"
+msgstr "Eroare: nu s-a putut adăuga directorul %s la ruta de căutare.\n"
 
-#: ../parser_include.c:147 ../parser_include.c:151
+#: ../parser_include.c:147 ../parser_include.c:151 ../parser_include.c:136
 msgid "Error: Could not allocate memory.\n"
-msgstr "Eroare: nu pot aloca memorie.\n"
+msgstr "Eroare: nu s-a putut aloca memorie.\n"
 
 #: ../parser_interface.c:69 ../parser_interface.c:72 ../parser_interface.c:49
+#: ../parser_interface.c:52
 msgid "Bad write position\n"
 msgstr "Poziție de scriere incorectă\n"
 
 #: ../parser_interface.c:72 ../parser_interface.c:75 ../parser_interface.c:52
+#: ../parser_interface.c:55
 msgid "Permission denied\n"
-msgstr "Permisiune respinsă\n"
+msgstr "Permisiune refuzată.\n"
 
 #: ../parser_interface.c:75 ../parser_interface.c:78 ../parser_interface.c:55
+#: ../parser_interface.c:58
 msgid "Out of memory\n"
 msgstr "Memorie insuficientă\n"
 
 #: ../parser_interface.c:78 ../parser_interface.c:81 ../parser_interface.c:58
+#: ../parser_interface.c:61
 msgid "Couldn't copy profile: Bad memory address\n"
-msgstr "Nu s-a putut copia profilul: Adresă de memorie necorespunzătoare\n"
+msgstr "Nu s-a putut copia profilul: adresă de memorie greșită\n"
 
 #: ../parser_interface.c:81 ../parser_interface.c:84 ../parser_interface.c:61
+#: ../parser_interface.c:64
 msgid "Profile doesn't conform to protocol\n"
 msgstr "Profilul nu corespunde protocolului\n"
 
 #: ../parser_interface.c:84 ../parser_interface.c:87 ../parser_interface.c:64
+#: ../parser_interface.c:67
 msgid "Profile does not match signature\n"
 msgstr "Profilul nu corespunde cu semnătura\n"
 
 #: ../parser_interface.c:87 ../parser_interface.c:90 ../parser_interface.c:67
+#: ../parser_interface.c:70
 msgid "Profile version not supported by Apparmor module\n"
-msgstr "Versiunea profilului nu este suportatp de modulul Apparmor\n"
+msgstr "Versiunea profilului nu este acceptată de modulul Apparmor\n"
 
 #: ../parser_interface.c:90 ../parser_interface.c:93 ../parser_interface.c:70
+#: ../parser_interface.c:73
 msgid "Profile already exists\n"
 msgstr "Profilul există deja\n"
 
 #: ../parser_interface.c:93 ../parser_interface.c:96 ../parser_interface.c:73
+#: ../parser_interface.c:76
 msgid "Profile doesn't exist\n"
 msgstr "Profilul nu există\n"
 
 #: ../parser_interface.c:96 ../parser_interface.c:99 ../parser_interface.c:76
+#: ../parser_interface.c:79
 msgid "Permission denied; attempted to load a profile while confined?\n"
 msgstr ""
-"Acces refuzat; ați încercat să încărcați un profil în timp ce sunteți "
-"limitat?\n"
+"Permisiune refuzată; ați încercat să încărcați un profil în timp ce sunteți "
+"confinat?\n"
 
 #: ../parser_interface.c:99 ../parser_interface.c:102 ../parser_interface.c:79
+#: ../parser_interface.c:82
 #, c-format
 msgid "Unknown error (%d): %s\n"
 msgstr "Eroare necunoscută (%d): %s\n"
 
-#: ../parser_interface.c:116 ../parser_interface.c:119
-#: ../parser_interface.c:96
+#: ../parser_interface.c:116 ../parser_interface.c:119 ../parser_interface.c:96
+#: ../parser_interface.c:100
 #, c-format
 msgid "%s: Unable to add \"%s\".  "
-msgstr "%s: Nu pot adăuga \"%s\".  "
+msgstr "%s: nu se poate adăuga „%s”.  "
 
 #: ../parser_interface.c:121 ../parser_interface.c:124
-#: ../parser_interface.c:101
+#: ../parser_interface.c:101 ../parser_interface.c:105
 #, c-format
 msgid "%s: Unable to replace \"%s\".  "
-msgstr "%s: Nu pot înlocui \"%s\".  "
+msgstr "%s: nu se poate înlocui „%s”.  "
 
 #: ../parser_interface.c:126 ../parser_interface.c:129
-#: ../parser_interface.c:106
+#: ../parser_interface.c:106 ../parser_interface.c:110
 #, c-format
 msgid "%s: Unable to remove \"%s\".  "
-msgstr "%s: Nu pot îndepărta \"%s\".  "
+msgstr "%s: nu se poate elimina „%s”.  "
 
 #: ../parser_interface.c:131 ../parser_interface.c:134
-#: ../parser_interface.c:111
+#: ../parser_interface.c:111 ../parser_interface.c:115
 #, c-format
 msgid "%s: Unable to write to stdout\n"
-msgstr "%s: Nu pot scrie la stdout\n"
+msgstr "%s: nu se poate scrie la ieșirea standard\n"
 
 #: ../parser_interface.c:135 ../parser_interface.c:138
-#: ../parser_interface.c:115
+#: ../parser_interface.c:115 ../parser_interface.c:119
 #, c-format
 msgid "%s: Unable to write to output file\n"
-msgstr "%s: Imposibil de scris în fișierul de ieșire\n"
+msgstr "%s: nu se poate scrie în fișierul de ieșire\n"
 
 #: ../parser_interface.c:138 ../parser_interface.c:162
 #: ../parser_interface.c:141 ../parser_interface.c:165
 #: ../parser_interface.c:118 ../parser_interface.c:142
+#: ../parser_interface.c:123 ../parser_interface.c:147
 #, c-format
 msgid "%s: ASSERT: Invalid option: %d\n"
-msgstr "%s: ASSERT: Opțiune invalidă: %d\n"
+msgstr "%s: ASSERT: Opțiune nevalidă: %d\n"
 
 #: ../parser_interface.c:147 ../parser_interface.c:150
-#: ../parser_interface.c:127
+#: ../parser_interface.c:127 ../parser_interface.c:132
 #, c-format
 msgid "Addition succeeded for \"%s\".\n"
-msgstr "Adăugarea s-a efectuat pentru \"%s\".\n"
+msgstr "Adăugare reușită pentru „%s”.\n"
 
 #: ../parser_interface.c:151 ../parser_interface.c:154
-#: ../parser_interface.c:131
+#: ../parser_interface.c:131 ../parser_interface.c:136
 #, c-format
 msgid "Replacement succeeded for \"%s\".\n"
-msgstr "Înlocuirea s-a efectuat pentru \"%s\".\n"
+msgstr "Înlocuire reușită pentru „%s”.\n"
 
 #: ../parser_interface.c:155 ../parser_interface.c:158
-#: ../parser_interface.c:135
+#: ../parser_interface.c:135 ../parser_interface.c:140
 #, c-format
 msgid "Removal succeeded for \"%s\".\n"
-msgstr "Ștergerea s-a efectuat pentru \"%s\".\n"
+msgstr "Eliminare reușită pentru „%s”.\n"
 
 #: ../parser_interface.c:251 ../parser_interface.c:254
 #, c-format
 msgid "PANIC bad increment buffer %p pos %p ext %p size %d res %p\n"
 msgstr ""
-"PANICĂ incrementare greșită buffer %p pos %p ext %p dimensiune %d res %p\n"
+"PANICĂ incrementare greșită a memoriei tampon %p poziția %p extensia %p "
+"dimensiunea %d rezoluție %p\n"
 
 #: ../parser_interface.c:656 ../parser_interface.c:658
-#: ../parser_interface.c:446
+#: ../parser_interface.c:446 ../parser_interface.c:476
 #, c-format
 msgid "profile %s network rules not enforced\n"
-msgstr "profilul %s regulile de rețea nu sunt aplicate\n"
+msgstr "regulile de rețea ale profilului %s nu sunt aplicate\n"
 
 #: ../parser_interface.c:666
 msgid "Unknown pattern type\n"
@@ -160,7 +179,7 @@ msgstr "Tip de model necunoscut\n"
 #: ../parser_interface.c:518 ../parser_interface.c:669
 #, c-format
 msgid "Unable to open %s - %s\n"
-msgstr "Nu pot deschide %s -%s\n"
+msgstr "Nu se poate deschide %s -%s\n"
 
 # ###############################################################################
 # Old yast2-agents.po
@@ -168,75 +187,75 @@ msgstr "Nu pot deschide %s -%s\n"
 #: ../parser_interface.c:543
 #, c-format
 msgid "Memory Allocation Error: Unable to remove ^%s\n"
-msgstr "Eroare la alocarea memoriei: Nu pot șterge ^%s\n"
+msgstr "Eroare la alocarea memoriei: nu se poate elimina ^%s\n"
 
 #: ../parser_interface.c:789 ../parser_interface.c:781
 #: ../parser_interface.c:556
 #, c-format
 msgid "Memory Allocation Error: Unable to remove %s:%s."
-msgstr "Eroare la alocarea memoriei: Nu pot șterge %s:%s."
+msgstr "Eroare la alocarea memoriei: nu se poate elimina %s:%s."
 
 #: ../parser_interface.c:810 ../parser_interface.c:802
 msgid "unable to create work area\n"
-msgstr "nu pot crea spațiul de lucru\n"
+msgstr "nu se poate crea spațiul de lucru\n"
 
 #: ../parser_interface.c:818 ../parser_interface.c:810
 #, c-format
 msgid "unable to serialize profile %s\n"
-msgstr "nu pot serializa profilul %s\n"
+msgstr "nu se poate serializa profilul %s\n"
 
 #: ../parser_interface.c:829 ../parser_interface.c:916
 #: ../parser_interface.c:821 ../parser_interface.c:908
 #: ../parser_interface.c:582
 #, c-format
 msgid "%s: Unable to write entire profile entry\n"
-msgstr "%s: No pot scrie intregul profil\n"
+msgstr "%s: nu se poate scrie întreaga intrare de profil\n"
 
 #: ../parser_interface.c:839 ../parser_interface.c:831
-#: ../parser_interface.c:593
+#: ../parser_interface.c:593 ../parser_interface.c:579
 #, c-format
 msgid "%s: Unable to write entire profile entry to cache\n"
-msgstr "%s: Nu se poate scrie intrarea întregului profil în memoria cache\n"
+msgstr "%s: nu se poate scrie întreaga intrare de profil în memoria cache\n"
 
 #: parser_lex.l:100 parser_lex.l:163 parser_lex.l:169
 #, c-format
 msgid "Could not open '%s'"
-msgstr "Nu poate fi deschis '%s'"
+msgstr "Nu s-a putut deschide „%s”"
 
-#: parser_lex.l:104 parser_lex.l:167 parser_lex.l:173
+#: parser_lex.l:104 parser_lex.l:167 parser_lex.l:173 parser_lex.l:174
 #, c-format
 msgid "fstat failed for '%s'"
-msgstr "fstat a eșuat pentru '%s'"
+msgstr "fstat() a eșuat pentru „%s”"
 
 #: parser_lex.l:121
 #, c-format
 msgid "opendir failed '%s'"
-msgstr "opendir a eșuat '%s'"
+msgstr "opendir() a eșuat „%s”"
 
 #: parser_lex.l:152
 #, c-format
 msgid "stat failed for '%s'"
-msgstr "stat a eșuat pentru '%s'"
+msgstr "stat() eșuat pentru „%s”"
 
 #: parser_lex.l:155 parser_lex.l:133 parser_lex.l:139
 #, c-format
 msgid "Could not open '%s' in '%s'"
-msgstr "Nu s-a putut deschide '%s' în '%s'"
+msgstr "Nu s-a putut deschide „%s” în „%s”"
 
 #: parser_lex.l:284 parser_lex.l:322 parser_lex.l:362 parser_lex.l:399
 #: parser_lex.l:469 parser_lex.l:655 parser_lex.l:586 parser_lex.l:638
 #, c-format
 msgid "Found unexpected character: '%s'"
-msgstr "Am găsit un caracter neașteptat: '%s'"
+msgstr "S-a găsit caracter neașteptat: „%s”"
 
-#: parser_lex.l:386 parser_lex.l:418 parser_lex.l:428
+#: parser_lex.l:386 parser_lex.l:418 parser_lex.l:428 parser_lex.l:474
 msgid "Variable declarations do not accept trailing commas"
-msgstr "Declarațiile variabile nu acceptă virgule"
+msgstr "Declarațiile variabilelor nu acceptă virgule la sfârșit"
 
 #: parser_lex.l:420
 #, c-format
 msgid "(network_mode) Found unexpected character: '%s'"
-msgstr "(network_mode) Am găsit un caracter neașteptat: '%s'"
+msgstr "(network_mode) S-a găsit caracter neașteptat: „%s”"
 
 #: ../parser_main.c:333 ../parser_common.c:61 ../parser_common.c:106
 #, c-format
@@ -246,44 +265,48 @@ msgstr "Avertisment din %s (%s%slinie %d): %s"
 #: ../parser_main.c:531
 #, c-format
 msgid "%s: Could not allocate memory for subdomainbase mount point\n"
-msgstr "%s: Nu pot aloca memorie pentru punctul de montare subdomainbase\n"
+msgstr ""
+"%s: nu s-a putut aloca memorie pentru punctul de montare al subdomeniului-"
+"bază\n"
 
 #: ../parser_main.c:577 ../parser_main.c:616 ../parser_main.c:479
+#: ../parser_main.c:1444
 #, c-format
 msgid ""
 "Warning: unable to find a suitable fs in %s, is it mounted?\n"
 "Use --subdomainfs to override.\n"
 msgstr ""
-"Atenție: nu pot găsi un fs potrivit în %s, este montat?\n"
-"Folosiți -subdomainfs pentru a forța.\n"
+"Avertizare: nu se poate găsi un sistem de fișiere adecvat în %s, este acesta "
+"montat?\n"
+"Utilizați opțiunea „--subdomainfs” pentru a-l suprascrie.\n"
 
 #: ../parser_main.c:597 ../parser_main.c:635 ../parser_main.c:498
+#: ../parser_main.c:822
 #, c-format
 msgid ""
 "%s: Sorry. You need root privileges to run this program.\n"
 "\n"
 msgstr ""
-"%s: Îmi pare rău. Aveți nevoie de privilegii root pentru a rula acest "
-"program.\n"
+"%s: Scuze... Aveți nevoie de privilegii root pentru a rula acest program.\n"
 "\n"
 
 #: ../parser_main.c:604 ../parser_main.c:642 ../parser_main.c:505
+#: ../parser_main.c:828
 #, c-format
 msgid ""
 "%s: Warning! You've set this program setuid root.\n"
 "Anybody who can run this program can update your AppArmor profiles.\n"
 "\n"
 msgstr ""
-"%s: Atenție! Ați setat setuid root pentru acest program.\n"
-"Oricine poate rula acest program poate face update la profilul dvs. "
-"AppArmor.\n"
+"%s: Atenție! Ați activat bitul „setuid root” pentru acest program.\n"
+"Oricine poate rula acest program vă poate actualiza profilurile AppArmor.\n"
 "\n"
 
 #: ../parser_main.c:704 ../parser_main.c:813 ../parser_main.c:836
-#: ../parser_main.c:946 ../parser_main.c:860
+#: ../parser_main.c:946 ../parser_main.c:860 ../parser_main.c:1038
 #, c-format
 msgid "Error: Could not read profile %s: %s.\n"
-msgstr "Eroare: Nu pot citi profilul %s: %s.\n"
+msgstr "Eroare: nu s-a putut citi profilul %s: %s.\n"
 
 #: ../parser_main.c:718 ../parser_misc.c:270 parser_yacc.y:227
 #: parser_yacc.y:374 parser_yacc.y:386 parser_yacc.y:484 parser_yacc.y:586
@@ -302,282 +325,314 @@ msgstr "Eroare: Nu pot citi profilul %s: %s.\n"
 #: parser_yacc.y:1166 parser_yacc.y:1170 parser_yacc.y:1180 parser_yacc.y:1190
 #: parser_yacc.y:1298 parser_yacc.y:1376 parser_yacc.y:1479 parser_yacc.y:1490
 #: parser_yacc.y:1565 parser_yacc.y:1583 parser_yacc.y:1590 parser_yacc.y:1639
-#: ../network.c:314 ../af_unix.cc:203
+#: ../network.c:314 ../af_unix.cc:203 ../parser_misc.c:215 ../parser_misc.c:939
+#: parser_yacc.y:343 parser_yacc.y:367 parser_yacc.y:533 parser_yacc.y:543
+#: parser_yacc.y:660 parser_yacc.y:741 parser_yacc.y:750 parser_yacc.y:1171
+#: parser_yacc.y:1219 parser_yacc.y:1255 parser_yacc.y:1264 parser_yacc.y:1268
+#: parser_yacc.y:1278 parser_yacc.y:1288 parser_yacc.y:1382 parser_yacc.y:1460
+#: parser_yacc.y:1592 parser_yacc.y:1597 parser_yacc.y:1674 parser_yacc.y:1692
+#: parser_yacc.y:1699 parser_yacc.y:1748 ../network.c:315 ../af_unix.cc:194
 msgid "Memory allocation error."
 msgstr "Eroare la alocarea memoriei."
 
 #: ../parser_main.c:740 ../parser_main.c:872 ../parser_main.c:757
+#: ../parser_main.c:975
 #, c-format
 msgid "Cached load succeeded for \"%s\".\n"
-msgstr "Încărcarea în cache a reușit \"%s\".\n"
+msgstr "Încărcarea în cache a reușit pentru „%s”.\n"
 
 #: ../parser_main.c:744 ../parser_main.c:876 ../parser_main.c:761
+#: ../parser_main.c:979
 #, c-format
 msgid "Cached reload succeeded for \"%s\".\n"
-msgstr "Reîncărcarea în cache a reușit \"%s\".\n"
+msgstr "Reîncărcarea în cache a reușit pentru „%s”.\n"
 
 #: ../parser_main.c:910 ../parser_main.c:1058 ../parser_main.c:967
+#: ../parser_main.c:1132
 #, c-format
 msgid "%s: Errors found in file. Aborting.\n"
-msgstr "%s: Am găsit erori în fișier. Abandonez.\n"
+msgstr "%s: s-au găsit erori în fișier. Se abandonează.\n"
 
 #: ../parser_misc.c:426 ../parser_misc.c:597 ../parser_misc.c:339
+#: ../parser_misc.c:532
 msgid ""
 "Uppercase qualifiers \"RWLIMX\" are deprecated, please convert to lowercase\n"
 "See the apparmor.d(5) manpage for details.\n"
 msgstr ""
-"Specificatori cu litere mari \"RWLIMX\" sunt depășiți, vă rog convertiți la "
-"litere mici\n"
-"Vedeți manpage apparmor.d(5) pentru amănunte.\n"
+"Specificatorii cu majuscule „RWLIMX” sunt depreciați, convertiți-i în "
+"minuscule\n"
+"Consultați pagina de manual apparmor.d(5) pentru detalii.\n"
 
 #: ../parser_misc.c:467 ../parser_misc.c:474 ../parser_misc.c:638
 #: ../parser_misc.c:645 ../parser_misc.c:380 ../parser_misc.c:387
+#: ../parser_misc.c:573 ../parser_misc.c:580
 msgid "Conflict 'a' and 'w' perms are mutually exclusive."
-msgstr "Conflict 'a' și 'w' perms se exclud reciproc."
+msgstr "Conflict: permisiunile „a” și „w” se exclud reciproc."
 
 #: ../parser_misc.c:491 ../parser_misc.c:662 ../parser_misc.c:404
+#: ../parser_misc.c:597
 msgid "Exec qualifier 'i' invalid, conflicting qualifier already specified"
 msgstr ""
-"Specificatorul exec 'i' este invalid, specificatorul conflictual este deja "
-"definit"
+"Specificatorul de execuție „i” nu este valid, un specificator conflictual a "
+"fost deja specificat"
 
 #: ../parser_misc.c:502 ../parser_misc.c:673 ../parser_misc.c:415
+#: ../parser_misc.c:608
 #, c-format
 msgid ""
 "Unconfined exec qualifier (%c%c) allows some dangerous environment variables "
 "to be passed to the unconfined process; 'man 5 apparmor.d' for details.\n"
 msgstr ""
-"Calificatorul de execuție neconfigurat (%c%c) permite trecerea unor "
-"variabile de mediu periculoase la procesul neconfigurat; 'man 5 apparmor.d' "
+"Specificatorul de execuție neconfinat (%c%c) permite trecerea unor variabile "
+"de mediu periculoase către procesul neconfinat; rulați «man 5 apparmor.d» "
 "pentru detalii.\n"
 
 #: ../parser_misc.c:510 ../parser_misc.c:551 ../parser_misc.c:681
 #: ../parser_misc.c:722 ../parser_misc.c:423 ../parser_misc.c:464
+#: ../parser_misc.c:616 ../parser_misc.c:657
 #, c-format
 msgid "Exec qualifier '%c' invalid, conflicting qualifier already specified"
 msgstr ""
-"Specificatorul exec '%c' este invalid, a fost deja declarat un asemenea "
-"specificator"
+"Specificatorul de execuție „%c” nu este valid, un specificator conflictual a "
+"fost deja specificat"
 
 #: ../parser_misc.c:537 ../parser_misc.c:545 ../parser_misc.c:708
 #: ../parser_misc.c:716 ../parser_misc.c:450 ../parser_misc.c:458
+#: ../parser_misc.c:643 ../parser_misc.c:651
 #, c-format
 msgid ""
 "Exec qualifier '%c%c' invalid, conflicting qualifier already specified"
 msgstr ""
-"Specificatorul exec '%c%c' este invalid, a fost deja declarat un asemenea "
-"specificator"
+"Specificatorul de execuție „%c%c” nu este valid, un specificator conflictual "
+"a fost deja specificat"
 
 #: ../parser_misc.c:593 ../parser_misc.c:764 ../parser_misc.c:506
+#: ../parser_misc.c:699
 #, c-format
 msgid "Internal: unexpected mode character '%c' in input"
-msgstr "Intern: '%c' este un caracter neașteptat la intrare"
+msgstr "Intern: caracter de mod neașteptat „%c” în intrare"
 
 #: ../parser_misc.c:615 ../parser_misc.c:786 ../parser_misc.c:528
+#: ../parser_misc.c:721
 #, c-format
 msgid "Internal error generated invalid perm 0x%llx\n"
-msgstr "O eroare internă a generat permutarea invalidă 0x%llx\n"
+msgstr "O eroare internă a generat permutarea nevalidă 0x%llx\n"
 
 #: ../parser_misc.c:865 ../parser_symtab.c:561 ../parser_regex.c:626
 #: ../parser_variable.c:229
 #, c-format
 msgid "AppArmor parser error: %s\n"
-msgstr "Eroare în parser-ul AppArmor: %s\n"
+msgstr "Eroare a analizatorului AppArmor: %s\n"
 
 #: ../parser_merge.c:92 ../parser_merge.c:91 ../parser_merge.c:83
+#: ../parser_merge.c:71
 msgid "Couldn't merge entries. Out of Memory\n"
-msgstr "Nu am putut uni intrările. Memorie insuficientă\n"
+msgstr "Nu s-au putut fuziona intrările. Memorie insuficientă\n"
 
 #: ../parser_merge.c:111 ../parser_merge.c:113 ../parser_merge.c:105
+#: ../parser_merge.c:93
 #, c-format
 msgid "profile %s: has merged rule %s with conflicting x modifiers\n"
 msgstr "profilul %s: a combinat regula %s cu modificatorii x în conflict\n"
 
 #: parser_yacc.y:236 parser_yacc.y:277 parser_yacc.y:320
 msgid "Profile attachment must begin with a '/'."
-msgstr "Atașamentul la profil trebuie să înceapă cu a '/'."
+msgstr "Atașamentul la profil trebuie să înceapă cu o „/”."
 
-#: parser_yacc.y:260 parser_yacc.y:302 parser_yacc.y:348
+#: parser_yacc.y:260 parser_yacc.y:302 parser_yacc.y:348 parser_yacc.y:407
 msgid ""
 "Profile names must begin with a '/', namespace or keyword 'profile' or 'hat'."
 msgstr ""
-"Numele profilului trebuie să înceapă cu un '/', spațiu de nume sau cuvinte "
-"cheie 'profile' sau 'hat'."
+"Numele profilului trebuie să înceapă cu o „/”', un spațiu de nume sau "
+"cuvintele cheie „profile” sau „hat”."
 
-#: parser_yacc.y:296 parser_yacc.y:338 parser_yacc.y:384
+#: parser_yacc.y:296 parser_yacc.y:338 parser_yacc.y:384 parser_yacc.y:449
 #, c-format
 msgid "Failed to create alias %s -> %s\n"
-msgstr "Nu am putut crea aliasul %s -> %s\n"
+msgstr "Crearea de alias %s -> %s a eșuats\n"
 
-#: parser_yacc.y:417 parser_yacc.y:460 parser_yacc.y:506
+#: parser_yacc.y:417 parser_yacc.y:460 parser_yacc.y:506 parser_yacc.y:581
 msgid "Profile flag chroot_relative conflicts with namespace_relative"
 msgstr ""
-"Indicatorul profilului chroot_relative intră în conflict cu "
-"relativul_spațiului de nume"
+"Indicatorul de profil chroot_relative intră în conflict cu namespace_relative"
 
-#: parser_yacc.y:421 parser_yacc.y:464 parser_yacc.y:510
+#: parser_yacc.y:421 parser_yacc.y:464 parser_yacc.y:510 parser_yacc.y:585
 msgid "Profile flag mediate_deleted conflicts with delegate_deleted"
 msgstr ""
-"Indicatorul profilului mediază_ștergerea conflictelor cu delegatul_șters"
+"Indicatorul de profil mediate_deleted intră în conflict cu delegate_deleted"
 
-#: parser_yacc.y:424 parser_yacc.y:467 parser_yacc.y:513
+#: parser_yacc.y:424 parser_yacc.y:467 parser_yacc.y:513 parser_yacc.y:588
 msgid ""
 "Profile flag attach_disconnected conflicts with no_attach_disconnected"
 msgstr ""
-"Indicatorul profilului atașați_deconectarea conflictelor cu "
-"nu_atașa_deconectat"
+"Indicatorul de profil attach_disconnected intră în conflict cu "
+"no_attach_disconnected"
 
-#: parser_yacc.y:427 parser_yacc.y:470 parser_yacc.y:516
+#: parser_yacc.y:427 parser_yacc.y:470 parser_yacc.y:516 parser_yacc.y:591
 msgid "Profile flag chroot_attach conflicts with chroot_no_attach"
-msgstr "Indicatorul profilului chroot_attach în conflict cu chroot_no_attach"
+msgstr ""
+"Indicatorul de profil chroot_attach intră în conflict cu chroot_no_attach"
 
-#: parser_yacc.y:441 parser_yacc.y:484 parser_yacc.y:530
+#: parser_yacc.y:441 parser_yacc.y:484 parser_yacc.y:530 parser_yacc.y:607
 msgid "Profile flag 'debug' is no longer valid."
-msgstr "Indicatorul 'debug' nu mai este valabil pentru profil."
+msgstr "Indicatorul de profil „debug” nu mai este valabil."
 
-#: parser_yacc.y:463 parser_yacc.y:506 parser_yacc.y:552
+#: parser_yacc.y:463 parser_yacc.y:506 parser_yacc.y:552 parser_yacc.y:629
 #, c-format
 msgid "Invalid profile flag: %s."
-msgstr "Indicator de profil invalid: %s."
+msgstr "Indicator de profil nevalid: %s."
 
 #: parser_yacc.y:498 parser_yacc.y:520 parser_yacc.y:548 parser_yacc.y:594
+#: parser_yacc.y:673
 msgid "Assert: `rule' returned NULL."
-msgstr "Aserțiune: `regula' a întors NULL."
+msgstr "Aserțiune: „rule” (regula) a returnat NULL."
 
 #: parser_yacc.y:501 parser_yacc.y:546 parser_yacc.y:552 parser_yacc.y:584
-#: parser_yacc.y:598 parser_yacc.y:630
+#: parser_yacc.y:598 parser_yacc.y:630 parser_yacc.y:677 parser_yacc.y:709
 msgid ""
 "Invalid mode, in deny rules 'x' must not be preceded by exec qualifier 'i', "
 "'p', or 'u'"
 msgstr ""
-"Mod invalid, în regulile de interzicere 'x' nu trebuie precedat de "
-"specificatorul exec 'i', 'p' sau 'u'"
+"Mod nevalid, în regulile de negare „x” nu trebuie să fie precedat de "
+"specificatorul de execuție „i”, „p” sau „u”"
 
-#: parser_yacc.y:524 parser_yacc.y:556 parser_yacc.y:602
+#: parser_yacc.y:524 parser_yacc.y:556 parser_yacc.y:602 parser_yacc.y:681
 msgid ""
 "Invalid mode, 'x' must be preceded by exec qualifier 'i', 'p', 'c', or 'u'"
 msgstr ""
-"Mod invalid, 'x' trebuie să fie precedat de specificatorul exec 'i', 'p', "
-"'c' sau 'u'"
+"Mod nevalid, „x” trebuie să fie precedat de specificatorul de execuție „i”, "
+"„p”, „c” sau „u”"
 
-#: parser_yacc.y:549 parser_yacc.y:587 parser_yacc.y:633
+#: parser_yacc.y:549 parser_yacc.y:587 parser_yacc.y:633 parser_yacc.y:712
 msgid "Invalid mode, 'x' must be preceded by exec qualifier 'i', 'p', or 'u'"
 msgstr ""
-"Mod invalid, 'x' trebuie precedat de specificatorul exec 'i', 'p' sau 'u'"
+"Mod nevalid, „x” trebuie să fie precedat de specificatorul de execuție „i”, "
+"„p” sau „u”"
 
 #: parser_yacc.y:574 parser_yacc.y:612 parser_yacc.y:614 parser_yacc.y:660
+#: parser_yacc.y:739
 msgid "Assert: `network_rule' return invalid protocol."
-msgstr "Ase_rțiune: `regula de rețea' a întors un protocol invalid."
+msgstr "Aserțiune: „network_rule” returnează un protocol nevalid."
 
-#: parser_yacc.y:649 parser_yacc.y:696 parser_yacc.y:786
+#: parser_yacc.y:649 parser_yacc.y:696 parser_yacc.y:786 parser_yacc.y:867
 msgid "Assert: `change_profile' returned NULL."
-msgstr "Asețiune: `change_profile' a întors NULL."
+msgstr "Aserțiune: „change_profile” a returnat NULL."
 
-#: parser_yacc.y:680 parser_yacc.y:720 parser_yacc.y:810
+#: parser_yacc.y:680 parser_yacc.y:720 parser_yacc.y:810 parser_yacc.y:905
 msgid "Assert: 'hat rule' returned NULL."
-msgstr "Afirma: 'hat rule' returnat NULL."
+msgstr "Aserțiune: „hat rule” a returnat NULL."
 
-#: parser_yacc.y:689 parser_yacc.y:729 parser_yacc.y:819
+#: parser_yacc.y:689 parser_yacc.y:729 parser_yacc.y:819 parser_yacc.y:914
 msgid "Assert: 'local_profile rule' returned NULL."
-msgstr "Aserțiune: `regulă _profil local' a întors NULL."
+msgstr "Aserțiune: „local_profile rule” a returnat NULL."
 
-#: parser_yacc.y:824 parser_yacc.y:885 parser_yacc.y:992
+#: parser_yacc.y:824 parser_yacc.y:885 parser_yacc.y:992 parser_yacc.y:1077
 #, c-format
 msgid "Unset boolean variable %s used in if-expression"
-msgstr ""
-"Variabila booleană neinițializată %s este folosită într-o instrucțiune if"
+msgstr "Variabila booleană nedefinită %s este utilizată în expresia „if”"
 
-#: parser_yacc.y:882 parser_yacc.y:986 parser_yacc.y:1092
+#: parser_yacc.y:882 parser_yacc.y:986 parser_yacc.y:1092 parser_yacc.y:1181
 msgid "unsafe rule missing exec permissions"
 msgstr "regulă nesigură fără permisiuni de execuție"
 
-#: parser_yacc.y:901 parser_yacc.y:954 parser_yacc.y:1060
+#: parser_yacc.y:901 parser_yacc.y:954 parser_yacc.y:1060 parser_yacc.y:1148
 msgid "subset can only be used with link rules."
 msgstr "subsetul poate fi utilizat doar cu reguli de legătură."
 
-#: parser_yacc.y:903 parser_yacc.y:956 parser_yacc.y:1062
+#: parser_yacc.y:903 parser_yacc.y:956 parser_yacc.y:1062 parser_yacc.y:1150
 msgid "link and exec perms conflict on a file rule using ->"
 msgstr ""
-"conectează și execută conflictul de perms pe o regulă de fișier folosind ->"
+"conflict între permisiunile de legătură și de execuție pe o regulă de fișier "
+"utilizând ->"
 
-#: parser_yacc.y:905 parser_yacc.y:958 parser_yacc.y:1064
+#: parser_yacc.y:905 parser_yacc.y:958 parser_yacc.y:1064 parser_yacc.y:1152
 msgid "link perms are not allowed on a named profile transition.\n"
-msgstr "legătura de perms nu sunt permise pe o tranziție de profil numită.\n"
+msgstr ""
+"permisiunile de legătură nu sunt permise pe o tranziție de profil numită.\n"
 
-#: parser_yacc.y:921 parser_yacc.y:1003 parser_yacc.y:1109
+#: parser_yacc.y:921 parser_yacc.y:1003 parser_yacc.y:1109 parser_yacc.y:1198
 #, c-format
 msgid "missing an end of line character? (entry: %s)"
 msgstr "lipsește un caracter de sfârșit de linie? (intrare: %s)"
 
 #: parser_yacc.y:975 parser_yacc.y:985 parser_yacc.y:1057 parser_yacc.y:1067
-#: parser_yacc.y:1145 parser_yacc.y:1155
+#: parser_yacc.y:1145 parser_yacc.y:1155 parser_yacc.y:1234 parser_yacc.y:1244
 msgid "Invalid network entry."
 msgstr "Intrare de rețea nevalidă."
 
 #: parser_yacc.y:1039 parser_yacc.y:1048 parser_yacc.y:1254 parser_yacc.y:1510
+#: parser_yacc.y:1617
 #, c-format
 msgid "Invalid capability %s."
-msgstr "Capabilitate invalidă: %s."
+msgstr "Capacitate nevalidă %s."
 
-#: parser_yacc.y:1066 parser_yacc.y:1269 parser_yacc.y:1525
+#: parser_yacc.y:1066 parser_yacc.y:1269 parser_yacc.y:1525 parser_yacc.y:1637
 #, c-format
 msgid "AppArmor parser error for %s%s%s at line %d: %s\n"
-msgstr "Eroare analizor AppArmor pentru %s%s%s la linie %d: %s\n"
+msgstr "Eroare a analizatorului AppArmor pentru %s%s%s la linia %d: %s\n"
 
 #: parser_yacc.y:1072 parser_yacc.y:1275 parser_yacc.y:1531
 #, c-format
 msgid "AppArmor parser error,%s%s line %d: %s\n"
-msgstr "Eroare analizor AppArmor,%s%s linia %d: %s\n"
+msgstr "Eroare a analizatorului AppArmor, %s%s linia %d: %s\n"
 
 #: ../parser_regex.c:244
 #, c-format
 msgid "%s: Illegal open {, nesting groupings not allowed\n"
 msgstr ""
-"%s: Paranteză { ilegală, nu sunt permise mai multe nivele de grupare\n"
+"%s: paranteză { ilegală, nu sunt permise mai multe nivele de grupare\n"
 
 #: ../parser_regex.c:265 ../parser_regex.c:274 ../parser_regex.c:278
+#: ../parser_regex.c:306
 #, c-format
 msgid "%s: Regex grouping error: Invalid number of items between {}\n"
 msgstr ""
-"%s: Eroare de grupare în expresia regulată: Număr invalid de intrări între "
+"%s: eroare de grupare în expresia regulată: Număr nevalid de elemente între "
 "{}\n"
 
 #: ../parser_regex.c:271 ../parser_regex.c:280 ../parser_regex.c:284
+#: ../parser_regex.c:312
 #, c-format
 msgid ""
 "%s: Regex grouping error: Invalid close }, no matching open { detected\n"
 msgstr ""
-"%s: Eroare de grupare în expresia regulată: Paranteză închisă } invalidă, nu "
-"există nicio paranteză deschisă echivalentă\n"
+"%s: eroare de grupare în expresia regulată: Paranteză de închidere } "
+"nevalidă, nu există nicio paranteză de deschidere ( pereche\n"
 
 #: ../parser_regex.c:337 ../parser_regex.c:343 ../parser_regex.c:361
+#: ../parser_regex.c:403
 #, c-format
 msgid ""
 "%s: Regex grouping error: Unclosed grouping or character class, expecting "
 "close }\n"
 msgstr ""
-"%s: Eroare de grupare în expresia regulată: Grupare sau clasă neterminată, "
-"mă așteptam la }\n"
+"%s: eroare de grupare în expresia regulată: Grupare sau clasă de caractere "
+"neînchisă, se aștepta paranteza de închidere }\n"
 
 #: ../parser_regex.c:351 ../parser_regex.c:357
 #, c-format
 msgid "%s: Internal buffer overflow detected, %d characters exceeded\n"
-msgstr "%s: Am detectat o depășire a buffer-ului intern cu %d caractere\n"
+msgstr ""
+"%s: s-a detectat o depășire a memoriei tampon interne, cu %d caractere "
+"excedentare\n"
 
 #: ../parser_regex.c:355 ../parser_regex.c:361 ../parser_regex.c:377
+#: ../parser_regex.c:419
 #, c-format
 msgid "%s: Unable to parse input line '%s'\n"
-msgstr "%s: Nu pot parsa linia '%s'\n"
+msgstr "%s: nu s-a putut analiza linia de intrare „%s”.\n"
 
 #: ../parser_regex.c:397 ../parser_regex.c:405 ../parser_regex.c:421
+#: ../parser_regex.c:487
 #, c-format
 msgid "%s: Invalid profile name '%s' - bad regular expression\n"
-msgstr "%s: Nume de profil nevalid '%s' - expresie regulată proastă\n"
+msgstr "%s: nume de profil nevalid „%s” - expresie regulată defectuoasă\n"
 
 #: ../parser_policy.c:202 ../parser_policy.c:402 ../parser_policy.c:375
+#: ../parser_policy.c:383
 #, c-format
 msgid "ERROR merging rules for profile %s, failed to load\n"
-msgstr "EROARE la unirea regulilor pentru profilul %s, nu am putut încărca\n"
+msgstr "EROARE la unirea regulilor pentru profilul %s, încărcarea a eșuat\n"
 
 #: ../parser_policy.c:234
 #, c-format
@@ -587,11 +642,12 @@ msgid ""
 "\t'**' may only be used at the end of a rule.\n"
 msgstr ""
 "EROARE profilul %s conține elemente de politică ce nu pot fi utilizate cu "
-"acest kernel:\n"
-"\t'*','?', intervale de caractere și alternări nu sunt permise.\n"
-"\t'**' poate fi folosit doar la sfârșitul unei reguli.\n"
+"acest nucleu:\n"
+"\t„*”, „?”, intervalele de caractere și alternanțele nu sunt permise.\n"
+"\t„**” poate fi utilizat numai la sfârșitul unei reguli.\n"
 
 #: ../parser_policy.c:279 ../parser_policy.c:359 ../parser_policy.c:332
+#: ../parser_policy.c:340
 #, c-format
 msgid "ERROR processing regexs for profile %s, failed to load\n"
 msgstr ""
@@ -599,15 +655,17 @@ msgstr ""
 "eșuat\n"
 
 #: ../parser_policy.c:306 ../parser_policy.c:389 ../parser_policy.c:362
+#: ../parser_policy.c:370
 #, c-format
 msgid "ERROR expanding variables for profile %s, failed to load\n"
 msgstr ""
-"EROARE la citirea variabilelor pentru profilul %s, nu am putut încărca\n"
+"EROARE la extinderea variabilelor pentru profilul %s, încărcarea a eșuat\n"
 
 #: ../parser_policy.c:390 ../parser_policy.c:382 ../parser_policy.c:355
+#: ../parser_policy.c:363
 #, c-format
 msgid "ERROR adding hat access rule for profile %s\n"
-msgstr "EROARE adăugând pălărie la regula de acces pentru profil %s\n"
+msgstr "EROARE la adăugarea regulii de acces „hat” pentru profilul %s\n"
 
 #: ../parser_policy.c:490 ../parser_policy.c:271
 #, c-format
@@ -617,37 +675,39 @@ msgstr "EROARE în profilul %s, încărcarea a eșuat\n"
 #: ../parser_policy.c:675
 #, c-format
 msgid "%s: Errors found during postprocessing.  Aborting.\n"
-msgstr "%s: Au apărut erori în timpul post-procesării. Abandonez.\n"
+msgstr "%s: au apărut erori în timpul post-procesării. Se abandonează.\n"
 
 #: ../parser_policy.c:682 ../parser_policy.c:704
 #, c-format
 msgid "%s: Errors found during regex postprocess.  Aborting.\n"
 msgstr ""
-"%s: Au apărut erori în timpul post-procesării expresiei regulate. "
-"Abandonez.\n"
+"%s: au apărut erori în timpul post-procesării expresiei regulate. Se "
+"abandonează.\n"
 
 #: ../parser_policy.c:689
 #, c-format
 msgid "%s: Errors found during postprocess.  Aborting.\n"
-msgstr "%s: Au apărut erori în timpul post-procesării. Abandonez.\n"
+msgstr "%s: au apărut erori în timpul post-procesării. Se abandonează.\n"
 
 #: ../parser_policy.c:696
 #, c-format
 msgid "%s: Errors found in combining rules postprocessing. Aborting.\n"
 msgstr ""
-"%s: Au apărut erori în combinarea regulilor de post-procesare. Abandonez.\n"
+"%s: au apărut erori în combinarea regulilor de post-procesare. Se "
+"abandonează.\n"
 
-#: parser_lex.l:180 parser_lex.l:186
+#: parser_lex.l:180 parser_lex.l:186 parser_lex.l:187
 #, c-format
 msgid "Could not process include directory '%s' in '%s'"
-msgstr "Imposibil de procesat directorul inclus '%s' în '%s'"
+msgstr "Nu s-a putut procesa directorul de includere „%s” în „%s"
 
 #: ../parser_main.c:660 ../parser_main.c:523
 msgid "Feature buffer full."
-msgstr "Funcție tampon complet."
+msgstr "Memoria tampon a funcției este plină."
 
 #: ../parser_main.c:1115 ../parser_main.c:1132 ../parser_main.c:1024
-#: ../parser_main.c:1041
+#: ../parser_main.c:1041 ../parser_main.c:1332 ../parser_main.c:1354
+#: ../parser_misc.c:280 ../parser_misc.c:299 ../parser_misc.c:308
 msgid "Out of memory"
 msgstr "Memorie insuficienta"
 
@@ -669,132 +729,142 @@ msgstr "Nu se poate actualiza directorul cache: %s\n"
 #: ../parser_misc.c:833
 #, c-format
 msgid "Internal: unexpected DBus mode character '%c' in input"
-msgstr "Intern: caracterul neașteptat al modului DBus '%c' la intrare"
+msgstr "Intern: caracter neașteptat în modul DBus „%c” în datele de intrare"
 
 #: ../parser_misc.c:857
 #, c-format
 msgid "Internal error generated invalid DBus perm 0x%x\n"
-msgstr ""
+msgstr "Eroare internă generată de permisiuni de acces DBus nevalide 0x%x\n"
 
-#: parser_yacc.y:575 parser_yacc.y:621
+#: parser_yacc.y:575 parser_yacc.y:621 parser_yacc.y:700
 msgid "deny prefix not allowed"
-msgstr ""
+msgstr "prefixul „deny” nu este permis"
 
-#: parser_yacc.y:612 parser_yacc.y:658
+#: parser_yacc.y:612 parser_yacc.y:658 parser_yacc.y:737
 msgid "owner prefix not allowed"
-msgstr ""
+msgstr "prefixul „owner” nu este permis"
 
 #: parser_yacc.y:660
 msgid "owner prefix not allow on mount rules"
-msgstr ""
+msgstr "prefixul „owner” nu este permis în regulile de montare"
 
 #: parser_yacc.y:677
 msgid "owner prefix not allow on dbus rules"
-msgstr ""
+msgstr "prefixul „owner” nu este permis în regulile dbus"
 
 #: parser_yacc.y:704
 msgid "owner prefix not allow on capability rules"
-msgstr ""
+msgstr "prefixul „owner” nu este permis în regulile de capacități"
 
-#: parser_yacc.y:1357 parser_yacc.y:1613
+#: parser_yacc.y:1357 parser_yacc.y:1613 parser_yacc.y:1722
 #, c-format
 msgid "invalid mount conditional %s%s"
-msgstr ""
+msgstr "montare condițională nevalidă %s%s"
 
-#: parser_yacc.y:1374 parser_yacc.y:1628
+#: parser_yacc.y:1374 parser_yacc.y:1628 parser_yacc.y:1737
 msgid "bad mount rule"
-msgstr ""
+msgstr "regulă de montare greșită"
 
-#: parser_yacc.y:1381 parser_yacc.y:1635
+#: parser_yacc.y:1381 parser_yacc.y:1635 parser_yacc.y:1744
 msgid "mount point conditions not currently supported"
-msgstr ""
+msgstr "condițiile punctului de montare nu sunt acceptate în prezent"
 
-#: parser_yacc.y:1398 parser_yacc.y:1650
+#: parser_yacc.y:1398 parser_yacc.y:1650 parser_yacc.y:1759
 #, c-format
 msgid "invalid pivotroot conditional '%s'"
-msgstr ""
+msgstr "pivotroot condițional nevalid „%s”"
 
-#: ../parser_regex.c:241 ../parser_regex.c:236
+#: ../parser_regex.c:241 ../parser_regex.c:236 ../parser_regex.c:264
 #, c-format
 msgid ""
 "%s: Regex grouping error: Invalid close ], no matching open [ detected\n"
 msgstr ""
+"%s: eroare de grupare în expresia regulată: Paranteză de închidere ] "
+"nevalidă, nu a fost detectată nicio paranteză de deschidere [ pereche\n"
 
-#: ../parser_regex.c:257 ../parser_regex.c:256
+#: ../parser_regex.c:257 ../parser_regex.c:256 ../parser_regex.c:284
 #, c-format
 msgid "%s: Regex grouping error: Exceeded maximum nesting of {}\n"
 msgstr ""
+"%s: eroare de grupare în expresia regulată: a fost depășit nivelul maxim de "
+"imbricare al {}\n"
 
-#: ../parser_policy.c:366 ../parser_policy.c:339
+#: ../parser_policy.c:366 ../parser_policy.c:339 ../parser_policy.c:347
 #, c-format
 msgid "ERROR processing policydb rules for profile %s, failed to load\n"
 msgstr ""
+"EROARE la procesarea regulilor policydb pentru profilul %s, încărcarea a "
+"eșuat\n"
 
-#: ../parser_policy.c:396 ../parser_policy.c:369
+#: ../parser_policy.c:396 ../parser_policy.c:369 ../parser_policy.c:377
 #, c-format
 msgid "ERROR replacing aliases for profile %s, failed to load\n"
 msgstr ""
+"EROARE la înlocuirea pseudonimelor (alias) pentru profilul %s, încărcarea a "
+"eșuat\n"
 
 #: ../parser_interface.c:635 ../parser_interface.c:638
 #, c-format
 msgid "%s: Unable to write %s\n"
-msgstr ""
+msgstr "%s: nu s-a putut scrie %s\n"
 
 #: ../parser_main.c:721
 #, c-format
 msgid "Error: Could not read binary profile or cache file %s: %s.\n"
 msgstr ""
+"Eroare: nu s-a putut citi profilul binar sau fișierul cache %s: %s.\n"
 
 #: ../parser_main.c:811
 #, c-format
 msgid "Error: Could not read cache file '%s', skipping...\n"
-msgstr ""
+msgstr "Eroare: nu s-a putut citi fișierul cache „%s”, se omite...\n"
 
-#: ../parser_misc.c:575
+#: ../parser_misc.c:575 ../parser_misc.c:768
 #, c-format
 msgid "Internal: unexpected %s mode character '%c' in input"
-msgstr ""
+msgstr "Intern: caracter neașteptat al modului %s, „%c” în datele de intrare"
 
-#: ../parser_misc.c:599
+#: ../parser_misc.c:599 ../parser_misc.c:792
 #, c-format
 msgid "Internal error generated invalid %s perm 0x%x\n"
-msgstr ""
+msgstr "Eroare internă generată de permisiunile nevalide %s 0x%x\n"
 
-#: parser_yacc.y:703
+#: parser_yacc.y:703 parser_yacc.y:784
 msgid "owner prefix not allowed on mount rules"
-msgstr ""
+msgstr "prefixul „owner” nu este permis în regulile de montare"
 
-#: parser_yacc.y:720
+#: parser_yacc.y:720 parser_yacc.y:801
 msgid "owner prefix not allowed on dbus rules"
-msgstr ""
+msgstr "prefixul „owner” nu este permis în regulile dbus"
 
-#: parser_yacc.y:736
+#: parser_yacc.y:736 parser_yacc.y:817
 msgid "owner prefix not allowed on signal rules"
-msgstr ""
+msgstr "prefixul „owner” nu este permis în regulile de semnale"
 
-#: parser_yacc.y:752
+#: parser_yacc.y:752 parser_yacc.y:833
 msgid "owner prefix not allowed on ptrace rules"
-msgstr ""
+msgstr "prefixul „owner” nu este permis în regulile ptrace"
 
-#: parser_yacc.y:768
+#: parser_yacc.y:768 parser_yacc.y:849 parser_yacc.y:869
 msgid "owner prefix not allowed on unix rules"
-msgstr ""
+msgstr "prefixul „owner” nu este permis în regulile unix"
 
-#: parser_yacc.y:794
+#: parser_yacc.y:794 parser_yacc.y:885
 msgid "owner prefix not allowed on capability rules"
-msgstr ""
+msgstr "prefixul „owner” nu este permis în regulile de capacități"
 
-#: parser_yacc.y:1293
+#: parser_yacc.y:1293 parser_yacc.y:1377
 #, c-format
 msgid "dbus rule: invalid conditional group %s=()"
-msgstr ""
+msgstr "regulă dbus: grup condițional nevalid %s=()"
 
-#: parser_yacc.y:1371
+#: parser_yacc.y:1371 parser_yacc.y:1455
 #, c-format
 msgid "unix rule: invalid conditional group %s=()"
-msgstr ""
+msgstr "regulă unix: grup condițional nevalid %s=()"
 
-#: ../parser_regex.c:368
+#: ../parser_regex.c:368 ../parser_regex.c:410
 #, c-format
 msgid "%s: Regex error: trailing '\\' escape character\n"
 msgstr ""
+"%s: eroare în expresia regulată: caracter de eludare „\\” la sfârșit\n"

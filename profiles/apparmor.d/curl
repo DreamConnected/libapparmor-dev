@@ -23,8 +23,13 @@ profile curl /usr/bin/curl {
   # allow writing output to $HOME, /tmp
   file w /{tmp,@{HOME}}/**,
 
-  # allows UDP (for DNS), TCP (for http, https, etc), IPv4, IPv6
-  network,
+  # allows UDP (for DNS), TCP (for http, https, etc), abstract Unix sockets, IPv4, IPv6
+  network unix stream,
+  network unix dgram,
+  network inet stream,
+  network inet dgram,
+  network inet6 stream,
+  network inet6 dgram,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/curl>

@@ -1,0 +1,14 @@
+summary: smoke test for the curl profile
+execute: |
+    # set up fake HTTP server
+    echo -ne "HTTP/1.0 200 OK\nContent-type: text/html; charset=utf-8\nContent-Length: 12\n\nhello, world" > res
+    nc -lvp 8080 < res &
+
+    # HTTP GET to server, save result
+    curl http://localhost:8080/ -o /tmp/res
+
+    # assert result is correct
+    test "$(cat /tmp/res)" = "hello, world"
+
+    # The profile is attached based on the program path.
+    "$SPREAD_PATH"/tests/bin/actual-profile-of curl | MATCH 'curl \(enforce\)'

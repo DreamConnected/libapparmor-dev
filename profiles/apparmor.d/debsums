@@ -1,4 +1,4 @@
-# Last Modified: Tue Feb 18 09:50:40 2025
+# Last Modified: Mon Feb 24 14:59:31 2025
 abi <abi/4.0>,
 
 include <tunables/global>
@@ -32,6 +32,8 @@ profile debsums /usr/bin/debsums {
   owner /tmp/*/DEBIAN/control rw,
   owner /tmp/*/DEBIAN/md5sums rw,
   owner /tmp/*/DEBIAN/triggers rw,
+  owner /tmp/*/DEBIAN/postinst rw,
+  owner /tmp/*/DEBIAN/postrm rw,
 
 
   profile awk {
@@ -98,6 +100,8 @@ profile debsums /usr/bin/debsums {
     owner /tmp/dpkg-deb.*/ rw,
     owner /tmp/dpkg-deb.*/control w,
     owner /tmp/dpkg-deb.*/md5sums w,
+    owner /tmp/dpkg-deb.*/postinst w,
+    owner /tmp/dpkg-deb.*/postrm w,
     owner /tmp/dpkg-deb.*/triggers w,
 
   }
@@ -116,18 +120,20 @@ profile debsums /usr/bin/debsums {
 
   profile tar {
     include <abstractions/base>
+    include <abstractions/nameservice>
 
-    /etc/group r,
-    /etc/nsswitch.conf r,
-    /etc/passwd r,
     /usr/bin/tar r,
     owner /tmp/*/DEBIAN/ w,
     owner /tmp/*/DEBIAN/control w,
     owner /tmp/*/DEBIAN/md5sums w,
+    owner /tmp/*/DEBIAN/postinst w,
+    owner /tmp/*/DEBIAN/postrm w,
     owner /tmp/*/DEBIAN/triggers w,
     owner /tmp/dpkg-deb.*/ w,
     owner /tmp/dpkg-deb.*/control w,
     owner /tmp/dpkg-deb.*/md5sums w,
+    owner /tmp/dpkg-deb.*/postinst w,
+    owner /tmp/dpkg-deb.*/postrm w,
     owner /tmp/dpkg-deb.*/triggers w,
 
   }

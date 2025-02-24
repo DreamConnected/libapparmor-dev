@@ -375,7 +375,7 @@ tst_%: parser_%.c parser.h $(filter-out parser_%.o, ${TEST_OBJECTS})
 
 errnos.h:
 	echo '#include <errno.h>' > dump.c
-	$(CC) -E -dD dump.c | awk '/^#define E/ { printf "{ \"%s\", %s },\n", $$2, $$2 }' > errnos.h
+	$(CC) $(CPPFLAGS) -E -dD dump.c | awk '/^#define E/ { printf "{ \"%s\", %s },\n", $$2, $$2 }' > errnos.h
 	rm -f dump.c
 
 .SILENT: check

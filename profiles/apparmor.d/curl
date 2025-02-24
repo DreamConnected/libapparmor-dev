@@ -15,7 +15,7 @@ profile curl /usr/bin/curl {
   include <abstractions/base>
 
   # read reading configuration files $HOME, from /etc
-  file r /{etc,@{HOME}}/**,
+  file r /{@{etc_ro},@{HOME}}/**,
   # read systemd-resolved's config
   file r /run/systemd/resolve/{,stub-}resolv.conf,
   file r /usr/lib/systemd/resolv.conf,

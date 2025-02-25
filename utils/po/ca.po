@@ -1,0 +1,1269 @@
+# Catalan translation for apparmor
+# Copyright (c) 2024 Rosetta Contributors and Canonical Ltd 2024
+# This file is distributed under the same license as the apparmor package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: apparmor\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2014-09-14 19:29+0530\n"
+"PO-Revision-Date: 2024-09-15 05:07+0000\n"
+"Last-Translator: Walter Garcia-Fontes <walter.garcia@upf.edu>\n"
+"Language-Team: Catalan <ca@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2024-09-16 04:30+0000\n"
+"X-Generator: Launchpad (build 1b1ed1ad2dbfc71ee62b5c5491c975135a771bf0)\n"
+"Language: ca\n"
+
+#: ../aa-genprof:56
+msgid "Generate profile for the given program"
+msgstr "Genera un perfil per al programa indicat"
+
+#: ../aa-genprof:57 ../aa-logprof:25 ../aa-cleanprof:24 ../aa-mergeprof:34
+#: ../aa-autodep:25 ../aa-audit:25 ../aa-complain:24 ../aa-enforce:24
+#: ../aa-disable:24
+msgid "path to profiles"
+msgstr "camí als perfils"
+
+#: ../aa-genprof:58 ../aa-logprof:26
+msgid "path to logfile"
+msgstr "camí al fitxer de registre"
+
+#: ../aa-genprof:59
+msgid "name of program to profile"
+msgstr "nom del programa a perfilar"
+
+#: ../aa-genprof:69 ../aa-logprof:37
+#, python-format
+msgid "The logfile %s does not exist. Please check the path"
+msgstr "El fitxer de registre %s no existeix. Comproveu el camí"
+
+#: ../aa-genprof:75 ../aa-logprof:43 ../aa-unconfined:36
+msgid ""
+"It seems AppArmor was not started. Please enable AppArmor and try again."
+msgstr ""
+"Sembla que l'AppArmor no s'ha iniciat. Activeu l'AppArmor i torneu-ho a "
+"provar."
+
+#: ../aa-genprof:80 ../aa-mergeprof:47
+#, python-format
+msgid "%s is not a directory."
+msgstr "%s no és un directori."
+
+#: ../aa-genprof:94
+#, python-format
+msgid ""
+"Can't find %(profiling)s in the system path list. If the name of the "
+"application\n"
+"is correct, please run 'which %(profiling)s' as a user with correct PATH\n"
+"environment set up in order to find the fully-qualified path and\n"
+"use the full path as parameter."
+msgstr ""
+"No es pot trobar %(profiling)s a la llista de camins del sistema. Si el nom "
+"de\n"
+"l'aplicació és correcte, si us plau executeu «which %(profiling)s» com a \n"
+"usuari amb l'entorn PATH establert correctament per trobar el camí \n"
+"plenament qualificat i usar el camí complet com a paràmetre."
+
+#: ../aa-genprof:96
+#, python-format
+msgid "%s does not exists, please double-check the path."
+msgstr "%s no existeix, comproveu el camí."
+
+#: ../aa-genprof:124
+msgid ""
+"\n"
+"Before you begin, you may wish to check if a\n"
+"profile already exists for the application you\n"
+"wish to confine. See the following wiki page for\n"
+"more information:"
+msgstr ""
+"\n"
+"Abans de començar, és possible que vulgueu comprovar si\n"
+"ja existeix un perfil per a l'aplicació que voleu\n"
+"confinar. Vegeu la pàgina del wiki següent per a\n"
+"més informació:"
+
+#: ../aa-genprof:126
+msgid ""
+"Please start the application to be profiled in\n"
+"another window and exercise its functionality now.\n"
+"\n"
+"Once completed, select the \"Scan\" option below in \n"
+"order to scan the system logs for AppArmor events. \n"
+"\n"
+"For each AppArmor event, you will be given the \n"
+"opportunity to choose whether the access should be \n"
+"allowed or denied."
+msgstr ""
+"Si us plau inicieu l'aplicació a perfilr en una\n"
+"altra finestre i proveu ara la seva funcionalitat.\n"
+"\n"
+"Un cop completat, trieu l'opció «Scan» a sota per \n"
+"buscar esdeveniments AppArmor als registres del sistema. \n"
+"\n"
+"Per a cada esdeveniment AppArmor, se us donarà \n"
+"l'oportunitat de triar si l'accés s'hauria de permetre \n"
+"o denegar."
+
+#: ../aa-genprof:147
+msgid "Profiling"
+msgstr "S'està perfilant"
+
+#: ../aa-genprof:165
+msgid ""
+"\n"
+"Reloaded AppArmor profiles in enforce mode."
+msgstr ""
+"\n"
+"S'ha recarregat els perfils d'AppArmor en mode forçat."
+
+#: ../aa-genprof:166
+msgid ""
+"\n"
+"Please consider contributing your new profile!\n"
+"See the following wiki page for more information:"
+msgstr ""
+"\n"
+"Considereu aportar el vostre nou perfil!\n"
+"Per a més informació, vegeu la pàgina wiki següent:"
+
+#: ../aa-genprof:167
+#, python-format
+msgid "Finished generating profile for %s."
+msgstr "S'ha finalitzat la generació del perfil per a %s."
+
+#: ../aa-logprof:24
+msgid "Process log entries to generate profiles"
+msgstr "Processa les entrades del registre per a generar perfils"
+
+#: ../aa-logprof:27
+msgid "mark in the log to start processing after"
+msgstr "marca al registre després de la qual es comença el processament"
+
+#: ../aa-cleanprof:23
+msgid "Cleanup the profiles for the given programs"
+msgstr "Neteja els perfils dels programes indicats"
+
+#: ../aa-cleanprof:25 ../aa-autodep:26 ../aa-audit:27 ../aa-complain:25
+#: ../aa-enforce:25 ../aa-disable:25
+msgid "name of program"
+msgstr "nom del programa"
+
+#: ../aa-cleanprof:26
+msgid "Silently overwrite with a clean profile"
+msgstr "Sobreescriu sense notificar amb un perfil net"
+
+#: ../aa-mergeprof:29
+msgid "Perform a 2-way or 3-way merge on the given profiles"
+msgstr "Realitza una fusió de 2 o 3 vies en els perfils indicats"
+
+#: ../aa-mergeprof:31
+msgid "your profile"
+msgstr "el vostre perfil"
+
+#: ../aa-mergeprof:32
+msgid "base profile"
+msgstr "perfil base"
+
+#: ../aa-mergeprof:33
+msgid "other profile"
+msgstr "un altre perfil"
+
+#: ../aa-mergeprof:67 ../apparmor/aa.py:2345
+msgid ""
+"The following local profiles were changed. Would you like to save them?"
+msgstr "S'ha canviat els perfils locals següents. Voleu desar-los?"
+
+#: ../aa-mergeprof:148 ../aa-mergeprof:430 ../apparmor/aa.py:1767
+msgid "Path"
+msgstr "Camí"
+
+#: ../aa-mergeprof:149
+msgid "Select the appropriate mode"
+msgstr "Seleccioneu el mode apropiat"
+
+#: ../aa-mergeprof:166
+msgid "Unknown selection"
+msgstr "Selecció desconeguda"
+
+#: ../aa-mergeprof:183 ../aa-mergeprof:209
+msgid "File includes"
+msgstr "El fitxer inclou"
+
+#: ../aa-mergeprof:183 ../aa-mergeprof:209
+msgid "Select the ones you wish to add"
+msgstr "Seleccioneu les que volgueu afegir"
+
+#: ../aa-mergeprof:195 ../aa-mergeprof:222
+#, python-format
+msgid "Adding %s to the file."
+msgstr "S'està afegint %s al fitxer."
+
+#: ../aa-mergeprof:199 ../apparmor/aa.py:2258
+msgid "unknown"
+msgstr "desconegut"
+
+#: ../aa-mergeprof:224 ../aa-mergeprof:275 ../aa-mergeprof:516
+#: ../aa-mergeprof:558 ../aa-mergeprof:675 ../apparmor/aa.py:1620
+#: ../apparmor/aa.py:1859 ../apparmor/aa.py:1899 ../apparmor/aa.py:2012
+#, python-format
+msgid "Deleted %s previous matching profile entries."
+msgstr "S'ha suprimit %s entrades de perfil coincidents anteriors."
+
+#: ../aa-mergeprof:244 ../aa-mergeprof:429 ../aa-mergeprof:629
+#: ../aa-mergeprof:656 ../apparmor/aa.py:992 ../apparmor/aa.py:1252
+#: ../apparmor/aa.py:1562 ../apparmor/aa.py:1603 ../apparmor/aa.py:1766
+#: ../apparmor/aa.py:1958 ../apparmor/aa.py:1994
+msgid "Profile"
+msgstr "Perfil"
+
+#: ../aa-mergeprof:245 ../apparmor/aa.py:1563 ../apparmor/aa.py:1604
+msgid "Capability"
+msgstr "Capacitat"
+
+#: ../aa-mergeprof:246 ../aa-mergeprof:480 ../apparmor/aa.py:1258
+#: ../apparmor/aa.py:1564 ../apparmor/aa.py:1605 ../apparmor/aa.py:1817
+msgid "Severity"
+msgstr "Severitat"
+
+#: ../aa-mergeprof:273 ../aa-mergeprof:514 ../apparmor/aa.py:1618
+#: ../apparmor/aa.py:1857
+#, python-format
+msgid "Adding %s to profile."
+msgstr "S'està afegint %s al perfil."
+
+#: ../aa-mergeprof:282 ../apparmor/aa.py:1627
+#, python-format
+msgid "Adding capability %s to profile."
+msgstr "S'està afegint la capacitat %s al perfil."
+
+#: ../aa-mergeprof:289 ../apparmor/aa.py:1634
+#, python-format
+msgid "Denying capability %s to profile."
+msgstr "S'està denegant la capacitat %s al perfil."
+
+#: ../aa-mergeprof:439 ../aa-mergeprof:470 ../apparmor/aa.py:1776
+#: ../apparmor/aa.py:1807
+msgid "(owner permissions off)"
+msgstr "(permisos de propietari desactivats)"
+
+#: ../aa-mergeprof:444 ../apparmor/aa.py:1781
+msgid "(force new perms to owner)"
+msgstr "(força els permisos nous al propietari)"
+
+#: ../aa-mergeprof:447 ../apparmor/aa.py:1784
+msgid "(force all rule perms to owner)"
+msgstr "(força totes les regles permeses al propietari)"
+
+#: ../aa-mergeprof:459 ../apparmor/aa.py:1796
+msgid "Old Mode"
+msgstr "Mode antic"
+
+#: ../aa-mergeprof:460 ../apparmor/aa.py:1797
+msgid "New Mode"
+msgstr "Mode nou"
+
+#: ../aa-mergeprof:475 ../apparmor/aa.py:1812
+msgid "(force perms to owner)"
+msgstr "(força els permisos al propietari)"
+
+#: ../aa-mergeprof:478 ../apparmor/aa.py:1815
+msgid "Mode"
+msgstr "Mode"
+
+#: ../aa-mergeprof:556
+#, python-format
+msgid "Adding %(path)s %(mod)s to profile"
+msgstr "S'està afegint %(path)s %(mod)s al perfil"
+
+#: ../aa-mergeprof:574 ../apparmor/aa.py:1915
+msgid "Enter new path: "
+msgstr "Introduïu un camí nou: "
+
+#: ../aa-mergeprof:630 ../aa-mergeprof:657 ../apparmor/aa.py:1959
+#: ../apparmor/aa.py:1995
+msgid "Network Family"
+msgstr "Família de xarxa"
+
+#: ../aa-mergeprof:631 ../aa-mergeprof:658 ../apparmor/aa.py:1960
+#: ../apparmor/aa.py:1996
+msgid "Socket Type"
+msgstr "Tipus de sòcol"
+
+#: ../aa-mergeprof:673 ../apparmor/aa.py:2010
+#, python-format
+msgid "Adding %s to profile"
+msgstr "S'està afegint %s al perfil"
+
+#: ../aa-mergeprof:683 ../apparmor/aa.py:2020
+#, python-format
+msgid "Adding network access %(family)s %(type)s to profile."
+msgstr "S'està afegint l'accés a la xarxa %(family)s %(type)s al perfil."
+
+#: ../aa-mergeprof:689 ../apparmor/aa.py:2026
+#, python-format
+msgid "Denying network access %(family)s %(type)s to profile"
+msgstr "S'està denegant l'accés a la xarxa %(family)s %(type)s al perfil"
+
+#: ../aa-autodep:23
+msgid "Generate a basic AppArmor profile by guessing requirements"
+msgstr "Genera un perfil bàsic d'AppArmor suposant els requisits"
+
+#: ../aa-autodep:24
+msgid "overwrite existing profile"
+msgstr "sobreescriu el perfil existent"
+
+#: ../aa-audit:24
+msgid "Switch the given programs to audit mode"
+msgstr "Canvia els programes indicats al mode d'auditoria"
+
+#: ../aa-audit:26
+msgid "remove audit mode"
+msgstr "elimina el mode d'auditoria"
+
+#: ../aa-audit:28
+msgid "Show full trace"
+msgstr "Mostra la traça completa"
+
+#: ../aa-complain:23
+msgid "Switch the given program to complain mode"
+msgstr "Canvia el programa indicat al mode de queixa"
+
+#: ../aa-enforce:23
+msgid "Switch the given program to enforce mode"
+msgstr "Canvia el programa indicat al mode forçat"
+
+#: ../aa-disable:23
+msgid "Disable the profile for the given programs"
+msgstr "Desactiva el perfil per als programes indicats"
+
+#: ../aa-unconfined:28
+msgid "Lists unconfined processes having tcp or udp ports"
+msgstr "Llista els processos no confinats que tenen ports tcp o udp"
+
+#: ../aa-unconfined:29
+msgid "scan all processes from /proc"
+msgstr "escaneja tots els processos des de /proc"
+
+#: ../aa-unconfined:81
+#, python-format
+msgid "%(pid)s %(program)s (%(commandline)s) not confined"
+msgstr "%(pid)s %(program)s (%(commandline)s) no està confinat"
+
+#: ../aa-unconfined:85
+#, python-format
+msgid "%(pid)s %(program)s%(pname)s not confined"
+msgstr "%(pid)s %(program)s%(pname)s no està confinat"
+
+#: ../aa-unconfined:90
+#, python-format
+msgid "%(pid)s %(program)s (%(commandline)s) confined by '%(attribute)s'"
+msgstr "%(pid)s %(program)s (%(commandline)s) confinat per '%(attribute)s'"
+
+#: ../aa-unconfined:94
+#, python-format
+msgid "%(pid)s %(program)s%(pname)s confined by '%(attribute)s'"
+msgstr "%(pid)s %(program)s%(pname)s confinat per '%(attribute)s'"
+
+#: ../apparmor/aa.py:196
+#, python-format
+msgid "Followed too many links while resolving %s"
+msgstr "S'ha seguit massa enllaços resolent %s"
+
+#: ../apparmor/aa.py:252 ../apparmor/aa.py:259
+#, python-format
+msgid "Can't find %s"
+msgstr "No s'ha pogut trobar %s"
+
+#: ../apparmor/aa.py:264 ../apparmor/aa.py:548
+#, python-format
+msgid "Setting %s to complain mode."
+msgstr "S'està establint %s al mode queixa."
+
+#: ../apparmor/aa.py:271
+#, python-format
+msgid "Setting %s to enforce mode."
+msgstr "S'està establint %s al mode forçat."
+
+#: ../apparmor/aa.py:286
+#, python-format
+msgid "Unable to find basename for %s."
+msgstr "No s'ha pogut trobar el nom base per a %s."
+
+#: ../apparmor/aa.py:301
+#, python-format
+msgid "Could not create %(link)s symlink to %(filename)s."
+msgstr "No s'ha pogut crear l'enllaç simbòlic %(link)s a %(filename)s."
+
+#: ../apparmor/aa.py:314
+#, python-format
+msgid "Unable to read first line from %s: File Not Found"
+msgstr ""
+"No s'ha pogut llegir la primera línia de %s: No s'ha trobat el fitxer"
+
+#: ../apparmor/aa.py:328
+#, python-format
+msgid ""
+"Unable to fork: %(program)s\n"
+"\t%(error)s"
+msgstr ""
+"No s'ha pogut bifurcar: %(program)s\n"
+"\t%(error)s"
+
+#: ../apparmor/aa.py:449 ../apparmor/ui.py:303
+msgid ""
+"Are you sure you want to abandon this set of profile changes and exit?"
+msgstr ""
+"Esteu segur que voleu abandonar aquest conjunt de canvis del perfil i sortir?"
+
+#: ../apparmor/aa.py:451 ../apparmor/ui.py:305
+msgid "Abandoning all changes."
+msgstr "Abandonant tots els canvis."
+
+#: ../apparmor/aa.py:464
+msgid "Connecting to repository..."
+msgstr "S'està connectant al repositori..."
+
+#: ../apparmor/aa.py:470
+msgid "WARNING: Error fetching profiles from the repository"
+msgstr "AVÍS: S'ha produït un error en recuperar els perfils del repositori"
+
+#: ../apparmor/aa.py:550
+#, python-format
+msgid "Error activating profiles: %s"
+msgstr "S'ha produït un error en activar els perfils: %s"
+
+#: ../apparmor/aa.py:605
+#, python-format
+msgid "%s contains no profile"
+msgstr "%s no conté cap perfil"
+
+#: ../apparmor/aa.py:706
+#, python-format
+msgid ""
+"WARNING: Error synchronizing profiles with the repository:\n"
+"%s\n"
+msgstr ""
+"AVÍS: S'ha produït un error en sincronitzar els perfils amb el repositori:\n"
+"%s\n"
+
+#: ../apparmor/aa.py:744
+#, python-format
+msgid ""
+"WARNING: Error synchronizing profiles with the repository\n"
+"%s"
+msgstr ""
+"AVÍS: S'ha produït un error en sincronitzar els perfils amb el repositori\n"
+"%s"
+
+#: ../apparmor/aa.py:832 ../apparmor/aa.py:883
+#, python-format
+msgid ""
+"WARNING: An error occurred while uploading the profile %(profile)s\n"
+"%(ret)s"
+msgstr ""
+"AVÍS: S'ha produït un error en pujar el perfil %(profile)s\n"
+"%(ret)s"
+
+#: ../apparmor/aa.py:833
+msgid "Uploaded changes to repository."
+msgstr "S'ha pujat els canvis al repositori."
+
+#: ../apparmor/aa.py:865
+msgid "Changelog Entry: "
+msgstr "Entrada del registre de canvis: "
+
+#: ../apparmor/aa.py:885
+msgid ""
+"Repository Error\n"
+"Registration or Signin was unsuccessful. User login\n"
+"information is required to upload profiles to the repository.\n"
+"These changes could not be sent."
+msgstr ""
+"Error del repositori\n"
+"El registre o l'inicia de sessió han fallat. Es requereix\n"
+"la informació d'inici de sessió per pujar perfils al repositori.\n"
+"No s'han pogut enviar aquests canvis."
+
+#: ../apparmor/aa.py:995
+msgid "Default Hat"
+msgstr "Barret per defecte"
+
+#: ../apparmor/aa.py:997
+msgid "Requested Hat"
+msgstr "Barret sol·licitat"
+
+#: ../apparmor/aa.py:1218
+#, python-format
+msgid "%s has transition name but not transition mode"
+msgstr "%s té nom de transició però no mode de transició"
+
+#: ../apparmor/aa.py:1232
+#, python-format
+msgid "Target profile exists: %s\n"
+msgstr "El perfil de destinació existeix: %s\n"
+
+#: ../apparmor/aa.py:1254
+msgid "Program"
+msgstr "Programa"
+
+#: ../apparmor/aa.py:1257
+msgid "Execute"
+msgstr "Executa"
+
+#: ../apparmor/aa.py:1287
+msgid "Are you specifying a transition to a local profile?"
+msgstr "Esteu especificant una transició a un perfil local?"
+
+#: ../apparmor/aa.py:1299
+msgid "Enter profile name to transition to: "
+msgstr "Introduïu el nom del perfil a on fer la transició: "
+
+#: ../apparmor/aa.py:1308
+msgid ""
+"Should AppArmor sanitise the environment when\n"
+"switching profiles?\n"
+"\n"
+"Sanitising environment is more secure,\n"
+"but some applications depend on the presence\n"
+"of LD_PRELOAD or LD_LIBRARY_PATH."
+msgstr ""
+"L'AppArmor hauria de sanejar l'entorn quan es\n"
+"canvia de perfil?\n"
+"\n"
+"L'entorn sanejat és més segur,\n"
+"però algunes aplicacions depenen de la presència\n"
+"de LD_PRELOAD o LD_LIBRARY_PATH."
+
+#: ../apparmor/aa.py:1310
+msgid ""
+"Should AppArmor sanitise the environment when\n"
+"switching profiles?\n"
+"\n"
+"Sanitising environment is more secure,\n"
+"but this application appears to be using LD_PRELOAD\n"
+"or LD_LIBRARY_PATH and sanitising the environment\n"
+"could cause functionality problems."
+msgstr ""
+"L'AppArmor hauria de sanejar l'entorn quan es\n"
+"canvia de perfil?\n"
+"\n"
+"L'entorn sanejat és més segur,\n"
+"però aquesta aplicació sembla estar utilitzant LD_PRELOAD\n"
+"o LD_LIBRARY_PATH i sanejar l'entorn\n"
+"podria causar problemes de funcionament."
+
+#: ../apparmor/aa.py:1318
+#, python-format
+msgid ""
+"Launching processes in an unconfined state is a very\n"
+"dangerous operation and can cause serious security holes.\n"
+"\n"
+"Are you absolutely certain you wish to remove all\n"
+"AppArmor protection when executing %s ?"
+msgstr ""
+"Llançar processos en un estat no confinat és una\n"
+"operació molt perillosa i pot causar greus forats de seguretat.\n"
+"\n"
+"Esteu absolutament segur que voleu eliminar totes\n"
+"les proteccions de l'AppArmor en executar %s ?"
+
+#: ../apparmor/aa.py:1320
+msgid ""
+"Should AppArmor sanitise the environment when\n"
+"running this program unconfined?\n"
+"\n"
+"Not sanitising the environment when unconfining\n"
+"a program opens up significant security holes\n"
+"and should be avoided if at all possible."
+msgstr ""
+"L'AppArmor hauria de sanejar l'entorn en\n"
+"executar aquest programa sense confinament?\n"
+"\n"
+"No sanejar l'entorn en desconfinar\n"
+"un programa obre forats de seguretat significatius\n"
+"i s'hauria d'evitar si és possible."
+
+#: ../apparmor/aa.py:1396 ../apparmor/aa.py:1414
+#, python-format
+msgid ""
+"A profile for %s does not exist.\n"
+"Do you want to create one?"
+msgstr ""
+"No existeix un perfil per a %s.\n"
+"Voleu crear-ne un?"
+
+#: ../apparmor/aa.py:1523
+msgid "Complain-mode changes:"
+msgstr "Canvis en el mode queixa:"
+
+#: ../apparmor/aa.py:1525
+msgid "Enforce-mode changes:"
+msgstr "Canvis en el mode forçat:"
+
+#: ../apparmor/aa.py:1528
+#, python-format
+msgid "Invalid mode found: %s"
+msgstr "S'ha trobat un mode no vàlid: %s"
+
+#: ../apparmor/aa.py:1897
+#, python-format
+msgid "Adding %(path)s %(mode)s to profile"
+msgstr "S'està afegint %(path)s %(mode)s al perfil"
+
+#: ../apparmor/aa.py:1918
+#, python-format
+msgid ""
+"The specified path does not match this log entry:\n"
+"\n"
+"  Log Entry: %(path)s\n"
+"  Entered Path:  %(ans)s\n"
+"Do you really want to use this path?"
+msgstr ""
+"El camí especificat no coincideix amb aquesta entrada de registre:\n"
+"\n"
+"  Entrada del registre: %(path)s\n"
+"  Camí introduït: %(ans)s\n"
+"Esteu segur que voleu utilitzar aquest camí?"
+
+#: ../apparmor/aa.py:2251
+#, python-format
+msgid "Reading log entries from %s."
+msgstr "S'estan llegint les entrades del registre de %s."
+
+#: ../apparmor/aa.py:2254
+#, python-format
+msgid "Updating AppArmor profiles in %s."
+msgstr "S'estan actualitzant els perfils d'AppArmor a %s."
+
+#: ../apparmor/aa.py:2323
+msgid ""
+"Select which profile changes you would like to save to the\n"
+"local profile set."
+msgstr ""
+"Seleccioneu quins canvis de perfil voleu desar al\n"
+"conjunt de perfil local."
+
+#: ../apparmor/aa.py:2324
+msgid "Local profile changes"
+msgstr "Canvis de perfil local"
+
+#: ../apparmor/aa.py:2418
+msgid "Profile Changes"
+msgstr "Canvis de perfil"
+
+#: ../apparmor/aa.py:2428
+#, python-format
+msgid "Can't find existing profile %s to compare changes."
+msgstr "No s'ha pogut trobar el perfil existent %s per comparar els canvis."
+
+#: ../apparmor/aa.py:2566 ../apparmor/aa.py:2581
+#, python-format
+msgid "Can't read AppArmor profiles in %s"
+msgstr "No es poden llegir els perfils d'AppArmor a %s"
+
+#: ../apparmor/aa.py:2677
+#, python-format
+msgid ""
+"%(profile)s profile in %(file)s contains syntax errors in line: %(line)s."
+msgstr ""
+"El perfil %(profile)s a %(file)s conté errors de sintaxi a la línia: "
+"%(line)s."
+
+#: ../apparmor/aa.py:2734
+#, python-format
+msgid ""
+"Syntax Error: Unexpected End of Profile reached in file: %(file)s line: "
+"%(line)s"
+msgstr ""
+"Error de sintaxi: S'ha arribat al final inesperat del perfil al fitxer: "
+"%(file)s línia: %(line)s"
+
+#: ../apparmor/aa.py:2749
+#, python-format
+msgid ""
+"Syntax Error: Unexpected capability entry found in file: %(file)s line: "
+"%(line)s"
+msgstr ""
+"Error de sintaxi: S'ha trobat una entrada de capacitat inesperada al fitxer: "
+"%(file)s línia: %(line)s"
+
+#: ../apparmor/aa.py:2770
+#, python-format
+msgid ""
+"Syntax Error: Unexpected link entry found in file: %(file)s line: %(line)s"
+msgstr ""
+"Error de sintaxi: s'ha trobat una entrada d'enllaç inesperada al fitxer: "
+"%(file)s línia: %(line)s"
+
+#: ../apparmor/aa.py:2798
+#, python-format
+msgid ""
+"Syntax Error: Unexpected change profile entry found in file: %(file)s line: "
+"%(line)s"
+msgstr ""
+"Error de sintaxi: S'ha trobat una entrada de canvi inesperada al fitxer: "
+"%(file)s línia: %(line)s"
+
+#: ../apparmor/aa.py:2820
+#, python-format
+msgid ""
+"Syntax Error: Unexpected rlimit entry found in file: %(file)s line: %(line)s"
+msgstr ""
+"Error de sintaxi: S'ha trobat una entrada de rlimit inesperada al fitxer: "
+"%(file)s línia: %(line)s"
+
+#: ../apparmor/aa.py:2831
+#, python-format
+msgid ""
+"Syntax Error: Unexpected boolean definition found in file: %(file)s line: "
+"%(line)s"
+msgstr ""
+"Error de sintaxi: S'ha trobat una definició booleana inesperada al fitxer: "
+"%(file)s línia: %(line)s"
+
+#: ../apparmor/aa.py:2871
+#, python-format
+msgid ""
+"Syntax Error: Unexpected bare file rule found in file: %(file)s line: "
+"%(line)s"
+msgstr ""
+"Error de sintaxi: S'ha trobat una regla de fitxer no esperada al fitxer: "
+"%(file)s línia: %(line)s"
+
+#: ../apparmor/aa.py:2894
+#, python-format
+msgid ""
+"Syntax Error: Unexpected path entry found in file: %(file)s line: %(line)s"
+msgstr ""
+"Error de sintaxi: S'ha trobat una entrada de camí inesperada al fitxer: "
+"%(file)s línia: %(line)s"
+
+#: ../apparmor/aa.py:2922
+#, python-format
+msgid "Syntax Error: Invalid Regex %(path)s in file: %(file)s line: %(line)s"
+msgstr ""
+"Error de sintaxi: Regex no vàlid %(path)s al fitxer: %(file)s línia: %(line)s"
+
+#: ../apparmor/aa.py:2925
+#, python-format
+msgid "Invalid mode %(mode)s in file: %(file)s line: %(line)s"
+msgstr "El mode %(mode)s no és vàlid al fitxer: %(file)s línia: %(line)s"
+
+#: ../apparmor/aa.py:2977
+#, python-format
+msgid ""
+"Syntax Error: Unexpected network entry found in file: %(file)s line: %(line)s"
+msgstr ""
+"Error de sintaxi: S'ha trobat una entrada de xarxa inesperada al fitxer: "
+"%(file)s línia: %(line)s"
+
+#: ../apparmor/aa.py:3007
+#, python-format
+msgid ""
+"Syntax Error: Unexpected dbus entry found in file: %(file)s line: %(line)s"
+msgstr ""
+"Error de sintaxi: S'ha trobat una entrada de dbus inesperada al fitxer: "
+"%(file)s línia: %(line)s"
+
+#: ../apparmor/aa.py:3030
+#, python-format
+msgid ""
+"Syntax Error: Unexpected mount entry found in file: %(file)s line: %(line)s"
+msgstr ""
+"Error de sintaxi: S'ha trobat una entrada de muntatge inesperada al fitxer: "
+"%(file)s línia: %(line)s"
+
+#: ../apparmor/aa.py:3052
+#, python-format
+msgid ""
+"Syntax Error: Unexpected signal entry found in file: %(file)s line: %(line)s"
+msgstr ""
+"Error de sintaxi: S'ha trobat una entrada de senyal inesperada al fitxer: "
+"%(file)s línia: %(line)s"
+
+#: ../apparmor/aa.py:3074
+#, python-format
+msgid ""
+"Syntax Error: Unexpected ptrace entry found in file: %(file)s line: %(line)s"
+msgstr ""
+"Error de sintaxi: S'ha trobat una entrada de ptrace inesperada al fitxer: "
+"%(file)s línia: %(line)s"
+
+#: ../apparmor/aa.py:3096
+#, python-format
+msgid ""
+"Syntax Error: Unexpected pivot_root entry found in file: %(file)s line: "
+"%(line)s"
+msgstr ""
+"Error de sintaxi: S'ha trobat una entrada de pivot_root inesperada al "
+"fitxer: %(file)s línia: %(line)s"
+
+#: ../apparmor/aa.py:3118
+#, python-format
+msgid ""
+"Syntax Error: Unexpected unix entry found in file: %(file)s line: %(line)s"
+msgstr ""
+"Error de sintaxi: S'ha trobat una entrada d'unix inesperada al fitxer: "
+"%(file)s línia: %(line)s"
+
+#: ../apparmor/aa.py:3140
+#, python-format
+msgid ""
+"Syntax Error: Unexpected change hat declaration found in file: %(file)s "
+"line: %(line)s"
+msgstr ""
+"Error de sintaxi: S'ha trobat una declaració de barret de canvi inesperada "
+"al fitxer: %(file)s línia: %(line)s"
+
+#: ../apparmor/aa.py:3152
+#, python-format
+msgid ""
+"Syntax Error: Unexpected hat definition found in file: %(file)s line: "
+"%(line)s"
+msgstr ""
+"Error de sintaxi: S'ha trobat una definició de barret inesperada al fitxer: "
+"%(file)s línia: %(line)s"
+
+#: ../apparmor/aa.py:3168
+#, python-format
+msgid "Error: Multiple definitions for hat %(hat)s in profile %(profile)s."
+msgstr ""
+"Error: Hi ha múltiples definicions del barret %(hat)s al perfil %(profile)s."
+
+#: ../apparmor/aa.py:3185
+#, python-format
+msgid "Warning: invalid \"REPOSITORY:\" line in %s, ignoring."
+msgstr "Avís: La línia «REPOSITORY:» a %s és invàlida, s'ignorarà."
+
+#: ../apparmor/aa.py:3198
+#, python-format
+msgid "Syntax Error: Unknown line found in file: %(file)s line: %(line)s"
+msgstr ""
+"Error de sintaxi: Línia desconeguda trobada al fitxer: %(file)s línia: "
+"%(line)s"
+
+#: ../apparmor/aa.py:3211
+#, python-format
+msgid ""
+"Syntax Error: Missing '}' or ','. Reached end of file %(file)s while inside "
+"profile %(profile)s"
+msgstr ""
+"Error de sintaxi: Falta «}» o «,». S'ha arribat al final del fitxer %(file)s "
+"mentre es trobava dins del perfil %(profile)s"
+
+#: ../apparmor/aa.py:3277
+#, python-format
+msgid "Redefining existing variable %(variable)s: %(value)s in %(file)s"
+msgstr "Redefinint la variable existent %(variable)s: %(value)s a %(file)s"
+
+#: ../apparmor/aa.py:3282
+#, python-format
+msgid ""
+"Values added to a non-existing variable %(variable)s: %(value)s in %(file)s"
+msgstr ""
+"S'han afegit valors a una variable no existent %(variable)s: %(value)s a "
+"%(file)s"
+
+#: ../apparmor/aa.py:3284
+#, python-format
+msgid ""
+"Unknown variable operation %(operation)s for variable %(variable)s in "
+"%(file)s"
+msgstr ""
+"Operació de variable desconeguda %(operation)s per a la variable "
+"%(variable)s a %(file)s"
+
+#: ../apparmor/aa.py:3343
+#, python-format
+msgid "Invalid allow string: %(allow)s"
+msgstr "Cadena de permissivitat no vàlida: %(allow)s"
+
+#: ../apparmor/aa.py:3778
+msgid "Can't find existing profile to modify"
+msgstr "No es pot trobar el perfil existent per a modificar"
+
+#: ../apparmor/aa.py:4347
+#, python-format
+msgid "Writing updated profile for %s."
+msgstr "S'està escrivint el perfil actualitzat per a %s."
+
+#: ../apparmor/aa.py:4481
+#, python-format
+msgid "File Not Found: %s"
+msgstr "No s'ha trobat el fitxer: %s"
+
+#: ../apparmor/aa.py:4591
+#, python-format
+msgid ""
+"%s is currently marked as a program that should not have its own\n"
+"profile.  Usually, programs are marked this way if creating a profile for \n"
+"them is likely to break the rest of the system.  If you know what you're\n"
+"doing and are certain you want to create a profile for this program, edit\n"
+"the corresponding entry in the [qualifiers] section in "
+"/etc/apparmor/logprof.conf."
+msgstr ""
+"%s està marcat com a programa que no hauria de tenir el seu propi\n"
+"perfil.  Normalment, els programes es marquen d'aquesta manera si és "
+"probable que \n"
+"en crear-ne un perfil es trenqui la resta del sistema.  Si sabeu el que "
+"esteu\n"
+"fent i esteu segurs que voleu crear un perfil per a aquest programa, editeu\n"
+"l'entrada corresponent a la secció [qualifiers] a /etc/apparmor/logprof.conf."
+
+#: ../apparmor/logparser.py:127 ../apparmor/logparser.py:132
+#, python-format
+msgid "Log contains unknown mode %s"
+msgstr "El registre conté el mode desconegut %s"
+
+#: ../apparmor/tools.py:84 ../apparmor/tools.py:126
+#, python-format
+msgid ""
+"Can't find %(program)s in the system path list. If the name of the "
+"application\n"
+"is correct, please run 'which %(program)s' as a user with correct PATH\n"
+"environment set up in order to find the fully-qualified path and\n"
+"use the full path as parameter."
+msgstr ""
+"No s'ha pogut trobar %(program)s a la llista de camins del sistema. Si el "
+"nom de l'aplicació\n"
+"és correcte executeu «which %(program)s» com a un usuari que tingui la "
+"variable d'entorn\n"
+"PATH configurada correctament per trobar el camí plenament qualificat i\n"
+"utilitzeu el camí complet com a paràmetre."
+
+#: ../apparmor/tools.py:86 ../apparmor/tools.py:102 ../apparmor/tools.py:128
+#, python-format
+msgid "%s does not exist, please double-check the path."
+msgstr "%s no existeix, comproveu el camí."
+
+#: ../apparmor/tools.py:100
+msgid ""
+"The given program cannot be found, please try with the fully qualified path "
+"name of the program: "
+msgstr ""
+"No s'ha pogut trobar el programa indicat, proveu-ho amb el nom del camí "
+"complet del programa: "
+
+#: ../apparmor/tools.py:113 ../apparmor/tools.py:137 ../apparmor/tools.py:157
+#: ../apparmor/tools.py:175 ../apparmor/tools.py:193
+#, python-format
+msgid "Profile for %s not found, skipping"
+msgstr "No s'ha pogut trobar el perfil per a %s, s'ometrà"
+
+#: ../apparmor/tools.py:140
+#, python-format
+msgid "Disabling %s."
+msgstr "S'està inhabilitant %s."
+
+#: ../apparmor/tools.py:198
+#, python-format
+msgid "Setting %s to audit mode."
+msgstr "S'està establint %s en mode d'auditoria."
+
+#: ../apparmor/tools.py:200
+#, python-format
+msgid "Removing audit mode from %s."
+msgstr "S'està suprimint el mode d'auditoria de %s."
+
+#: ../apparmor/tools.py:212
+#, python-format
+msgid ""
+"Please pass an application to generate a profile for, not a profile itself - "
+"skipping %s."
+msgstr ""
+"Passeu una aplicació per generar un perfil, no un perfil en si - s'omet %s."
+
+#: ../apparmor/tools.py:220
+#, python-format
+msgid "Profile for %s already exists - skipping."
+msgstr "El perfil per a %s ja existeix - s'omet."
+
+#: ../apparmor/tools.py:232
+#, python-format
+msgid ""
+"\n"
+"Deleted %s rules."
+msgstr ""
+"\n"
+"S'han suprimit %s regles."
+
+#: ../apparmor/tools.py:240
+#, python-format
+msgid ""
+"The local profile for %(program)s in file %(file)s was changed. Would you "
+"like to save it?"
+msgstr ""
+"S'ha canviat el perfil local de %(program)s al fitxer %(file)s. Voleu desar-"
+"lo?"
+
+#: ../apparmor/tools.py:260
+#, python-format
+msgid "The profile for %s does not exists. Nothing to clean."
+msgstr "El perfil de %s no existeix. Res a netejar."
+
+#: ../apparmor/ui.py:61
+msgid "Invalid hotkey for"
+msgstr "Tecla de drecera no vàlida per a"
+
+#: ../apparmor/ui.py:77 ../apparmor/ui.py:121 ../apparmor/ui.py:275
+msgid "(Y)es"
+msgstr "(Y)Sí"
+
+#: ../apparmor/ui.py:78 ../apparmor/ui.py:122 ../apparmor/ui.py:276
+msgid "(N)o"
+msgstr "(N)o"
+
+#: ../apparmor/ui.py:123
+msgid "(C)ancel"
+msgstr "(C)ancel·lar"
+
+#: ../apparmor/ui.py:223
+msgid "(A)llow"
+msgstr "(A)Permetre"
+
+#: ../apparmor/ui.py:224
+msgid "(M)ore"
+msgstr "(M)és"
+
+#: ../apparmor/ui.py:225
+msgid "Audi(t)"
+msgstr "Audi(t)ar"
+
+#: ../apparmor/ui.py:226
+msgid "Audi(t) off"
+msgstr "Desactiva audi(t)oria"
+
+#: ../apparmor/ui.py:227
+msgid "Audit (A)ll"
+msgstr "(A)udita tot"
+
+#: ../apparmor/ui.py:229
+msgid "(O)wner permissions on"
+msgstr "(O)Activa el permisos de propietari"
+
+#: ../apparmor/ui.py:230
+msgid "(O)wner permissions off"
+msgstr "(O)Desactiva els permisos de propietari"
+
+#: ../apparmor/ui.py:231
+msgid "(D)eny"
+msgstr "(D)enega"
+
+#: ../apparmor/ui.py:232
+msgid "Abo(r)t"
+msgstr "Abor(r)ta"
+
+#: ../apparmor/ui.py:233
+msgid "(F)inish"
+msgstr "(F)inalitza"
+
+#: ../apparmor/ui.py:234
+msgid "(I)nherit"
+msgstr "(I)Hereta"
+
+#: ../apparmor/ui.py:235
+msgid "(P)rofile"
+msgstr "(P)erfil"
+
+#: ../apparmor/ui.py:236
+msgid "(P)rofile Clean Exec"
+msgstr "Executar (P)erfil net"
+
+#: ../apparmor/ui.py:237
+msgid "(C)hild"
+msgstr "(C)Fill"
+
+#: ../apparmor/ui.py:238
+msgid "(C)hild Clean Exec"
+msgstr "(C)Executar fill net"
+
+#: ../apparmor/ui.py:239
+msgid "(N)amed"
+msgstr "(N)Anomenat"
+
+#: ../apparmor/ui.py:240
+msgid "(N)amed Clean Exec"
+msgstr "(N)Executar net amb nom"
+
+#: ../apparmor/ui.py:241
+msgid "(U)nconfined"
+msgstr "(U)No confinat"
+
+#: ../apparmor/ui.py:242
+msgid "(U)nconfined Clean Exec"
+msgstr "(U)Executar net no confinat"
+
+#: ../apparmor/ui.py:243
+msgid "(P)rofile Inherit"
+msgstr "Heretar (P)erfil"
+
+#: ../apparmor/ui.py:244
+msgid "(P)rofile Inherit Clean Exec"
+msgstr "Executar net heretar (P)erfil"
+
+#: ../apparmor/ui.py:245
+msgid "(C)hild Inherit"
+msgstr "(C)Heretar fill"
+
+#: ../apparmor/ui.py:246
+msgid "(C)hild Inherit Clean Exec"
+msgstr "(C)Executar net heretar fill"
+
+#: ../apparmor/ui.py:247
+msgid "(N)amed Inherit"
+msgstr "Heretar (N)om"
+
+#: ../apparmor/ui.py:248
+msgid "(N)amed Inherit Clean Exec"
+msgstr "Executar net heretar (N)om"
+
+#: ../apparmor/ui.py:249
+msgid "(X) ix On"
+msgstr "(X) ix està activat"
+
+#: ../apparmor/ui.py:250
+msgid "(X) ix Off"
+msgstr "(X) ix està desactivat"
+
+#: ../apparmor/ui.py:251 ../apparmor/ui.py:265
+msgid "(S)ave Changes"
+msgstr "De(s)a els canvis"
+
+#: ../apparmor/ui.py:252
+msgid "(C)ontinue Profiling"
+msgstr "(C)ontinua el Perfilament"
+
+#: ../apparmor/ui.py:253
+msgid "(N)ew"
+msgstr "(N)ou"
+
+#: ../apparmor/ui.py:254
+msgid "(G)lob"
+msgstr "(G)lob"
+
+#: ../apparmor/ui.py:255
+msgid "Glob with (E)xtension"
+msgstr "Glob amb (E)xtensió"
+
+#: ../apparmor/ui.py:256
+msgid "(A)dd Requested Hat"
+msgstr "(A)fegeix el Barret sol·licitat"
+
+#: ../apparmor/ui.py:257
+msgid "(U)se Default Hat"
+msgstr "(U)sa el Barret per defecte"
+
+#: ../apparmor/ui.py:258
+msgid "(S)can system log for AppArmor events"
+msgstr ""
+"E(s)caneja el registre del sistema per als esdeveniments de l'AppArmor"
+
+#: ../apparmor/ui.py:259
+msgid "(H)elp"
+msgstr "(H)Ajuda"
+
+#: ../apparmor/ui.py:260
+msgid "(V)iew Profile"
+msgstr "(V)isualitzar perfil"
+
+#: ../apparmor/ui.py:261
+msgid "(U)se Profile"
+msgstr "(U)tilitza Perfil"
+
+#: ../apparmor/ui.py:262
+msgid "(C)reate New Profile"
+msgstr "(C)rea un nou Perfil"
+
+#: ../apparmor/ui.py:263
+msgid "(U)pdate Profile"
+msgstr "Act(u)alitza el Perfil"
+
+#: ../apparmor/ui.py:264
+msgid "(I)gnore Update"
+msgstr "(I)gnora l'actualització"
+
+#: ../apparmor/ui.py:266
+msgid "Save Selec(t)ed Profile"
+msgstr "Desa el perfil selecciona(t)"
+
+#: ../apparmor/ui.py:267
+msgid "(U)pload Changes"
+msgstr "P(u)ja els canvis"
+
+#: ../apparmor/ui.py:268
+msgid "(V)iew Changes"
+msgstr "Mostra els can(v)is"
+
+#: ../apparmor/ui.py:269
+msgid "View Changes b/w (C)lean profiles"
+msgstr "(C)Visualitza canvia entre perfils nets"
+
+#: ../apparmor/ui.py:270
+msgid "(V)iew"
+msgstr "(V)visualitza"
+
+#: ../apparmor/ui.py:271
+msgid "(E)nable Repository"
+msgstr "(E)Activa el repositori"
+
+#: ../apparmor/ui.py:272
+msgid "(D)isable Repository"
+msgstr "(D)esactiva el repositori"
+
+#: ../apparmor/ui.py:273
+msgid "(N)ever Ask Again"
+msgstr "(N)o tornis a preguntar"
+
+#: ../apparmor/ui.py:274
+msgid "Ask Me (L)ater"
+msgstr "(L)Pregunta'm després"
+
+#: ../apparmor/ui.py:277
+msgid "Allow All (N)etwork"
+msgstr "(N)Permet totes les xarxes"
+
+#: ../apparmor/ui.py:278
+msgid "Allow Network Fa(m)ily"
+msgstr "Permet la fa(m)ília de xarxes"
+
+#: ../apparmor/ui.py:279
+msgid "(O)verwrite Profile"
+msgstr "(O)met el perfil"
+
+#: ../apparmor/ui.py:280
+msgid "(K)eep Profile"
+msgstr "(K)Manté el perfil"
+
+#: ../apparmor/ui.py:281
+msgid "(C)ontinue"
+msgstr "(C)ontinua"
+
+#: ../apparmor/ui.py:282
+msgid "(I)gnore"
+msgstr "(I)gnora"
+
+#: ../apparmor/ui.py:344
+#, python-format
+msgid "PromptUser: Unknown command %s"
+msgstr "PromptUser: Ordre desconeguda %s"
+
+#: ../apparmor/ui.py:351
+#, python-format
+msgid "PromptUser: Duplicate hotkey for %(command)s: %(menutext)s "
+msgstr ""
+"PromptUser: Drecera de teclat duplicada per a %(command)s: %(menutext)s "
+
+#: ../apparmor/ui.py:363
+msgid "PromptUser: Invalid hotkey in default item"
+msgstr ""
+"PromptUser: La drecera de teclat no és vàlida a l'element predeterminat"
+
+#: ../apparmor/ui.py:368
+#, python-format
+msgid "PromptUser: Invalid default %s"
+msgstr "PromptUser: El valor per defecte %s no és vàlid"

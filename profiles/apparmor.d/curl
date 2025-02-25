@@ -14,10 +14,15 @@ include <tunables/global>
 profile curl /usr/bin/curl {
   include <abstractions/base>
   include <abstractions/nameservice>
+  include <abstractions/private-files-strict>
   include <abstractions/ssl_certs>
 
-  # allow reading certificates, configuration from $HOME
-  # (.curlrc, .config/curlrc, also see --config, --cacert options)
+  # allow reading configuration files from $HOME
+  priority=1 file r @{HOME}/.curlrc,
+  priority=1 file r @{HOME}/.config/curlrc,
+
+  # allow reading other configuration files/certs from $HOME
+  # (see --config, --cacert options)
   file r @{HOME}/**,
 
   # allow writing output to $HOME, /tmp (see -o option)

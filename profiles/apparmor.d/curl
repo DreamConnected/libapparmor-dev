@@ -13,17 +13,16 @@ include <tunables/global>
 
 profile curl /usr/bin/curl {
   include <abstractions/base>
-  include <abstractions/private-files-strict>
+  include <abstractions/nameservice>
+  include <abstractions/ssl_certs>
 
-  # read reading configuration files $HOME, from /etc
-  file r /{@{etc_ro},@{HOME}}/**,
-  # read systemd-resolved's config
-  file r /run/systemd/resolve/{,stub-}resolv.conf,
-  file r /usr/lib/systemd/resolv.conf,
+  # allow reading certificates, configuration from $HOME
+  # (.curlrc, .config/curlrc, also see --config, --cacert options)
+  file r @{HOME}/**,
 
-  # allow writing output to $HOME, /tmp
+  # allow writing output to $HOME, /tmp (see -o option)
+  file w @{HOME}/**,
   file w /tmp/**,
-  file w /@{HOME}/**,
 
   # allows UDP (for DNS), TCP (for http, https, etc), abstract Unix sockets, IPv4, IPv6
   network unix stream,

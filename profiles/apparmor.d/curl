@@ -13,6 +13,7 @@ include <tunables/global>
 
 profile curl /usr/bin/curl {
   include <abstractions/base>
+  include <abstractions/private-files-strict>
 
   # read reading configuration files $HOME, from /etc
   file r /{@{etc_ro},@{HOME}}/**,
@@ -21,7 +22,8 @@ profile curl /usr/bin/curl {
   file r /usr/lib/systemd/resolv.conf,
 
   # allow writing output to $HOME, /tmp
-  file w /{tmp,@{HOME}}/**,
+  file w /tmp/**,
+  file w /@{HOME}/**,
 
   # allows UDP (for DNS), TCP (for http, https, etc), abstract Unix sockets, IPv4, IPv6
   network unix stream,

@@ -27,14 +27,14 @@ profile lsusb /usr/bin/lsusb {
   @{sys}/bus/usb/devices/ r,
   @{sys}/class/ r,
 
-  @{sys}/devices/pci[0-9]*:[0-9]*/**/usb[0-9]**/uevent r,
-  @{sys}/devices/pci[0-9]*:[0-9]*/**/usb[0-9]**/busnum r,
-  @{sys}/devices/pci[0-9]*:[0-9]*/**/usb[0-9]**/descriptors r,
-  @{sys}/devices/pci[0-9]*:[0-9]*/**/usb[0-9]**/devnum r,
-  @{sys}/devices/pci[0-9]*:[0-9]*/**/usb[0-9]**/speed r,
-  @{sys}/devices/pci[0-9]*:[0-9]*/**/usb[0-9]**/manufacturer r,
-  @{sys}/devices/pci[0-9]*:[0-9]*/**/usb[0-9]**/product r,
-  @{sys}/devices/pci[0-9]*:[0-9]*/**/usb[0-9]**/serial r,
+  @{sys}/devices/**/usb[0-9]**/uevent r,
+  @{sys}/devices/**/usb[0-9]**/busnum r,
+  @{sys}/devices/**/usb[0-9]**/descriptors r,
+  @{sys}/devices/**/usb[0-9]**/devnum r,
+  @{sys}/devices/**/usb[0-9]**/speed r,
+  @{sys}/devices/**/usb[0-9]**/manufacturer r,
+  @{sys}/devices/**/usb[0-9]**/product r,
+  @{sys}/devices/**/usb[0-9]**/serial r,
 
   include if exists <local/lsusb>
 }

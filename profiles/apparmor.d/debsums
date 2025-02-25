@@ -120,7 +120,7 @@ profile debsums /usr/bin/debsums {
 
   profile tar {
     include <abstractions/base>
-    include <abstractions/nameservice>
+    include <abstractions/nameservice-strict>
 
     /usr/bin/tar r,
     owner /tmp/*/DEBIAN/ w,

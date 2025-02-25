@@ -8,33 +8,33 @@ msgstr ""
 "Project-Id-Version: apparmor-parser\n"
 "Report-Msgid-Bugs-To: <apparmor@lists.ubuntu.com>\n"
 "POT-Creation-Date: 2014-09-13 00:11-0700\n"
-"PO-Revision-Date: 2013-11-15 01:59+0000\n"
-"Last-Translator: Christian Boltz <Unknown>\n"
+"PO-Revision-Date: 2024-09-14 11:03+0000\n"
+"Last-Translator: Walter Garcia-Fontes <walter.garcia@upf.edu>\n"
 "Language-Team: Catalan\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2019-04-18 05:32+0000\n"
-"X-Generator: Launchpad (build 18928)\n"
+"X-Launchpad-Export-Date: 2024-09-15 07:16+0000\n"
+"X-Generator: Launchpad (build 1b1ed1ad2dbfc71ee62b5c5491c975135a771bf0)\n"
 "Language: ca\n"
 
 #: ../parser_include.c:113 ../parser_include.c:111
 msgid "Error: Out of memory.\n"
-msgstr ""
+msgstr "Error: Sense memòria.\n"
 
 #: ../parser_include.c:123 ../parser_include.c:121
 #, c-format
 msgid "Error: basedir %s is not a directory, skipping.\n"
-msgstr ""
+msgstr "Error: basedir %s no és un directori, s'omet.\n"
 
 #: ../parser_include.c:137
 #, c-format
 msgid "Error: Could not add directory %s to search path.\n"
-msgstr ""
+msgstr "Error: no s'ha pogut afegir el directori %s al camí de cerca.\n"
 
 #: ../parser_include.c:147 ../parser_include.c:151
 msgid "Error: Could not allocate memory.\n"
-msgstr ""
+msgstr "Error: no s'ha pogut assignar memòria.\n"
 
 #: ../parser_interface.c:69 ../parser_interface.c:72 ../parser_interface.c:49
 msgid "Bad write position\n"
@@ -50,7 +50,7 @@ msgstr "Sense memòria\n"
 
 #: ../parser_interface.c:78 ../parser_interface.c:81 ../parser_interface.c:58
 msgid "Couldn't copy profile: Bad memory address\n"
-msgstr ""
+msgstr "No s'ha pogut copiar el perfil: adreça de memòria incorrecta\n"
 
 #: ../parser_interface.c:81 ../parser_interface.c:84 ../parser_interface.c:61
 msgid "Profile doesn't conform to protocol\n"
@@ -62,7 +62,7 @@ msgstr "El perfil no coincideix amb la signatura\n"
 
 #: ../parser_interface.c:87 ../parser_interface.c:90 ../parser_interface.c:67
 msgid "Profile version not supported by Apparmor module\n"
-msgstr ""
+msgstr "La versió del perfil no és compatible amb el mòdul Apparmor\n"
 
 #: ../parser_interface.c:90 ../parser_interface.c:93 ../parser_interface.c:70
 msgid "Profile already exists\n"
@@ -75,11 +75,13 @@ msgstr "El perfil no existeix\n"
 #: ../parser_interface.c:96 ../parser_interface.c:99 ../parser_interface.c:76
 msgid "Permission denied; attempted to load a profile while confined?\n"
 msgstr ""
+"S'ha denegat el permís; s'ha intentat carregar un perfil mentre està "
+"confinat?\n"
 
 #: ../parser_interface.c:99 ../parser_interface.c:102 ../parser_interface.c:79
 #, c-format
 msgid "Unknown error (%d): %s\n"
-msgstr ""
+msgstr "Error desconegut (%d): %s\n"
 
 #: ../parser_interface.c:116 ../parser_interface.c:119
 #: ../parser_interface.c:96
@@ -109,7 +111,7 @@ msgstr "%s: no es pot escriure a l'stdout\n"
 #: ../parser_interface.c:115
 #, c-format
 msgid "%s: Unable to write to output file\n"
-msgstr ""
+msgstr "%s: no s'ha pogut escriure al fitxer de sortida\n"
 
 #: ../parser_interface.c:138 ../parser_interface.c:162
 #: ../parser_interface.c:141 ../parser_interface.c:165
@@ -147,11 +149,11 @@ msgstr ""
 #: ../parser_interface.c:446
 #, c-format
 msgid "profile %s network rules not enforced\n"
-msgstr ""
+msgstr "el perfil %s de les regles de xarxa no està obligat\n"
 
 #: ../parser_interface.c:666
 msgid "Unknown pattern type\n"
-msgstr ""
+msgstr "Tipus de patró desconegut\n"
 
 #: ../parser_interface.c:750 ../parser_interface.c:902
 #: ../parser_interface.c:743 ../parser_interface.c:894
@@ -164,13 +166,13 @@ msgstr "No es pot obrir %s - %s\n"
 #: ../parser_interface.c:543
 #, c-format
 msgid "Memory Allocation Error: Unable to remove ^%s\n"
-msgstr ""
+msgstr "Error d'assignació de memòria: no es pot eliminar ^%s\n"
 
 #: ../parser_interface.c:789 ../parser_interface.c:781
 #: ../parser_interface.c:556
 #, c-format
 msgid "Memory Allocation Error: Unable to remove %s:%s."
-msgstr ""
+msgstr "Error d'assignació de memòria: no es pot eliminar %s:%s."
 
 #: ../parser_interface.c:810 ../parser_interface.c:802
 msgid "unable to create work area\n"
@@ -193,31 +195,32 @@ msgstr "%s: no es pot escriure tota l'entrada del perfil\n"
 #, c-format
 msgid "%s: Unable to write entire profile entry to cache\n"
 msgstr ""
+"%s: No s'ha pogut escriure l'entrada de perfil sencera a la memòria cau\n"
 
 #: parser_lex.l:100 parser_lex.l:163 parser_lex.l:169
 #, c-format
 msgid "Could not open '%s'"
-msgstr ""
+msgstr "No s'ha pogut obrir «%s»"
 
 #: parser_lex.l:104 parser_lex.l:167 parser_lex.l:173
 #, c-format
 msgid "fstat failed for '%s'"
-msgstr ""
+msgstr "ha fallat fstat per a «%s»"
 
 #: parser_lex.l:121
 #, c-format
 msgid "opendir failed '%s'"
-msgstr ""
+msgstr "opendir ha fallat «%s»"
 
 #: parser_lex.l:152
 #, c-format
 msgid "stat failed for '%s'"
-msgstr ""
+msgstr "stat ha fallat per a «%s»"
 
 #: parser_lex.l:155 parser_lex.l:133 parser_lex.l:139
 #, c-format
 msgid "Could not open '%s' in '%s'"
-msgstr ""
+msgstr "No s'ha pogut obrir «%s» a «%s»"
 
 #: parser_lex.l:284 parser_lex.l:322 parser_lex.l:362 parser_lex.l:399
 #: parser_lex.l:469 parser_lex.l:655 parser_lex.l:586 parser_lex.l:638
@@ -227,17 +230,17 @@ msgstr "S'ha trobat un caràcter inesperat: '%s'"
 
 #: parser_lex.l:386 parser_lex.l:418 parser_lex.l:428
 msgid "Variable declarations do not accept trailing commas"
-msgstr ""
+msgstr "Les declaracions de variables no accepten comes finals"
 
 #: parser_lex.l:420
 #, c-format
 msgid "(network_mode) Found unexpected character: '%s'"
-msgstr ""
+msgstr "(networkmode) S'ha trobat un caràcter inesperat: «%s»"
 
 #: ../parser_main.c:333 ../parser_common.c:61 ../parser_common.c:106
 #, c-format
 msgid "Warning from %s (%s%sline %d): %s"
-msgstr ""
+msgstr "Avís de %s (%s%slínia %d): %s"
 
 #: ../parser_main.c:531
 #, c-format
@@ -252,6 +255,8 @@ msgid ""
 "Warning: unable to find a suitable fs in %s, is it mounted?\n"
 "Use --subdomainfs to override.\n"
 msgstr ""
+"Avís: no s'ha pogut trobar un fs adequat a %s, està muntat?\n"
+"Utilitzeu --subdomainfs per a substituir.\n"
 
 #: ../parser_main.c:597 ../parser_main.c:635 ../parser_main.c:498
 #, c-format
@@ -259,6 +264,8 @@ msgid ""
 "%s: Sorry. You need root privileges to run this program.\n"
 "\n"
 msgstr ""
+"%s: Ho sento. Necessiteu privilegis de root per a executar aquest programa.\n"
+"\n"
 
 #: ../parser_main.c:604 ../parser_main.c:642 ../parser_main.c:505
 #, c-format
@@ -267,12 +274,16 @@ msgid ""
 "Anybody who can run this program can update your AppArmor profiles.\n"
 "\n"
 msgstr ""
+"%s: Avís! Heu establert el setuid d'aquest programa a root.\n"
+"Qualsevol persona que pugui executar aquest programa pot actualitzar els "
+"perfils de l'AppArmor.\n"
+"\n"
 
 #: ../parser_main.c:704 ../parser_main.c:813 ../parser_main.c:836
 #: ../parser_main.c:946 ../parser_main.c:860
 #, c-format
 msgid "Error: Could not read profile %s: %s.\n"
-msgstr ""
+msgstr "Error: no s'ha pogut llegir el perfil %s: %s.\n"
 
 #: ../parser_main.c:718 ../parser_misc.c:270 parser_yacc.y:227
 #: parser_yacc.y:374 parser_yacc.y:386 parser_yacc.y:484 parser_yacc.y:586
@@ -298,12 +309,12 @@ msgstr "S'ha produït un error d'assignació de memòria."
 #: ../parser_main.c:740 ../parser_main.c:872 ../parser_main.c:757
 #, c-format
 msgid "Cached load succeeded for \"%s\".\n"
-msgstr ""
+msgstr "La càrrega a la memòria cau ha estat correcta per a «%s».\n"
 
 #: ../parser_main.c:744 ../parser_main.c:876 ../parser_main.c:761
 #, c-format
 msgid "Cached reload succeeded for \"%s\".\n"
-msgstr ""
+msgstr "S'ha recarregat a la memòria cau amb èxit per a «%s».\n"
 
 #: ../parser_main.c:910 ../parser_main.c:1058 ../parser_main.c:967
 #, c-format
@@ -315,11 +326,14 @@ msgid ""
 "Uppercase qualifiers \"RWLIMX\" are deprecated, please convert to lowercase\n"
 "See the apparmor.d(5) manpage for details.\n"
 msgstr ""
+"Els classificadors «RWLIMX» en majúscules estan obsolets, si us plau "
+"convertiu-los a minúscules\n"
+"Vegeu la pàgina del manual apparmor.d(5) per a més detalls.\n"
 
 #: ../parser_misc.c:467 ../parser_misc.c:474 ../parser_misc.c:638
 #: ../parser_misc.c:645 ../parser_misc.c:380 ../parser_misc.c:387
 msgid "Conflict 'a' and 'w' perms are mutually exclusive."
-msgstr ""
+msgstr "Els perms del conflicte «a» i «w» són mútuament excloents."
 
 #: ../parser_misc.c:491 ../parser_misc.c:662 ../parser_misc.c:404
 msgid "Exec qualifier 'i' invalid, conflicting qualifier already specified"
@@ -333,12 +347,17 @@ msgid ""
 "Unconfined exec qualifier (%c%c) allows some dangerous environment variables "
 "to be passed to the unconfined process; 'man 5 apparmor.d' for details.\n"
 msgstr ""
+"El qualificador d'exec no confiat (%c%c) permet passar algunes variables "
+"d'entorn perilloses al procés no confiat; «man 5 apparmor.d» per als "
+"detalls.\n"
 
 #: ../parser_misc.c:510 ../parser_misc.c:551 ../parser_misc.c:681
 #: ../parser_misc.c:722 ../parser_misc.c:423 ../parser_misc.c:464
 #, c-format
 msgid "Exec qualifier '%c' invalid, conflicting qualifier already specified"
 msgstr ""
+"El qualificador d'execució «%c» no és vàlid, ja s'ha especificat un "
+"qualificador conflictiu"
 
 #: ../parser_misc.c:537 ../parser_misc.c:545 ../parser_misc.c:708
 #: ../parser_misc.c:716 ../parser_misc.c:450 ../parser_misc.c:458
@@ -346,22 +365,24 @@ msgstr ""
 msgid ""
 "Exec qualifier '%c%c' invalid, conflicting qualifier already specified"
 msgstr ""
+"El qualificador d'execució «%c%c» no és vàlid, ja s'ha especificat un "
+"qualificador conflictiu"
 
 #: ../parser_misc.c:593 ../parser_misc.c:764 ../parser_misc.c:506
 #, c-format
 msgid "Internal: unexpected mode character '%c' in input"
-msgstr ""
+msgstr "Intern: el caràcter de mode «%c» no és esperat a l'entrada"
 
 #: ../parser_misc.c:615 ../parser_misc.c:786 ../parser_misc.c:528
 #, c-format
 msgid "Internal error generated invalid perm 0x%llx\n"
-msgstr ""
+msgstr "Error intern generat un perm 0x%llx no vàlid\n"
 
 #: ../parser_misc.c:865 ../parser_symtab.c:561 ../parser_regex.c:626
 #: ../parser_variable.c:229
 #, c-format
 msgid "AppArmor parser error: %s\n"
-msgstr ""
+msgstr "Error de l'analitzador AppArmor: %s\n"
 
 #: ../parser_merge.c:92 ../parser_merge.c:91 ../parser_merge.c:83
 msgid "Couldn't merge entries. Out of Memory\n"
@@ -370,47 +391,56 @@ msgstr "No s'han pogut fusionar les entrades. Sense memòria\n"
 #: ../parser_merge.c:111 ../parser_merge.c:113 ../parser_merge.c:105
 #, c-format
 msgid "profile %s: has merged rule %s with conflicting x modifiers\n"
-msgstr ""
+msgstr "perfil %s: té la regla fusionada %s amb modificadors X conflictius\n"
 
 #: parser_yacc.y:236 parser_yacc.y:277 parser_yacc.y:320
 msgid "Profile attachment must begin with a '/'."
-msgstr ""
+msgstr "L'adjunt del perfil ha de començar amb una «/»."
 
 #: parser_yacc.y:260 parser_yacc.y:302 parser_yacc.y:348
 msgid ""
 "Profile names must begin with a '/', namespace or keyword 'profile' or 'hat'."
 msgstr ""
+"Els noms de perfil han de començar amb un '/', espai de noms o paraula clau "
+"'profile' o 'hat'."
 
 #: parser_yacc.y:296 parser_yacc.y:338 parser_yacc.y:384
 #, c-format
 msgid "Failed to create alias %s -> %s\n"
-msgstr ""
+msgstr "No s'ha pogut crear l'àlies %s -> %s\n"
 
 #: parser_yacc.y:417 parser_yacc.y:460 parser_yacc.y:506
 msgid "Profile flag chroot_relative conflicts with namespace_relative"
 msgstr ""
+"L'indicador de perfil chrootrelative entra en conflicte amb "
+"namespace_relative"
 
 #: parser_yacc.y:421 parser_yacc.y:464 parser_yacc.y:510
 msgid "Profile flag mediate_deleted conflicts with delegate_deleted"
 msgstr ""
+"L'indicador del perfil mediate_deleted entre en conflicte amb "
+"delegate_deleted"
 
 #: parser_yacc.y:424 parser_yacc.y:467 parser_yacc.y:513
 msgid ""
 "Profile flag attach_disconnected conflicts with no_attach_disconnected"
 msgstr ""
+"L'indicador de perfil attach_disconnected entra en conflicte amb "
+"no_attach_disconnected"
 
 #: parser_yacc.y:427 parser_yacc.y:470 parser_yacc.y:516
 msgid "Profile flag chroot_attach conflicts with chroot_no_attach"
 msgstr ""
+"El perfil de l'etiqueta chroot_attach entra en conflicte amb chroot_noattach"
 
 #: parser_yacc.y:441 parser_yacc.y:484 parser_yacc.y:530
 msgid "Profile flag 'debug' is no longer valid."
-msgstr ""
+msgstr "L'indicador de perfil «debug» ja no és vàlid."
 
 #: parser_yacc.y:463 parser_yacc.y:506 parser_yacc.y:552
 #, c-format
 msgid "Invalid profile flag: %s."
-msgstr ""
+msgstr "Indicador de perfil no vàlid: %s."
 
 #: parser_yacc.y:498 parser_yacc.y:520 parser_yacc.y:548 parser_yacc.y:594
 msgid "Assert: `rule' returned NULL."
@@ -422,23 +452,29 @@ msgid ""
 "Invalid mode, in deny rules 'x' must not be preceded by exec qualifier 'i', "
 "'p', or 'u'"
 msgstr ""
+"El mode no és vàlid, a les regles de denegació «x» no s'ha de precedir per "
+"«i», «p» o «u»"
 
 #: parser_yacc.y:524 parser_yacc.y:556 parser_yacc.y:602
 msgid ""
 "Invalid mode, 'x' must be preceded by exec qualifier 'i', 'p', 'c', or 'u'"
 msgstr ""
+"El mode no és vàlid, «x» ha d'anar precedit del qualificador «i», «p», «c» o "
+"«u»"
 
 #: parser_yacc.y:549 parser_yacc.y:587 parser_yacc.y:633
 msgid "Invalid mode, 'x' must be preceded by exec qualifier 'i', 'p', or 'u'"
 msgstr ""
+"El mode no és vàlid, «x» ha d'anar precedit del qualificador exec «i», «p» o "
+"«u»"
 
 #: parser_yacc.y:574 parser_yacc.y:612 parser_yacc.y:614 parser_yacc.y:660
 msgid "Assert: `network_rule' return invalid protocol."
-msgstr ""
+msgstr "Assert: «network_rule» retorna un protocol no vàlid."
 
 #: parser_yacc.y:649 parser_yacc.y:696 parser_yacc.y:786
 msgid "Assert: `change_profile' returned NULL."
-msgstr ""
+msgstr "Confirmació: «change_profile» ha retornat NULL."
 
 #: parser_yacc.y:680 parser_yacc.y:720 parser_yacc.y:810
 msgid "Assert: 'hat rule' returned NULL."
@@ -446,28 +482,32 @@ msgstr "Confirmació: 'hat rule' ha retornat NULL."
 
 #: parser_yacc.y:689 parser_yacc.y:729 parser_yacc.y:819
 msgid "Assert: 'local_profile rule' returned NULL."
-msgstr ""
+msgstr "Confirmació: «local_profile rule» ha retornat NULL."
 
 #: parser_yacc.y:824 parser_yacc.y:885 parser_yacc.y:992
 #, c-format
 msgid "Unset boolean variable %s used in if-expression"
 msgstr ""
+"No s'ha establert la variable booleana %s utilitzada a l'expressió if"
 
 #: parser_yacc.y:882 parser_yacc.y:986 parser_yacc.y:1092
 msgid "unsafe rule missing exec permissions"
-msgstr ""
+msgstr "manca permisos d'execució per a la regla insegura"
 
 #: parser_yacc.y:901 parser_yacc.y:954 parser_yacc.y:1060
 msgid "subset can only be used with link rules."
-msgstr ""
+msgstr "el subconjunt només es pot utilitzar amb regles d'enllaç."
 
 #: parser_yacc.y:903 parser_yacc.y:956 parser_yacc.y:1062
 msgid "link and exec perms conflict on a file rule using ->"
 msgstr ""
+"l'enllaç i els permisos exec entren en conflicte amb una regla de fitxer "
+"utilitzant ->"
 
 #: parser_yacc.y:905 parser_yacc.y:958 parser_yacc.y:1064
 msgid "link perms are not allowed on a named profile transition.\n"
 msgstr ""
+"no es permeten permisos d'enllaç en una transició de perfil amb nom.\n"
 
 #: parser_yacc.y:921 parser_yacc.y:1003 parser_yacc.y:1109
 #, c-format
@@ -477,22 +517,22 @@ msgstr "falta un caràcter de final de línia? (entrada: %s)"
 #: parser_yacc.y:975 parser_yacc.y:985 parser_yacc.y:1057 parser_yacc.y:1067
 #: parser_yacc.y:1145 parser_yacc.y:1155
 msgid "Invalid network entry."
-msgstr ""
+msgstr "Entrada de xarxa no vàlida."
 
 #: parser_yacc.y:1039 parser_yacc.y:1048 parser_yacc.y:1254 parser_yacc.y:1510
 #, c-format
 msgid "Invalid capability %s."
-msgstr ""
+msgstr "Capacitat no vàlida %s."
 
 #: parser_yacc.y:1066 parser_yacc.y:1269 parser_yacc.y:1525
 #, c-format
 msgid "AppArmor parser error for %s%s%s at line %d: %s\n"
-msgstr ""
+msgstr "Error de l'analitzador AppArmor per a %s%s%s a la línia %d: %s\n"
 
 #: parser_yacc.y:1072 parser_yacc.y:1275 parser_yacc.y:1531
 #, c-format
 msgid "AppArmor parser error,%s%s line %d: %s\n"
-msgstr ""
+msgstr "Error de l'analitzador AppArmor, %s%s línia %d: %s\n"
 
 #: ../parser_regex.c:244
 #, c-format
@@ -521,6 +561,8 @@ msgid ""
 "%s: Regex grouping error: Unclosed grouping or character class, expecting "
 "close }\n"
 msgstr ""
+"%s: error d'agrupament d'expressions regulars: agrupació sense tancar o "
+"classe de caràcters, esperant tancar }\n"
 
 #: ../parser_regex.c:351 ../parser_regex.c:357
 #, c-format
@@ -538,11 +580,14 @@ msgstr "%s: no es pot analitzar la línia d'entrada '%s'\n"
 #, c-format
 msgid "%s: Invalid profile name '%s' - bad regular expression\n"
 msgstr ""
+"%s: el nom del perfil «%s» no és vàlid - expressió regular incorrecta\n"
 
 #: ../parser_policy.c:202 ../parser_policy.c:402 ../parser_policy.c:375
 #, c-format
 msgid "ERROR merging rules for profile %s, failed to load\n"
 msgstr ""
+"S'ha produït un ERROR en fusionar les regles per al perfil %s, no s'ha pogut "
+"carregar\n"
 
 #: ../parser_policy.c:234
 #, c-format
@@ -551,21 +596,28 @@ msgid ""
 "\t'*', '?', character ranges, and alternations are not allowed.\n"
 "\t'**' may only be used at the end of a rule.\n"
 msgstr ""
+"El perfil d'ERROR %s conté elements de política no usables amb aquest "
+"nucli:\n"
+"\t'*', '?', intervals de caràcters i alternances no estan permesos.\n"
+"\t«**» només es pot utilitzar al final d'una regla.\n"
 
 #: ../parser_policy.c:279 ../parser_policy.c:359 ../parser_policy.c:332
 #, c-format
 msgid "ERROR processing regexs for profile %s, failed to load\n"
 msgstr ""
+"S'ha produït un ERROR en processar les expressions regulars del perfil %s, "
+"no s'ha pogut carregar\n"
 
 #: ../parser_policy.c:306 ../parser_policy.c:389 ../parser_policy.c:362
 #, c-format
 msgid "ERROR expanding variables for profile %s, failed to load\n"
 msgstr ""
+"ERROR en expandir les variables del perfil %s, no s'ha pogut carregar\n"
 
 #: ../parser_policy.c:390 ../parser_policy.c:382 ../parser_policy.c:355
 #, c-format
 msgid "ERROR adding hat access rule for profile %s\n"
-msgstr ""
+msgstr "ERROR en afegir la regla d'accés al barret per al perfil %s\n"
 
 #: ../parser_policy.c:490 ../parser_policy.c:271
 #, c-format
@@ -576,16 +628,20 @@ msgstr "ERROR al perfil %s, no s'ha pogut carregar\n"
 #, c-format
 msgid "%s: Errors found during postprocessing.  Aborting.\n"
 msgstr ""
+"%s: S'han trobat errors durant el postprocessament.  S'està avortant.\n"
 
 #: ../parser_policy.c:682 ../parser_policy.c:704
 #, c-format
 msgid "%s: Errors found during regex postprocess.  Aborting.\n"
 msgstr ""
+"%s: S'han trobat errors durant el postprocés de l'expressió regular.  S'està "
+"avortant.\n"
 
 #: ../parser_policy.c:689
 #, c-format
 msgid "%s: Errors found during postprocess.  Aborting.\n"
 msgstr ""
+"%s: S'han trobat errors durant el postprocessament.  S'està avortant.\n"
 
 #: ../parser_policy.c:696
 #, c-format
@@ -597,161 +653,171 @@ msgstr ""
 #: parser_lex.l:180 parser_lex.l:186
 #, c-format
 msgid "Could not process include directory '%s' in '%s'"
-msgstr ""
+msgstr "No s'ha pogut processar el directori d'inclusió «%s» a «%s»"
 
 #: ../parser_main.c:660 ../parser_main.c:523
 msgid "Feature buffer full."
-msgstr ""
+msgstr "Memòria intermèdia de funcions plena."
 
 #: ../parser_main.c:1115 ../parser_main.c:1132 ../parser_main.c:1024
 #: ../parser_main.c:1041
 msgid "Out of memory"
-msgstr ""
+msgstr "Sense memòria"
 
 #: ../parser_main.c:1182 ../parser_main.c:1091
 #, c-format
 msgid "Can't create cache directory: %s\n"
-msgstr ""
+msgstr "No es pot crear el directori de la memòria cau: %s\n"
 
 #: ../parser_main.c:1185 ../parser_main.c:1094
 #, c-format
 msgid "File in cache directory location: %s\n"
-msgstr ""
+msgstr "Fitxer a la ubicació del directori de la memòria cau: %s\n"
 
 #: ../parser_main.c:1188 ../parser_main.c:1097
 #, c-format
 msgid "Can't update cache directory: %s\n"
-msgstr ""
+msgstr "No es pot actualitzar el directori de la memòria cau: %s\n"
 
 #: ../parser_misc.c:833
 #, c-format
 msgid "Internal: unexpected DBus mode character '%c' in input"
-msgstr ""
+msgstr "Intern: el caràcter «%c» del mode DBus no és esperat a l'entrada"
 
 #: ../parser_misc.c:857
 #, c-format
 msgid "Internal error generated invalid DBus perm 0x%x\n"
-msgstr ""
+msgstr "S'ha produït un error intern al DBus perm 0x%x no vàlid\n"
 
 #: parser_yacc.y:575 parser_yacc.y:621
 msgid "deny prefix not allowed"
-msgstr ""
+msgstr "no es permet el prefix de denegació"
 
 #: parser_yacc.y:612 parser_yacc.y:658
 msgid "owner prefix not allowed"
-msgstr ""
+msgstr "no es permet el prefix del propietari"
 
 #: parser_yacc.y:660
 msgid "owner prefix not allow on mount rules"
-msgstr ""
+msgstr "el prefix propietari no permet les regles de muntatge"
 
 #: parser_yacc.y:677
 msgid "owner prefix not allow on dbus rules"
-msgstr ""
+msgstr "el prefix del propietari no permet a les regles de dbus"
 
 #: parser_yacc.y:704
 msgid "owner prefix not allow on capability rules"
-msgstr ""
+msgstr "el prefix del propietari no permet les regles de capacitat"
 
 #: parser_yacc.y:1357 parser_yacc.y:1613
 #, c-format
 msgid "invalid mount conditional %s%s"
-msgstr ""
+msgstr "el muntatge condicional %s%s no és vàlid"
 
 #: parser_yacc.y:1374 parser_yacc.y:1628
 msgid "bad mount rule"
-msgstr ""
+msgstr "regla de muntatge incorrecta"
 
 #: parser_yacc.y:1381 parser_yacc.y:1635
 msgid "mount point conditions not currently supported"
-msgstr ""
+msgstr "les condicions del punt de muntatge no són compatibles actualment"
 
 #: parser_yacc.y:1398 parser_yacc.y:1650
 #, c-format
 msgid "invalid pivotroot conditional '%s'"
-msgstr ""
+msgstr "la condició «%s» de l'arrel dinàmica no és vàlida"
 
 #: ../parser_regex.c:241 ../parser_regex.c:236
 #, c-format
 msgid ""
 "%s: Regex grouping error: Invalid close ], no matching open [ detected\n"
 msgstr ""
+"%s: error d'agrupament d'expressions regulars: tancament invàlid ], no s'ha "
+"trobat cap obert coincident [ detectat\n"
 
 #: ../parser_regex.c:257 ../parser_regex.c:256
 #, c-format
 msgid "%s: Regex grouping error: Exceeded maximum nesting of {}\n"
 msgstr ""
+"%s: Error d'agrupament d'expressions regulars: s'ha superat la imbricació "
+"màxima de {}\n"
 
 #: ../parser_policy.c:366 ../parser_policy.c:339
 #, c-format
 msgid "ERROR processing policydb rules for profile %s, failed to load\n"
 msgstr ""
+"S'ha produït un error en processar les regles policydb per al perfil %s, no "
+"s'ha pogut carregar\n"
 
 #: ../parser_policy.c:396 ../parser_policy.c:369
 #, c-format
 msgid "ERROR replacing aliases for profile %s, failed to load\n"
 msgstr ""
+"ERROR en substituir els àlies del perfil %s, no s'ha pogut carregar\n"
 
 #: ../parser_interface.c:635 ../parser_interface.c:638
 #, c-format
 msgid "%s: Unable to write %s\n"
-msgstr ""
+msgstr "%s: no s'ha pogut escriure %s\n"
 
 #: ../parser_main.c:721
 #, c-format
 msgid "Error: Could not read binary profile or cache file %s: %s.\n"
 msgstr ""
+"Error: no s'ha pogut llegir el perfil binari o el fitxer de memòria cau %s: "
+"%s.\n"
 
 #: ../parser_main.c:811
 #, c-format
 msgid "Error: Could not read cache file '%s', skipping...\n"
 msgstr ""
+"Error: no s'ha pogut llegir el fitxer de la memòria cau «%s», s'omet...\n"
 
 #: ../parser_misc.c:575
 #, c-format
 msgid "Internal: unexpected %s mode character '%c' in input"
-msgstr ""
+msgstr "Intern: al mode %s el caràcter «%c» no és l'esperat"
 
 #: ../parser_misc.c:599
 #, c-format
 msgid "Internal error generated invalid %s perm 0x%x\n"
-msgstr ""
+msgstr "Error intern generat no vàlid %s perm 0x%x\n"
 
 #: parser_yacc.y:703
 msgid "owner prefix not allowed on mount rules"
-msgstr ""
+msgstr "no es permet el prefix del propietari a les regles de muntatge"
 
 #: parser_yacc.y:720
 msgid "owner prefix not allowed on dbus rules"
-msgstr ""
+msgstr "no es permet el prefix del propietari a les regles de dbus"
 
 #: parser_yacc.y:736
 msgid "owner prefix not allowed on signal rules"
-msgstr ""
+msgstr "no es permet el prefix del propietari a les regles del senyal"
 
 #: parser_yacc.y:752
 msgid "owner prefix not allowed on ptrace rules"
-msgstr ""
+msgstr "no es permet el prefix del propietari a les regles «ptrace»"
 
 #: parser_yacc.y:768
 msgid "owner prefix not allowed on unix rules"
-msgstr ""
+msgstr "no es permet el prefix del propietari a les regles unix"
 
 #: parser_yacc.y:794
 msgid "owner prefix not allowed on capability rules"
-msgstr ""
+msgstr "no es permet el prefix del propietari a les regles de capacitat"
 
 #: parser_yacc.y:1293
 #, c-format
 msgid "dbus rule: invalid conditional group %s=()"
-msgstr ""
+msgstr "regla dbus: el grup condicional %s()() no és vàlid"
 
 #: parser_yacc.y:1371
 #, c-format
 msgid "unix rule: invalid conditional group %s=()"
-msgstr ""
+msgstr "regla unix: el grup condicional %s()() no és vàlid"
 
 #: ../parser_regex.c:368
 #, c-format
 msgid "%s: Regex error: trailing '\\' escape character\n"
-msgstr ""
+msgstr "%s: error d'expressió regular: caràcter d'escapament «\\» al final\n"

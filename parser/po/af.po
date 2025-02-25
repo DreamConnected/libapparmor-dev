@@ -8,33 +8,33 @@ msgstr ""
 "Project-Id-Version: apparmor-parser\n"
 "Report-Msgid-Bugs-To: <apparmor@lists.ubuntu.com>\n"
 "POT-Creation-Date: 2014-09-13 00:11-0700\n"
-"PO-Revision-Date: 2013-11-15 01:27+0000\n"
-"Last-Translator: Novell Language <Unknown>\n"
+"PO-Revision-Date: 2020-03-12 02:48+0000\n"
+"Last-Translator: bernard stafford <Unknown>\n"
 "Language-Team: Novell Language <language@novell.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2019-04-18 05:32+0000\n"
-"X-Generator: Launchpad (build 18928)\n"
+"X-Launchpad-Export-Date: 2020-03-13 05:43+0000\n"
+"X-Generator: Launchpad (build 3a6db24bbe7280ec09bae73384238390fcc98ad3)\n"
 "Language: af\n"
 
 #: ../parser_include.c:113 ../parser_include.c:111
 msgid "Error: Out of memory.\n"
-msgstr ""
+msgstr "Fout: Buite geheue.\n"
 
 #: ../parser_include.c:123 ../parser_include.c:121
 #, c-format
 msgid "Error: basedir %s is not a directory, skipping.\n"
-msgstr ""
+msgstr "Fout: basedir %s is nie 'n gids, huppel tans.\n"
 
 #: ../parser_include.c:137
 #, c-format
 msgid "Error: Could not add directory %s to search path.\n"
-msgstr ""
+msgstr "Fout: Kon gids nie by te voeg %s om soek pad.\n"
 
 #: ../parser_include.c:147 ../parser_include.c:151
 msgid "Error: Could not allocate memory.\n"
-msgstr ""
+msgstr "Fout: Kon nie geheue toeken.\n"
 
 #: ../parser_interface.c:69 ../parser_interface.c:72 ../parser_interface.c:49
 msgid "Bad write position\n"
@@ -50,7 +50,7 @@ msgstr "Geheue is opgebruik\n"
 
 #: ../parser_interface.c:78 ../parser_interface.c:81 ../parser_interface.c:58
 msgid "Couldn't copy profile: Bad memory address\n"
-msgstr ""
+msgstr "Kon nie profiel kopieer: Slegte geheue-adres\n"
 
 #: ../parser_interface.c:81 ../parser_interface.c:84 ../parser_interface.c:61
 msgid "Profile doesn't conform to protocol\n"
@@ -62,7 +62,7 @@ msgstr "Profiel stem nie ooreen met handtekening nie\n"
 
 #: ../parser_interface.c:87 ../parser_interface.c:90 ../parser_interface.c:67
 msgid "Profile version not supported by Apparmor module\n"
-msgstr ""
+msgstr "Profiel weergawe nie gesteunde deur Apparmora module\n"
 
 #: ../parser_interface.c:90 ../parser_interface.c:93 ../parser_interface.c:70
 msgid "Profile already exists\n"
@@ -74,12 +74,12 @@ msgstr "Profiel bestaan nie\n"
 
 #: ../parser_interface.c:96 ../parser_interface.c:99 ../parser_interface.c:76
 msgid "Permission denied; attempted to load a profile while confined?\n"
-msgstr ""
+msgstr "Toestemming ontkened; poging tot laai 'n profiel terwyl confined?\n"
 
 #: ../parser_interface.c:99 ../parser_interface.c:102 ../parser_interface.c:79
 #, c-format
 msgid "Unknown error (%d): %s\n"
-msgstr ""
+msgstr "Onbekende fout  (%d): %s\n"
 
 #: ../parser_interface.c:116 ../parser_interface.c:119
 #: ../parser_interface.c:96
@@ -109,7 +109,7 @@ msgstr "%s: Kan nie na stdout toe skryf nie\n"
 #: ../parser_interface.c:115
 #, c-format
 msgid "%s: Unable to write to output file\n"
-msgstr ""
+msgstr "%s: Nie in staat is om te skryf aan uitset lêer\n"
 
 #: ../parser_interface.c:138 ../parser_interface.c:162
 #: ../parser_interface.c:141 ../parser_interface.c:165
@@ -145,11 +145,11 @@ msgstr "PANIEK slegs inkrementbuffer %p pos %p uitbr %p grootte %d res %p\n"
 #: ../parser_interface.c:446
 #, c-format
 msgid "profile %s network rules not enforced\n"
-msgstr ""
+msgstr "profiel %s netwerk reëls nie afgedwing\n"
 
 #: ../parser_interface.c:666
 msgid "Unknown pattern type\n"
-msgstr ""
+msgstr "Onbekend patroon tipe\n"
 
 #: ../parser_interface.c:750 ../parser_interface.c:902
 #: ../parser_interface.c:743 ../parser_interface.c:894
@@ -162,13 +162,13 @@ msgstr "Kan %s - %s nie open nie\n"
 #: ../parser_interface.c:543
 #, c-format
 msgid "Memory Allocation Error: Unable to remove ^%s\n"
-msgstr ""
+msgstr "Geheue Allokasie Fout: Nie in staat om verwyder ^%s\n"
 
 #: ../parser_interface.c:789 ../parser_interface.c:781
 #: ../parser_interface.c:556
 #, c-format
 msgid "Memory Allocation Error: Unable to remove %s:%s."
-msgstr ""
+msgstr "Geheue Allokasie Fout: Nie in staat om verwyder %s:%s."
 
 #: ../parser_interface.c:810 ../parser_interface.c:802
 msgid "unable to create work area\n"
@@ -190,32 +190,32 @@ msgstr "%s: Kan nie volledige profielinskrywing skryf nie\n"
 #: ../parser_interface.c:593
 #, c-format
 msgid "%s: Unable to write entire profile entry to cache\n"
-msgstr ""
+msgstr "%s: Nie in staat skryf die entire profiel inskrywing om kas\n"
 
 #: parser_lex.l:100 parser_lex.l:163 parser_lex.l:169
 #, c-format
 msgid "Could not open '%s'"
-msgstr ""
+msgstr "Kon nie oopmaak '%s'"
 
 #: parser_lex.l:104 parser_lex.l:167 parser_lex.l:173
 #, c-format
 msgid "fstat failed for '%s'"
-msgstr ""
+msgstr "fstat misluk vir '%s'"
 
 #: parser_lex.l:121
 #, c-format
 msgid "opendir failed '%s'"
-msgstr ""
+msgstr "oopdir misluk '%s'"
 
 #: parser_lex.l:152
 #, c-format
 msgid "stat failed for '%s'"
-msgstr ""
+msgstr "stat misluk vir '%s'"
 
 #: parser_lex.l:155 parser_lex.l:133 parser_lex.l:139
 #, c-format
 msgid "Could not open '%s' in '%s'"
-msgstr ""
+msgstr "Kon nie oopmaak '%s' in '%s'"
 
 #: parser_lex.l:284 parser_lex.l:322 parser_lex.l:362 parser_lex.l:399
 #: parser_lex.l:469 parser_lex.l:655 parser_lex.l:586 parser_lex.l:638
@@ -225,17 +225,17 @@ msgstr "Onverwagte karakter gevind: '%s'"
 
 #: parser_lex.l:386 parser_lex.l:418 parser_lex.l:428
 msgid "Variable declarations do not accept trailing commas"
-msgstr ""
+msgstr "Veranderlike aangiftes aanvaar nie trailing kommas"
 
 #: parser_lex.l:420
 #, c-format
 msgid "(network_mode) Found unexpected character: '%s'"
-msgstr ""
+msgstr "(netwerk_modus) Gevind onverwagte karakter: '%s'"
 
 #: ../parser_main.c:333 ../parser_common.c:61 ../parser_common.c:106
 #, c-format
 msgid "Warning from %s (%s%sline %d): %s"
-msgstr ""
+msgstr "Waarskuwing vanaf %s (%s%sline %d): %s"
 
 #: ../parser_main.c:531
 #, c-format
@@ -248,6 +248,8 @@ msgid ""
 "Warning: unable to find a suitable fs in %s, is it mounted?\n"
 "Use --subdomainfs to override.\n"
 msgstr ""
+"Waarskuwing: nie in staat om vind 'n geskikte fs in %s, is dit gemonteer?\n"
+"Gebruik --subdomainfs om override.\n"
 
 #: ../parser_main.c:597 ../parser_main.c:635 ../parser_main.c:498
 #, c-format
@@ -255,6 +257,8 @@ msgid ""
 "%s: Sorry. You need root privileges to run this program.\n"
 "\n"
 msgstr ""
+"%s: Jammer. Wat jy nodig het root voorregte om hierdie program uit te voer.\n"
+"\n"
 
 #: ../parser_main.c:604 ../parser_main.c:642 ../parser_main.c:505
 #, c-format
@@ -263,12 +267,16 @@ msgid ""
 "Anybody who can run this program can update your AppArmor profiles.\n"
 "\n"
 msgstr ""
+"%s: Waarskuwing! Jy het stel hierdie program setuid root.\n"
+"Enigiemand wat hierdie programe kan jou AppArmor profiele by te werk kan "
+"hardloop.\n"
+"\n"
 
 #: ../parser_main.c:704 ../parser_main.c:813 ../parser_main.c:836
 #: ../parser_main.c:946 ../parser_main.c:860
 #, c-format
 msgid "Error: Could not read profile %s: %s.\n"
-msgstr ""
+msgstr "Fout: Kan nie profiel lees %s: %s.\n"
 
 #: ../parser_main.c:718 ../parser_misc.c:270 parser_yacc.y:227
 #: parser_yacc.y:374 parser_yacc.y:386 parser_yacc.y:484 parser_yacc.y:586
@@ -294,12 +302,12 @@ msgstr "Geheuetoekenningsfout."
 #: ../parser_main.c:740 ../parser_main.c:872 ../parser_main.c:757
 #, c-format
 msgid "Cached load succeeded for \"%s\".\n"
-msgstr ""
+msgstr "Kas laai suksesvol vir \"%s\".\n"
 
 #: ../parser_main.c:744 ../parser_main.c:876 ../parser_main.c:761
 #, c-format
 msgid "Cached reload succeeded for \"%s\".\n"
-msgstr ""
+msgstr "Kas relaai suksesvol vir \"%s\".\n"
 
 #: ../parser_main.c:910 ../parser_main.c:1058 ../parser_main.c:967
 #, c-format
@@ -311,11 +319,14 @@ msgid ""
 "Uppercase qualifiers \"RWLIMX\" are deprecated, please convert to lowercase\n"
 "See the apparmor.d(5) manpage for details.\n"
 msgstr ""
+"Hoofletters kwalifiseerders \"RWLIMX\" is deprecated, asseblief omskakel na "
+"kleinletters\n"
+"Sien die apparmor.d(5) manpage vir besonderhede.\n"
 
 #: ../parser_misc.c:467 ../parser_misc.c:474 ../parser_misc.c:638
 #: ../parser_misc.c:645 ../parser_misc.c:380 ../parser_misc.c:387
 msgid "Conflict 'a' and 'w' perms are mutually exclusive."
-msgstr ""
+msgstr "Konflik 'a' en 'w' perms is onderling uitsluitend."
 
 #: ../parser_misc.c:491 ../parser_misc.c:662 ../parser_misc.c:404
 msgid "Exec qualifier 'i' invalid, conflicting qualifier already specified"
@@ -329,12 +340,17 @@ msgid ""
 "Unconfined exec qualifier (%c%c) allows some dangerous environment variables "
 "to be passed to the unconfined process; 'man 5 apparmor.d' for details.\n"
 msgstr ""
+"Onbegrensde exec kwalifiseerder (%c%c) toelaat sommige gevaarlike omgewing "
+"veranderlikes om wees geslaag om die onbegrensde proses; 'man 5 apparmor.d' "
+"vir besonderhede.\n"
 
 #: ../parser_misc.c:510 ../parser_misc.c:551 ../parser_misc.c:681
 #: ../parser_misc.c:722 ../parser_misc.c:423 ../parser_misc.c:464
 #, c-format
 msgid "Exec qualifier '%c' invalid, conflicting qualifier already specified"
 msgstr ""
+"Exec kwalifiseerder '%c' ongeldig, konflikterende kwalifiseerder reeds "
+"gespesifiseer"
 
 #: ../parser_misc.c:537 ../parser_misc.c:545 ../parser_misc.c:708
 #: ../parser_misc.c:716 ../parser_misc.c:450 ../parser_misc.c:458
@@ -342,22 +358,24 @@ msgstr ""
 msgid ""
 "Exec qualifier '%c%c' invalid, conflicting qualifier already specified"
 msgstr ""
+"Exec kwalifiseerder '%c%c' ongeldig, konflikterende kwalifiseerder reeds "
+"gespesifiseer"
 
 #: ../parser_misc.c:593 ../parser_misc.c:764 ../parser_misc.c:506
 #, c-format
 msgid "Internal: unexpected mode character '%c' in input"
-msgstr ""
+msgstr "Interne: onverwagte modus karakter '%c' in insette"
 
 #: ../parser_misc.c:615 ../parser_misc.c:786 ../parser_misc.c:528
 #, c-format
 msgid "Internal error generated invalid perm 0x%llx\n"
-msgstr ""
+msgstr "Interne fout gegenereer ongeldige perm 0x%llx\n"
 
 #: ../parser_misc.c:865 ../parser_symtab.c:561 ../parser_regex.c:626
 #: ../parser_variable.c:229
 #, c-format
 msgid "AppArmor parser error: %s\n"
-msgstr ""
+msgstr "AppArmor parser fout: %s\n"
 
 #: ../parser_merge.c:92 ../parser_merge.c:91 ../parser_merge.c:83
 msgid "Couldn't merge entries. Out of Memory\n"
@@ -366,47 +384,50 @@ msgstr "Kon inskrywings nie saamvleg nie. Geheue is opgebruik\n"
 #: ../parser_merge.c:111 ../parser_merge.c:113 ../parser_merge.c:105
 #, c-format
 msgid "profile %s: has merged rule %s with conflicting x modifiers\n"
-msgstr ""
+msgstr "profiel %s: het saamgevoegde reël %s met konflikterende x wysigers\n"
 
 #: parser_yacc.y:236 parser_yacc.y:277 parser_yacc.y:320
 msgid "Profile attachment must begin with a '/'."
-msgstr ""
+msgstr "Profiel beslaglegging moet begin met 'n  '/'."
 
 #: parser_yacc.y:260 parser_yacc.y:302 parser_yacc.y:348
 msgid ""
 "Profile names must begin with a '/', namespace or keyword 'profile' or 'hat'."
 msgstr ""
+"Profiel name moet begin met 'n '/', naamruimte of sleutelwoord 'profile' of "
+"'hat'."
 
 #: parser_yacc.y:296 parser_yacc.y:338 parser_yacc.y:384
 #, c-format
 msgid "Failed to create alias %s -> %s\n"
-msgstr ""
+msgstr "Kon nie alias skep %s -> %s\n"
 
 #: parser_yacc.y:417 parser_yacc.y:460 parser_yacc.y:506
 msgid "Profile flag chroot_relative conflicts with namespace_relative"
-msgstr ""
+msgstr "Profiel vlag chroot_relatiewe konflik met naamruimte_relatiewe"
 
 #: parser_yacc.y:421 parser_yacc.y:464 parser_yacc.y:510
 msgid "Profile flag mediate_deleted conflicts with delegate_deleted"
-msgstr ""
+msgstr "Profiel vlag bemiddel_geskrap konflikte met delegeer_geskrap"
 
 #: parser_yacc.y:424 parser_yacc.y:467 parser_yacc.y:513
 msgid ""
 "Profile flag attach_disconnected conflicts with no_attach_disconnected"
 msgstr ""
+"Profiel vlag hechten_ontkoppelde konflikte met geen_hechten_ontkoppel"
 
 #: parser_yacc.y:427 parser_yacc.y:470 parser_yacc.y:516
 msgid "Profile flag chroot_attach conflicts with chroot_no_attach"
-msgstr ""
+msgstr "Profiel vlag chroot_hechten konflik met chroot_geen_hechten"
 
 #: parser_yacc.y:441 parser_yacc.y:484 parser_yacc.y:530
 msgid "Profile flag 'debug' is no longer valid."
-msgstr ""
+msgstr "Profiel vlag 'debug' is nie meer geldig."
 
 #: parser_yacc.y:463 parser_yacc.y:506 parser_yacc.y:552
 #, c-format
 msgid "Invalid profile flag: %s."
-msgstr ""
+msgstr "Ongeldige profiel vlag: %s."
 
 #: parser_yacc.y:498 parser_yacc.y:520 parser_yacc.y:548 parser_yacc.y:594
 msgid "Assert: `rule' returned NULL."
@@ -418,23 +439,29 @@ msgid ""
 "Invalid mode, in deny rules 'x' must not be preceded by exec qualifier 'i', "
 "'p', or 'u'"
 msgstr ""
+"Ongeldige modus, in ontken reëls 'x' moet nie voorafgegaan word deur exec "
+"kwalifiseerder 'i', 'p', of 'u'"
 
 #: parser_yacc.y:524 parser_yacc.y:556 parser_yacc.y:602
 msgid ""
 "Invalid mode, 'x' must be preceded by exec qualifier 'i', 'p', 'c', or 'u'"
 msgstr ""
+"Ongeldige modus, 'x' moet voorafgegaan word deur exec kwalifiseerder 'i', "
+"'p', 'c', of 'u'"
 
 #: parser_yacc.y:549 parser_yacc.y:587 parser_yacc.y:633
 msgid "Invalid mode, 'x' must be preceded by exec qualifier 'i', 'p', or 'u'"
 msgstr ""
+"Ongeldige modus, 'x' moet voorafgegaan word deur exec kwalifiseerder 'i', "
+"'p', of 'u'"
 
 #: parser_yacc.y:574 parser_yacc.y:612 parser_yacc.y:614 parser_yacc.y:660
 msgid "Assert: `network_rule' return invalid protocol."
-msgstr ""
+msgstr "Assert: `network_rule' ongeldige protokol terugstuur."
 
 #: parser_yacc.y:649 parser_yacc.y:696 parser_yacc.y:786
 msgid "Assert: `change_profile' returned NULL."
-msgstr ""
+msgstr "Assert: `change_profile' teruggekeer NULL."
 
 #: parser_yacc.y:680 parser_yacc.y:720 parser_yacc.y:810
 msgid "Assert: 'hat rule' returned NULL."
@@ -442,28 +469,28 @@ msgstr "Beweer: `hat-reël' het NUL teruggestuur."
 
 #: parser_yacc.y:689 parser_yacc.y:729 parser_yacc.y:819
 msgid "Assert: 'local_profile rule' returned NULL."
-msgstr ""
+msgstr "Assert: 'local_profile rule' teruggekeer NULL."
 
 #: parser_yacc.y:824 parser_yacc.y:885 parser_yacc.y:992
 #, c-format
 msgid "Unset boolean variable %s used in if-expression"
-msgstr ""
+msgstr "Unset boolean veranderlike %s gebruik in if-uitdrukking"
 
 #: parser_yacc.y:882 parser_yacc.y:986 parser_yacc.y:1092
 msgid "unsafe rule missing exec permissions"
-msgstr ""
+msgstr "onveilige reël ontbreek exec toestemmings"
 
 #: parser_yacc.y:901 parser_yacc.y:954 parser_yacc.y:1060
 msgid "subset can only be used with link rules."
-msgstr ""
+msgstr "subset kan slegs gebruik word met skakel reëls."
 
 #: parser_yacc.y:903 parser_yacc.y:956 parser_yacc.y:1062
 msgid "link and exec perms conflict on a file rule using ->"
-msgstr ""
+msgstr "skakel en exec perms konflik op 'n lêer reël met behulp van ->"
 
 #: parser_yacc.y:905 parser_yacc.y:958 parser_yacc.y:1064
 msgid "link perms are not allowed on a named profile transition.\n"
-msgstr ""
+msgstr "skakel perms word nie toegelaat op 'n vernoem profiel oorgang.\n"
 
 #: parser_yacc.y:921 parser_yacc.y:1003 parser_yacc.y:1109
 #, c-format
@@ -473,22 +500,22 @@ msgstr "ontbreek daar ’n reëleindkarakter? (inskrywing: %s)"
 #: parser_yacc.y:975 parser_yacc.y:985 parser_yacc.y:1057 parser_yacc.y:1067
 #: parser_yacc.y:1145 parser_yacc.y:1155
 msgid "Invalid network entry."
-msgstr ""
+msgstr "Ongeldig netwerk inskrywing."
 
 #: parser_yacc.y:1039 parser_yacc.y:1048 parser_yacc.y:1254 parser_yacc.y:1510
 #, c-format
 msgid "Invalid capability %s."
-msgstr ""
+msgstr "Ongeldige capvermoë %s."
 
 #: parser_yacc.y:1066 parser_yacc.y:1269 parser_yacc.y:1525
 #, c-format
 msgid "AppArmor parser error for %s%s%s at line %d: %s\n"
-msgstr ""
+msgstr "AppArmor parser fout vir %s%s%s by lyn %d: %s\n"
 
 #: parser_yacc.y:1072 parser_yacc.y:1275 parser_yacc.y:1531
 #, c-format
 msgid "AppArmor parser error,%s%s line %d: %s\n"
-msgstr ""
+msgstr "AppArmor parser fout,%s%s lyn %d: %s\n"
 
 #: ../parser_regex.c:244
 #, c-format
@@ -514,6 +541,8 @@ msgid ""
 "%s: Regex grouping error: Unclosed grouping or character class, expecting "
 "close }\n"
 msgstr ""
+"%s: Regex groepering fout: Unclosed groepering of karakter klas, verwag tans "
+"sluit }\n"
 
 #: ../parser_regex.c:351 ../parser_regex.c:357
 #, c-format
@@ -528,12 +557,12 @@ msgstr "%s: Kan insetreël '%s' nie ontleed nie\n"
 #: ../parser_regex.c:397 ../parser_regex.c:405 ../parser_regex.c:421
 #, c-format
 msgid "%s: Invalid profile name '%s' - bad regular expression\n"
-msgstr ""
+msgstr "%s: Ongeldig profiel naam '%s' - slegte gereelde uitdrukking\n"
 
 #: ../parser_policy.c:202 ../parser_policy.c:402 ../parser_policy.c:375
 #, c-format
 msgid "ERROR merging rules for profile %s, failed to load\n"
-msgstr ""
+msgstr "FOUT samesmelting reëls vir profiele %s, kon nie laai nie\n"
 
 #: ../parser_policy.c:234
 #, c-format
@@ -542,21 +571,24 @@ msgid ""
 "\t'*', '?', character ranges, and alternations are not allowed.\n"
 "\t'**' may only be used at the end of a rule.\n"
 msgstr ""
+"FOUT profiel %s bevat beleid elemente nie bruikbaar met hierdie kern:\n"
+"\t'*', '?', karakter reekse, en alternations is nie toegelaat.\n"
+"\t'**' mag enigste wees gebruik an die einde van 'n rule.\n"
 
 #: ../parser_policy.c:279 ../parser_policy.c:359 ../parser_policy.c:332
 #, c-format
 msgid "ERROR processing regexs for profile %s, failed to load\n"
-msgstr ""
+msgstr "FOUT verwerking regexs vir profiel %s, misluk om laai\n"
 
 #: ../parser_policy.c:306 ../parser_policy.c:389 ../parser_policy.c:362
 #, c-format
 msgid "ERROR expanding variables for profile %s, failed to load\n"
-msgstr ""
+msgstr "FOUT uitbrei tans veranderlikes vir praofiel %s, misluk om laai\n"
 
 #: ../parser_policy.c:390 ../parser_policy.c:382 ../parser_policy.c:355
 #, c-format
 msgid "ERROR adding hat access rule for profile %s\n"
-msgstr ""
+msgstr "FOUT bygevoeg hoed toegang reël vir profiel %s\n"
 
 #: ../parser_policy.c:490 ../parser_policy.c:271
 #, c-format
@@ -566,17 +598,17 @@ msgstr "FOUT in profiel %s, het misluk om te laai\n"
 #: ../parser_policy.c:675
 #, c-format
 msgid "%s: Errors found during postprocessing.  Aborting.\n"
-msgstr ""
+msgstr "%s: Foute gevind tydens naverwerking. Aborteer tans.\n"
 
 #: ../parser_policy.c:682 ../parser_policy.c:704
 #, c-format
 msgid "%s: Errors found during regex postprocess.  Aborting.\n"
-msgstr ""
+msgstr "%s: Foute gevind tydens regex naverwerking. Aborteer tans.\n"
 
 #: ../parser_policy.c:689
 #, c-format
 msgid "%s: Errors found during postprocess.  Aborting.\n"
-msgstr ""
+msgstr "%s: Foute gevind tydens na-proses. Aborteer tans.\n"
 
 #: ../parser_policy.c:696
 #, c-format
@@ -587,161 +619,162 @@ msgstr ""
 #: parser_lex.l:180 parser_lex.l:186
 #, c-format
 msgid "Could not process include directory '%s' in '%s'"
-msgstr ""
+msgstr "Kon nie proses -insluit gids '%s' in '%s'"
 
 #: ../parser_main.c:660 ../parser_main.c:523
 msgid "Feature buffer full."
-msgstr ""
+msgstr "Funksie buffer volle."
 
 #: ../parser_main.c:1115 ../parser_main.c:1132 ../parser_main.c:1024
 #: ../parser_main.c:1041
 msgid "Out of memory"
-msgstr ""
+msgstr "Uit van geheue"
 
 #: ../parser_main.c:1182 ../parser_main.c:1091
 #, c-format
 msgid "Can't create cache directory: %s\n"
-msgstr ""
+msgstr "Kan nie kasgids skep nie: %s\n"
 
 #: ../parser_main.c:1185 ../parser_main.c:1094
 #, c-format
 msgid "File in cache directory location: %s\n"
-msgstr ""
+msgstr "Lêer in kas directory plek: %s\n"
 
 #: ../parser_main.c:1188 ../parser_main.c:1097
 #, c-format
 msgid "Can't update cache directory: %s\n"
-msgstr ""
+msgstr "Kan nie kasgids opdateer: %s\n"
 
 #: ../parser_misc.c:833
 #, c-format
 msgid "Internal: unexpected DBus mode character '%c' in input"
-msgstr ""
+msgstr "interne: onverwagte DBUS modus karakter '%c' in insette"
 
 #: ../parser_misc.c:857
 #, c-format
 msgid "Internal error generated invalid DBus perm 0x%x\n"
-msgstr ""
+msgstr "Interne fout gegenereer ongeldig DBus perm 0x%x\n"
 
 #: parser_yacc.y:575 parser_yacc.y:621
 msgid "deny prefix not allowed"
-msgstr ""
+msgstr "ontken voorvoegsel nie toegelaat"
 
 #: parser_yacc.y:612 parser_yacc.y:658
 msgid "owner prefix not allowed"
-msgstr ""
+msgstr "eienaar voorvoegsel nie toegelaat"
 
 #: parser_yacc.y:660
 msgid "owner prefix not allow on mount rules"
-msgstr ""
+msgstr "eienaar voorvoegsel nie toegelaat op reëls berg"
 
 #: parser_yacc.y:677
 msgid "owner prefix not allow on dbus rules"
-msgstr ""
+msgstr "eienaar voorvoegsel nie toelaat op dbus reëls"
 
 #: parser_yacc.y:704
 msgid "owner prefix not allow on capability rules"
-msgstr ""
+msgstr "eienaar voorvoegsel nie toelaat op capvermoë reëls"
 
 #: parser_yacc.y:1357 parser_yacc.y:1613
 #, c-format
 msgid "invalid mount conditional %s%s"
-msgstr ""
+msgstr "ongeldig berg voorwaardelike %s%s"
 
 #: parser_yacc.y:1374 parser_yacc.y:1628
 msgid "bad mount rule"
-msgstr ""
+msgstr "slegte berg reël"
 
 #: parser_yacc.y:1381 parser_yacc.y:1635
 msgid "mount point conditions not currently supported"
-msgstr ""
+msgstr "hegpunt voorwaardes tans nie ondersteun nie"
 
 #: parser_yacc.y:1398 parser_yacc.y:1650
 #, c-format
 msgid "invalid pivotroot conditional '%s'"
-msgstr ""
+msgstr "ongeldig pivotroot voorwaardelike '%s'"
 
 #: ../parser_regex.c:241 ../parser_regex.c:236
 #, c-format
 msgid ""
 "%s: Regex grouping error: Invalid close ], no matching open [ detected\n"
 msgstr ""
+"%s: Regex groepering fout: Ongeldig naby ], geen bypassende oop [ bespeur\n"
 
 #: ../parser_regex.c:257 ../parser_regex.c:256
 #, c-format
 msgid "%s: Regex grouping error: Exceeded maximum nesting of {}\n"
-msgstr ""
+msgstr "%s: Regex groepering fout: Oorskry maksimum nes van {}\n"
 
 #: ../parser_policy.c:366 ../parser_policy.c:339
 #, c-format
 msgid "ERROR processing policydb rules for profile %s, failed to load\n"
-msgstr ""
+msgstr "FOUT verwerking beleiddb reëls vir profiel %s, kon nie laai nie\n"
 
 #: ../parser_policy.c:396 ../parser_policy.c:369
 #, c-format
 msgid "ERROR replacing aliases for profile %s, failed to load\n"
-msgstr ""
+msgstr "FOUT vervanging van aliasse vir profiel %s, misluk om laai\n"
 
 #: ../parser_interface.c:635 ../parser_interface.c:638
 #, c-format
 msgid "%s: Unable to write %s\n"
-msgstr ""
+msgstr "%s: Nie in staat om skryf %s\n"
 
 #: ../parser_main.c:721
 #, c-format
 msgid "Error: Could not read binary profile or cache file %s: %s.\n"
-msgstr ""
+msgstr "Fout: Kon nie lees binêre profiel of kaslêer %s: %s.\n"
 
 #: ../parser_main.c:811
 #, c-format
 msgid "Error: Could not read cache file '%s', skipping...\n"
-msgstr ""
+msgstr "Fout: Kon nie lees kaslêer '%s', huppel tans...\n"
 
 #: ../parser_misc.c:575
 #, c-format
 msgid "Internal: unexpected %s mode character '%c' in input"
-msgstr ""
+msgstr "Interne: onverwagte %s modus karakter '%c' in inset"
 
 #: ../parser_misc.c:599
 #, c-format
 msgid "Internal error generated invalid %s perm 0x%x\n"
-msgstr ""
+msgstr "Interne fout gegenereer ongeldig %s perm 0x%x\n"
 
 #: parser_yacc.y:703
 msgid "owner prefix not allowed on mount rules"
-msgstr ""
+msgstr "eienaar voorvoegsel nie toegelaat op reëls berg"
 
 #: parser_yacc.y:720
 msgid "owner prefix not allowed on dbus rules"
-msgstr ""
+msgstr "eienaar voorvoegsel nie toegelaat op dbus reëls"
 
 #: parser_yacc.y:736
 msgid "owner prefix not allowed on signal rules"
-msgstr ""
+msgstr "eienaar voorvoegsel nie toegelaat op sein reëls"
 
 #: parser_yacc.y:752
 msgid "owner prefix not allowed on ptrace rules"
-msgstr ""
+msgstr "eienaar voorvoegsel nie toegelaat op ptrace reëls"
 
 #: parser_yacc.y:768
 msgid "owner prefix not allowed on unix rules"
-msgstr ""
+msgstr "eienaar voorvoegsel nie toegelaat op unix reëls"
 
 #: parser_yacc.y:794
 msgid "owner prefix not allowed on capability rules"
-msgstr ""
+msgstr "eienaar voorvoegsel nie toegelaat op capvermoë reëls"
 
 #: parser_yacc.y:1293
 #, c-format
 msgid "dbus rule: invalid conditional group %s=()"
-msgstr ""
+msgstr "dbus reël: ongeldig voorwaardelike groep %s=()"
 
 #: parser_yacc.y:1371
 #, c-format
 msgid "unix rule: invalid conditional group %s=()"
-msgstr ""
+msgstr "unix reël: ongeldig voorwaardelike groep %s=()"
 
 #: ../parser_regex.c:368
 #, c-format
 msgid "%s: Regex error: trailing '\\' escape character\n"
-msgstr ""
+msgstr "%s: Regex fout: trailing '\\' ontsnapping karakter\n"

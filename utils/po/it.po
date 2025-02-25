@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: apparmor\n"
 "Report-Msgid-Bugs-To: AppArmor list <apparmor@lists.ubuntu.com>\n"
 "POT-Creation-Date: 2014-09-14 19:29+0530\n"
-"PO-Revision-Date: 2023-01-29 16:22+0000\n"
-"Last-Translator: Mark Grassi <Unknown>\n"
+"PO-Revision-Date: 2025-02-20 20:01+0000\n"
+"Last-Translator: Christian Boltz <Unknown>\n"
 "Language-Team: Italian <it@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2023-01-30 06:25+0000\n"
-"X-Generator: Launchpad (build 20dbca4abd50eb567cd11c349e7e914443a145a1)\n"
+"X-Launchpad-Export-Date: 2025-02-21 09:32+0000\n"
+"X-Generator: Launchpad (build 78860d903de6d6d7dd5a0ade63efaca45d3467e2)\n"
 "Language: it\n"
 
 #: ../aa-genprof:56
@@ -1093,7 +1093,7 @@ msgstr ""
 
 #: ../apparmor/ui.py:239
 msgid "(N)amed"
-msgstr ""
+msgstr "(N)ominato"
 
 #: ../apparmor/ui.py:240
 msgid "(N)amed Clean Exec"
@@ -1101,7 +1101,7 @@ msgstr ""
 
 #: ../apparmor/ui.py:241
 msgid "(U)nconfined"
-msgstr "Non conf(i)nato"
+msgstr "Non confina(t)o"
 
 #: ../apparmor/ui.py:242
 msgid "(U)nconfined Clean Exec"
@@ -1225,15 +1225,15 @@ msgstr ""
 
 #: ../apparmor/ui.py:273
 msgid "(N)ever Ask Again"
-msgstr ""
+msgstr "(N)on chiedere nuovamente"
 
 #: ../apparmor/ui.py:274
 msgid "Ask Me (L)ater"
-msgstr ""
+msgstr "Chiedi (D)opo"
 
 #: ../apparmor/ui.py:277
 msgid "Allow All (N)etwork"
-msgstr ""
+msgstr "Accetta tutte le (R)eti"
 
 #: ../apparmor/ui.py:278
 msgid "Allow Network Fa(m)ily"
@@ -1245,15 +1245,15 @@ msgstr ""
 
 #: ../apparmor/ui.py:280
 msgid "(K)eep Profile"
-msgstr ""
+msgstr "(M)antieni il Profilo"
 
 #: ../apparmor/ui.py:281
 msgid "(C)ontinue"
-msgstr ""
+msgstr "(C)ontinua"
 
 #: ../apparmor/ui.py:282
 msgid "(I)gnore"
-msgstr ""
+msgstr "(I)gnora"
 
 #: ../apparmor/ui.py:344
 #, python-format

@@ -8,48 +8,49 @@ msgstr ""
 "Project-Id-Version: apparmor-utils\n"
 "Report-Msgid-Bugs-To: <apparmor@lists.ubuntu.com>\n"
 "POT-Creation-Date: 2014-09-14 19:29+0530\n"
-"PO-Revision-Date: 2013-11-15 06:49+0000\n"
-"Last-Translator: AppArmor list <apparmor@lists.ubuntu.com>\n"
+"PO-Revision-Date: 2024-03-07 18:30+0000\n"
+"Last-Translator: Andrii Prokopenko <Unknown>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2019-04-18 05:33+0000\n"
-"X-Generator: Launchpad (build 18928)\n"
+"X-Launchpad-Export-Date: 2024-03-08 06:49+0000\n"
+"X-Generator: Launchpad (build 2e4955e3d556e61e2eb54acf7a827d17e9e46822)\n"
 "Language: uk\n"
 
 #: ../aa-genprof:56
 msgid "Generate profile for the given program"
-msgstr ""
+msgstr "Створити профіль для даної програми"
 
 #: ../aa-genprof:57 ../aa-logprof:25 ../aa-cleanprof:24 ../aa-mergeprof:34
 #: ../aa-autodep:25 ../aa-audit:25 ../aa-complain:24 ../aa-enforce:24
 #: ../aa-disable:24
 msgid "path to profiles"
-msgstr ""
+msgstr "шлях до профілю"
 
 #: ../aa-genprof:58 ../aa-logprof:26
 msgid "path to logfile"
-msgstr ""
+msgstr "шлях до файлу журналу"
 
 #: ../aa-genprof:59
 msgid "name of program to profile"
-msgstr ""
+msgstr "назва програми до профілю"
 
 #: ../aa-genprof:69 ../aa-logprof:37
 #, python-format
 msgid "The logfile %s does not exist. Please check the path"
-msgstr ""
+msgstr "Файл журналу %s не існує. Перевірте шлях"
 
 #: ../aa-genprof:75 ../aa-logprof:43 ../aa-unconfined:36
 msgid ""
 "It seems AppArmor was not started. Please enable AppArmor and try again."
 msgstr ""
+"Здається AppArmor не запущений. Запустіть AppArmor і спробуйте ще раз."
 
 #: ../aa-genprof:80 ../aa-mergeprof:47
 #, python-format
 msgid "%s is not a directory."
-msgstr ""
+msgstr "%s не є каталогом."
 
 #: ../aa-genprof:94
 #, python-format
@@ -60,11 +61,15 @@ msgid ""
 "environment set up in order to find the fully-qualified path and\n"
 "use the full path as parameter."
 msgstr ""
+"Неможлив знайти%(profiling)s у списку системних шляхів. Якщо ім'я програми\n"
+"правильне, запустіть «which %(profiling)s» як користувача з \n"
+"належно налаштованою змінною середовища PATH, щоб дізнатися \n"
+"повністю кваліфікований шлях, і використовувати повний шлях як параметр."
 
 #: ../aa-genprof:96
 #, python-format
 msgid "%s does not exists, please double-check the path."
-msgstr ""
+msgstr "%s не існує, ще раз перевірте шлях."
 
 #: ../aa-genprof:124
 msgid ""
@@ -74,6 +79,11 @@ msgid ""
 "wish to confine. See the following wiki page for\n"
 "more information:"
 msgstr ""
+"\n"
+"Перш ніж почати, ви можете перевірити\n"
+"існування профіля для програми,\n"
+"яку ви бажаєте обмежити. Додаткові відомості\n"
+"див. на такій вікі-сторінці:"
 
 #: ../aa-genprof:126
 msgid ""
@@ -87,16 +97,26 @@ msgid ""
 "opportunity to choose whether the access should be \n"
 "allowed or denied."
 msgstr ""
+"Будь ласка, запустіть програму, що потребує профілювання \n"
+"в іншому вікні і перевірте її працездатність. \n"
+"\n"
+"Після завершення, виберіть параметр «Scan», щоб перевірити\n"
+"події AppArmor в системному журналі. \n"
+"\n"
+"Для кожної події AppArmor, вам буде дана можливість\n"
+"вибору делегування доступу або відмови в доступі."
 
 #: ../aa-genprof:147
 msgid "Profiling"
-msgstr ""
+msgstr "Профілювання"
 
 #: ../aa-genprof:165
 msgid ""
 "\n"
 "Reloaded AppArmor profiles in enforce mode."
 msgstr ""
+"\n"
+"Повторне завантаження профілів AppArmor в примусовому режимі."
 
 #: ../aa-genprof:166
 msgid ""
@@ -104,259 +124,262 @@ msgid ""
 "Please consider contributing your new profile!\n"
 "See the following wiki page for more information:"
 msgstr ""
+"\n"
+"Будь ласка поділіться вашим новим профілем!\n"
+"Додаткові відомості див. на такій вікі-сторінці:"
 
 #: ../aa-genprof:167
 #, python-format
 msgid "Finished generating profile for %s."
-msgstr ""
+msgstr "Створення профілю для %s завершено."
 
 #: ../aa-logprof:24
 msgid "Process log entries to generate profiles"
-msgstr ""
+msgstr "Обробити записи журналу для створення профілів"
 
 #: ../aa-logprof:27
 msgid "mark in the log to start processing after"
-msgstr ""
+msgstr "позначити в журналі, щоб почати обробку пізніше"
 
 #: ../aa-cleanprof:23
 msgid "Cleanup the profiles for the given programs"
-msgstr ""
+msgstr "Очистити профілі для заданих програм"
 
 #: ../aa-cleanprof:25 ../aa-autodep:26 ../aa-audit:27 ../aa-complain:25
 #: ../aa-enforce:25 ../aa-disable:25
 msgid "name of program"
-msgstr ""
+msgstr "назва програми"
 
 #: ../aa-cleanprof:26
 msgid "Silently overwrite with a clean profile"
-msgstr ""
+msgstr "Замінити чистим профілем без запитів"
 
 #: ../aa-mergeprof:29
 msgid "Perform a 2-way or 3-way merge on the given profiles"
-msgstr ""
+msgstr "Виконати 2 чи 3 етапне злиття заданих профілів"
 
 #: ../aa-mergeprof:31
 msgid "your profile"
-msgstr ""
+msgstr "ваш профіль"
 
 #: ../aa-mergeprof:32
 msgid "base profile"
-msgstr ""
+msgstr "базовий профіль"
 
 #: ../aa-mergeprof:33
 msgid "other profile"
-msgstr ""
+msgstr "інший профіль"
 
 #: ../aa-mergeprof:67 ../apparmor/aa.py:2345
 msgid ""
 "The following local profiles were changed. Would you like to save them?"
-msgstr ""
+msgstr "Наступні локальні профілі були змінені. Бажаєте їх зберегти?"
 
 #: ../aa-mergeprof:148 ../aa-mergeprof:430 ../apparmor/aa.py:1767
 msgid "Path"
-msgstr ""
+msgstr "Шлях"
 
 #: ../aa-mergeprof:149
 msgid "Select the appropriate mode"
-msgstr ""
+msgstr "Виберіть відповідний режим"
 
 #: ../aa-mergeprof:166
 msgid "Unknown selection"
-msgstr ""
+msgstr "Невідомий вибір"
 
 #: ../aa-mergeprof:183 ../aa-mergeprof:209
 msgid "File includes"
-msgstr ""
+msgstr "Файл містить"
 
 #: ../aa-mergeprof:183 ../aa-mergeprof:209
 msgid "Select the ones you wish to add"
-msgstr ""
+msgstr "Вкажіть, що ви бажаєте додати"
 
 #: ../aa-mergeprof:195 ../aa-mergeprof:222
 #, python-format
 msgid "Adding %s to the file."
-msgstr ""
+msgstr "Додавання %s до файлу."
 
 #: ../aa-mergeprof:199 ../apparmor/aa.py:2258
 msgid "unknown"
-msgstr ""
+msgstr "невідомо"
 
 #: ../aa-mergeprof:224 ../aa-mergeprof:275 ../aa-mergeprof:516
 #: ../aa-mergeprof:558 ../aa-mergeprof:675 ../apparmor/aa.py:1620
 #: ../apparmor/aa.py:1859 ../apparmor/aa.py:1899 ../apparmor/aa.py:2012
 #, python-format
 msgid "Deleted %s previous matching profile entries."
-msgstr ""
+msgstr "Видалені %s попередні відповідні записи профілів."
 
 #: ../aa-mergeprof:244 ../aa-mergeprof:429 ../aa-mergeprof:629
 #: ../aa-mergeprof:656 ../apparmor/aa.py:992 ../apparmor/aa.py:1252
 #: ../apparmor/aa.py:1562 ../apparmor/aa.py:1603 ../apparmor/aa.py:1766
 #: ../apparmor/aa.py:1958 ../apparmor/aa.py:1994
 msgid "Profile"
-msgstr ""
+msgstr "Профіль"
 
 #: ../aa-mergeprof:245 ../apparmor/aa.py:1563 ../apparmor/aa.py:1604
 msgid "Capability"
-msgstr ""
+msgstr "Можливість"
 
 #: ../aa-mergeprof:246 ../aa-mergeprof:480 ../apparmor/aa.py:1258
 #: ../apparmor/aa.py:1564 ../apparmor/aa.py:1605 ../apparmor/aa.py:1817
 msgid "Severity"
-msgstr ""
+msgstr "Важливість"
 
 #: ../aa-mergeprof:273 ../aa-mergeprof:514 ../apparmor/aa.py:1618
 #: ../apparmor/aa.py:1857
 #, python-format
 msgid "Adding %s to profile."
-msgstr ""
+msgstr "Додавання %s до профілю."
 
 #: ../aa-mergeprof:282 ../apparmor/aa.py:1627
 #, python-format
 msgid "Adding capability %s to profile."
-msgstr ""
+msgstr "Додавання можливості %s до профілю."
 
 #: ../aa-mergeprof:289 ../apparmor/aa.py:1634
 #, python-format
 msgid "Denying capability %s to profile."
-msgstr ""
+msgstr "Заборона можливості %s у профілі."
 
 #: ../aa-mergeprof:439 ../aa-mergeprof:470 ../apparmor/aa.py:1776
 #: ../apparmor/aa.py:1807
 msgid "(owner permissions off)"
-msgstr ""
+msgstr "(права власника вимкнені)"
 
 #: ../aa-mergeprof:444 ../apparmor/aa.py:1781
 msgid "(force new perms to owner)"
-msgstr ""
+msgstr "(примусово призначити нові права власнику)"
 
 #: ../aa-mergeprof:447 ../apparmor/aa.py:1784
 msgid "(force all rule perms to owner)"
-msgstr ""
+msgstr "(примусово надати всі дозволи керування власнику)"
 
 #: ../aa-mergeprof:459 ../apparmor/aa.py:1796
 msgid "Old Mode"
-msgstr ""
+msgstr "Старий режим"
 
 #: ../aa-mergeprof:460 ../apparmor/aa.py:1797
 msgid "New Mode"
-msgstr ""
+msgstr "Новий режим"
 
 #: ../aa-mergeprof:475 ../apparmor/aa.py:1812
 msgid "(force perms to owner)"
-msgstr ""
+msgstr "(примусові права власнику)"
 
 #: ../aa-mergeprof:478 ../apparmor/aa.py:1815
 msgid "Mode"
-msgstr ""
+msgstr "Режим"
 
 #: ../aa-mergeprof:556
 #, python-format
 msgid "Adding %(path)s %(mod)s to profile"
-msgstr ""
+msgstr "Додавання %(path)s %(mod)s до профілю"
 
 #: ../aa-mergeprof:574 ../apparmor/aa.py:1915
 msgid "Enter new path: "
-msgstr ""
+msgstr "Введіть новий шлях: "
 
 #: ../aa-mergeprof:630 ../aa-mergeprof:657 ../apparmor/aa.py:1959
 #: ../apparmor/aa.py:1995
 msgid "Network Family"
-msgstr ""
+msgstr "Мережева родина"
 
 #: ../aa-mergeprof:631 ../aa-mergeprof:658 ../apparmor/aa.py:1960
 #: ../apparmor/aa.py:1996
 msgid "Socket Type"
-msgstr ""
+msgstr "Тип сокету"
 
 #: ../aa-mergeprof:673 ../apparmor/aa.py:2010
 #, python-format
 msgid "Adding %s to profile"
-msgstr ""
+msgstr "Додавання %s до профілю"
 
 #: ../aa-mergeprof:683 ../apparmor/aa.py:2020
 #, python-format
 msgid "Adding network access %(family)s %(type)s to profile."
-msgstr ""
+msgstr "Додавання мережевого доступу %(family)s %(type)s до профілю."
 
 #: ../aa-mergeprof:689 ../apparmor/aa.py:2026
 #, python-format
 msgid "Denying network access %(family)s %(type)s to profile"
-msgstr ""
+msgstr "Заборона мережевого доступу %(family)s %(type)s до профілю"
 
 #: ../aa-autodep:23
 msgid "Generate a basic AppArmor profile by guessing requirements"
-msgstr ""
+msgstr "Створити основний профіль AppArmor за передбачуваними вимогами"
 
 #: ../aa-autodep:24
 msgid "overwrite existing profile"
-msgstr ""
+msgstr "заміна наявного профілю"
 
 #: ../aa-audit:24
 msgid "Switch the given programs to audit mode"
-msgstr ""
+msgstr "Перемкнути задані програми в режим аудиту"
 
 #: ../aa-audit:26
 msgid "remove audit mode"
-msgstr ""
+msgstr "вилучити режим аудиту"
 
 #: ../aa-audit:28
 msgid "Show full trace"
-msgstr ""
+msgstr "Показати повне відслідковування"
 
 #: ../aa-complain:23
 msgid "Switch the given program to complain mode"
-msgstr ""
+msgstr "Перемкнути задану програму в претензійний режим"
 
 #: ../aa-enforce:23
 msgid "Switch the given program to enforce mode"
-msgstr ""
+msgstr "Перемкнути задану програму в примусовий режим"
 
 #: ../aa-disable:23
 msgid "Disable the profile for the given programs"
-msgstr ""
+msgstr "Вимкнути профіль для даної програми"
 
 #: ../aa-unconfined:28
 msgid "Lists unconfined processes having tcp or udp ports"
-msgstr ""
+msgstr "Список процесів без обмежень з портами TCP і UDP"
 
 #: ../aa-unconfined:29
 msgid "scan all processes from /proc"
-msgstr ""
+msgstr "сканувати всі процеси з /proc"
 
 #: ../aa-unconfined:81
 #, python-format
 msgid "%(pid)s %(program)s (%(commandline)s) not confined"
-msgstr ""
+msgstr "%(pid)s %(program)s (%(commandline)s) не має обмежень"
 
 #: ../aa-unconfined:85
 #, python-format
 msgid "%(pid)s %(program)s%(pname)s not confined"
-msgstr ""
+msgstr "%(pid)s %(program)s%(pname)s не має обмежень"
 
 #: ../aa-unconfined:90
 #, python-format
 msgid "%(pid)s %(program)s (%(commandline)s) confined by '%(attribute)s'"
-msgstr ""
+msgstr "%(pid)s %(program)s (%(commandline)s) обмежені '%(attribute)s'"
 
 #: ../aa-unconfined:94
 #, python-format
 msgid "%(pid)s %(program)s%(pname)s confined by '%(attribute)s'"
-msgstr ""
+msgstr "%(pid)s %(program)s%(pname)s обмежені «%(attribute)s»"
 
 #: ../apparmor/aa.py:196
 #, python-format
 msgid "Followed too many links while resolving %s"
-msgstr ""
+msgstr "При вирішенні %s пройдено забагато посилань"
 
 #: ../apparmor/aa.py:252 ../apparmor/aa.py:259
 #, python-format
 msgid "Can't find %s"
-msgstr ""
+msgstr "Не вдалося знайти %s"
 
 #: ../apparmor/aa.py:264 ../apparmor/aa.py:548
 #, python-format
 msgid "Setting %s to complain mode."
-msgstr ""
+msgstr "Встановлення %s у претензійний режим"
 
 #: ../apparmor/aa.py:271
 #, python-format

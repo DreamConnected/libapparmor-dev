@@ -24,6 +24,13 @@ import unittest
 #     print("Please press the Y button on the keyboard.")
 #     self.assertEqual(apparmor.common.readkey().lower(), 'y', 'Error reading key from shell!')
 
+# If a profile can't be parsed by the tools, add it to skip_active_profiles or skip_extra_profiles.
+# Add only the filename (without path), for example 'usr.bin.foo'.
+# These skip lists are meant as a temporary solution, and should be empty on release.
+skip_active_profiles = []
+
+skip_extra_profiles = []
+
 
 class AATest(unittest.TestCase):
     def setUp(self):

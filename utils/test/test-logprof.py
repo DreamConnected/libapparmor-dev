@@ -16,7 +16,7 @@ import sys
 import unittest
 
 # import apparmor.aa as aa  # see the setup_aa() call for details
-from common_test import AATest, read_file, setup_all_loops  # , setup_aa
+from common_test import AATest, read_file, setup_all_loops, skip_active_profiles  # , setup_aa
 
 
 class TestLogprof(AATest):
@@ -35,7 +35,8 @@ class TestLogprof(AATest):
 
         # copy the local profiles to the test directory
         self.profile_dir = self.tmpdir + '/profiles'
-        shutil.copytree('../../profiles/apparmor.d/', self.profile_dir, symlinks=True)
+        shutil.copytree('../../profiles/apparmor.d/', self.profile_dir,
+                        symlinks=True, ignore=shutil.ignore_patterns(*skip_active_profiles))
 
     def AATeardown(self):
         self._terminate()

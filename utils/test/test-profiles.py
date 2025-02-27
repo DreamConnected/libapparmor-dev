@@ -12,14 +12,7 @@
 import unittest
 
 import apparmor.aa as aa
-from common_test import AATest, setup_aa, setup_all_loops
-
-# If a profile can't be parsed by the tools, add it to skip_active_profiles or skip_extra_profiles.
-# Add only the filename (without path), for example 'usr.bin.foo'.
-# These skip lists are meant as a temporary solution, and should be empty on release.
-skip_active_profiles = []
-
-skip_extra_profiles = []
+from common_test import AATest, setup_aa, setup_all_loops, skip_active_profiles, skip_extra_profiles
 
 
 class TestFoo(AATest):

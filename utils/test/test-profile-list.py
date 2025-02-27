@@ -23,7 +23,7 @@ from apparmor.rule.alias import AliasRule
 from apparmor.rule.boolean import BooleanRule
 from apparmor.rule.include import IncludeRule
 from apparmor.rule.variable import VariableRule
-from common_test import AATest, setup_aa, setup_all_loops, write_file
+from common_test import AATest, setup_aa, setup_all_loops, write_file, skip_active_profiles
 
 
 class TestAdd_profile(AATest):
@@ -387,7 +387,9 @@ class AaTest_get_all_merged_variables(AATest):
         # load the profiles and abstractions
         apparmor.aa.profile_dir = self.profile_dir
         apparmor.aa.loadincludes()
-        apparmor.aa.read_profiles()
+        # Keep this synced with the list in test-logprof.py and
+        # test-minitools.py
+        apparmor.aa.read_profiles(skip_profiles=skip_active_profiles)
 
     def test_unchanged(self):
         self._load_profiles()

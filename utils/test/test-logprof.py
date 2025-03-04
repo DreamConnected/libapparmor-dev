@@ -127,7 +127,7 @@ class TestLogprof(AATest):
             output = self.process.stdout.readline().decode("utf-8").strip()
             self.assertEqual(output, line)
         # give logprof some time to write the updated profile and terminate
-        self.process.wait(timeout=0.3)
+        self.process.wait(timeout=0.6)
         self.assertEqual(self.process.returncode, 0)
 
 

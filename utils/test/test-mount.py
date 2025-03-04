@@ -39,6 +39,7 @@ class MountTestParse(AATest):
         ('mount fstype=(ext3, ext4),',                                      MountRule('mount',   ('=', ['ext3', 'ext4']),  MountRule.ALL,           MountRule.ALL,  MountRule.ALL,  False, False, False, '')),
         ('mount bpf,',                                                      MountRule('mount',   MountRule.ALL,            MountRule.ALL,           'bpf',          MountRule.ALL,  False, False, False, '')),
         ('mount none,',                                                     MountRule('mount',   MountRule.ALL,            MountRule.ALL,           'none',         MountRule.ALL,  False, False, False, '')),
+        ('mount fstype=(procfs) none -> /foo,',                             MountRule('mount',   ('=', ['procfs']),        MountRule.ALL,           'none',         '/foo',         False, False, False, '')),
         ('mount fstype=(ext3, ext4) options=(ro),',                         MountRule('mount',   ('=', ['ext3', 'ext4']),  ('=', ('ro')),           MountRule.ALL,  MountRule.ALL,  False, False, False, '')),
         ('mount @{mntpnt},',                                                MountRule('mount',   MountRule.ALL,            MountRule.ALL,           '@{mntpnt}',    MountRule.ALL,  False, False, False, '')),
         ('mount /a,',                                                       MountRule('mount',   MountRule.ALL,            MountRule.ALL,           '/a',           MountRule.ALL,  False, False, False, '')),
@@ -51,6 +52,9 @@ class MountTestParse(AATest):
         ('mount fstype in (ext3, ext4) options=(ro, sync) /a -> /b, #cmt',  MountRule('mount',   ('in', ['ext3', 'ext4']), ('=', ('ro', 'sync')),   '/a',           '/b',           False, False, False, ' #cmt')),
         ('mount fstype in (ext3, ext4) option in (ro, sync) /a, #cmt',      MountRule('mount',   ('in', ['ext3', 'ext4']), ('in', ('ro', 'sync')),  '/a',           MountRule.ALL,  False, False, False, ' #cmt')),
         ('mount fstype=(ext3, ext4) option=(ro, sync) /a -> /b, #cmt',      MountRule('mount',   ('=', ['ext3', 'ext4']),  ('=', ('ro', 'sync')),   '/a',           '/b',           False, False, False, ' #cmt')),
+        ('mount fstype=fuse.revokefs-fuse options=(nosuid,nodev,rw) revokefs-fuse -> /foo-*/**/,',
+                                                                            MountRule('mount',  ('=', ['fuse.revokefs-fuse']), ('=', ('nosuid', 'nodev', 'rw')),                                                # noqa: E127
+                                                                                                                                                    'revokefs-fuse', '/foo-*/**/',  False, False, False, '')),  # noqa: E127
         ('mount options=(rw, rbind) {,/usr}/lib{,32,64,x32}/modules/ -> /tmp/snap.rootfs_*{,/usr}/lib/modules/,',
                                                                             MountRule('mount',   MountRule.ALL,            ('=', ('rw', 'rbind')),  '{,/usr}/lib{,32,64,x32}/modules/',  # noqa: E127
                                                                                                                                                                    '/tmp/snap.rootfs_*{,/usr}/lib/modules/',  # noqa: E127

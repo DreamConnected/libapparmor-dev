@@ -66,7 +66,7 @@ mount_condition_pattern = rf'({fs_type_pattern})?\s*({option_pattern})?'
 # - A path          : /foo
 # - A globbed Path  : **
 
-glob_pattern = r'(\s*(?P<%s>(([/{]|\*\*)\S*|"([/{]|\*\*)[^"]*"|@{\S+}\S*|"@{\S+}[^"]*"|"")|\w+))'
+glob_pattern = r'(\s*(?P<%s>([/{]\S*|\*\*\S*|"[/{][^"]*"|\*\*[^"]*"|@{\S+}\S*|"@{\S+}[^"]*"|"")|[\w-]+))'
 source_fileglob_pattern = glob_pattern % 'source_file'
 dest_fileglob_pattern = glob_pattern % 'dest_file'
 

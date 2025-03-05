@@ -1,0 +1,7 @@
+summary: smoke test for the linux-boot-prober profile
+environment:
+  # We try to execute linux-boot-prober on the first partition of the system.
+  TEST/simple_test: "df -h|grep /dev/|head -n1|cut -f1 -d' '|sed 's/.$/1/'|xargs linux-boot-prober"
+execute: |
+  eval "$TEST"
+

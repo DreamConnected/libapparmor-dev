@@ -1,0 +1,7 @@
+summary: smoke test for the os-prober profile
+environment:
+  # simple os-prober test
+  TEST/simple_test: 'os-prober'
+
+execute: |
+  eval $TEST

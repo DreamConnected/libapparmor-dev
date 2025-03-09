@@ -80,6 +80,109 @@ aa-exec.
 
 =back
 
+=head1 RESTRICTIONS
+
+aa-exec uses I<aa_change_profile(3)> to change application confinement.
+The use of I<aa_change_profile(3)> may be restricted by policy in ways
+that will cause failure or results different than expected.
+
+Even when using I<aa-exec> from unconfined restrictions in policy can
+causes failure or the confinement entered to be different than requested
+
+See the unpriviled unconfined restriction documentation for more detail.
+https://gitlab.com/apparmor/apparmor/-/wikis/unprivileged_unconfined_restriction
+
+=head1 STACKING
+
+aa-exec can be used to setup a stack of profiles as confinement. When an
+application is confined by a stack, all profiles in the stack are checked
+as if they were the profile confining the application. The resulting
+mediation is the intersection of what is allowed by each profile in the
+stack.
+
+The profiles in a stack are treated independently. Each profile can have
+its own flags and profile transitions. During an exec each profile gets
+to specify its transition and the results brought together to form a
+new canonicalized stack.
+
+The profile separator indicating a stack is the character sequence I<//&>.
+Thus a stack can be expressed using
+
+=over 4
+
+  $ aa-exec -p "unconfined//&firefox" -- bash
+  $ ps -Z
+  LABEL                               PID TTY          TIME CMD
+  unconfined                        30714 pts/12   00:00:00 bash
+  firefox//&unconfined (unconfined) 31160 pts/12   00:00:00 bash
+  firefox//&unconfined (unconfined) 31171 pts/12   00:00:00 ps
+
+=back
+
+=head1 NAMESPACES
+
+aa-exec can be used to enter confinement in another policy namespace
+if the policy namespaces exists, is visible, and the profile exists in
+the namespace. Note applications launched within the namespace will
+not be able to exit the namespace, and may be restricted by additional
+confinement around namespacing. Files and resources visible to the
+parent that launches the application may not be visible in the policy
+namespace resultinging access denials.
+
+To enter a policy namespace the profile is prefixed with the namespace's
+name, using a I<:> prefix and suffix.
+
+Eg.
+
+=over 4
+
+  $ aa-exec -p :ex1:unconfined -- bash
+  $ ps -Z
+  LABEL                               PID TTY          TIME CMD
+  -                                 30714 pts/12   00:00:00 bash
+  unconfined                        34372 pts/12   00:00:00 bash
+  unconfined                        34379 pts/12   00:00:00 ps
+
+=back
+
+Confinement of processes outside of the namespace may not be visible
+in which case the confinement will be represented with a -. If policy
+is stacked only part of the confinement might be visible. However
+confinement is usually fully visible from the parent policy namespace.
+
+Eg. the confinement of the child can be queried in the parent to see
+
+=over 4
+
+  $ ps -Z 34372
+  LABEL                               PID TTY      STAT   TIME COMMAND
+  :ex1:unconfined                   34372 pts/12   S+     0:00 bash
+
+=back
+
+And in the case of stacking with namespaces
+
+=over 4
+
+  $ aa-exec -p "unconfined//&:ex1:unconfined" -- bash
+  $ ps -Z
+  LABEL                               PID TTY          TIME CMD
+  -                                 30714 pts/12   00:00:00 bash
+  unconfined                        36298 pts/12   00:00:00 bash
+  unconfined                        36305 pts/12   00:00:00 ps
+
+=back
+
+while from the parent namespace the full confinement can be seen
+
+=over 4
+
+  $ ps -Z 36298
+  LABEL                               PID TTY      STAT   TIME COMMAND
+  unconfined//&:ex1:unconfined      36298 pts/12   S+     0:00 bash
+
+=back
+
 =head1 BUGS
 
 If you find any bugs, please report them at
@@ -87,7 +190,7 @@ L<https://gitlab.com/apparmor/apparmor/-/issues>
 
 =head1 SEE ALSO
 
-aa-stack(8), aa-namespace(8), apparmor(7), apparmor.d(5), aa_change_profile(3),
+apparmor(7), apparmor.d(5), aa_change_profile(3),
 aa_change_onexec(3) and L<https://wiki.apparmor.net>.
 
 =cut

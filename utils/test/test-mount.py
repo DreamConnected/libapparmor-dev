@@ -51,6 +51,8 @@ class MountTestParse(AATest):
         ('mount fstype in (ext3, ext4) options=(ro, sync) /a -> /b, #cmt',  MountRule('mount',   ('in', ['ext3', 'ext4']), ('=', ('ro', 'sync')),   '/a',           '/b',           False, False, False, ' #cmt')),
         ('mount fstype in (ext3, ext4) option in (ro, sync) /a, #cmt',      MountRule('mount',   ('in', ['ext3', 'ext4']), ('in', ('ro', 'sync')),  '/a',           MountRule.ALL,  False, False, False, ' #cmt')),
         ('mount fstype=(ext3, ext4) option=(ro, sync) /a -> /b, #cmt',      MountRule('mount',   ('=', ['ext3', 'ext4']),  ('=', ('ro', 'sync')),   '/a',           '/b',           False, False, False, ' #cmt')),
+        ('mount fstype=fuse.revokefs-fuse revokefs-fuse -> /foo,',          MountRule('mount',   ('=', ['fuse.revokefs-fuse']),
+                                                                                                                           MountRule.ALL,           'revokefs-fuse', '/foo',        False, False, False, '')),  # noqa: E127
         ('mount options=(rw, rbind) {,/usr}/lib{,32,64,x32}/modules/ -> /tmp/snap.rootfs_*{,/usr}/lib/modules/,',
                                                                             MountRule('mount',   MountRule.ALL,            ('=', ('rw', 'rbind')),  '{,/usr}/lib{,32,64,x32}/modules/',  # noqa: E127
                                                                                                                                                                    '/tmp/snap.rootfs_*{,/usr}/lib/modules/',  # noqa: E127

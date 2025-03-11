@@ -71,12 +71,20 @@ glob_pattern = (
     + RE_PROFILE_PATH_OR_VAR % 'IGNOREDEV'  # path or variable
     + r'|\{\S*|"\{[^"]*"'  # alternation, optionally quoted (note: no leading "/" needed/enforced)
     + r'|\*\*\S*|\*\*[^"]*"'  # starting with "**"
-    + r'|"")'  # empty source
+    + r'|""'  # empty source
     + r'|[\w-]+'  # any word including "-"
-    + '))'
+    # Note: the closing ')))' needs to be added in the final regex
 )
-source_fileglob_pattern = glob_pattern % 'source_file'
-dest_fileglob_pattern = glob_pattern.replace('IGNOREDEV', 'IGNOREMP') % 'dest_file'
+
+source_fileglob_pattern = (
+    glob_pattern % 'source_file'
+    + ')))'
+)
+
+dest_fileglob_pattern = (
+    glob_pattern.replace('IGNOREDEV', 'IGNOREMP') % 'dest_file'
+    + ')))'
+)
 
 RE_MOUNT_DETAILS = re.compile(r'^\s*' + mount_condition_pattern + rf'(\s+{source_fileglob_pattern})?' + rf'(\s+->\s+{dest_fileglob_pattern})?\s*' + r'$')
 RE_UMOUNT_DETAILS = re.compile(r'^\s*' + mount_condition_pattern + rf'(\s+{dest_fileglob_pattern})?\s*' + r'$')

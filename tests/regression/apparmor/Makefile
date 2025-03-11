@@ -85,6 +85,9 @@ endif
 SYSCTL_INCLUDE="\#include <sys/sysctl.h>"
 USE_SYSCTL:=$(shell echo $(SYSCTL_INCLUDE) | cpp -dM >/dev/null 2>/dev/null && echo true)
 
+LINUX_MOUNT_INCLUDE="\#include <linux/mount.h>"
+HAVE_LINUX_MOUNT_H:=$(shell echo $(LINUX_MOUNT_INCLUDE) | cpp -dM >/dev/null 2>/dev/null && echo true)
+
 CFLAGS += -g -O0 $(EXTRA_WARNINGS)
 
 SRC=access.c \
@@ -125,7 +128,6 @@ SRC=access.c \
     mmap.c \
     mkdir.c \
     mount.c \
-    move_mount.c \
     named_pipe.c \
     net_inet_rcv.c \
     net_inet_snd.c \
@@ -172,6 +174,11 @@ SRC=access.c \
 #only do the ioperm/iopl tests for x86 derived architectures
 ifneq (,$(findstring $(shell uname -i),i386 i486 i586 i686 x86 x86_64))
 SRC+=syscall_ioperm.c syscall_iopl.c
+endif
+
+#only do move_mount test if we have linux/mount.h
+ifeq ($(HAVE_LINUX_MOUNT_H),true)
+SRC+=move_mount.c
 endif
 
 #only do sysctl syscall test if defines installed and OR supported by the

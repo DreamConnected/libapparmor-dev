@@ -71,13 +71,13 @@ glob_pattern = (
     + RE_PROFILE_PATH_OR_VAR % 'IGNOREDEV'  # path or variable
     + r'|\{\S*|"\{[^"]*"'  # alternation, optionally quoted (note: no leading "/" needed/enforced)
     + r'|\*\*\S*|\*\*[^"]*"'  # starting with "**"
-    + r'|""'  # empty source
-    + r'|[\w-]+'  # any word including "-"
     # Note: the closing ')))' needs to be added in the final regex
 )
 
 source_fileglob_pattern = (
     glob_pattern % 'source_file'
+    + r'|""'  # empty source
+    + r'|[\w-]+'  # any word including "-"
     + ')))'
 )
 

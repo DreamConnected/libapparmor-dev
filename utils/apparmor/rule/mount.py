@@ -15,7 +15,7 @@ import re
 
 from apparmor.common import AppArmorBug, AppArmorException
 
-from apparmor.regex import RE_PROFILE_MOUNT, strip_parenthesis, strip_quotes
+from apparmor.regex import RE_PROFILE_MOUNT, RE_PROFILE_PATH_OR_VAR, strip_parenthesis, strip_quotes
 from apparmor.rule import AARE
 from apparmor.rule import BaseRule, BaseRuleset, parse_modifiers, logprof_value_or_all, check_and_split_list, quote_if_needed
 
@@ -66,9 +66,17 @@ mount_condition_pattern = rf'({fs_type_pattern})?\s*({option_pattern})?'
 # - A path          : /foo
 # - A globbed Path  : **
 
-glob_pattern = r'(\s*(?P<%s>([/{]\S*|\*\*\S*|"[/{][^"]*"|\*\*[^"]*"|@{\S+}\S*|"@{\S+}[^"]*"|"")|[\w-]+))'
+glob_pattern = (
+    r'(\s*(?P<%s>('
+    + RE_PROFILE_PATH_OR_VAR % 'IGNOREDEV'  # path or variable
+    + r'|\{\S*|"\{[^"]*"'  # alternation, optionally quoted (note: no leading "/" needed/enforced)
+    + r'|\*\*\S*|\*\*[^"]*"'  # starting with "**"
+    + r'|"")'  # empty source
+    + r'|[\w-]+'  # any word including "-"
+    + '))'
+)
 source_fileglob_pattern = glob_pattern % 'source_file'
-dest_fileglob_pattern = glob_pattern % 'dest_file'
+dest_fileglob_pattern = glob_pattern.replace('IGNOREDEV', 'IGNOREMP') % 'dest_file'
 
 RE_MOUNT_DETAILS = re.compile(r'^\s*' + mount_condition_pattern + rf'(\s+{source_fileglob_pattern})?' + rf'(\s+->\s+{dest_fileglob_pattern})?\s*' + r'$')
 RE_UMOUNT_DETAILS = re.compile(r'^\s*' + mount_condition_pattern + rf'(\s+{dest_fileglob_pattern})?\s*' + r'$')

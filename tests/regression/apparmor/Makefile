@@ -27,7 +27,7 @@ manually, or build against in-tree libapparmor.${nl}\
   endif # LIBAPPARMOR not set
   LDLIBS += $(LIBAPPARMOR)
 
-  AA_EXEC = $(shell command -v aa-exec)
+  AA_EXEC = $(shell which aa-exec)
   ifeq ($(AA_EXEC),)
     AA_EXEC_ERROR_MESSAGE = $(error ${nl}\
 ************************************************************************${nl}\
@@ -188,7 +188,7 @@ SRC+=syscall_sysctl.c
 endif
 
 # Only do xattrs_profile test if we have the required setfattr binary
-ifneq (,$(shell command -v setfattr))
+ifneq (,$(shell which setfattr > /dev/null && echo TRUE))
 SRC+=xattrs_profile.c
 else
 $(warning ${nl}\
@@ -199,7 +199,7 @@ Install attr or equivalent package to build and run this test${nl}\
 endif
 
 # Only do overlayfs_fuse test if we have the required fuse-overlayfs binary
-ifeq (,$(shell command -v fuse-overlayfs))
+ifeq (,$(shell which fuse-overlayfs > /dev/null && echo TRUE))
 $(warning ${nl}\
 ************************************************************************${nl}\
 No fuse-overlayfs skipping overlayfs_fuse tests ...${nl}\
@@ -328,12 +328,12 @@ TESTS=aa_exec \
       nfs
 
 # Only do overlayfs_fuse test if we have the required fuse-overlayfs binary
-ifneq (,$(shell command -v fuse-overlayfs))
+ifneq (,$(shell which fuse-overlayfs > /dev/null && echo TRUE))
 TESTS+=overlayfs_fuse
 endif
 
 # Only do xattrs_profile test if we have the required setfattr binary
-ifneq (,$(shell command -v setfattr))
+ifneq (,$(shell which setfattr > /dev/null && echo TRUE))
 TESTS+=xattrs_profile
 endif
 

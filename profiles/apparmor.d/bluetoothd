@@ -1,0 +1,49 @@
+#------------------------------------------------------------------
+#    Copyright (C) 2025 Canonical Ltd.
+#
+#    Author: Hlib Korzhynskyy <hlib.korzhynskyy@canonical.com>
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+# vim: ft=apparmor
+#
+
+abi <abi/4.0>,
+
+include <tunables/global>
+
+profile bluetoothd /usr/libexec/bluetooth/bluetoothd,/usr/sbin/bluetoothd flags=(attach_disconnected) {
+  include <abstractions/base>
+  include <abstractions/dbus>
+  include <abstractions/private-files-strict>
+
+  capability net_admin,
+  capability net_bind_service,
+
+  network alg seqpacket,
+  network bluetooth raw,
+  network bluetooth seqpacket,
+  network bluetooth stream,
+  network netlink raw,
+
+  # Users can load a config file from anywhere
+  @{HOME}/** r,
+
+  /dev/rfkill rw,
+  /dev/uinput rw,
+  @{PROC}/sys/kernel/hostname r,
+  @{run}/systemd/notify w,
+  @{sys}/devices/pci[0-9]*:[0-9]*/** r,
+  @{sys}/devices/virtual/dmi/id/chassis_type r,
+
+  owner /etc/bluetooth rw,
+  owner /etc/bluetooth/** rw,
+  owner /var/lib/bluetooth rw,
+  owner /var/lib/bluetooth/** rw,
+  owner @{run}/sdp rw,
+  owner /usr/share/dbus-1/system.d/bluetooth.conf rw,
+
+  include if exists <local/bluetoothd>
+}

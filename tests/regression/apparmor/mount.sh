@@ -305,6 +305,11 @@ open_tree_tests() {
 	mnt_target=$2
 	fsname=$3
 	settest move_mount
+
+	if [ ! -f "$bin/move_mount" ]; then
+		echo "  WARNING: move_mount binary was not built, skipping open_tree_tests ..."
+		return
+	fi
 	# TODO: check for move_mount syscall support
 	# TODO: check that parser supports detached
 	# eg. move_mount tmpfs /tmp/move_mount_test tmpfs
@@ -377,6 +382,11 @@ fsmount_tests() {
 	mnt_target=$2
 	fsname=$3
 	settest move_mount
+
+	if [ ! -f "$bin/move_mount" ]; then
+		echo "  WARNING: move_mount binary was not built, skipping fsmount_tests ..."
+		return
+	fi
 	# TODO: check for move_mount syscall support
 	# TODO: check that parser supports detached
 	# eg. move_mount tmpfs /tmp/move_mount_test tmpfs
@@ -422,6 +432,11 @@ all_rule() {
 	runchecktest "MOUNT (confined allow all remount setup)" pass mount ${loop_device} ${mount_point}
 	runchecktest "MOUNT (confined allow all remount)" pass mount ${loop_device} ${mount_point} -o remount
 	remove_mnt
+
+	if [ ! -f "$bin/move_mount" ]; then
+		echo "  WARNING: move_mount binary was not built, skipping all_rule move_mount tests ..."
+		return
+	fi
 
 	settest move_mount
 	genprofile "all"

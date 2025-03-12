@@ -78,6 +78,7 @@ packages:
 - python311
 - python311-devel
 - swig
+- which
 endef
 
 define FEDORA_CLOUD_INIT_USER_DATA_TEMPLATE

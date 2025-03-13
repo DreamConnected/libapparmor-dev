@@ -38,9 +38,7 @@ profile bluetoothd /usr/libexec/bluetooth/bluetoothd,/usr/sbin/bluetoothd flags=
   @{sys}/devices/pci[0-9]*:[0-9]*/** r,
   @{sys}/devices/virtual/dmi/id/chassis_type r,
 
-  owner /etc/bluetooth rw,
-  owner /etc/bluetooth/** rw,
-  owner /var/lib/bluetooth rw,
+  owner /etc/bluetooth/** r,
   owner /var/lib/bluetooth/** rw,
   owner @{run}/sdp rw,
   owner /usr/share/dbus-1/system.d/bluetooth.conf rw,

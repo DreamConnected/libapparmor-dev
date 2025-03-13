@@ -27,7 +27,7 @@ _ = init_translation()
 class aa_tools:
     def __init__(self, tool_name, args):
         apparmor.init_aa(profiledir=args.dir, confdir=args.configdir)
-        apparmor.read_profiles()
+        apparmor.read_profiles(skip_disabled=(tool_name != 'enforce'))
 
         if not user_perm(apparmor.profile_dir):
             raise AppArmorException("Cannot write to profile directory: %s" % (apparmor.profile_dir))

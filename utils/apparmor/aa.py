@@ -1618,7 +1618,7 @@ def update_profiles(ui_msg=False, skip_profiles=()):
         print(_("Error while loading profiles: {}").format(e))
 
 
-def read_profiles(ui_msg=False, skip_profiles=()):
+def read_profiles(ui_msg=False, skip_profiles=(), skip_disabled=True):
     # we'll read all profiles from disk, so reset the storage first (autodep() might have created/stored
     # a profile already, which would cause a 'Conflicting profile' error in attach_profile_data())
     #
@@ -1641,7 +1641,7 @@ def read_profiles(ui_msg=False, skip_profiles=()):
         if os.path.isfile(full_file):
             if is_skippable_file(file):
                 continue
-            elif os.path.exists(f'{profile_dir}/disable/{file}'):
+            elif skip_disabled and os.path.exists(f'{profile_dir}/disable/{file}'):
                 aaui.UI_Info("skipping disabled profile %s" % file)
                 continue
             elif file in skip_profiles:

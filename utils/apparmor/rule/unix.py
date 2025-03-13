@@ -47,7 +47,7 @@ sep = r'\s*[\s,]\s*'
 unix_accesses = rf'\s*(\s*(?P<accesses>\({join_access}({sep}{join_access})*\s*\)|{join_access}))?'
 unix_rule_conds = rf'(\s*({re_cond_set("type")}|{re_cond_set("protocol")}))*'
 unix_local_expr = rf'(\s*({re_cond("addr")}|{re_cond("label")}|{re_cond("attr")}|{re_cond("opt")}))*'
-unix_peer_expr = rf'peer\s*=\s*\((\s*({re_cond("addr", "addr_peer")}|{re_cond("label", "label_peer")}))*\)'
+unix_peer_expr = rf'peer\s*=\s*\((\s*({re_cond("addr", "addr_peer")}|{re_cond("label", "label_peer")})(\s*,)?)*\)'
 
 RE_UNIX_DETAILS = re.compile(rf'^(\s*{unix_accesses})?(\s*{unix_rule_conds})?(\s*{unix_local_expr})?(\s*{unix_peer_expr})?\s*$')
 

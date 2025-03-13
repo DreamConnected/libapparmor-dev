@@ -166,6 +166,16 @@ exception_not_raised = (
     'profile/flags/flags_bad_disconnected_path3.sd',
     'profile/flags/flags_bad_disconnected_path4.sd',
     'profile/flags/flags_bad_disconnected_path5.sd',
+
+    'profile/flags/flags_bad_disconnected_ipc1.sd',
+    'profile/flags/flags_bad_disconnected_ipc2.sd',
+    'profile/flags/flags_bad_disconnected_ipc3.sd',
+    'profile/flags/flags_bad_disconnected_ipc4.sd',
+    'profile/flags/flags_bad_disconnected_ipc5.sd',
+    'profile/flags/flags_bad_disconnected_ipc6.sd',
+    'profile/flags/flags_bad_disconnected_ipc7.sd',
+    'profile/flags/flags_bad_disconnected_ipc8.sd',
+
     'profile/profile_ns_bad8.sd',  # 'profile :ns/t' without terminating ':'
     'ptrace/bad_10.sd',  # peer with invalid regex
     'signal/bad_21.sd',  # invalid regex

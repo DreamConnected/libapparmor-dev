@@ -1,0 +1,17 @@
+#
+#=DESCRIPTION validate some uses of the profile flags.
+#=EXRESULT FAIL
+# vim:syntax=subdomain
+# Last Modified: Sun Apr 17 19:44:44 2005
+#
+
+@{var}=bar
+
+/does/not/exist flags=(attach_disconnected.ipc=@{var}) {
+  #include <includes/base>
+
+  mqueue,
+  /usr/X11R6/lib/lib*so* r,
+  /does/not/exist r,
+}
+

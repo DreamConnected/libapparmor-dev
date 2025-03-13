@@ -86,6 +86,7 @@ int features_supports_io_uring = 0;	/* kernel supports io_uring rules */
 int features_supports_flag_interruptible = 0;
 int features_supports_flag_signal = 0;
 int features_supports_flag_error = 0;
+int features_supports_flag_disconnected_ipc = 0;	/* kernel supports disconnected paths for ipc ns */
 int kernel_supports_oob = 0;		/* out of band transitions */
 int kernel_supports_promptdev = 0;	/* prompt via audit perms */
 int kernel_supports_permstable32 = 0;	/* extended permissions */

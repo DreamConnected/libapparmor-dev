@@ -115,6 +115,7 @@ B<PROFILE FLAG CONDS> =  [ 'flags=' ] '(' comma or white space separated list of
 
 B<PROFILE FLAGS> = I<PROFILE MODE> | I<AUDIT_MODE> | 'mediate_deleted'
 | 'attach_disconnected' | 'attach_disconneced.path='I<ABS PATH> | 'chroot_relative'
+| 'attach_disconnected.ipc' | 'attach_disconnected.ipc='I<ABS PATH>
 | 'debug' | 'interruptible' | 'kill.signal='I<SIGNAL> | 'error='I<ERROR CODE>
 
 B<ERROR CODE> = (case insensitive error code name starting with 'E'; see errno(3))
@@ -558,6 +559,14 @@ allowed. Its intent is a debug and policy development tool.
 
 =item B<attach_disconnected.path>=I<ABS PATH> Like attach_disconnected, but
 attach disconnected objects to the supplied path instead of the root of
+the namespace.
+
+=item B<attach_disconnected.ipc> A subset of attach_disconnected, but specific
+for IPC namespaces. It allows attaching disconnected IPC paths without having
+to allow attaching all types of files.
+
+=item B<attach_disconnected.ipc>=I<ABS PATH> Like attach_disconnected.ipc, but
+attach disconnected posix mqueue to the supplied path instead of the root of
 the namespace.
 
 =item B<chroot_relative> This forces file names to be relative to a

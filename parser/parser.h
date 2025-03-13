@@ -189,7 +189,7 @@ extern int preprocess_only;
 #define PATH_DELEGATE_DELETED 0x20
 #define PATH_ATTACH 0x40
 #define PATH_NO_ATTACH 0x80
-
+#define PATH_IPC_ATTACH 0x100
 
 
 #ifdef DEBUG
@@ -334,6 +334,7 @@ extern int features_supports_io_uring;
 extern int features_supports_flag_interruptible;
 extern int features_supports_flag_signal;
 extern int features_supports_flag_error;
+extern int features_supports_flag_disconnected_ipc;
 extern int kernel_supports_oob;
 extern int kernel_supports_promptdev;
 extern int kernel_supports_permstable32;

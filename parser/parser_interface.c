@@ -474,6 +474,11 @@ void sd_serialize_profile(std::ostringstream &buf, Profile *profile,
 				"disconnected");
 	}
 
+	if (profile->flags.disconnected_ipc && features_supports_flag_disconnected_ipc) {
+		sd_write_string(buf, profile->flags.disconnected_ipc,
+				"disconnected_ipc");
+	}
+
 	if (profile->flags.signal && features_supports_flag_signal) {
 		sd_write_name(buf, "kill");
 		sd_write_uint32(buf, profile->flags.signal);
@@ -500,6 +505,8 @@ void sd_serialize_profile(std::ostringstream &buf, Profile *profile,
 			flags |= 0x4;
 		if (profile->flags.path & PATH_CHROOT_NSATTACH)
 			flags |= 0x10;
+		if (profile->flags.path & PATH_IPC_ATTACH)
+			flags |= 0x20;
 
 		sd_write_name(buf, "path_flags");
 		sd_write_uint32(buf, flags);

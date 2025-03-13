@@ -159,6 +159,7 @@ public:
 	int audit;
 	int path;
 	char *disconnected_path;
+	char *disconnected_ipc;
 	int signal;
 	int error;
 
@@ -170,6 +171,7 @@ public:
 		audit = 0;
 		path = 0;
 		disconnected_path = NULL;
+		disconnected_ipc = NULL;
 		signal = 0;
 		error = 0;
 	}
@@ -216,6 +218,12 @@ public:
 				yyerror("unknown error code specified for error=\'%s\'\n", str + 6);
 		} else if (strcmp(str, "interruptible") == 0) {
 				flags |= FLAG_INTERRUPTIBLE;
+		} else if (strcmp(str, "attach_disconnected.ipc") == 0) {
+			path |= PATH_IPC_ATTACH;
+		} else if (strncmp(str, "attach_disconnected.ipc=", 24) == 0) {
+			/* TODO: make this a proper parse */
+			path |= PATH_IPC_ATTACH;
+			disconnected_ipc = strdup(str + 24);
 		} else {
 			yyerror(_("Invalid profile flag: %s."), str);
 		}
@@ -237,6 +245,8 @@ public:
 			os << ", kill.signal=" << signal;
 		if (error)
 			os << ", error=" << find_error_name_mapping(error);
+		if (disconnected_ipc)
+			os << ", attach_disconnected.ipc=" << disconnected_ipc;
 
 		if (flags & FLAG_PROMPT_COMPAT)
 			os << ", prompt_dev";
@@ -277,6 +287,9 @@ public:
 		if ((path & (PATH_ATTACH | PATH_NO_ATTACH)) ==
 		    (PATH_ATTACH | PATH_NO_ATTACH))
 			yyerror(_("Profile flag attach_disconnected conflicts with no_attach_disconnected"));
+		if ((path & (PATH_IPC_ATTACH | PATH_NO_ATTACH)) ==
+		    (PATH_IPC_ATTACH | PATH_NO_ATTACH))
+			yyerror(_("Profile flag attach_disconnected.ipc conflicts with no_attach_disconnected"));
 		if ((path & (PATH_CHROOT_NSATTACH | PATH_CHROOT_NO_ATTACH)) ==
 		    (PATH_CHROOT_NSATTACH | PATH_CHROOT_NO_ATTACH))
 			yyerror(_("Profile flag chroot_attach conflicts with chroot_no_attach"));
@@ -289,6 +302,16 @@ public:
 				// same ignore rhs.disconnect_path
 			} else {
 				disconnected_path = rhs.disconnected_path;
+			}
+		}
+		if (rhs.disconnected_ipc) {
+			if (disconnected_ipc) {
+				if (strcmp(disconnected_ipc, rhs.disconnected_ipc) != 0) {
+					yyerror(_("Profile flag attach_disconnected set to conflicting values: '%s' and '%s'"), disconnected_ipc, rhs.disconnected_ipc);
+				}
+				// same so do nothing
+			} else {
+				disconnected_ipc = rhs.disconnected_ipc;
 			}
 		}
 		if (rhs.signal) {

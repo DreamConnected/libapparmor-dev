@@ -16,6 +16,7 @@ profile openvpn /usr/sbin/openvpn flags=(attach_disconnected) {
   include <abstractions/consoles>
   include <abstractions/openssl>
   include <abstractions/nameservice-strict>
+  include <abstractions/private-files-strict>
 
   capability dac_read_search,
   capability dac_override,
@@ -32,9 +33,20 @@ profile openvpn /usr/sbin/openvpn flags=(attach_disconnected) {
   network inet stream,
   network inet6 stream,
 
-  # OpenVPN configuration and key files
-  file r /etc/openvpn/{,**},
+  # OpenVPN configuration, key files and unbreak --genkey feature
+  file w @{etc_rw}/openvpn/{,**},
   file mr /usr/sbin/openvpn,
+
+  # Allow OpenVPN to read keys from most user places while preventing an
+  # OpenVPN daemon running as root from covertly modifying user-generated
+  # keys. If this gets removed later make sure to preserve the .cert
+  # carveout above and add carveouts for .config/** and .sesame/*
+  file r @{HOME}/**,
+  owner file w @{HOME}/**,
+
+  # Allow OpenVPN access to the systemd notify socket (LP: #2101796)
+  file w @{run}/systemd/notify,
+  file w @{run}/user/@{uid}/systemd/notify,
 
   # To prompt password to users,
   file mrix /usr/bin/systemd-ask-password,
@@ -48,9 +60,10 @@ profile openvpn /usr/sbin/openvpn flags=(attach_disconnected) {
   # OpenVPN log and status files
   file rw /var/log/openvpn/*.log,
   file rw /var/log/openvpn/ipp.txt,
-  file rw /{,var/}run/openvpn/*.{pid,status},
+  file rw @{run}/openvpn/*.{pid,status},
 
-  # integration with NetworkManager
+  # Integration with NetworkManager
+  file r @{HOME}/.cert/nm-openvpn/*,
   file rw @{run}/NetworkManager/nm-openvpn-*,
   file PUx /{usr/,}lib{exec,/NetworkManager}/nm-openvpn-service-openvpn-helper,
 

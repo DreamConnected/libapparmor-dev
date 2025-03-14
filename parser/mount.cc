@@ -352,16 +352,14 @@ int is_valid_mnt_cond(const char *name, int src)
 	return -1;
 }
 
-static unsigned int extract_flags(struct value_list **list, unsigned int *inv)
+// Pair is (flags, invflags)
+static pair<unsigned int, unsigned int> extract_flags(value_list &list)
 {
 	unsigned int flags = 0, invflags = 0;
-	if (inv)
-		*inv = 0;
 
-	struct value_list *entry, *tmp, *prev = NULL;
-	list_for_each_safe(*list, entry, tmp) {
+	for (auto it = list.begin(); it != list.end(); ++it) {
 		int i;
-		i = find_mnt_keyword(mnt_opts_table, entry->value);
+		i = find_mnt_keyword(mnt_opts_table, it->get());
 		if (i != -1) {
 			flags |= mnt_opts_table[i].set;
 			invflags |= mnt_opts_table[i].clear;
@@ -369,16 +367,13 @@ static unsigned int extract_flags(struct value_list **list, unsigned int *inv)
 			       " => req: 0x%x inv: 0x%x\n",
 			       entry->value, mnt_opts_table[i].set,
 			       mnt_opts_table[i].clear, flags, invflags);
-			list_remove_at(*list, prev, entry);
-			free_value_list(entry);
-		} else
-			prev = entry;
+			it->reset(NULL);
+		}
 	}
 
-	if (inv)
-		*inv = invflags;
+	list.remove(NULL);
 
-	return flags;
+	return make_pair(flags, invflags);
 }
 
 static bool conflicting_flags(unsigned int flags, unsigned int inv)
@@ -396,20 +391,20 @@ static bool conflicting_flags(unsigned int flags, unsigned int inv)
 	return false;
 }
 
-static struct value_list *extract_fstype(struct cond_entry **conds)
+static value_list extract_fstype(struct cond_entry **conds)
 {
-	struct value_list *list = NULL;
+	value_list list;
 
-	struct cond_entry *entry, *tmp, *prev = NULL;
+	struct cond_entry *prev = NULL;
 
-	list_for_each_safe(*conds, entry, tmp) {
+	for_each_iter_safe<struct cond_entry> conds_iter(*conds);
+
+	for (auto entry: conds_iter) {
 		if (strcmp(entry->name, "fstype") == 0 ||
 		    strcmp(entry->name, "vfstype") == 0) {
 			PDEBUG("  extracting fstype\n");
 			list_remove_at(*conds, prev, entry);
-			list_append(entry->vals, list);
-			list = entry->vals;
-			entry->vals = NULL;
+			list.splice(list.begin(), entry->vals);
 			free_cond_entry(entry);
 		} else
 			prev = entry;
@@ -420,9 +415,10 @@ static struct value_list *extract_fstype(struct cond_entry **conds)
 
 static struct cond_entry *extract_options(struct cond_entry **conds, int eq)
 {
-	struct cond_entry *list = NULL, *entry, *tmp, *prev = NULL;
+	struct cond_entry *list = NULL, *prev = NULL;
+	for_each_iter_safe<struct cond_entry> conds_iter(*conds);
 
-	list_for_each_safe(*conds, entry, tmp) {
+	for (auto entry: conds_iter) {
 		if ((strcmp(entry->name, "options") == 0 ||
 		     strcmp(entry->name, "option") == 0) &&
 		    entry->eq == eq) {
@@ -440,19 +436,17 @@ static struct cond_entry *extract_options(struct cond_entry **conds, int eq)
 
 static void perror_conds(const char *rule, struct cond_entry *conds)
 {
-	struct cond_entry *entry;
+	for_each_iter<struct cond_entry> cond_iter(conds);
 
-	list_for_each(conds, entry) {
+	for (auto entry: cond_iter) {
 		PERROR(  "unsupported %s condition '%s%s(...)'\n", rule, entry->name, entry->eq ? "=" : " in ");
 	}
 }
 
-static void perror_vals(const char *rule, struct value_list *vals)
+static void perror_vals(const char *rule, value_list &vals)
 {
-	struct value_list *entry;
-
-	list_for_each(vals, entry) {
-		PERROR(  "unsupported %s value '%s'\n", rule, entry->value);
+	for (auto it = vals.cbegin(); it != vals.cend(); ++it) {
+		PERROR(  "unsupported %s value '%s'\n", rule, it->get());
 	}
 }
 
@@ -460,11 +454,11 @@ static void process_one_option(struct cond_entry *&opts, unsigned int &flags,
 			       unsigned int &inv_flags)
 {
 	struct cond_entry *entry;
-	struct value_list *vals;
+	value_list vals;
 
 	entry = list_pop(opts);
-	vals = entry->vals;
-	entry->vals = NULL;
+	vals = std::move(entry->vals);
+
 	/* fail if there are any unknown optional flags */
 	if (opts) {
 		PERROR("  unsupported multiple 'mount options %s(...)'\n", entry->eq ? "=" : " in ");
@@ -472,8 +466,8 @@ static void process_one_option(struct cond_entry *&opts, unsigned int &flags,
 	}
 	free_cond_entry(entry);
 
-	flags = extract_flags(&vals, &inv_flags);
-	if (vals) {
+	std::tie(flags, inv_flags) = extract_flags(vals);
+	if (!vals.empty()) {
 		perror_vals("mount option", vals);
 		exit(1);
 	}
@@ -483,7 +477,7 @@ mnt_rule::mnt_rule(struct cond_entry *src_conds, char *device_p,
 		   struct cond_entry *dst_conds unused, char *mnt_point_p,
 		   perm32_t perms_p):
 	perms_rule_t(AA_CLASS_MOUNT),
-	mnt_point(mnt_point_p), device(device_p), trans(NULL), opts(NULL),
+	mnt_point(mnt_point_p), device(device_p), trans(NULL), opts(),
 	flagsv(0), opt_flagsv(0)
 {
 	/* FIXME: dst_conds are ignored atm */
@@ -582,11 +576,11 @@ ostream &mnt_rule::dump(ostream &os)
 	for (unsigned int i = 0; i < opt_flagsv.size(); i++)
 		os << " flags in (0x" << hex << opt_flagsv[i] << ")";
 
-	if (dev_type) {
+	if (!dev_type.empty()) {
 		os << " type=";
 		print_value_list(dev_type);
 	}
-	if (opts) {
+	if (!opts.empty()) {
 		os << " options=";
 		print_value_list(opts);
 	}
@@ -607,7 +601,6 @@ ostream &mnt_rule::dump(ostream &os)
 /* does not currently support expansion of vars in options */
 int mnt_rule::expand_variables(void)
 {
-	struct value_list *ent;
 	int error = 0;
 
 	error = expand_entry_variables(&mnt_point);
@@ -622,15 +615,24 @@ int mnt_rule::expand_variables(void)
 	if (error)
 		return error;
 
-	list_for_each(dev_type, ent) {
-		error = expand_entry_variables(&ent->value);
-		if (error)
-			return error;
+	// These loops need unique_ptr.release() since the subroutine reallocates
+	if (!dev_type.empty()) {
+		for (auto it = dev_type.begin(); it != dev_type.end(); ++it) {
+			char *name = it->release();
+			error = expand_entry_variables(&name);
+			it->reset(name);
+			if (error)
+				return error;
+		}
 	}
-	list_for_each(opts, ent) {
-		error = expand_entry_variables(&ent->value);
-		if (error)
-			return error;
+	if (!opts.empty()) {
+		for (auto it = opts.begin(); it != opts.end(); ++it) {
+			char *name = it->release();
+			error = expand_entry_variables(&name);
+			it->reset(name);
+			if (error)
+				return error;
+		}
 	}
 
 	return 0;
@@ -721,23 +723,24 @@ static bool build_mnt_flags(char *buffer, int size, unsigned int flags,
 	return true;
 }
 
-static bool build_mnt_opts(std::string& buffer, struct value_list *opts)
+static bool build_mnt_opts(std::string& buffer, const value_list &opts)
 {
-	struct value_list *ent;
 	pattern_t ptype;
 	int pos;
 
-	if (!opts) {
+	if (opts.empty()) {
 		buffer.append(default_match_pattern);
 		return true;
 	}
 
-	list_for_each(opts, ent) {
-		ptype = convert_aaregex_to_pcre(ent->value, 0, glob_default, buffer, &pos);
+	for (auto it = opts.cbegin(); it != opts.cend(); ++it) {
+		ptype = convert_aaregex_to_pcre(it->get(), 0, glob_default, buffer, &pos);
 		if (ptype == ePatternInvalid)
 			return false;
 
-		if (ent->next)
+		auto it_copy = it;
+		it_copy++;
+		if (it_copy != opts.cend())
 			buffer.append(",");
 	}
 
@@ -788,7 +791,7 @@ int mnt_rule::gen_policy_remount(Profile &prof, int &count,
 	vec[3] = flagsbuf;
 
 	perm32_t tmpperms, tmpaudit;
-	if (opts) {
+	if (!opts.empty()) {
 		tmpperms = AA_MATCH_CONT;
 		tmpaudit = 0;
 	} else {
@@ -806,7 +809,7 @@ int mnt_rule::gen_policy_remount(Profile &prof, int &count,
 		goto fail;
 	count++;
 
-	if (opts) {
+	if (!opts.empty()) {
 		/* rule with data match required */
 		optsbuf.clear();
 		if (!build_mnt_opts(optsbuf, opts))
@@ -1001,7 +1004,7 @@ int mnt_rule::gen_policy_new_mount(Profile &prof, int &count,
 	vec[3] = flagsbuf;
 
 	perm32_t tmpperms, tmpaudit;
-	if (opts) {
+	if (!opts.empty()) {
 		tmpperms = AA_MATCH_CONT;
 		tmpaudit = 0;
 	} else {
@@ -1015,7 +1018,7 @@ int mnt_rule::gen_policy_new_mount(Profile &prof, int &count,
 		goto fail;
 	count++;
 
-	if (opts) {
+	if (!opts.empty()) {
 		/* rule with data match required */
 		optsbuf.clear();
 		if (!build_mnt_opts(optsbuf, opts))
@@ -1043,32 +1046,32 @@ int mnt_rule::gen_flag_rules(Profile &prof, int &count, unsigned int flags,
 	 */
 	if ((perms & AA_MAY_MOUNT) && (!flags || flags == MS_ALL_FLAGS)) {
 		/* no mount flags specified, generate multiple rules */
-		if (!device && !dev_type &&
+		if (!device && dev_type.empty() &&
 		    gen_policy_remount(prof, count, flags, opt_flags) == RULE_ERROR)
 			return RULE_ERROR;
-		if (!dev_type && !opts &&
+		if (dev_type.empty() && opts.empty() &&
 		    gen_policy_bind_mount(prof, count, flags, opt_flags) == RULE_ERROR)
 			return RULE_ERROR;
-		if ((!device || !mnt_point) && !dev_type && !opts &&
+		if ((!device || !mnt_point) && dev_type.empty() && opts.empty() &&
 		    gen_policy_change_mount_type(prof, count, flags, opt_flags) == RULE_ERROR)
 			return RULE_ERROR;
-		if (!dev_type && !opts &&
+		if (dev_type.empty() && opts.empty() &&
 		    gen_policy_move_mount(prof, count, flags, opt_flags) == RULE_ERROR)
 			return RULE_ERROR;
 
 		return gen_policy_new_mount(prof, count, flags, opt_flags);
 	} else if ((perms & AA_MAY_MOUNT) && (flags & MS_REMOUNT)
-		   && !device && !dev_type) {
+		   && !device && dev_type.empty()) {
 		return gen_policy_remount(prof, count, flags, opt_flags);
 	} else if ((perms & AA_MAY_MOUNT) && (flags & MS_BIND)
-		   && !dev_type && !opts) {
+		   && dev_type.empty() && opts.empty()) {
 		return gen_policy_bind_mount(prof, count, flags, opt_flags);
 	} else if ((perms & AA_MAY_MOUNT) &&
 		   (flags & (MS_MAKE_CMDS))
-		   && (!device || !mnt_point) && !dev_type && !opts) {
+		   && (!device || !mnt_point) && dev_type.empty() && opts.empty()) {
 		return gen_policy_change_mount_type(prof, count, flags, opt_flags);
 	} else if ((perms & AA_MAY_MOUNT) && (flags & MS_MOVE)
-		   && !dev_type && !opts) {
+		   && dev_type.empty() && opts.empty()) {
 		return gen_policy_move_mount(prof, count, flags, opt_flags);
 	} else if ((perms & AA_MAY_MOUNT) &&
 		   ((flags | opt_flags) & ~MS_CMDS)) {

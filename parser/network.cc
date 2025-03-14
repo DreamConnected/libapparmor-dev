@@ -401,9 +401,9 @@ bool network_rule::parse_address(ip_conds &entry)
 
 void network_rule::move_conditionals(struct cond_entry *conds, ip_conds &ip_cond)
 {
-	struct cond_entry *cond_ent;
+	for_each_iter<struct cond_entry> cond_iter(conds);
 
-	list_for_each(conds, cond_ent) {
+	for (auto cond_ent: cond_iter) {
 		/* for now disallow keyword 'in' (list) */
 		if (!cond_ent->eq)
 			yyerror("keyword \"in\" is not allowed in network rules\n");

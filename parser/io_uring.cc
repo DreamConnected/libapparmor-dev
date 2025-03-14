@@ -27,14 +27,14 @@
 
 void io_uring_rule::move_conditionals(struct cond_entry *conds)
 {
-	struct cond_entry *cond_ent;
+	for_each_iter<struct cond_entry> cond_iter(conds);
 
-	list_for_each(conds, cond_ent) {
+	for (auto cond_ent: cond_iter) {
 		/* disallow keyword 'in' (list) */
 		if (!cond_ent->eq)
 			yyerror("keyword \"in\" is not allowed in io_uring rules\n");
 
-		if (list_len(cond_ent->vals) > 1)
+		if (cond_ent->vals.size() > 1)
 			yyerror("io_uring conditional \"%s\" only supports a single value\n",
 				cond_ent->name);
 

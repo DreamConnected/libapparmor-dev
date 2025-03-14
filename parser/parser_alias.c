@@ -111,7 +111,8 @@ static struct cod_entry *target_list;
 static void process_entries(const void *nodep, VISIT value, int level unused)
 {
 	struct alias_rule **t = (struct alias_rule **) nodep;
-	struct cod_entry *entry, *dup = NULL;
+	struct cod_entry *dup = NULL;
+	for_each_iter<struct cod_entry> target_list_iter(target_list);
 	int len;
 
 	if (value == preorder || value == endorder)
@@ -119,7 +120,7 @@ static void process_entries(const void *nodep, VISIT value, int level unused)
 
 	len = strlen((*t)->from);
 
-	list_for_each(target_list, entry) {
+	for (auto entry: target_list_iter) {
 		if ((entry->perms & AA_SHARED_PERMS) || entry->alias_ignore)
 			continue;
 		if (entry->name && strncmp((*t)->from, entry->name, len) == 0) {
@@ -172,19 +173,16 @@ static void process_name(const void *nodep, VISIT value, int level unused)
 		name = prof->name;
 
 	if (name && strncmp((*t)->from, name, len) == 0) {
-		struct alt_name *alt;
+		/* aliases create alternate names */
 		char *n = do_alias(*t, name);
 		if (!n)
 			return;
-		/* aliases create alternate names */
-		alt = (struct alt_name *) calloc(1, sizeof(struct alt_name));
-		if (!alt) {
-			free(n);
+		unique_ptr<char, delete_via_free> n_wrapped(n);
+		try {
+			prof->altnames.push_back(std::move(n_wrapped));
+		} catch (const std::bad_alloc &_e) {
 			return;
 		}
-		alt->name = n;
-		alt->next = prof->altnames;
-		prof->altnames = alt;
 	}
 }
 

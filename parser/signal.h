@@ -35,7 +35,7 @@ int find_signal_mapping(const char *sig);
 int parse_signal_perms(const char *str_perms, perm32_t *perms, int fail);
 
 class signal_rule: public perms_rule_t {
-	void extract_sigs(struct value_list **list);
+	void extract_sigs(value_list &list);
 	void move_conditionals(struct cond_entry *conds);
 public:
 	Signals signals;

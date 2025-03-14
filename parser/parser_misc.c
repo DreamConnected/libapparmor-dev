@@ -55,13 +55,6 @@
 #endif
 #define NPDEBUG(fmt, args...)	/* Do nothing */
 
-#ifndef HAVE_REALLOCARRAY
-void *reallocarray(void *ptr, size_t nmemb, size_t size)
-{
-	return realloc(ptr, nmemb * size);
-}
-#endif
-
 #ifndef NULL
 #define NULL nullptr
 #endif
@@ -361,22 +354,84 @@ class capability_lookup {
 
 static capability_lookup cap_table;
 
-/* don't mark up str with \0 */
-static const char *strn_token(const char *str, size_t &len)
-{
-	const char *start;
+// The pair should be changed to string_view when we can migrate to C++17
+class ws_delimited_token_iter: public std::iterator<
+		std::input_iterator_tag,
+		std::pair<const char*, size_t>
+		> {
+	// Stores a (current_token, token_len) pair
+	std::pair<const char*, size_t> token;
+	size_t remaining_count;
 
-	while (isspace(*str))
-		str++;
-	start = str;
-	while (*str && !isspace(*str))
-		str++;
-	if (start == str)
-		return NULL;
+	// Increment the iter_ptr and update the remaining_count accordingly
+	// Returns whether there are characters left afterwards
+	bool incr_ptr() {
+		if (remaining_count > 0) {
+			token.first++;
+			remaining_count--;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	void advance_past_token() {
+		token.first += token.second;
+		remaining_count -= token.second;
+		token.second = 0;
+	}
+public:
+	// Call operator++ once to locate the first token
+	explicit ws_delimited_token_iter(const char* str): token(str, 0), remaining_count(strlen(str)) {
+		this->operator++();
+	}
+	explicit ws_delimited_token_iter(const char* str, size_t len): token(str, 0), remaining_count(len) {
+		this->operator++();
+	}
+	explicit ws_delimited_token_iter(string const &str): token(str.c_str(), 0), remaining_count(str.length()) {
+		this->operator++();
+	}
 
-	len = str - start;
-	return start;
-}
+	ws_delimited_token_iter begin() {
+		return *this;
+	}
+	ws_delimited_token_iter end() {
+		return ws_delimited_token_iter(this->token.first+remaining_count, 0);
+	}
+	bool operator==(ws_delimited_token_iter other) const {
+		return (this->token.first == other.token.first) && (this->remaining_count == other.remaining_count);
+	}
+	// Needed before C++20
+	bool operator!=(ws_delimited_token_iter other) const {
+		return !(*this==other);
+	}
+	const std::pair<const char*, size_t>& operator*() const {
+		return this->token;
+	}
+	ws_delimited_token_iter& operator++() {
+		advance_past_token();
+
+		if (remaining_count == 0) {
+			return *this;
+		}
+		while (isspace(*token.first)) {
+			if (!incr_ptr()) {
+				assert(*this == this->end());
+				return *this;
+			}
+		}
+		token.second = 0;
+		while (token.second < remaining_count && !isspace(token.first[token.second])) {
+			token.second++;
+		}
+
+		return *this;
+	}
+	ws_delimited_token_iter operator++(int) {
+		ws_delimited_token_iter old = *this;
+		operator++();
+		return old;
+	}
+};
 
 int null_strcmp(const char *s1, const char *s2)
 {
@@ -400,7 +455,6 @@ bool strcomp (const char *lhs, const char *rhs)
 bool add_cap_feature_mask(struct aa_features *features, capability_flags flags)
 {
 	autofree char *value = NULL;
-	const char *capstr;
 	size_t valuelen, len = 0;
 	int n;
 
@@ -410,10 +464,11 @@ bool add_cap_feature_mask(struct aa_features *features, capability_flags flags)
 		return true;
 
 	n = 0;
-	for (capstr = strn_token(value, len);
-	     capstr;
-	     capstr = strn_token(capstr + len, len)) {
-		string capstr_as_str = string(capstr, len);
+
+	ws_delimited_token_iter tok_iter = ws_delimited_token_iter(value, valuelen);
+	for (auto it = tok_iter.begin(); it != tok_iter.end(); ++it) {
+		auto capstr_len_pair = *it;
+		string capstr_as_str = string(capstr_len_pair.first, capstr_len_pair.second);
 		if (cap_table.capable_add_cap(capstr_as_str, n, flags) < 0)
 			return false;
 		n++;
@@ -1079,11 +1134,11 @@ static void debug_base_perm_mask(int mask)
 
 void debug_cod_entries(struct cod_entry *list)
 {
-	struct cod_entry *item = NULL;
+	for_each_iter<struct cod_entry> list_iter(list);
 
 	printf("--- Entries ---\n");
 
-	list_for_each(list, item) {
+	for (auto item: list_iter) {
 		printf("Perms:\t");
 		if (HAS_CHANGE_PROFILE(item->perms))
 			printf(" change_profile");
@@ -1149,22 +1204,21 @@ bool entry_add_prefix(struct cod_entry *entry, const prefixes &p, const char *&e
 }
 
 // these need to move to stl
-int ordered_cmp_value_list(value_list *lhs, value_list *rhs)
+int ordered_cmp_value_list(const value_list &lhs, const value_list &rhs)
 {
-	std::vector<const char *> lhstable;
-	std::vector<const char *> rhstable;
-
-	struct value_list *entry;
-	list_for_each(lhs, entry) {
-		lhstable.push_back(entry->value);
-	}
-	list_for_each(rhs, entry) {
-		rhstable.push_back(entry->value);
-	}
-
-	int res = lhstable.size() - rhstable.size();
+	int res = lhs.size() - rhs.size();
 	if (res)
 		return res;
+
+	std::vector<char *> lhstable(lhs.size());
+	std::vector<char *> rhstable(rhs.size());
+
+	for (auto it = lhs.cbegin(); it != lhs.cend(); ++it) {
+		lhstable.push_back(it->get());
+	}
+	for (auto it = rhs.cbegin(); it != rhs.cend(); ++it) {
+		rhstable.push_back(it->get());
+	}
 
 	std::sort(lhstable.begin(), lhstable.end(), strcomp);
 	std::sort(rhstable.begin(), rhstable.end(), strcomp);
@@ -1178,52 +1232,23 @@ int ordered_cmp_value_list(value_list *lhs, value_list *rhs)
 	return 0;
 }
 
-int cmp_value_list(value_list *lhs, value_list *rhs)
+int cmp_value_list(const value_list &lhs, const value_list &rhs)
 {
-	if (lhs) {
-		if (rhs) {
-			return ordered_cmp_value_list(lhs, rhs);
+	// Should this just be inlined?
+	return ordered_cmp_value_list(lhs, rhs);
+}
+
+void print_value_list(const value_list &list)
+{
+	bool is_first = true;
+
+	for (auto it = list.cbegin(); it != list.cend(); ++it) {
+		if (is_first) {
+			fprintf(stderr, "%s", it->get());
+			is_first = false;
+		} else {
+			fprintf(stderr, ", %s", it->get());
 		}
-		return 1;
-	} else if (rhs) {
-		return -1;
-	}
-
-	return 0;
-}
-
-struct value_list *new_value_list(char *value)
-{
-	struct value_list *val = (struct value_list *) calloc(1, sizeof(struct value_list));
-	if (val)
-		val->value = value;
-	return val;
-}
-
-void free_value_list(struct value_list *list)
-{
-	struct value_list *next;
-
-	while (list) {
-		next = list->next;
-		if (list->value)
-			free(list->value);
-		free(list);
-		list = next;
-	}
-}
-
-void print_value_list(struct value_list *list)
-{
-	struct value_list *entry;
-
-	if (!list)
-		return;
-
-	fprintf(stderr, "%s", list->value);
-	list = list->next;
-	list_for_each(list, entry) {
-		fprintf(stderr, ", %s", entry->value);
 	}
 }
 
@@ -1234,37 +1259,36 @@ void move_conditional_value(const char *rulename, char **dst_ptr,
 		yyerror("%s conditional \"%s\" can only be specified once\n",
 			rulename, cond_ent->name);
 
-	*dst_ptr = cond_ent->vals->value;
-	cond_ent->vals->value = NULL;
+	*dst_ptr = cond_ent->vals.front().release();
+	cond_ent->vals.pop_front();
 }
 
-struct cond_entry *new_cond_entry(char *name, int eq, struct value_list *list)
+struct cond_entry *new_cond_entry(char *name, int eq, value_list &&list)
 {
-	struct cond_entry *ent = (struct cond_entry *) calloc(1, sizeof(struct cond_entry));
-	if (ent) {
+	try {
+		struct cond_entry *ent = new cond_entry();
 		ent->name = name;
-		ent->vals = list;
+		ent->vals = std::move(list);
 		ent->eq = eq;
+		return ent;
+	} catch (const std::bad_alloc &_e) {
+		return NULL;
 	}
-
-	return ent;
 }
 
 void free_cond_entry(struct cond_entry *ent)
 {
 	if (ent) {
 		free(ent->name);
-		free_value_list(ent->vals);
-		free(ent);
+		delete ent;
 	}
 }
 
 void free_cond_list(struct cond_entry *ents)
 {
-	struct cond_entry *entry, *tmp;
-
 	if (ents) {
-		list_for_each_safe(ents, entry, tmp) {
+		for_each_iter_safe<struct cond_entry> ents_iter(ents);
+		for (auto entry: ents_iter) {
 			free_cond_entry(entry);
 		}
 	}

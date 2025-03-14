@@ -38,8 +38,14 @@
 #include "libapparmor_re/aare_rules.h"
 #include "rule.h"
 #include "bignum.h"
+#include "lib.h"
 
+#include "lib.h"
+
+#include <list>
+#include <memory>
 #include <string>
+#include <memory>
 
 using namespace std;
 
@@ -91,18 +97,14 @@ struct cod_pattern {
 	char *regex;		// posix regex
 };
 
-struct value_list {
-	char *value;
+typedef list<unique_ptr<char, delete_via_free>> value_list;
 
-	struct value_list *next;
-};
-
-int cmp_value_list(value_list *lhs, value_list *rhs);
+int cmp_value_list(const value_list &lhs, const value_list &rhs);
 
 struct cond_entry {
 	char *name;
 	int eq;			/* where equals was used in specifying list */
-	struct value_list *vals;
+	value_list vals;
 
 	struct cond_entry *next;
 };
@@ -142,10 +144,7 @@ struct aa_rlimits {
 	rlim_t limits[RLIMIT_NLIMITS];
 };
 
-struct alt_name {
-	char *name;
-	struct alt_name *next;
-};
+typedef std::vector<unique_ptr<char, delete_via_free>> alt_name;
 
 struct sd_hat {
 	char *hat_name;
@@ -218,12 +217,71 @@ do {						\
 #define unused __attribute__ ((unused))
 #endif
 
+template<typename T>
+class for_each_iter: public std::iterator<std::input_iterator_tag, T*> {
+private:
+	T* ptr;
+public:
+	explicit for_each_iter(T* ptr): ptr(ptr) {}
+	for_each_iter begin() const {
+		return *this;
+	}
+	for_each_iter end() const {
+		return for_each_iter(NULL);
+	}
+	bool operator==(for_each_iter other) const {
+		return (this->ptr == other.ptr);
+	}
+	bool operator!=(for_each_iter other) const {
+		return !(*this == other);
+	}
+	T* operator*() const {
+		return ptr;
+	}
+	for_each_iter& operator++() {
+		ptr = ptr ? ptr->next : NULL;
+		return *this;
+	}
+	for_each_iter operator++(int) {
+		for_each_iter old = *this;
+		operator++();
+		return old;
+	}
+};
+template<typename T>
+class for_each_iter_safe: public std::iterator<std::input_iterator_tag, T*> {
+private:
+	T* ptr;
+	T* ptr_next;
+public:
+	explicit for_each_iter_safe(T* ptr): ptr(ptr), ptr_next(ptr ? ptr->next : NULL) {}
+	for_each_iter_safe begin() const {
+		return *this;
+	}
+	for_each_iter_safe end() const {
+		return for_each_iter_safe(NULL);
+	}
+	bool operator==(for_each_iter_safe other) const {
+		return (this->ptr == other.ptr);
+	}
+	bool operator!=(for_each_iter_safe other) const {
+		return !(*this == other);
+	}
+	T* operator*() const {
+		return ptr;
+	}
+	for_each_iter_safe& operator++() {
+		ptr = ptr_next;
+		ptr_next = ptr ? ptr->next : NULL;
+		return *this;
+	}
+	for_each_iter_safe operator++(int) {
+		for_each_iter_safe old = *this;
+		operator++();
+		return old;
+	}
+};
 
-#define list_first(LIST) (LIST)
-#define list_for_each(LIST, ENTRY) \
-	for ((ENTRY) = (LIST); (ENTRY); (ENTRY) = (ENTRY)->next)
-#define list_for_each_safe(LIST, ENTRY, TMP) \
-	for ((ENTRY) = (LIST), (TMP) = (LIST) ? (LIST)->next : NULL; (ENTRY); (ENTRY) = (TMP), (TMP) = (TMP) ? (TMP)->next : NULL)
 #define list_last_entry(LIST, ENTRY) \
 	for ((ENTRY) = (LIST); (ENTRY) && (ENTRY)->next; (ENTRY) = (ENTRY)->next)
 #define list_append(LISTA, LISTB)		\
@@ -232,15 +290,6 @@ do {						\
 		list_last_entry((LISTA), ___tmp);\
 		___tmp->next = (LISTB);		\
 	} while (0)
-
-#define list_len(LIST)		\
-({				\
-	int len = 0;		\
-	typeof(LIST) tmp;		\
-	list_for_each((LIST), tmp)	\
-		len++;		\
-	len;			\
-})
 
 #define list_pop(LIST)				\
 ({						\
@@ -398,7 +447,7 @@ extern const char *basedir;
 #define glob_null	1
 extern pattern_t convert_aaregex_to_pcre(const char *aare, int anchor, int glob,
 					 std::string& pcre, int *first_re_pos);
-extern bool build_list_val_expr(std::string& buffer, struct value_list *list);
+extern bool build_list_val_expr(std::string& buffer, const value_list &list);
 extern bool convert_entry(std::string& buffer, char *entry);
 extern int clear_and_convert_entry(std::string& buffer, char *entry);
 extern bool convert_range(std::string& buffer, bignum start, bignum end);
@@ -419,10 +468,8 @@ extern void free_var_string(struct var_string *var);
 /* parser_misc.c */
 extern void warn_uppercase(void);
 extern int is_blacklisted(const char *name, const char *path);
-extern struct value_list *new_value_list(char *value);
-extern void free_value_list(struct value_list *list);
-extern void print_value_list(struct value_list *list);
-extern struct cond_entry *new_cond_entry(char *name, int eq, struct value_list *list);
+extern void print_value_list(const value_list &list);
+extern struct cond_entry *new_cond_entry(char *name, int eq, value_list &&list);
 extern void move_conditional_value(const char *rulename, char **dst_ptr,
 				   struct cond_entry *cond_ent);
 extern void free_cond_entry(struct cond_entry *ent);

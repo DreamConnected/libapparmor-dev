@@ -150,8 +150,8 @@ public:
 	char *mnt_point;
 	char *device;
 	char *trans;
-	struct value_list *dev_type;
-	struct value_list *opts;
+	value_list dev_type;
+	value_list opts;
 
 	std::vector<unsigned int> flagsv, opt_flagsv;
 
@@ -161,8 +161,6 @@ public:
 		   perm32_t perms_p);
 	virtual ~mnt_rule()
 	{
-		free_value_list(opts);
-		free_value_list(dev_type);
 		free(device);
 		free(mnt_point);
 		free(trans);

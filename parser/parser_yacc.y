@@ -64,6 +64,7 @@
 
 int parser_token = 0;
 
+static value_list *new_value_list(char *value);
 struct cod_entry *do_file_rule(char *id, perm32_t perms, char *link_id, char *nt);
 mnt_rule *do_mnt_rule(struct cond_entry *src_conds, char *src,
 		      struct cond_entry *dst_conds, char *dst,
@@ -221,7 +222,7 @@ static void abi_features(char *filename, bool search);
 	char *set_var;
 	char *bool_var;
 	char *var_val;
-	struct value_list *val_list;
+	value_list *val_list;
 	struct cond_entry *cond_entry;
 	struct cond_entry_list cond_entry_list;
 	bool boolean;
@@ -491,55 +492,55 @@ alias: TOK_ALIAS TOK_ID TOK_ARROW TOK_ID TOK_END_OF_RULE
 
 varassign:	TOK_SET_VAR TOK_EQUALS valuelist
 	{
-		struct value_list *list = $3;
+		value_list *list = $3;
 		char *var_name = process_var($1);
 		int err;
-		if (!list || !list->value)
+		if (!list || list->empty() || !list->front().get())
 			yyerror("Assert: valuelist returned NULL");
 		PDEBUG("Matched: set assignment for (%s)\n", $1);
-		err = new_set_var(var_name, list->value);
+		err = new_set_var(var_name, list->front().get());
 		if (err) {
 			free(var_name);
 			yyerror("variable %s was previously declared", $1);
 			/* FIXME: it'd be handy to report the previous location */
 		}
-		for (list = list->next; list; list = list->next) {
-			err = add_set_value(var_name, list->value);
+		for (auto it = ++list->cbegin(); it != list->cend(); ++it) {
+			err = add_set_value(var_name, it->get());
 			if (err) {
 				free(var_name);
 				yyerror("Error adding %s to set var %s",
-					list->value, $1);
+					it->get(), $1);
 			}
 		}
-		free_value_list($3);
+		delete $3;
 		free(var_name);
 		free($1);
 	}
 
 varassign:	TOK_SET_VAR TOK_ADD_ASSIGN valuelist
 	{
-		struct value_list *list = $3;
+		value_list *list = $3;
 		char *var_name = process_var($1);
 		int err;
-		if (!list || !list->value)
+		if (!list || list->empty() || !list->front().get())
 			yyerror("Assert: valuelist returned NULL");
 		PDEBUG("Matched: additive assignment for (%s)\n", $1);
 		/* do the first one outside the loop, subsequent
 		 * failures are indicative of symtab failures */
-		err = add_set_value(var_name, list->value);
+		err = add_set_value(var_name, list->front().get());
 		if (err) {
 			free(var_name);
 			yyerror("variable %s was not previously declared, but is being assigned additional values", $1);
 		}
-		for (list = list->next; list; list = list->next) {
-			err = add_set_value(var_name, list->value);
+		for (auto it = ++list->cbegin(); it != list->cend(); ++it) {
+			err = add_set_value(var_name, it->get());
 			if (err) {
 				free(var_name);
 				yyerror("Error adding %s to set var %s",
-					list->value, $1);
+					it->get(), $1);
 			}
 		}
-		free_value_list($3);
+		delete $3;
 		free(var_name);
 		free($1);
 	}
@@ -566,7 +567,7 @@ varassign:	TOK_BOOL_VAR TOK_EQUALS TOK_VALUE
 
 valuelist:	TOK_VALUE
 	{
-		struct value_list *val = new_value_list($1);
+		value_list *val = new_value_list($1);
 		if (!val)
 			yyerror(_("Memory allocation error."));
 		PDEBUG("Matched: value (%s)\n", $1);
@@ -576,12 +577,13 @@ valuelist:	TOK_VALUE
 
 valuelist:	valuelist TOK_VALUE
 	{
-		struct value_list *val = new_value_list($2);
-		if (!val)
+		try {
+			$1->push_back(unique_ptr<char, delete_via_free>($2));
+		} catch (const std::bad_alloc &_e) {
 			yyerror(_("Memory allocation error."));
+		}
 		PDEBUG("Matched: value list\n");
 
-		list_append($1, val);
 		$$ = $1;
 	}
 
@@ -699,7 +701,7 @@ block: TOK_OPEN rules TOK_CLOSE
 
 rules: rules opt_prefix block
 	{
-		struct cod_entry *entry, *tmp;
+		for_each_iter_safe<struct cod_entry> entries_iter($3->entries);
 
 		if (($2).priority != 0) {
 			yyerror(_("priority is not allowed on rule blocks"));
@@ -709,7 +711,7 @@ rules: rules opt_prefix block
 		       $2.rule_mode == RULE_DENY ? "deny " : "",
 		       $2.rule_mode == RULE_PROMPT ? "prompt " : "",
 		       $2.owner == OWNER_SPECIFIED ? "owner " : "");
-		list_for_each_safe($3->entries, entry, tmp) {
+		for (auto entry: entries_iter) {
 			const char *error;
 			entry->next = NULL;
 			if (!entry_add_prefix(entry, $2, error)) {
@@ -1155,7 +1157,7 @@ network_rule: TOK_NETWORK opt_net_perm TOK_ID TOK_ID opt_conds opt_cond_list TOK
 cond: TOK_CONDID
 	{
 		struct cond_entry *ent;
-		ent = new_cond_entry($1, 0, NULL);
+		ent = new_cond_entry($1, 0, value_list());
 		if (!ent)
 			yyerror(_("Memory allocation error."));
 		$$ = ent;
@@ -1164,12 +1166,13 @@ cond: TOK_CONDID
 cond: TOK_CONDID TOK_EQUALS TOK_VALUE
 	{
 		struct cond_entry *ent;
-		struct value_list *value = new_value_list($3);
-		if (!value)
-			yyerror(_("Memory allocation error."));
-		ent = new_cond_entry($1, 1, value);
-		if (!ent) {
-			free_value_list(value);
+		value_list value;
+		try {
+			value.emplace_back($3);
+			ent = new_cond_entry($1, 1, std::move(value));
+			if (!ent)
+				throw std::bad_alloc();
+		} catch (const std::bad_alloc &_e) {
 			yyerror(_("Memory allocation error."));
 		}
 		$$ = ent;
@@ -1177,20 +1180,22 @@ cond: TOK_CONDID TOK_EQUALS TOK_VALUE
 
 cond: TOK_CONDID TOK_EQUALS TOK_OPENPAREN valuelist TOK_CLOSEPAREN
 	{
-		struct cond_entry *ent = new_cond_entry($1, 1, $4);
+		struct cond_entry *ent = new_cond_entry($1, 1, std::move(*$4));
 
 		if (!ent)
 			yyerror(_("Memory allocation error."));
+		delete $4;
 		$$ = ent;
 	}
 
 
 cond: TOK_CONDID TOK_IN TOK_OPENPAREN valuelist TOK_CLOSEPAREN
 	{
-		struct cond_entry *ent = new_cond_entry($1, 0, $4);
+		struct cond_entry *ent = new_cond_entry($1, 0, std::move(*$4));
 
 		if (!ent)
 			yyerror(_("Memory allocation error."));
+		delete $4;
 		$$ = ent;
 	}
 
@@ -1692,6 +1697,19 @@ void yyerror(const char *msg, ...)
 	exit(1);
 }
 
+// We only keep this around (and keep value_list as a ptr in the union)
+// because all types in the union must be trivially constructable
+static value_list *new_value_list(char *value)
+{
+	try {
+		value_list *val = new value_list();
+		val->push_front(unique_ptr<char, delete_via_free>(value));
+		return val;
+	} catch (const std::bad_alloc &_e) {
+		return NULL;
+	}
+}
+
 struct cod_entry *do_file_rule(char *id, perm32_t perms, char *link_id, char *nt)
 {
 		struct cod_entry *entry;
@@ -1712,13 +1730,13 @@ static const char *mnt_cond_msg[] = {"",
 
 int verify_mnt_conds(struct cond_entry *conds, int src)
 {
-	struct cond_entry *entry;
+	for_each_iter<struct cond_entry> conds_iter(conds);
 	int error = 0;
 
 	if (!conds)
 		return 0;
 
-	list_for_each(conds, entry) {
+	for (auto entry: conds_iter) {
 		int res = is_valid_mnt_cond(entry->name, src);
 		if (res <= 0) {
 				printyyerror(_("invalid mount conditional %s%s"),
@@ -1759,9 +1777,9 @@ mnt_rule *do_pivot_rule(struct cond_entry *old, char *root, char *transition)
 	if (old) {
 		if (strcmp(old->name, "oldroot") != 0)
 			yyerror(_("invalid pivotroot conditional '%s'"), old->name);
-		if (old->vals) {
-			device = old->vals->value;
-			old->vals->value = NULL;
+		if (!old->vals.empty()) {
+			device = old->vals.front().release();
+			old->vals.pop_front();
 		}
 		free_cond_entry(old);
 	}

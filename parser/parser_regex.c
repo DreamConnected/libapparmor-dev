@@ -452,9 +452,9 @@ char *get_xattr_value(struct cond_entry *entry)
 {
 	if (!entry->eq)
 		return NULL;
-	if (!entry->vals)
+	if (entry->vals.empty())
 		return NULL;
-	return entry->vals->value;
+	return entry->vals.front().get();
 }
 
 /* do we want to warn once/profile or just once per compile?? */
@@ -497,7 +497,7 @@ static bool process_profile_name_xmatch(Profile *prof)
 	if (!prof->attachment)
 		free(name);
 
-	if (ptype == ePatternBasic && !(prof->altnames || prof->attachment || prof->xattrs.list)) {
+	if (ptype == ePatternBasic && !(!prof->altnames.empty() || prof->attachment || prof->xattrs.list)) {
 		/* no regex so do not set xmatch */
 		prof->xmatch = NULL;
 		prof->xmatch_len = 0;
@@ -512,13 +512,12 @@ static bool process_profile_name_xmatch(Profile *prof)
 			delete rules;
 			return false;
 		}
-		if (prof->altnames) {
-			struct alt_name *alt;
-			list_for_each(prof->altnames, alt) {
+		if (!prof->altnames.empty()) {
+			for (auto it = prof->altnames.begin(); it != prof->altnames.end(); ++it) {
 				int len;
 				tbuf.clear();
-				filter_slashes(alt->name);
-				ptype = convert_aaregex_to_pcre(alt->name, 0,
+				filter_slashes(it->get());
+				ptype = convert_aaregex_to_pcre(it->get(), 0,
 								glob_default,
 								tbuf, &len);
 				if (!rules->add_rule(tbuf.c_str(), 0,
@@ -758,9 +757,9 @@ static bool process_dfa_entry(aare_rules *dfarules, struct cod_entry *entry)
 bool post_process_entries(Profile *prof)
 {
 	int ret = true;
-	struct cod_entry *entry;
+	for_each_iter<cod_entry> prof_entries_iter(prof->entries);
 
-	list_for_each(prof->entries, entry) {
+	for (auto entry: prof_entries_iter) {
 		if (!process_dfa_entry(prof->dfa.rules, entry))
 			ret = false;
 	}
@@ -815,26 +814,25 @@ out:
 	return error;
 }
 
-bool build_list_val_expr(std::string& buffer, struct value_list *list)
+bool build_list_val_expr(std::string& buffer, const value_list &list)
 {
-	struct value_list *ent;
 	pattern_t ptype;
 	int pos;
 
-	if (!list) {
+	if (list.empty()) {
 		buffer.append(default_match_pattern);
 		return true;
 	}
 
 	buffer.append("(");
 
-	ptype = convert_aaregex_to_pcre(list->value, 0, glob_default, buffer, &pos);
+	ptype = convert_aaregex_to_pcre(list.front().get(), 0, glob_default, buffer, &pos);
 	if (ptype == ePatternInvalid)
 		goto fail;
 
-	list_for_each(list->next, ent) {
+	for (auto it = ++list.cbegin(); it != list.cend(); ++it) {
 		buffer.append("|");
-		ptype = convert_aaregex_to_pcre(ent->value, 0, glob_default, buffer, &pos);
+		ptype = convert_aaregex_to_pcre(it->get(), 0, glob_default, buffer, &pos);
 		if (ptype == ePatternInvalid)
 			goto fail;
 	}

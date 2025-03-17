@@ -21,15 +21,13 @@ profile tnftp /usr/bin/tnftp {
   include <abstractions/base>
   include <abstractions/consoles>
   include <abstractions/nameservice>
+  include <abstractions/terminfo>
   include <abstractions/user-tmp>
   include <abstractions/user-download>
   include <abstractions/private-files-strict>
 
   network inet stream,
   network inet6 stream,
-
-  # readline wants to know terminal capabilities
-  file r /usr/share/terminfo/**,
 
   # required for the pager (less, more) to work
   file Cx /usr/bin/dash,
@@ -52,11 +50,10 @@ profile tnftp /usr/bin/tnftp {
   # Defined as sub profile of tnftp for backwards compatibility.
   profile dash//more {
     include <abstractions/base>
+    include <abstractions/terminfo>
     network (send, receive) inet stream,
     network (send, receive) inet6 stream,
 
-    # readline wants to know terminal capabilities
-    file r /usr/share/terminfo/**,
     file mr /usr/bin/more,
   }
 

@@ -6,9 +6,9 @@ profile alsamixer /{usr,}/bin/alsamixer {
     include <abstractions/base>
     include <abstractions/consoles>
     include <abstractions/nameservice-strict>
-    include <abstractions/dbus-session-strict>
+    include <abstractions/terminfo>
 
-    /usr/share/terminfo/** r,
+    include <abstractions/dbus-session-strict>
 
     @{sys}/devices/virtual/dmi/id/sys_vendor r,
 

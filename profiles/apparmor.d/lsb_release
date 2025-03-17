@@ -12,6 +12,7 @@ include <tunables/global>
 profile lsb_release {
   include <abstractions/base>
   include <abstractions/python>
+  include <abstractions/terminfo>
 
   owner @{PROC}/@{pid}/fd/ r,
 
@@ -43,7 +44,6 @@ profile lsb_release {
   /usr/include/python*/pyconfig.h r,
   /usr/share/distro-info/** r,
   /usr/share/dpkg/** r,
-  /usr/share/terminfo/** r,
   /var/lib/dpkg/** r,
 
   # file_inherit

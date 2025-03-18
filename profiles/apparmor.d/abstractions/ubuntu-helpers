@@ -83,6 +83,10 @@ profile sanitized_helper {
   /opt/brave.com/brave{,-beta,-dev,-nightly}/chrome_crashpad_handler Pixr,
   /opt/brave.com/brave{,-beta,-dev,-nightly}/{,**/}lib*.so{,.*} m,
 
+  # Allow running snap applications
+  # https://bugs.launchpad.net/apparmor/+bug/2095872
+  /usr/bin/snap ux,
+
   # Full access
   / r,
   /** rwkl,

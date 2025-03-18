@@ -127,7 +127,7 @@ the namespace. Note applications launched within the namespace will
 not be able to exit the namespace, and may be restricted by additional
 confinement around namespacing. Files and resources visible to the
 parent that launches the application may not be visible in the policy
-namespace resultinging access denials.
+namespace resulting in access denials.
 
 To enter a policy namespace the profile is prefixed with the namespace's
 name, using a I<:> prefix and suffix.

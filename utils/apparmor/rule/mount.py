@@ -17,7 +17,7 @@ from apparmor.common import AppArmorBug, AppArmorException
 
 from apparmor.regex import RE_PROFILE_MOUNT, RE_PROFILE_PATH_OR_VAR, strip_parenthesis, strip_quotes
 from apparmor.rule import AARE
-from apparmor.rule import BaseRule, BaseRuleset, parse_modifiers, logprof_value_or_all, check_and_split_list
+from apparmor.rule import BaseRule, BaseRuleset, parse_modifiers, logprof_value_or_all, check_and_split_list, quote_if_needed
 
 from apparmor.translations import init_translation
 
@@ -217,10 +217,13 @@ class MountRule(BaseRule):
 
         if self.operation == 'mount':
             if not self.all_source:
-                source = ' ' + str(self.source.regex)
+                if self.source.regex == '':
+                    source = ' ""'
+                else:
+                    source = ' ' + quote_if_needed(str(self.source.regex))
 
             if not self.all_dest:
-                dest = ' -> ' + str(self.dest.regex)
+                dest = ' -> ' + quote_if_needed(str(self.dest.regex))
 
         else:
             if not self.all_dest:

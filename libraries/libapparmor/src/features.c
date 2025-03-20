@@ -604,11 +604,11 @@ void aa_features_unref(aa_features *features)
  *
  * Returns: 0 on success, -1 on error with errno set
  */
-int aa_features_write_to_fd(aa_features *features, int fd)
+int aa_features_write_to_fd(const aa_features *features, int fd)
 {
 	size_t size;
 	ssize_t retval;
-	char *string;
+	const char *string;
 
 	string = features->string;
 	size = strlen(string);
@@ -632,7 +632,7 @@ int aa_features_write_to_fd(aa_features *features, int fd)
  *
  * Returns: 0 on success, -1 on error with errno set
  */
-int aa_features_write_to_file(aa_features *features,
+int aa_features_write_to_file(const aa_features *features,
 			      int dirfd, const char *path)
 {
 	autoclose int fd = -1;
@@ -653,7 +653,7 @@ int aa_features_write_to_file(aa_features *features,
  *
  * Returns: true if they're equal, false if they're not or either are NULL
  */
-bool aa_features_is_equal(aa_features *features1, aa_features *features2)
+bool aa_features_is_equal(const aa_features *features1, const aa_features *features2)
 {
 	return features1 && features2 &&
 	       strcmp(features1->string, features2->string) == 0;
@@ -697,7 +697,7 @@ int aa_features_check(int dirfd, const char *path,
 	return 0;
 }
 
-static const char *features_lookup(aa_features *features, const char *str)
+static const char *features_lookup(const aa_features *features, const char *str)
 {
 	const char *features_string = features->string;
 	struct component components[32];
@@ -739,7 +739,7 @@ static const char *features_lookup(aa_features *features, const char *str)
  *
  * Returns: a bool specifying the support status of @str feature
  */
-bool aa_features_supports(aa_features *features, const char *str)
+bool aa_features_supports(const aa_features *features, const char *str)
 {
 	const char *value = features_lookup(features, str);
 
@@ -760,7 +760,7 @@ bool aa_features_supports(aa_features *features, const char *str)
  * EISDIR - @str is not a leaf node in the feature tree
  */
 
-char *aa_features_value(aa_features *features, const char *str, size_t *len)
+char *aa_features_value(const aa_features *features, const char *str, size_t *len)
 {
 	const char *start, *cur = features_lookup(features, str);
 
@@ -803,7 +803,7 @@ char *aa_features_value(aa_features *features, const char *str, size_t *len)
  * Returns: a string identifying @features which must be freed by the
  * caller or NULL, with errno set, upon error
  */
-char *aa_features_id(aa_features *features)
+char *aa_features_id(const aa_features *features)
 {
 	return strdup(features->hash);
 }

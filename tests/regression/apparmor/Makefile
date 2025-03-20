@@ -27,7 +27,7 @@ manually, or build against in-tree libapparmor.${nl}\
   endif # LIBAPPARMOR not set
   LDLIBS += $(LIBAPPARMOR)
 
-  AA_EXEC = $(shell command -v aa-exec)
+  AA_EXEC = $(shell which aa-exec)
   ifeq ($(AA_EXEC),)
     AA_EXEC_ERROR_MESSAGE = $(error ${nl}\
 ************************************************************************${nl}\
@@ -85,6 +85,9 @@ endif
 SYSCTL_INCLUDE="\#include <sys/sysctl.h>"
 USE_SYSCTL:=$(shell echo $(SYSCTL_INCLUDE) | cpp -dM >/dev/null 2>/dev/null && echo true)
 
+LINUX_MOUNT_INCLUDE="\#include <linux/mount.h>"
+HAVE_LINUX_MOUNT_H:=$(shell echo $(LINUX_MOUNT_INCLUDE) | cpp -dM >/dev/null 2>/dev/null && echo true)
+
 CFLAGS += -g -O0 $(EXTRA_WARNINGS)
 
 SRC=access.c \
@@ -125,7 +128,6 @@ SRC=access.c \
     mmap.c \
     mkdir.c \
     mount.c \
-    move_mount.c \
     named_pipe.c \
     net_inet_rcv.c \
     net_inet_snd.c \
@@ -174,6 +176,11 @@ ifneq (,$(findstring $(shell uname -i),i386 i486 i586 i686 x86 x86_64))
 SRC+=syscall_ioperm.c syscall_iopl.c
 endif
 
+#only do move_mount test if we have linux/mount.h
+ifeq ($(HAVE_LINUX_MOUNT_H),true)
+SRC+=move_mount.c
+endif
+
 #only do sysctl syscall test if defines installed and OR supported by the
 # kernel
 ifeq ($(USE_SYSCTL),true)
@@ -181,7 +188,7 @@ SRC+=syscall_sysctl.c
 endif
 
 # Only do xattrs_profile test if we have the required setfattr binary
-ifneq (,$(shell command -v setfattr))
+ifneq (,$(shell which setfattr > /dev/null && echo TRUE))
 SRC+=xattrs_profile.c
 else
 $(warning ${nl}\
@@ -192,7 +199,7 @@ Install attr or equivalent package to build and run this test${nl}\
 endif
 
 # Only do overlayfs_fuse test if we have the required fuse-overlayfs binary
-ifeq (,$(shell command -v fuse-overlayfs))
+ifeq (,$(shell which fuse-overlayfs > /dev/null && echo TRUE))
 $(warning ${nl}\
 ************************************************************************${nl}\
 No fuse-overlayfs skipping overlayfs_fuse tests ...${nl}\
@@ -321,12 +328,12 @@ TESTS=aa_exec \
       nfs
 
 # Only do overlayfs_fuse test if we have the required fuse-overlayfs binary
-ifneq (,$(shell command -v fuse-overlayfs))
+ifneq (,$(shell which fuse-overlayfs > /dev/null && echo TRUE))
 TESTS+=overlayfs_fuse
 endif
 
 # Only do xattrs_profile test if we have the required setfattr binary
-ifneq (,$(shell command -v setfattr))
+ifneq (,$(shell which setfattr > /dev/null && echo TRUE))
 TESTS+=xattrs_profile
 endif
 

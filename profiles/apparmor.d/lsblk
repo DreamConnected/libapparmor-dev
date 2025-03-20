@@ -26,12 +26,16 @@ profile lsblk /usr/bin/lsblk {
   @{sys}/devices/virtual/** r,
   @{sys}/devices/platform/** r,
 
+  # Needed for Hyper-V VMs (including Azure)
+  @{sys}/devices/LNXSYSTM:*/LNXSYBUS:*/** r,
+
   /dev/sr[0-9]* rk,
 
   @{run}/udev/data/** r,
 
   @{run}/mount/** r,
   @{PROC}/swaps r,
+  @{PROC}/cmdline r,
   owner @{PROC}/@{pid}/mountinfo r,
 
   include if exists <local/lsblk>

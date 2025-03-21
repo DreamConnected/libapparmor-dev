@@ -29,5 +29,5 @@ runchecktest "Complain mode profile (file exec no permission entry)" pass exec e
 
 # This test will fail on a kernel that doesn't have
 # https://lists.ubuntu.com/archives/apparmor/2024-August/013338.html applied
-genprofile -C $(command -v echo):cx
+genprofile -C $(type -P echo):cx
 runchecktest "Complain mode profile (file exec cx permission entry)" pass exec echo PASS

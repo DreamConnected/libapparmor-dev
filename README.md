@@ -205,6 +205,18 @@ in an ephemeral virtual machine. This allows testing in isolation from the
 host, as well as testing across different commonly used distributions and their
 real kernels.
 
+Image Garden is available as a snap. If you wish to use it this way then snap
+then install the snap with:
+
+```sh
+sudo snap install image-garden
+```
+
+If you need to install snapd first, see https://snapcraft.io/docs/installing-snapd
+
+Alternatively you may build image-garden and spread from source, and install
+dependencies manually.
+
 ```sh
 sudo apt install git golang whois ovmf genisoimage qemu-utils qemu-system
 go install github.com/snapcore/spread/cmd/spread@latest
@@ -218,8 +230,9 @@ git clean -xdf
 # or ~/go/bin/spread -v garden:ubuntu-cloud-24.04:tests/regression/apparmor:at_secure
 ```
 
-Running the `run_spread.sh` script, with `spread` on `PATH` will run all the
-tests across several supported systems (Debian, Ubuntu and openSUSE).
+Running the `run_spread.sh` script, with `image-garden` snap installed or with
+`spread` on `PATH` will run all the tests across several supported systems
+(Debian, Ubuntu and openSUSE).
 
 If you include a `bzImage` file in the root of the repository then that kernel
 will be used in the integration test. Please look at `spread.yaml` for details.

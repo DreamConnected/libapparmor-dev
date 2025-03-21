@@ -5,6 +5,15 @@ backends:
         # TODO: Switch to a released version for better stability.
         type: adhoc
         allocate: |
+            # Spread automatically injects /snap/bin to PATH. When we are
+            # running from the image-garden snap then SPREAD_HOST_PATH is the
+            # original path before such modifications were applied. Snap
+            # applications cannot normally run /snap/bin/* entry-points
+            # successfully so re-set PATH to the original value, as provided by
+            # snapcraft.
+            if [ -n "${SPREAD_HOST_PATH-}" ]; then
+                PATH="${SPREAD_HOST_PATH}"
+            fi
             # Use just enough RAM to link the parser on a virtual system with
             # two cores. Using more cores may easily consume more memory, due
             # to make -j$(nproc), used below than a small CI/CD system is
@@ -38,7 +47,12 @@ backends:
             # Ask image garden to allocate the system and relay the result back
             # to spread as either success of failure.
             exec image-garden allocate "$SPREAD_SYSTEM"."$ARCH"
-        discard: image-garden discard "$SPREAD_SYSTEM_ADDRESS"
+        discard: |
+            # See above for an explanation.
+            if [ -n "${SPREAD_HOST_PATH-}" ]; then
+                PATH="${SPREAD_HOST_PATH}"
+            fi
+            image-garden discard "$SPREAD_SYSTEM_ADDRESS"
         systems:
             # All systems except for the one Ubuntu system are marked as
             # manual. This way we don't accidentally spin up everything when

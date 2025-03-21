@@ -22,26 +22,37 @@ profile bluetoothd /usr/libexec/bluetooth/bluetoothd,/usr/sbin/bluetoothd flags=
   capability net_admin,
   capability net_bind_service,
 
-  network alg seqpacket,
   network bluetooth raw,
   network bluetooth seqpacket,
   network bluetooth stream,
+  network alg seqpacket,
   network netlink raw,
 
-  # Users can load a config file from anywhere
-  @{HOME}/** r,
-
+  /dev/hidraw[0-9]* rw,
   /dev/rfkill rw,
+  /dev/uhid rw,
   /dev/uinput rw,
-  @{PROC}/sys/kernel/hostname r,
-  @{run}/systemd/notify w,
-  @{sys}/devices/pci[0-9]*:[0-9]*/** r,
-  @{sys}/devices/virtual/dmi/id/chassis_type r,
 
   owner /etc/bluetooth/** r,
-  owner /var/lib/bluetooth/** rw,
+
+  # Users can load a config file from anywhere
+  @{HOME}/*.conf r,
+
+  /usr/lib/@{multiarch}/bluetooth/plugins/*.so mr,
+
+  @{PROC}/sys/kernel/hostname r,
+
+  @{run}/systemd/notify w,
   owner @{run}/sdp rw,
+  @{run}/udev/data/+hid:* r,
+
+  @{sys}/devices/pci[0-9]*:[0-9]*/** r,
+  @{sys}/devices/virtual/dmi/id/chassis_type r,
+  @{sys}/devices/virtual/misc/uhid/**/uevent r,
+
   owner /usr/share/dbus-1/system.d/bluetooth.conf rw,
+
+  owner /var/lib/bluetooth/** rw,
 
   include if exists <local/bluetoothd>
 }

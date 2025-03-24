@@ -107,6 +107,69 @@ class AaTest_get_header_01(AATest):
         self.assertEqual(result, [expected])
 
 
+class AaTest_get_header_after_parse(AATest):
+    tests = (
+        # profile start line                                   profile  hat   embedded_hat depth  clean header
+        (('/foo {',                                            None,    None, False,       0),   ('/foo {')),
+        (('/foo flags=(complain) {',                           None,    None, False,       0),   ('/foo flags=(complain) {')),
+        (('profile /foo {',                                    None,    None, False,       2),   ('    profile /foo {')),
+        (('profile /foo {',                                    '/bar',  None, False,       1),   ('  profile /foo {')),  # child profile
+        (('profile /foo flags=(complain) {',                   None,    None, False,       0),   ('profile /foo flags=(complain) {')),
+        (('profile foo /foo {',                                None,    None, False,       0),   ('profile foo /foo {')),  # named profile
+        (('profile foo /foo flags=(complain) {',               None,    None, False,       0),   ('profile foo /foo flags=(complain) {')),  # named profile and flags
+        (('profile foo /foo flags=(enforce) {',                '/bar',  None, False,       0),   ('profile foo /foo flags=(enforce) {')),  # child profile and flags
+        (('/foo//bar {',                                       None,    None, True,        1),   ('  profile /foo//bar {')),  # external hat
+        (('/bin/bash///bin/cat {',                             None,    None, True,        1),   ('  profile /bin/bash///bin/cat {')),  # external hat
+        (('profile /foo//bar {',                               None,    None, True,        1),   ('  profile /foo//bar {')),  # external hat and name is attachment
+        (('profile foo//bar {',                                None,    None, True,        2),   ('    profile foo//bar {')),  # external hat and no attachment
+        (('profile foo//bar /attachment {',                    None,    None, True,        2),   ('    profile foo//bar /attachment {')),  # external hat and attachment
+        (('/foo//bar flags=(enforce) {',                       None,    None, True,        1),   ('  profile /foo//bar flags=(enforce) {')),  # external hat and flags
+        (('profile /foo//bar flags=(attach_disconnected) {',   None,    None, True,        1),   ('  profile /foo//bar flags=(attach_disconnected) {')),  # external hat, name is attachment and flags
+        (('profile foo//bar flags=(complain) {',               None,    None, True,        2),   ('    profile foo//bar flags=(complain) {')),  # external hat, no attachment and flags
+        (('profile foo//bar /attachment flags=(complain) {',   None,    None, True,        2),   ('    profile foo//bar /attachment flags=(complain) {')),  # external hat, attachment and flags
+        (('profile "foo//has spaces" {',                       None,    None, True,        1),   ('  profile "foo//has spaces" {')),  # quoted external hat
+        (('profile "/path/with spaces/foo//has spaces" {',     None,    None, True,        0),   ('profile "/path/with spaces/foo//has spaces" {')),  # quoted external hat
+        (('profile "foo//has spaces" flags=(complain) {',      None,    None, True,        1),   ('  profile "foo//has spaces" flags=(complain) {')),  # quoted external hat and flags
+        (('profile "/p h/foo//has spaces" flags=(complain) {', None,    None, True,        0),   ('profile "/p h/foo//has spaces" flags=(complain) {')),  # quoted external hat and flags
+        (('profile /foo xattrs=(user.bar=bar) {',              None,    None, False,       1),   ('  profile /foo xattrs=(user.bar=bar) {')),
+        (('profile "/foo" xattrs=(user.bar=bar user.foo=*) {', None,    None, False,       0),   ('profile /foo xattrs=(user.bar=bar user.foo=*) {')),
+        (('/usr/bin/xattrs-test xattrs=(myvalue="foo.bar") {', None,    None, False,       0),   ('/usr/bin/xattrs-test xattrs=(myvalue="foo.bar") {')),
+        (('profile /foo xattrs=(user.bar=bar) {',              '/bar',  None, False,       1),   ('  profile /foo xattrs=(user.bar=bar) {')),  # child profile
+        (('profile "/foo" xattrs=(user.bar=bar user.foo=*) {', '/bar',  None, False,       0),   ('profile /foo xattrs=(user.bar=bar user.foo=*) {')),  # child profile
+        (('profile /bin/xattr xattrs=(myvalue="foo.bar") {',   '/bar',  None, False,       0),   ('profile /bin/xattr xattrs=(myvalue="foo.bar") {')),  # child profile needs profile keyword
+        (('profile /foo//bar xattrs=(user.bar=bar) {',         None,    None, True,        1),   ('  profile /foo//bar xattrs=(user.bar=bar) {')),  # external hat
+        (('profile foo//bar /foo xattrs=(user.bar=bar) {',     None,    None, True,        1),   ('  profile foo//bar /foo xattrs=(user.bar=bar) {')),  # external hat
+        (('profile "foo//bar" xattrs=(user.bar=b user.f=*) {', None,    None, True,        0),   ('profile foo//bar xattrs=(user.bar=b user.f=*) {')),  # external hat
+        (('/bin/xattrs//test xattrs=(myvalue="foo.bar") {',    None,    None, True,        0),   ('profile /bin/xattrs//test xattrs=(myvalue="foo.bar") {')),  # external hat
+
+        (('^foo {',                                            None,    None, True,        1),   ('  ^foo {')),
+        (('hat foo {',                                         None,    None, True,        1),   ('  hat foo {')),
+        (('^foo flags=(complain) {',                           None,    None, True,        0),   ('^foo flags=(complain) {')),
+        (('hat foo flags=(attach_disconnected) {',             None,    None, True,        0),   ('hat foo flags=(attach_disconnected) {')),
+        (('^foo {',                                            '/bar',  None, True,        1),   ('  ^foo {')),
+        (('hat foo {',                                         '/bar',  None, True,        0),   ('hat foo {')),
+        (('^foo flags=(complain) {',                           '/bar',  None, True,        0),   ('^foo flags=(complain) {')),
+        (('hat foo flags=(attach_disconnected) {',             '/bar',  None, True,        2),   ('    hat foo flags=(attach_disconnected) {')),
+        (('^/bar//foo {',                                      None,    None, True,        0),   ('^/bar//foo {')),
+        (('hat /bar//foo {',                                   None,    None, True,        1),   ('  hat /bar//foo {')),
+        (('^/bar//foo flags=(complain) {',                     None,    None, True,        1),   ('  ^/bar//foo flags=(complain) {')),
+        (('hat /bar//foo flags=(attach_disconnected) {',       None,    None, True,        0),   ('hat /bar//foo flags=(attach_disconnected) {')),
+        (('^bar//foo {',                                       None,    None, True,        0),   ('^bar//foo {')),
+        (('hat bar//foo {',                                    None,    None, True,        1),   ('  hat bar//foo {')),
+        (('^bar//foo flags=(complain) {',                      None,    None, True,        1),   ('  ^bar//foo flags=(complain) {')),
+        (('hat bar//foo flags=(attach_disconnected) {',        None,    None, True,        0),   ('hat bar//foo flags=(attach_disconnected) {')),
+        (('^"/bar//foo space" {',                              None,    None, True,        1),   ('  ^"/bar//foo space" {')),
+        (('hat "bar//foo space" {',                            None,    None, True,        0),   ('hat "bar//foo space" {')),
+        (('^"/space bar//foo" flags=(complain) {',             None,    None, True,        1),   ('  ^"/space bar//foo" flags=(complain) {')),
+        (('hat "space ba//foo" flags=(attach_disconnected) {', None,    None, True,        0),   ('hat "space ba//foo" flags=(attach_disconnected) {')),
+    )
+
+    def _run_test(self, params, expected):
+        (profile, hat, prof_storage) = ProfileStorage.parse(params[0], 'somefile', 1, params[1], params[2])
+        header = prof_storage.get_header(params[4], profile, params[3])
+        self.assertEqual(header, [expected], prof_storage.data)
+
+
 class TestSetInvalid(AATest):
     tests = (
         (('profile_keyword', None),  AppArmorBug),  # expects bool

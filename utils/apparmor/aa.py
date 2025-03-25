@@ -676,7 +676,7 @@ def build_x_functions(default, options, exec_toggle):
         if fallback_toggle:
             ret_list.append('CMD_EXEC_IX_ON')
 
-    ret_list.extend(('CMD_DENY', 'CMD_ABORT', 'CMD_FINISHED'))
+    ret_list.extend(('CMD_DENY', 'CMD_ABORT', 'CMD_IGNORE_ENTRY', 'CMD_FINISHED'))
     return ret_list
 
 
@@ -835,7 +835,7 @@ def ask_exec(hashlog):
 
                     # ask user about the exec mode to use
                     ans = ''
-                    while ans not in ('CMD_ix', 'CMD_px', 'CMD_cx', 'CMD_nx', 'CMD_pix', 'CMD_cix', 'CMD_nix', 'CMD_ux', 'CMD_DENY'):  # add '(I)gnore'? (hotkey conflict with '(i)x'!)
+                    while ans not in ('CMD_ix', 'CMD_px', 'CMD_cx', 'CMD_nx', 'CMD_pix', 'CMD_cix', 'CMD_nix', 'CMD_ux', 'CMD_DENY', 'CMD_IGNORE_ENTRY'):
                         ans = q.promptUser()[0]
 
                         if ans.startswith('CMD_EXEC_IX_'):
@@ -912,6 +912,9 @@ def ask_exec(hashlog):
                                     exec_mode = exec_mode.capitalize()
                             else:
                                 ans = 'INVALID'
+
+                    if ans == 'CMD_IGNORE_ENTRY':
+                        continue
 
                     if exec_mode and 'i' in exec_mode:
                         # For inherit we need mr

@@ -153,6 +153,12 @@ class ProfileStorage:
         if self.data['header_comment']:
             comment = ' %s' % self.data['header_comment']
 
+        if self.data['external']:
+            name = quote_if_needed(unquoted_name + '//' + self.data['info']['hat'])
+
+        if not self.data['external'] and self.data['parent']:  # child profile
+            name = quote_if_needed(self.data['info']['hat'])
+
         if self.data['is_hat']:
             if self.data['hat_keyword']:
                 name = 'hat %s' % name

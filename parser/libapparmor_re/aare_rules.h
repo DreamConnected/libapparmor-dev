@@ -66,6 +66,11 @@ public:
 	UniquePermsCache(void) { };
 	~UniquePermsCache() { clear(); }
 
+	// Delete the copy constructors to prevent accidental pointer aliasing
+	UniquePermsCache(const UniquePermsCache&) = delete;
+	UniquePermsCache& operator=(const UniquePermsCache&) = delete;
+	// TODO: write move constructors if that is desired later
+
 	void clear()
 	{
 		for (iterator i = nodes.begin(); i != nodes.end(); i++) {
@@ -113,6 +118,11 @@ class aare_rules {
 	aare_rules(void): root(NULL), unique_perms(), expr_map(), reverse(0), rule_count(0) { };
 	aare_rules(int reverse): root(NULL), unique_perms(), expr_map(), reverse(reverse), rule_count(0) { };
 	~aare_rules();
+
+	// Delete the copy constructors to prevent accidental pointer aliasing
+	aare_rules(const aare_rules&) = delete;
+	aare_rules& operator=(const aare_rules&) = delete;
+	// TODO: write move constructors if that is desired later
 
 	bool add_rule(const char *rule, int priority, rule_mode_t mode,
 		      perm32_t perms, perm32_t audit, optflags const &opts);

@@ -138,10 +138,14 @@ public:
 	bool is_none = false;
 
 	void free_conds() {
-		if (sip)
+		if (sip) {
 			free(sip);
-		if (sport)
+			sip = NULL;
+		}
+		if (sport) {
 			free(sport);
+			sport = NULL;
+		}
 	}
 };
 
@@ -188,6 +192,11 @@ public:
 			quiet = NULL;
 		}
 	};
+
+	// Delete the copy constructors to prevent accidental pointer aliasing
+	network_rule(const network_rule&) = delete;
+	network_rule& operator=(const network_rule&) = delete;
+	// TODO: write move constructors if that is desired later
 
 	bool gen_ip_conds(Profile &prof, std::list<std::ostringstream> &streams, ip_conds &entry, bool is_peer, uint16_t port, bool is_port, bool is_cmd);
 	bool gen_net_rule(Profile &prof, u16 family, unsigned int type_mask, unsigned int protocol);

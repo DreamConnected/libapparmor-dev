@@ -30,12 +30,6 @@
 
 class Profile;
 
-class block {
-public:
-
-};
-
-
 struct deref_profileptr_lt {
 	bool operator()(Profile * const &lhs, Profile * const &rhs) const;
 };
@@ -49,6 +43,10 @@ public:
 	iterator end() { return list.end(); }
 
 	ProfileList() { };
+	// Delete the copy constructors to prevent accidental pointer aliasing
+	ProfileList(const ProfileList&) = delete;
+	ProfileList& operator=(const ProfileList&) = delete;
+	// TODO: write move constructors if that is desired later
 	virtual ~ProfileList() { clear(); }
 	virtual bool empty(void) { return list.empty(); }
 	virtual pair<ProfileList::iterator,bool> insert(Profile *);
@@ -162,6 +160,12 @@ public:
 	char *disconnected_ipc;
 	int signal;
 	int error;
+
+	static flagvals make_default(void) {
+		flagvals ret_obj;
+		ret_obj.init();
+		return ret_obj;
+	}
 
 	// stupid not constructor constructors
 	void init(void)
@@ -348,7 +352,7 @@ struct capabilities {
 	uint64_t deny;
 	uint64_t quiet;
 
-	capabilities(void) { allow = audit = deny = quiet = 0; }
+	capabilities(void): allow(0), audit(0), deny(0), quiet(0) {};
 
 	void dump()
 		{
@@ -406,29 +410,20 @@ public:
 	struct dfa_stuff dfa;
 	struct dfa_stuff policy;
 
-	Profile(void)
-	{
-		uses_prompt_rules = false;
-		ns = name = attachment = NULL;
-		altnames = NULL;
-		xmatch = NULL;
-		xmatch_size = 0;
-		xmatch_len = 0;
+	Profile(void): uses_prompt_rules(false),
+		ns(NULL), name(NULL), attachment(NULL), altnames(NULL),
+		xmatch(NULL), xmatch_size(0), xmatch_len(0),
+		xattrs{.name = NULL, .list = NULL},
+		parent(NULL), flags(flagvals::make_default()),
+		rlimits({0, {}}),
+		exec_table{NULL}, entries(NULL) {};
 
-		xattrs.list = NULL;
-		xattrs.name = NULL;
-
-		parent = NULL;
-
-		flags.init();
-		rlimits = {0, {}};
-
-		std::fill(exec_table, exec_table + AA_EXEC_COUNT, (char *)NULL);
-
-		entries = NULL;
-	};
-
+	// Non-trivial destructor defined in profile.cc
 	virtual ~Profile();
+	// Delete the copy constructors to prevent accidental pointer aliasing
+	Profile(const Profile&) = delete;
+	Profile& operator=(const Profile&) = delete;
+	// TODO: write move constructors if that is desired later
 
 	bool operator<(Profile const &rhs)const
 	{

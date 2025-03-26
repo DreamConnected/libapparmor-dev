@@ -61,6 +61,11 @@ public:
 		free(peer_label);
 	};
 
+	// Delete the copy constructors to prevent accidental pointer aliasing
+	af_rule(const af_rule&) = delete;
+	af_rule& operator=(const af_rule&) = delete;
+	// TODO: write move constructors if that is desired later
+
 	const char *af_name(void) {
 		if (af != AF_ANY)
 			return net_find_af_name(af);

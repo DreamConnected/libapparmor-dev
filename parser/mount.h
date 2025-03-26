@@ -66,7 +66,7 @@
 #define MS_NOIVERSION	0
 #define MS_STRICTATIME	(1 << 24)
 #define MS_LAZYTIME	(1 << 25)
-#define MS_NOUSER	(1 << 31)
+#define MS_NOUSER	(1U << 31)
 #define MS_USER		0
 
 /* Only use MS_REC when defining these macros. Please use the macros from here
@@ -167,6 +167,11 @@ public:
 		free(mnt_point);
 		free(trans);
 	}
+
+	// Delete the copy constructors to prevent accidental pointer aliasing
+	mnt_rule(const mnt_rule&) = delete;
+	mnt_rule& operator=(const mnt_rule&) = delete;
+	// TODO: write move constructors if that is desired later
 
 	virtual bool valid_prefix(const prefixes &p, const char *&error) {
 		if (p.owner != OWNER_UNSPECIFIED) {

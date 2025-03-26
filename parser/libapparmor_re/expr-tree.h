@@ -273,6 +273,12 @@ public:
 			child[1]->release();
 	}
 
+	// This should be enough to delete copy constructors in derived classes too
+	// Delete the copy constructors to prevent accidental pointer aliasing
+	Node(const Node&) = delete;
+	Node& operator=(const Node&) = delete;
+	// TODO: write move constructors if that is desired later
+
 	/**
 	 * firstpos, lastpos, and followpos are used to convert the syntax tree
 	 * to a DFA.
@@ -1013,6 +1019,11 @@ public:
 		delete [] nodes;
 	}
 
+	// Delete the copy constructors to prevent accidental pointer aliasing
+	NodeVec(const NodeVec&) = delete;
+	NodeVec& operator=(const NodeVec&) = delete;
+	// TODO: write move constructors if that is desired later
+
 	unsigned long size()const { return len; }
 
 	bool operator<(NodeVec const &rhs)const
@@ -1054,6 +1065,11 @@ public:
 
 	NodeVecCache(void): cache() { };
 	~NodeVecCache() { clear(); };
+
+	// Delete the copy constructors to prevent accidental pointer aliasing
+	NodeVecCache(const NodeVecCache&) = delete;
+	NodeVecCache& operator=(const NodeVecCache&) = delete;
+	// TODO: write move constructors if that is desired later
 
 	virtual unsigned long size(void) const { return cache.size(); }
 

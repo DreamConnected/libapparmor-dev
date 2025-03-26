@@ -46,6 +46,12 @@ public:
 		signals.clear();
 		free(peer_label);
 	};
+
+	// Delete the copy constructors to prevent accidental pointer aliasing
+	signal_rule(const signal_rule&) = delete;
+	signal_rule& operator=(const signal_rule&) = delete;
+	// TODO: write move constructors if that is desired later
+
 	virtual bool valid_prefix(const prefixes &p, const char *&error) {
 		if (p.owner != OWNER_UNSPECIFIED) {
 			error = "owner prefix not allowed on signal rules";

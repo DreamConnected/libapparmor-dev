@@ -11,6 +11,10 @@ include if exists <tunables/nothing>
 $foo = false
 $bar = true
 
+/bin/bar///bin/baz {
+  /home/pathchild w,
+
+}
 # A simple test comment which will persist
 
 
@@ -71,5 +75,9 @@ $bar = true
 }
 /what/ever/xattr xattrs=(   foo=bar      ) flags=(  complain ) {
   /what/ever r,
+
+}
+profile foo//bar {
+  /home/namedchild r,
 
 }

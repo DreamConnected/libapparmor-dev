@@ -383,7 +383,7 @@ def get_interpreter_and_abstraction(exec_target):
 
 def create_new_profile(localfile, is_stub=False):
     local_profile = {}
-    local_profile[localfile] = ProfileStorage('NEW', localfile, 'create_new_profile()')
+    local_profile[localfile] = ProfileStorage(localfile, localfile, 'create_new_profile()')
     local_profile[localfile]['flags'] = 'complain'
 
     if os.path.join(profile_dir, 'abstractions/base') in include:
@@ -413,7 +413,7 @@ def create_new_profile(localfile, is_stub=False):
             for hat in sorted(cfg['required_hats'][hatglob].split()):
                 full_hat = combine_profname((localfile, hat))
                 if not local_profile.get(full_hat, False):
-                    local_profile[full_hat] = ProfileStorage('NEW', hat, 'create_new_profile() required_hats')
+                    local_profile[full_hat] = ProfileStorage(localfile, hat, 'create_new_profile() required_hats')
                     local_profile[full_hat]['parent'] = localfile
                     local_profile[full_hat]['is_hat'] = True
                 local_profile[full_hat]['flags'] = 'complain'
@@ -577,7 +577,7 @@ def change_profile_flags(prof_filename, program, flag, set_flag):
 
                         prof_storage['flags'] = newflags
 
-                        line = prof_storage.get_header(depth, profile, False)
+                        line = prof_storage.get_header(depth, False)
                         line = '%s\n' % line[0]
                 elif RE_PROFILE_HAT_DEF.search(line):
                     depth += 1
@@ -587,7 +587,7 @@ def change_profile_flags(prof_filename, program, flag, set_flag):
                     newflags = ', '.join(add_or_remove_flag(old_flags, flag, set_flag))
                     prof_storage['flags'] = newflags
 
-                    line = prof_storage.get_header(depth, profile, False)
+                    line = prof_storage.get_header(depth, False)
                     line = '%s\n' % line[0]
                 elif RE_PROFILE_END.search(line):
                     depth -= 1
@@ -1938,15 +1938,11 @@ def merged_to_split(profile_data):
 def write_piece(profile_data, depth, name, nhat):
     pre = '  ' * depth
     data = []
-    wname = None
     inhat = False
-    if name == nhat:
-        wname = name
-    else:
-        wname = name + '//' + nhat
+    if name != nhat:
         name = nhat
         inhat = True
-    data += profile_data[name].get_header(depth, wname, False)
+    data += profile_data[name].get_header(depth, False)
     data += profile_data[name].get_rules_clean(depth + 1)
 
     pre2 = '  ' * (depth + 1)
@@ -1964,7 +1960,7 @@ def write_piece(profile_data, depth, name, nhat):
             if not profile_data[hat]['external']:
                 data.append('')
 
-                data += profile_data[hat].get_header(depth + 1, only_hat, True)
+                data += profile_data[hat].get_header(depth + 1, True)
 
                 data += profile_data[hat].get_rules_clean(depth + 2)
 

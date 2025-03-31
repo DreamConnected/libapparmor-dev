@@ -96,3 +96,11 @@ $foo = false
 	   ) {
  /what/ever r,
  }
+
+profile foo//bar {
+/home/namedchild r,
+}
+
+/bin/bar///bin/baz {
+   /home/pathchild w,
+   }

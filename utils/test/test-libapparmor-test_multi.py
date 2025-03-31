@@ -222,7 +222,7 @@ def logfile_to_profile(logfile):
     full_profile = parsed_event['profile']
     profile, hat = split_name(full_profile)
 
-    dummy_prof = apparmor.aa.ProfileStorage('TEST DUMMY for active_profiles', profile_dummy_file, 'logprof_to_profile()')
+    dummy_prof = apparmor.aa.ProfileStorage(profile, hat, 'logprof_to_profile()')
 
     # optional for now, might be needed one day
     # if profile.startswith('/'):
@@ -256,8 +256,9 @@ def logfile_to_profile(logfile):
         # initialize parent profile in log_dict as ProfileStorage to ensure writing the profile doesn't fail
         # (in "normal" usage outside of this test, log_dict will not be handed over to serialize_profile())
 
-        log_dict[aamode][profile] = apparmor.aa.ProfileStorage('TEST DUMMY for empty parent profile', profile_dummy_file, 'logfile_to_profile()')
+        log_dict[aamode][profile] = apparmor.aa.ProfileStorage(profile, '', 'logfile_to_profile()')
         log_dict[aamode][parsed_event['profile']]['is_hat'] = True  # for historical reasons, generate hats, not child profiles
+        log_dict[aamode][parsed_event['profile']]['parent'] = profile
 
     log_is_empty = True
 

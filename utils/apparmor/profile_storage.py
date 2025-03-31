@@ -69,7 +69,6 @@ class ProfileStorage:
     def __init__(self, profilename, hat, calledby):
         data = dict()
 
-        # self.data['info'] isn't used anywhere, but can be helpful in debugging.
         data['info'] = {'profile': profilename, 'hat': hat, 'calledby': calledby}
 
         for rule in ruletypes:
@@ -128,7 +127,7 @@ class ProfileStorage:
 
     def __repr__(self):
         classname = type(self).__name__
-        header = '\n'.join(self.get_header(0, self['name'], False))
+        header = '\n'.join(self.get_header(0, False))
         rules = '\n'.join(self.get_rules_clean(1))
         endprofile = '}'
         return f'\n<{classname}>\n{header}\n{rules}\n{endprofile}\n</{classname}>\n'
@@ -139,11 +138,11 @@ class ProfileStorage:
         else:
             raise AppArmorBug('attempt to read unknown key %s' % key)
 
-    def get_header(self, depth, name, embedded_hat):
+    def get_header(self, depth, embedded_hat):
         pre = ' ' * int(depth * 2)
         data = []
-        unquoted_name = name
-        name = quote_if_needed(name)
+        unquoted_name = self.data['info']['profile']
+        name = quote_if_needed(self.data['info']['profile'])
 
         attachment = ''
         if self.data['attachment']:

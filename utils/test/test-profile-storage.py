@@ -79,7 +79,7 @@ class AaTest_get_header(AATest):
         prof_storage['profile_keyword'] = params[6]
         prof_storage['header_comment'] = params[7]
 
-        result = prof_storage.get_header(depth, name, embedded_hat)
+        result = prof_storage.get_header(depth, embedded_hat)
         self.assertEqual(result, [expected])
 
 
@@ -103,7 +103,7 @@ class AaTest_get_header_01(AATest):
             if params.get(param) is not None:
                 prof_storage[param] = params[param]
 
-        result = prof_storage.get_header(depth, name, embedded_hat)
+        result = prof_storage.get_header(depth, embedded_hat)
         self.assertEqual(result, [expected])
 
 
@@ -166,7 +166,7 @@ class AaTest_get_header_after_parse(AATest):
 
     def _run_test(self, params, expected):
         (profile, hat, prof_storage) = ProfileStorage.parse(params[0], 'somefile', 1, params[1], params[2])
-        header = prof_storage.get_header(params[4], profile, params[3])
+        header = prof_storage.get_header(params[4], params[3])
         self.assertEqual(header, [expected], prof_storage.data)
 
 
@@ -194,7 +194,7 @@ class TestSetInvalid(AATest):
 
 class AaTest_repr(AATest):
     def testRepr(self):
-        prof_storage = ProfileStorage('/test/foo', 'hat', 'TEST')
+        prof_storage = ProfileStorage('foo', 'hat', 'TEST')
         prof_storage['name'] = 'foo'
         prof_storage['xattrs'] = 'user.bar=bar'
         prof_storage['capability'].add(CapabilityRule('dac_override'))

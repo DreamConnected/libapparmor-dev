@@ -104,3 +104,6 @@ profile foo//bar {
 /bin/bar///bin/baz {
    /home/pathchild w,
    }
+/usr/bin/a/simple/cleanprof/test/profile//child {
+       /home/test-child r,
+          }

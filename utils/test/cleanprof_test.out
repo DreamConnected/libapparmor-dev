@@ -68,6 +68,11 @@ $bar = true
 
   }
 }
+
+/usr/bin/a/simple/cleanprof/test/profile//child {
+  /home/test-child r,
+
+}
 /usr/bin/other/cleanprof/test/profile {
   allow /home/*/** rw,
   allow /home/foo/bar r,

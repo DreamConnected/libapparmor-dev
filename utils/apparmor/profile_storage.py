@@ -242,6 +242,7 @@ class ProfileStorage:
                     % {'profile': profile, 'file': file})
             elif len(profile.split('//')) == 2:
                 profile, hat = profile.split('//')
+                parent = profile
                 pps_set_hat_external = True
             else:
                 hat = profile

@@ -1,0 +1,7 @@
+#
+#=Description detached mount rule with options
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  mount options=(ro) fstype=ext4 detached -> /destination,
+}

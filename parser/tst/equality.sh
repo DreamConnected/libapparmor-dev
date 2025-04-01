@@ -912,12 +912,6 @@ verify_binary_equality "'$p1'x'$p2' mount specific deny doesn't affect non-overl
 			"/t { $p2 audit deny mount /s/** -> /**,
 			      mount options=bind /e/ -> /**, }"
 
-if [ $fails -ne 0 ] || [ $errors -ne 0 ]
-then
-	printf "ERRORS: %d\nFAILS: %d\n" $errors $fails 1>&2
-	exit $((fails + errors))
-fi
-
 
 ## priority override equivalence tests
 ## compare single rule, to multi-rule profile where one rule overrides
@@ -1109,8 +1103,13 @@ run_tests()
 	done
 
 	[ -z "${verbose}" ] && printf "\n"
-	printf "PASS\n"
-	exit 0
+	if [ $fails -ne 0 ] || [ $errors -ne 0 ]; then
+		printf "ERRORS: %d\nFAILS: %d\n" $errors $fails 1>&2
+		exit $((fails + errors))
+	else
+		printf "PASS\n"
+		exit 0
+	fi
 }
 
 

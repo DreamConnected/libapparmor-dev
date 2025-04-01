@@ -879,28 +879,6 @@ verify_binary_equality "'$p1'x'$p2' link rules slash filtering" \
                         @{BAR}=/mnt/
                            /t { $p2 link @{FOO}/foo -> @{BAR}/bar, }"
 
-verify_binary_equality "'$p1'x'$p2' attachment slash filtering" \
-                       "/t /bin/foo { }" \
-                       "/t /bin//foo { }" \
-                       "@{BAR}=/bin/
-			   /t @{BAR}/foo { }" \
-                       "@{FOO}=/foo
-			   /t /bin/@{FOO} { }" \
-                       "@{BAR}=/bin/
-                        @{FOO}=/foo
-			   /t @{BAR}/@{FOO} { }"
-
-# verify comment at end of variable assignment is not treated as a value
-verify_binary_equality "comment at end of set var" \
-                       "/t { /bin/ r, }" \
-                       "@{BAR}=/bin/   #a tail comment
-			   /t { @{BAR} r, }"
-
-verify_binary_equality "value like comment at end of set var" \
-                       "/t { /{bin/,#value} r, }" \
-                       "@{BAR}=bin/   \#value
-			   /t { /@{BAR} r, }"
-
 
 # This can potentially fail as ideally it requires a better dfa comparison
 # routine as it can generates hormomorphic dfas. The enumeration of the
@@ -1075,6 +1053,29 @@ run_tests()
 	verify_binary_equality "file rule default audit deny vs audit priority carveout" \
 			"/t { /a r, }" \
 			"/t { priority=-1 audit deny /* rwxlk, /a r, }"
+
+	# Tests that do not use priority keywords at all
+
+	verify_binary_equality "attachment slash filtering" \
+				"/t /bin/foo { }" \
+				"/t /bin//foo { }" \
+				"@{BAR}=/bin/
+					/t @{BAR}/foo { }" \
+				"@{FOO}=/foo
+					/t /bin/@{FOO} { }" \
+				"@{BAR}=/bin/
+					@{FOO}=/foo
+					/t @{BAR}/@{FOO} { }"
+	# verify comment at end of variable assignment is not treated as a value
+	verify_binary_equality "comment at end of set var" \
+				"/t { /bin/ r, }" \
+				"@{BAR}=/bin/   #a tail comment
+					/t { @{BAR} r, }"
+
+	verify_binary_equality "value like comment at end of set var" \
+				"/t { /{bin/,#value} r, }" \
+				"@{BAR}=bin/   \#value
+					/t { /@{BAR} r, }"
 
 	# verify combinations of different priority levels
 	# for single rule comparisons, rules should keep same expected result

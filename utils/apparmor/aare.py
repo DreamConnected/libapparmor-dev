@@ -17,6 +17,16 @@ import re
 from apparmor.common import convert_regexp, AppArmorBug, AppArmorException
 
 
+path_entry = r"(/[^\n,]*|(@{[^\n,}]*}[^\n,]*))"
+# XXX Matching using this regex is not perfect but should be enough for practical scenarios. Limitations are:
+#  - We do not look recursively '{', therefore some weird-but-valid string such as {{/foo,/bar},{/baz,/qux}} are denied
+#  - Variables are not replaced: we have to accept "@{" regardless of whether it contains an actual path
+AARE_PATH_REGEX = re.compile(
+    r"^" + path_entry
+    + r"|{" + path_entry + "," + path_entry + "*}$"
+)
+
+
 class AARE:
     """AARE (AppArmor Regular Expression) wrapper class"""
 
@@ -25,13 +35,8 @@ class AARE:
         If is_path is true, the regex is expected to be a path and therefore must start with / or a variable."""
         # using the specified variables when matching.
 
-        if is_path:
-            if regex.startswith('/'):
-                pass
-            elif regex.startswith('@{'):
-                pass  # XXX ideally check variable content - each part must start with / - or another variable, which must start with /
-            else:
-                raise AppArmorException("Path doesn't start with / or variable: %s" % regex)
+        if is_path and not AARE_PATH_REGEX.match(regex):
+            raise AppArmorException("Path doesn't start with / or variable: %s" % regex)
 
         if log_event:
             self.orig_regex = regex

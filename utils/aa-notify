@@ -1013,7 +1013,8 @@ def main():
     if 'userns_special_profiles' in config['']:
         userns_special_profiles = config['']['userns_special_profiles'].strip().split(',')
     else:
-        userns_special_profiles = ['unconfined']  # By default, unconfined is the only special profile
+        # By default, unconfined and unprivileged_userns are the special profiles
+        userns_special_profiles = ['unconfined', 'unprivileged_userns']
 
     if 'ignore_denied_capability' in config['']:
         ignore_denied_capability = config['']['ignore_denied_capability'].strip().split(',')

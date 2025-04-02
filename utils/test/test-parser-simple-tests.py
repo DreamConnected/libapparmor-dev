@@ -433,7 +433,7 @@ syntax_failure = (
     'file/ok_quoted_4.sd',  # quoted string including \"
 
     # misc
-    'vars/vars_dbus_8.sd',  # Path doesn't start with / or variable: {/@{TLDS}/foo,/com/@{DOMAINS}}
+    'vars/vars_dbus_12.sd',  # AARE starting with {{ are not handled
     'vars/vars_simple_assignment_12.sd',  # Redefining existing variable @{BAR} ('\' not handled)
     'bare_include_tests/ok_2.sd',  # two #include<...> in one line
 

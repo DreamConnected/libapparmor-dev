@@ -238,6 +238,8 @@ class TestAAREIsPath(AATest):
         (('/foo*',    True,     '/foobar'), True),
         (('@{PROC}/', True,     '/foobar'), False),
         (('foo*',     False,    'foobar'),  True),
+        (('{/a,/b}',  True,     '/a'),      True),
+        (('{@{X},/b}', True,    '/b'),      True),
     )
 
     def _run_test(self, params, expected):
@@ -248,6 +250,18 @@ class TestAAREIsPath(AATest):
     def test_path_missing_slash(self):
         with self.assertRaises(AppArmorException):
             AARE('foo*', True)
+
+    def test_path_bad_alternative(self):
+        with self.assertRaises(AppArmorException):
+            AARE('{/a,@{foo},invalid}', True)
+
+    def test_path_bad_alternative2(self):
+        with self.assertRaises(AppArmorException):
+            AARE('{invalid,@{X},/X}', True)
+
+    def test_path_bad_alternative3(self):
+        with self.assertRaises(AppArmorException):
+            AARE('{/foo,@{invalid,/X}', True)
 
 
 class TestAARERepr(AATest):

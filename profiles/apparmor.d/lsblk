@@ -26,8 +26,8 @@ profile lsblk /usr/bin/lsblk {
   @{sys}/devices/virtual/** r,
   @{sys}/devices/platform/** r,
 
-  # Needed for Hyper-V VMs (including Azure)
-  @{sys}/devices/LNXSYSTM:*/LNXSYBUS:*/** r,
+  # Needed for disks over network e.g. Hyper-V VMs (including Azure), IBM Power, ...
+  @{sys}/devices/**/host@{int}/** r,
 
   /dev/sr[0-9]* rk,
 

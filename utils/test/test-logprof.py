@@ -16,7 +16,7 @@ import sys
 import unittest
 
 # import apparmor.aa as aa  # see the setup_aa() call for details
-from common_test import AATest, read_file, setup_all_loops, skip_active_profiles  # , setup_aa
+from common_test import AATest, read_file, setup_all_loops  # , setup_aa
 
 
 class TestLogprof(AATest):
@@ -36,7 +36,7 @@ class TestLogprof(AATest):
         # copy the local profiles to the test directory
         self.profile_dir = self.tmpdir + '/profiles'
         shutil.copytree('../../profiles/apparmor.d/', self.profile_dir,
-                        symlinks=True, ignore=shutil.ignore_patterns(*skip_active_profiles))
+                        symlinks=True)
 
     def AATeardown(self):
         self._terminate()
@@ -81,7 +81,10 @@ class TestLogprof(AATest):
 
         for line in jlog:
             if line.startswith('o '):  # read from stdout
-                output = self.process.stdout.readline().decode("utf-8").strip()
+                while True:
+                    output = self.process.stdout.readline().decode("utf-8").strip()
+                    if "skipping unparseable" not in output:
+                        break
                 self.assertEqual(output, line[2:])
 
             elif line.startswith('i '):  # send to stdin
@@ -124,7 +127,10 @@ class TestLogprof(AATest):
         self.process = self._startLogprof(auditlog, 'allow-all')
 
         for line in slog:
-            output = self.process.stdout.readline().decode("utf-8").strip()
+            while True:
+                output = self.process.stdout.readline().decode("utf-8").strip()
+                if not output.startswith("skipping unparseable"):
+                    break
             self.assertEqual(output, line)
         # give logprof some time to write the updated profile and terminate
         self.process.wait(timeout=0.6)

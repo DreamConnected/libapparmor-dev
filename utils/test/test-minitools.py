@@ -18,7 +18,7 @@ import sys
 import unittest
 
 import apparmor.aa as apparmor
-from common_test import AATest, read_file, write_file, setup_aa, setup_all_loops, skip_active_profiles
+from common_test import AATest, read_file, write_file, setup_aa, setup_all_loops
 
 # Use the same python as the one this script is being run with
 python_interpreter = sys.executable
@@ -35,7 +35,7 @@ class MinitoolsTest(AATest):
         # Should be the set of cleanprofile
         self.profile_dir = self.tmpdir + '/profiles'
         shutil.copytree('../../profiles/apparmor.d/', self.profile_dir,
-                        symlinks=True, ignore=shutil.ignore_patterns(*skip_active_profiles))
+                        symlinks=True)
 
         apparmor.profile_dir = self.profile_dir
 
@@ -65,6 +65,17 @@ class MinitoolsTest(AATest):
             apparmor.get_profile_flags(self.local_profilename, self.test_path),
             None,
             'Audit flag could not be removed in profile ' + self.local_profilename)
+
+    def test_audit_with_garbage(self):
+        # Inject a garbage profile into the profile directory and check that
+        # test_audit still passes
+        with open(self.profile_dir + "/duchamps_readymades", "w") as fil:
+            fil.write("a porcelain toilet rotated on its side and signed")
+
+        try:
+            self.test_audit()
+        finally:
+            os.unlink(self.profile_dir + "/duchamps_readymades")
 
     def test_complain(self):
         # Set test profile to complain mode and check if it was correctly set

@@ -12,7 +12,7 @@
 import unittest
 
 import apparmor.aa as aa
-from common_test import AATest, setup_aa, setup_all_loops, skip_active_profiles, skip_extra_profiles
+from common_test import AATest, setup_aa, setup_all_loops
 
 
 class TestFoo(AATest):
@@ -23,12 +23,12 @@ class TestFoo(AATest):
     # (to make sure an empty or non-existing directory won't make this test useless).
 
     def test_active_profiles(self):
-        aa.read_profiles(skip_profiles=skip_active_profiles)
+        aa.read_profiles()
 
         self.assertGreaterEqual(len(aa.active_profiles.profile_names), 42)
 
     def test_extra_profiles(self):
-        aa.read_inactive_profiles(skip_profiles=skip_extra_profiles)
+        aa.read_inactive_profiles()
 
         self.assertGreaterEqual(len(aa.extra_profiles.profile_names), 100)
 

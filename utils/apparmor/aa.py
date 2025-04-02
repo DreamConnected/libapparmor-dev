@@ -1627,7 +1627,10 @@ def read_profiles(ui_msg=False, skip_profiles=(), skip_disabled=True):
                 aaui.UI_Info("skipping profile %s" % full_file)
                 continue
             else:
-                read_profile(full_file, True)
+                try:
+                    read_profile(full_file, True)
+                except AppArmorException as e:
+                    aaui.UI_Info("skipping unparseable profile %s (%s)" % (full_file, e.value))
 
 
 def read_inactive_profiles(skip_profiles=()):

@@ -891,19 +891,22 @@ def main():
     if not system_config:
         system_config = {'': {'show_notifications': 'yes'}}
 
-    # Load user's notify.conf
-    if os.path.isfile(os.environ['HOME'] + '/.apparmor/notify.conf'):
-        # Use legacy path if the conf file is there
-        user_config = read_notify_conf(os.environ['HOME'] + '/.apparmor', shell_config)
-    elif 'XDG_CONFIG_HOME' in os.environ and os.path.isfile(os.environ['XDG_CONFIG_HOME'] + '/apparmor/notify.conf'):
-        # Use XDG_CONFIG_HOME if it is defined
-        user_config = read_notify_conf(os.environ['XDG_CONFIG_HOME'] + '/apparmor', shell_config)
-    else:
-        # Fallback to the default value of XDG_CONFIG_HOME
-        user_config = read_notify_conf(os.environ['HOME'] + '/.config/apparmor', shell_config)
+    # Load user's notify.conf if a configdir override was not specified
+    if not args.configdir:
+        if os.path.isfile(os.environ['HOME'] + '/.apparmor/notify.conf'):
+            # Use legacy path if the conf file is there
+            user_config = read_notify_conf(os.environ['HOME'] + '/.apparmor', shell_config)
+        elif 'XDG_CONFIG_HOME' in os.environ and os.path.isfile(os.environ['XDG_CONFIG_HOME'] + '/apparmor/notify.conf'):
+            # Use XDG_CONFIG_HOME if it is defined
+            user_config = read_notify_conf(os.environ['XDG_CONFIG_HOME'] + '/apparmor', shell_config)
+        else:
+            # Fallback to the default value of XDG_CONFIG_HOME
+            user_config = read_notify_conf(os.environ['HOME'] + '/.config/apparmor', shell_config)
 
-    # Merge the two config dicts in an accurate and idiomatic way (requires Python 3.5)
-    config = {**system_config, **user_config}
+        # Merge the two config dicts in an accurate and idiomatic way (requires Python 3.5)
+        config = {**system_config, **user_config}
+    else:
+        config = system_config
 
     """
     Possible configuration options:

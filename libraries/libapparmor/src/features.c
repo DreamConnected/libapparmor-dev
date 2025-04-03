@@ -398,6 +398,10 @@ static bool walk_one(const char **str, const struct component *component,
 			i = 0;
 
 		cur++;
+
+		/* Partial match, continue to search */
+		if (i == component->len && !isbrace_space_or_nul(*cur))
+			i = 0;
 	}
 
 	/* Return false if a full match was not found */

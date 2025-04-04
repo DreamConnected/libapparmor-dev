@@ -61,5 +61,16 @@ profile wpa_supplicant /usr/sbin/wpa_supplicant {
   owner @{run}/wpa_supplicant/ w,
   owner @{run}/wpa_supplicant/** rw,
 
+  owner @{run}/netplan/* r,
+
+  network inet dgram,
+  network inet6 dgram,
+  network netlink raw,
+
+  @{sys}/devices/pci[0-9]*:[0-9]*/**/ieee80211/phy[0-9]*/name r,
+  # Might also need @{sys}/class/ieee80211/ r,
+  # phy* files inside are symlinks to the pci directory but directory
+  # listing might be needed to enumerate and resolve symlinks
+
   include if exists <local/wpa_supplicant>
 }

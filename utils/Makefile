@@ -22,7 +22,7 @@ include $(COMMONDIR)/Make.rules
 
 PYTOOLS = aa-easyprof aa-genprof aa-logprof aa-cleanprof aa-mergeprof \
           aa-autodep aa-audit aa-complain aa-enforce aa-disable \
-	        aa-notify aa-unconfined
+	        aa-notify aa-unconfined aa-show-usage
 TOOLS = ${PYTOOLS} aa-decode aa-remove-unknown
 PYSETUP = python-tools-setup.py
 PYMODULES = $(wildcard apparmor/*.py apparmor/rule/*.py)

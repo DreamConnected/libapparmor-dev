@@ -13,6 +13,17 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
+#TODO: need to make these part of a proper desktop policy API, some may merge
+#keep them separate for now
+@{StatusNotifierWatcher}=unconfined
+@{MountTracker}=unconfined
+@{secrets}=unconfined
+@{DBus}=unconfined
+@{collection}=unconfined
+@{NetworkManager}=unconfined
+@{a11y}=unconfined
+@{Settings}=unconfined
+
 profile remmina /usr/bin/remmina {
   include <abstractions/base>
   include <abstractions/fonts>
@@ -27,21 +38,31 @@ profile remmina /usr/bin/remmina {
   include <abstractions/dconf>
 
   dbus (bind) bus=session name="org.remmina.Remmina",
-  dbus (send) bus=session path="/org/gtk/vfs/mounttracker" interface="org.gtk.vfs.MountTracker" member={ListMountableInfo,LookupMount} peer=(label=unconfined),
-  dbus (send) bus=session path="/org/freedesktop/secrets" interface="org.freedesktop.DBus.Properties" member=GetAll peer=(label=unconfined),
-  dbus (send) bus=session path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member={RequestName,ReleaseName} peer=(label=unconfined),
-  dbus (send) bus=session path="/org/freedesktop/secrets/collection/login" interface="org.freedesktop.DBus.Properties" member=GetAll peer=(label=unconfined),
-  dbus (send) bus=system path="/org/freedesktop/NetworkManager" interface="org.freedesktop.DBus.Properties" member=GetAll peer=(label=unconfined),
+  dbus (send) bus=session path="/org/gtk/vfs/mounttracker" interface="org.gtk.vfs.MountTracker" member={ListMountableInfo,LookupMount} peer=(label=@{MountTracker}),
+  dbus (send) bus=session path="/org/freedesktop/secrets" interface="org.freedesktop.DBus.Properties" member=GetAll peer=(label=@{secrets}),
+  dbus (send) bus=session path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member={RequestName,ReleaseName,DescribeAll} peer=(label=@{DBus}),
+  dbus (send) bus=session path="/org/freedesktop/secrets/collection/{login,session}" interface="org.freedesktop.DBus.Properties" member=GetAll peer=(label=@{collection}),
+  dbus (send) bus=system path="/org/freedesktop/NetworkManager" interface="org.freedesktop.DBus.Properties" member=GetAll peer=(label=@{NetworkManager}),
+  dbus (send) bus=system path="/org/a11y/bus" interface="org.a11y.Bus" member=GetAddress peer=(label=@{a11y}),
+  dbus (send) bus=system path="/org/gtk/Settings" interface="org.freedesktop.DBus.Properties" member=GetAll peer=(label=@{Settings}),
+  dbus (send) bus=system path="/StatusNotifierWatcher" interface="org.freedesktop.DBus.Introspectable" member=Introspect peer=(label=@{StatusNotifierWatcher}),
+  dbus (send) bus=system path="/StatusNotifierWatcher" interface="org.kde.StatusNotifierWatcher" member=RegisterStatusNotifierItem peer=(label=@{StatusNotifierWatcher}),
 
   @{etc_ro}/fstab r,
   /usr/bin/remmina mr,
   /usr/share/remmina/{,**} r,
   /var/lib/snapd/desktop/icons/{,**} r,
+  /etc/debian_version r,
+  /{,usr/}bin/python3.{1,}[0-9] mrix,
+  /usr/bin/lsb_release Px -> lsb_release,
 
   owner @{HOME}/.cache/org.remmina.Remmina/{,**} rw,
   owner @{HOME}/.cache/remmina/{,**} rw,
   owner @{HOME}/.cache/thumbnails/{,**} r,
-  owner @{HOME}/.config/autostart/remmina-applet.desktop r,
+  owner @{HOME}/.config/autostart/remmina-applet.desktop{,**} r,
+  # TODO: This should be mknod instead of w, and this should be behind prompt
+  # hence why the rule is split.
+  owner @{HOME}/.config/autostart/remmina-applet.desktop{,**} w,
   owner @{HOME}/.config/freerdp/known_hosts2 rwk,
   owner @{HOME}/.config/glib-2.0/settings/keyfile rw,
   owner @{HOME}/.config/remmina/{,**} rw,

@@ -88,6 +88,23 @@ USE_SYSCTL:=$(shell echo $(SYSCTL_INCLUDE) | cpp -dM >/dev/null 2>/dev/null && e
 LINUX_MOUNT_INCLUDE="\#include <linux/mount.h>"
 HAVE_LINUX_MOUNT_H:=$(shell echo $(LINUX_MOUNT_INCLUDE) | cpp -dM >/dev/null 2>/dev/null && echo true)
 
+# Perform detection of whether the new mount syscalls are available and whether
+# we'll need to provide the wrapper functions ourselves.
+# The syscalls themselves are available in Ubuntu Focal and later, with
+# associated constants available in linux/mount.h, but the wrapper functions are
+# only available in sys/mount.h in Ubuntu Noble and later.
+
+# Test-compile the header with the test function selected as if it were a
+# regular .c file:
+# * -Wimplicit-function-declaration to warn upon function prototype not existing in header
+# * -Werror to convert that warning into a hard error
+# * -x c to force compilation to an object file instead of a precompiled header
+HAVE_NEW_MOUNT_PROTOS=$(shell gcc -c -o /dev/null -Wimplicit-function-declaration -Werror -x c -DCHECK_FOR_NEW_MOUNT_PROTOTYPES mount_syscall_iface.h && echo true)
+
+ifneq ($(HAVE_NEW_MOUNT_PROTOS),true)
+CFLAGS += -DVENDORED_NEW_MOUNT_PROTOTYPES
+endif
+
 CFLAGS += -g -O0 $(EXTRA_WARNINGS)
 
 SRC=access.c \
@@ -111,6 +128,7 @@ SRC=access.c \
     complain.c \
     coredump.c \
     deleted.c \
+    disconnected_mount_complain.c \
     environ.c \
     env_check.c \
     exec.c \
@@ -179,6 +197,8 @@ endif
 #only do move_mount test if we have linux/mount.h
 ifeq ($(HAVE_LINUX_MOUNT_H),true)
 SRC+=move_mount.c
+else
+CFLAGS += -DSKIP_NEW_MOUNT_TESTING
 endif
 
 #only do sysctl syscall test if defines installed and OR supported by the
@@ -277,6 +297,7 @@ TESTS=aa_exec \
       complain \
       coredump \
       deleted \
+      disconnected_mount_complain \
       e2e \
       environ \
       exec \

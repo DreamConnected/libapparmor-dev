@@ -237,6 +237,7 @@ tests/regression/apparmor/dbus_message
 tests/regression/apparmor/dbus_service
 tests/regression/apparmor/dbus_unrequested_reply
 tests/regression/apparmor/deleted
+tests/regression/apparmor/disconnected_mount_complain
 tests/regression/apparmor/env_check
 tests/regression/apparmor/environ
 tests/regression/apparmor/exec

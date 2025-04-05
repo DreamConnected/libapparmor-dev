@@ -321,6 +321,7 @@ extern int features_supports_inet;
 extern int kernel_supports_policydb;
 extern int kernel_supports_diff_encode;
 extern int features_supports_mount;
+extern bool features_supports_detached_mount;
 extern int features_supports_dbus;
 extern int features_supports_signal;
 extern int features_supports_ptrace;

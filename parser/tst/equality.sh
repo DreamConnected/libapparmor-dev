@@ -879,6 +879,11 @@ verify_binary_equality "'$p1'x'$p2' link rules slash filtering" \
                         @{BAR}=/mnt/
                            /t { $p2 link @{FOO}/foo -> @{BAR}/bar, }"
 
+# Verify equality with mount detached source
+
+verify_binary_equality "'$p1'x'$p2' mount detached vs empty source" \
+                       "/t { $p1 mount \"\" -> /destination, }" \
+					   "/t { $p2 mount detached -> /destination, }"
 
 # This can potentially fail as ideally it requires a better dfa comparison
 # routine as it can generates hormomorphic dfas. The enumeration of the

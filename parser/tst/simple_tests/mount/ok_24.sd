@@ -1,0 +1,7 @@
+#
+#=Description basic detached mount rule
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  mount detached -> /foo,
+}

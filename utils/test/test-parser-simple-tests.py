@@ -441,6 +441,9 @@ syntax_failure = (
     'network/network_ok_17.sd',
     'network/network_ok_45.sd',
     'network/network_ok_46.sd',
+
+    # detached mount
+    'mount/ok_opt_86.sd',
 )
 
 

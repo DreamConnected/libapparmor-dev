@@ -73,6 +73,7 @@ int features_supports_inet = 0; 	/* kernel supports inet network rules */
 int features_supports_unix = 0;		/* kernel supports unix socket rules */
 int kernel_supports_policydb = 0;	/* kernel supports new policydb */
 int features_supports_mount = 0;	/* kernel supports mount rules */
+bool features_supports_detached_mount = false;
 int features_supports_dbus = 0;		/* kernel supports dbus rules */
 int kernel_supports_diff_encode = 0;	/* kernel supports diff_encode */
 int features_supports_signal = 0;	/* kernel supports signal rules */

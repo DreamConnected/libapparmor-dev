@@ -62,7 +62,7 @@ profile remmina /usr/bin/remmina {
   owner @{HOME}/.config/autostart/remmina-applet.desktop{,**} r,
   # TODO: This should be mknod instead of w, and this should be behind prompt
   # hence why the rule is split.
-  owner @{HOME}/.config/autostart/remmina-applet.desktop{,**} w,
+  audit owner @{HOME}/.config/autostart/remmina-applet.desktop{,**} w,
   owner @{HOME}/.config/freerdp/known_hosts2 rwk,
   owner @{HOME}/.config/glib-2.0/settings/keyfile rw,
   owner @{HOME}/.config/remmina/{,**} rw,

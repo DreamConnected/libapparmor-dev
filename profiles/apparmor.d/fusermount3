@@ -29,7 +29,6 @@ profile fusermount3 /usr/bin/fusermount3 {
   umount /tmp/**/,
 
   # Flatpak's default cache directory where it mounts a revokefs-fuse
-  # The second revokefs rule cannot be parsed by aa-logprof currently
   mount fstype=fuse options=(nosuid,nodev,rw) /dev/fuse -> /var/tmp/flatpak-cache-*/**/,
   mount fstype=fuse.revokefs-fuse options=(nosuid,nodev,rw) revokefs-fuse -> /var/tmp/flatpak-cache-*/**/,
   umount /var/tmp/flatpak-cache-*/**/,

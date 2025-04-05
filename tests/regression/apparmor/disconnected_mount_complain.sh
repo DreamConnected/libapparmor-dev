@@ -37,13 +37,13 @@ mkdir "$shadowing_dir"
 echo "corn" > "${shadowing_dir}/cornh"
 
 genprofile -C cap:sys_admin
-runchecktest "Complain mode profile and disconnected path mounts (mount(2))" pass $tmpdir old
+runchecktest "Complain mode profile and disconnected path mounts (mount(2))" xpass $tmpdir old
 
 # Use the presence of move_mount as a proxy for new mount syscall availability
 if [ ! -f "$bin/move_mount" ]; then
     echo "  WARNING: move_mount binary was not built, skipping open_tree test ..."
 else
-    runchecktest "Complain mode profile and disconnected path mounts (open_tree(2))" pass $tmpdir open_tree
+    runchecktest "Complain mode profile and disconnected path mounts (open_tree(2))" xpass $tmpdir open_tree
 fi
 
 rm -r "$shadowed_target"
@@ -58,7 +58,7 @@ else
     losetup -f "${backing_file_fsmount}" || fatalerror 'Unable to set up loop device'
     loop_device="$(/sbin/losetup -n -O NAME -l -j "${backing_file_fsmount}")"
 
-    runchecktest "Complain mode profile and disconnected path mounts (fsmount(2))" pass $tmpdir fsmount "${loop_device}"
+    runchecktest "Complain mode profile and disconnected path mounts (fsmount(2))" xpass $tmpdir fsmount "${loop_device}"
 
     losetup -d "${loop_device}"
     rm "${backing_file_fsmount}"

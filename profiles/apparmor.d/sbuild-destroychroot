@@ -4,7 +4,12 @@
 abi <abi/4.0>,
 include <tunables/global>
 
-profile sbuild-destroychroot /usr/sbin/sbuild-destroychroot flags=(unconfined) {
+profile sbuild-destroychroot /usr/sbin/sbuild-destroychroot flags=(attach_disconnected mediate_deleted) {
+  allow all,
+
+  # override default pix
+  /usr/bin/unshare ix,
+
   userns,
 
   # Site-specific additions and overrides. See local/README for details.

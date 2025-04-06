@@ -956,6 +956,14 @@ void set_supported_features()
 	features_supports_mount = features_intersect(kernel_features,
 						     policy_features,
 						     "mount");
+	/*
+	 * note: detached mounts are just a null condition, so previous
+	 *       mount rule encoding supports it, if the kernel supports
+	 *       it. So support for detached depends on mount intersect and
+	 *       kernel detached.
+	 */
+	features_supports_detached_mount = aa_features_supports(kernel_features,
+							      "mount/move_mount/detached");
 	features_supports_dbus = features_intersect(kernel_features,
 						    policy_features, "dbus");
 	features_supports_signal = features_intersect(kernel_features,

@@ -278,15 +278,15 @@ open_tree_test() {
 	runchecktest "MOVE_MOUNT (confined${desc}: mount options=(move) -> ${mnt_target}/,)" ${result} open_tree ${mnt_source} ${mnt_target} ${fsname}
 	remove_mnt
 
-	# genprofile cap:sys_admin "${qualifier}mount: detached -> ${mnt_target}/" ${additional_perms}
-	# mount ${loop_device} ${mnt_source}
-	# runchecktest "MOVE_MOUNT (confined${desc}: mount detached -> ${mnt_target}/,)" ${result} open_tree ${mnt_source} ${mnt_target} ${fsname}
-	# remove_mnt
+	genprofile cap:sys_admin "${qualifier}mount: detached -> ${mnt_target}/" ${additional_perms}
+	mount ${loop_device} ${mnt_source}
+	runchecktest "MOVE_MOUNT (confined${desc}: mount detached -> ${mnt_target}/,)" ${result} open_tree ${mnt_source} ${mnt_target} ${fsname}
+	remove_mnt
 
-	# genprofile cap:sys_admin "${qualifier}mount: options=(move) detached -> ${mnt_target}/" ${additional_perms}
-	# mount ${loop_device} ${mnt_source}
-	# runchecktest "MOVE_MOUNT (confined${desc}: mount options=(move) detached -> ${mnt_target}/,)" ${result} open_tree ${mnt_source} ${mnt_target} ${fsname}
-	# remove_mnt
+	genprofile cap:sys_admin "${qualifier}mount: options=(move) detached -> ${mnt_target}/" ${additional_perms}
+	mount ${loop_device} ${mnt_source}
+	runchecktest "MOVE_MOUNT (confined${desc}: mount options=(move) detached -> ${mnt_target}/,)" ${result} open_tree ${mnt_source} ${mnt_target} ${fsname}
+	remove_mnt
 
 	genprofile cap:sys_admin "${qualifier}mount: \"\" -> ${mnt_target}/" ${additional_perms}
 	mount ${loop_device} ${mnt_source}
@@ -359,13 +359,13 @@ fsmount_test() {
 	runchecktest "MOVE_MOUNT (confined${desc}: mount options=(move) -> ${mnt_target}/,)" ${result} fsmount ${mnt_source} ${mnt_target} ${fsname}
 	remove_mnt
 
-	# genprofile cap:sys_admin "${qualifier}mount: detached -> ${mnt_target}/" ${additional_perms}
-	# runchecktest "MOVE_MOUNT (confined${desc}: mount detached -> ${mnt_target}/,)" ${result} fsmount ${mnt_source} ${mnt_target} ${fsname}
-	# remove_mnt
+	genprofile cap:sys_admin "${qualifier}mount: detached -> ${mnt_target}/" ${additional_perms}
+	runchecktest "MOVE_MOUNT (confined${desc}: mount detached -> ${mnt_target}/,)" ${result} fsmount ${mnt_source} ${mnt_target} ${fsname}
+	remove_mnt
 
-	# genprofile cap:sys_admin "${qualifier}mount: options=(move) detached -> ${mnt_target}/" ${additional_perms}
-	# runchecktest "MOVE_MOUNT (confined${desc}: mount options=(move) detached -> ${mnt_target}/,)" ${result} fsmount ${mnt_source} ${mnt_target} ${fsname}
-	# remove_mnt
+	genprofile cap:sys_admin "${qualifier}mount: options=(move) detached -> ${mnt_target}/" ${additional_perms}
+	runchecktest "MOVE_MOUNT (confined${desc}: mount options=(move) detached -> ${mnt_target}/,)" ${result} fsmount ${mnt_source} ${mnt_target} ${fsname}
+	remove_mnt
 
 	genprofile cap:sys_admin "${qualifier}mount: \"\" -> ${mnt_target}/" ${additional_perms}
 	runchecktest "MOVE_MOUNT (confined${desc}: mount \"\" -> ${mnt_target}/,)" ${result} fsmount ${mnt_source} ${mnt_target} ${fsname}

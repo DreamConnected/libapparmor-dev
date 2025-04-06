@@ -22,6 +22,8 @@ include <tunables/global>
 
   capability chown,
   capability sys_resource,
+  capability setuid,
+  capability fsetid,
 
   /etc/.pwd.lock wk,
   /etc/pwdutils/logging r,
@@ -29,6 +31,10 @@ include <tunables/global>
   /etc/shadow rwl,
   /etc/shadow.old rwl,
   /etc/shadow.tmp?????? rwl,
+  /etc/shadow.[0-9]* rwl,
+  /etc/shadow.lock rwl,
+  /etc/shadow- rw,
+  /etc/shadow+ rw,
 
   @{PROC}/@{pid}/loginuid r,
 
@@ -38,6 +44,9 @@ include <tunables/global>
   /usr/share/cracklib/pw_dict.hwm r,
   /usr/share/cracklib/pw_dict.pwd r,
   /usr/share/cracklib/pw_dict.pwi r,
+  /etc/passwdqc.conf r,
+  /opt/passwdqc/*.pwq r,
+  /usr/sbin/nscd Px,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.bin.passwd>

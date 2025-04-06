@@ -92,6 +92,10 @@ dest_fileglob_pattern = (
 RE_MOUNT_DETAILS = re.compile(r'^\s*' + mount_condition_pattern + rf'(\s+{source_fileglob_pattern})?' + rf'(\s+->\s+{dest_fileglob_pattern})?\s*' + r'$')
 RE_UMOUNT_DETAILS = re.compile(r'^\s*' + mount_condition_pattern + rf'(\s+{dest_fileglob_pattern})?\s*' + r'$')
 
+# check if a rule contains multiple 'options'
+# (not using option_pattern here because a) it also matches an empty string, and b) using it twice would cause name conflicts)
+RE_MOUNT_MULTIPLE_OPTIONS = re.compile(r'\soptions\s*(=|\sin\s).*\soptions\s*(=|\sin\s)')
+
 
 class MountRule(BaseRule):
     '''Class to handle and store a single mount rule'''
@@ -183,6 +187,11 @@ class MountRule(BaseRule):
                 fstype = cls.ALL
 
             if r['options'] is not None:
+                # mount rules with multiple 'options' are not supported by the tools yet, and when writing them, only the last 'options' would survive.
+                # Therefore raise an exception when parsing such a rule to prevent breaking the rule.
+                if RE_MOUNT_MULTIPLE_OPTIONS.search(raw_rule):
+                    raise AppArmorException("mount rules with multiple 'options' are not supported by the tools")
+
                 is_options_equal = r['options_equals_or_in']
                 options = strip_parenthesis(r['options']).replace(',', ' ').split()
             else:

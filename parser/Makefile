@@ -37,7 +37,7 @@ MANPAGES=apparmor.d.5 apparmor.7 apparmor_parser.8 aa-teardown.8 apparmor_xattrs
 # default behavior changed in version 3.6
 # parse.error=verbose supported from 3.0 so just test on that
 # TODO move to autoconf
-BISON_MAJOR:=$(shell bison --version |  awk '/^bison/ { print ($$NF) }'  | awk -F. '{print $$1 }')
+BISON_MAJOR:=$(shell bison --version |  ${AWK} '/^bison/ { print ($$NF) }'  | ${AWK} -F. '{print $$1 }')
 USE_PARSE_ERROR:=$(shell test "${BISON_MAJOR}" -ge 3 && echo true)
 
 YACC	:= bison
@@ -375,7 +375,7 @@ tst_%: parser_%.c parser.h $(filter-out parser_%.o, ${TEST_OBJECTS})
 
 errnos.h:
 	echo '#include <errno.h>' > dump.c
-	$(CC) $(CPPFLAGS) -E -dD dump.c | awk '/^#define E/ { printf "{ \"%s\", %s },\n", $$2, $$2 }' > errnos.h
+	$(CC) $(CPPFLAGS) -E -dD dump.c | $(AWK) '/^#define E/ { printf "{ \"%s\", %s },\n", $$2, $$2 }' > errnos.h
 	rm -f dump.c
 
 .SILENT: check

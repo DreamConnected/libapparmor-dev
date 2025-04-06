@@ -204,6 +204,8 @@ manpages:	$(MANPAGES)
 
 htmlmanpages:	$(HTMLMANPAGES)
 
+markdown:	$(MARKDOWNPAGES)
+
 pdf:	techdoc.pdf
 
 docs:	manpages htmlmanpages

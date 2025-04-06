@@ -54,7 +54,10 @@ option_pattern = r'\s*(\boption(s?)\b\s*(?P<options_equals_or_in>=|in)\s*'\
     r'(?P<options>\(\s*(' + join_valid_flags + r')(' + sep + r'(' + join_valid_flags + r'))*\s*\)|' \
     r'(\s*' + join_valid_flags + r')'\
     r'))?'
-mount_condition_pattern = rf'({fs_type_pattern})?\s*({option_pattern})?'
+
+# allow any order of fstype and options
+# Note: also matches if multiple fstype= or options= are given to keep the regex simpler
+mount_condition_pattern = rf'({fs_type_pattern}\s*|{option_pattern}\s*)*'
 
 # Source can either be
 # - A path          : /foo

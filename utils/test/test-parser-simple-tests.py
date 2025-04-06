@@ -87,6 +87,8 @@ exception_not_raised = (
     'mount/bad_opt_31.sd',
     'mount/bad_1.sd',
     'mount/bad_2.sd',
+    'mount/bad_3.sd',
+    'mount/bad_4.sd',
 
     'profile/flags/flags_bad10.sd',
     'profile/flags/flags_bad11.sd',
@@ -315,15 +317,6 @@ unknown_line = (
     'bare_include_tests/ok_85.sd',
     'bare_include_tests/ok_86.sd',
 
-    # According to spec mount should be in the form fstype=... options=... and NOT in the form options=... fstype=...
-    'mount/ok_opt_combo_3.sd',
-    'mount/ok_opt_combo_2.sd',
-    'mount/ok_opt_combo_1.sd',
-    'mount/ok_opt_combo_4.sd',
-
-    # Options should be comma separated
-    'mount/in_4.sd',  # also order option then fstype is invalid
-
     # Unsupported \\" in unix AARE
     'unix/ok_regex_03.sd',
     'unix/ok_regex_09.sd',
@@ -441,9 +434,6 @@ syntax_failure = (
     'network/network_ok_17.sd',
     'network/network_ok_45.sd',
     'network/network_ok_46.sd',
-
-    # detached mount
-    'mount/ok_opt_86.sd',
 )
 
 

@@ -250,6 +250,22 @@ image-ubuntu-cloud-24.04-x86_64:
           - .gitlab-ci.yml
         compare_to: "refs/heads/master"
 
+# This job builds and caches the image that the job below looks at.
+image-ubuntu-cloud-25.04-x86_64:
+  extends: .image-garden-x86_64
+  variables:
+    GARDEN_SYSTEM: ubuntu-cloud-25.04
+  needs: []
+  dependencies: []
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_BRANCH
+      changes:
+        paths:
+          - .image-garden.mk
+          - .gitlab-ci.yml
+        compare_to: "refs/heads/master"
+
 .spread-x86_64:
   extends: .image-garden-x86_64
   variables:
@@ -302,5 +318,17 @@ spread-ubuntu-cloud-24.04-x86_64:
   dependencies: []
   needs:
     - job: image-ubuntu-cloud-24.04-x86_64
+      optional: true
+  parallel: 4
+
+spread-ubuntu-cloud-25.04-x86_64:
+  extends: .spread-x86_64
+  variables:
+    GARDEN_SYSTEM: ubuntu-cloud-25.04
+    SPREAD_ARGS: garden:$GARDEN_SYSTEM:tests/regression/ garden:$GARDEN_SYSTEM:tests/profiles/
+    CACHE_POLICY: pull
+  dependencies: []
+  needs:
+    - job: image-ubuntu-cloud-25.04-x86_64
       optional: true
   parallel: 4

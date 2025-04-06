@@ -31,6 +31,7 @@ packages:
 - libpam0g-dev
 - libtool
 - liburing-dev
+- linux-libc-dev
 - pkg-config
 - python3-all-dev
 - python3-gi

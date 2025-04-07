@@ -775,17 +775,8 @@ int mnt_rule::gen_policy_remount(Profile &prof, int &count,
 			goto fail;
 		vec[0] = mntbuf.c_str();
 	} else {
-		if (device && strcmp(device, "detached") == 0) {
-			/* if (features_supports_detached_mount) ...
-			 * not needed because this is equiv to ""
-			 * which was preivously supported
-			 *
-			 * match nothing
-			 */
-			devbuf.clear();
-		} else if (!clear_and_convert_entry(devbuf, device)) {
+		if (!convert_entry(mntbuf, device))
 			goto fail;
-		}
 		vec[0] = mntbuf.c_str();
 	}
 	/* skip device */

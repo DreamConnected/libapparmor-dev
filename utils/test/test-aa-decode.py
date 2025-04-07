@@ -10,53 +10,13 @@
 # ------------------------------------------------------------------
 
 import os
-import signal
-import subprocess
 import unittest
 from tempfile import NamedTemporaryFile
-
+from apparmor.common import cmd_pipe_stderr
 # The location of the aa-decode utility can be overridden by setting
 # the APPARMOR_DECODE environment variable; this is useful for running
 # these tests in an installed environment
 aadecode_bin = "../aa-decode"
-
-
-# http://www.chiark.greenend.org.uk/ucgi/~cjwatson/blosxom/2009-07-02-python-sigpipe.html
-# This is needed so that the subprocesses that produce endless output
-# actually quit when the reader goes away.
-def subprocess_setup():
-    # Python installs a SIGPIPE handler by default. This is usually not what
-    # non-Python subprocesses expect.
-    signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-
-# Define only arguments that are actually ever used: command and stdin
-def cmd(command, stdin=None):
-    """Try to execute given command (array) and return its stdout, or return
-    a textual error if it failed."""
-
-    try:
-        sp = subprocess.Popen(
-            command,
-            stdin=stdin,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            close_fds=True,
-            preexec_fn=subprocess_setup
-        )
-    except OSError as e:
-        return 127, str(e)
-
-    stdout, stderr = sp.communicate(input)
-
-    # If there was some error output, show that instead of stdout to ensure
-    # test fails and does not mask potentially major warnings and errors.
-    if stderr:
-        out = stderr
-    else:
-        out = stdout
-
-    return sp.returncode, out.decode('utf-8')
 
 
 class AADecodeTest(unittest.TestCase):
@@ -65,7 +25,7 @@ class AADecodeTest(unittest.TestCase):
         """Test --help argument"""
 
         expected = 0
-        rc, report = cmd((aadecode_bin, "--help"))
+        rc, report = cmd_pipe_stderr((aadecode_bin, "--help"))
         result = 'Got exit code {}, expected {}\n'.format(rc, expected)
         self.assertEqual(expected, rc, result + report)
 
@@ -80,7 +40,7 @@ class AADecodeTest(unittest.TestCase):
             temp_file.write(content)
             temp_file.flush()
             temp_file.seek(0)
-            rc, report = cmd((aadecode_bin,), stdin=temp_file)
+            rc, report = cmd_pipe_stderr(aadecode_bin, stdin=temp_file)
 
         result = 'Got exit code {}, expected {}\n'.format(rc, expected_return_code)
         self.assertEqual(expected_return_code, rc, result + report)
@@ -95,7 +55,7 @@ class AADecodeTest(unittest.TestCase):
         expected_output = 'Decoded: /tmp/foo bar'
         test_code = '2F746D702F666F6F20626172'
 
-        rc, report = cmd((aadecode_bin, test_code))
+        rc, report = cmd_pipe_stderr((aadecode_bin, test_code))
         result = 'Got exit code {}, expected {}\n'.format(rc, expected)
         self.assertEqual(expected, rc, result + report)
         result = 'Got output "{}", expected "{}"\n'.format(report, expected_output)

@@ -14,12 +14,11 @@ import json
 import optparse
 import os
 import re
-import subprocess
 import sys
 from shutil import which
 from tempfile import NamedTemporaryFile
 
-from apparmor.common import AppArmorException, open_file_read
+from apparmor.common import AppArmorException, open_file_read, cmd
 
 
 DEBUGGING = False
@@ -53,19 +52,6 @@ def msg(out, output=sys.stdout):
         sys.stdout.write("%s\n" % (out))
     except IOError:
         pass
-
-
-def cmd(command):
-    """Try to execute the given command."""
-    debug(command)
-    try:
-        sp = subprocess.Popen(command, stdout=subprocess.PIPE,
-                              stderr=subprocess.STDOUT)
-    except OSError as ex:
-        return [127, str(ex)]
-
-    out = sp.communicate()[0]
-    return [sp.returncode, out]
 
 
 def debug(out):

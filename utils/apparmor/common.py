@@ -15,6 +15,7 @@ import logging
 import os
 import re
 import subprocess
+import signal
 import sys
 import termios
 import tty
@@ -111,18 +112,35 @@ def recursive_print(src, dpth=0, key=''):
             print(tabs + '- %s' % src)
 
 
-def cmd(command):
-    """Try to execute the given command."""
+def subprocess_setup():
+    # Python installs a SIGPIPE handler by default. This is usually not what
+    # non-Python subprocesses expect.
+    signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+
+
+def cmd_pipe_stderr(command, stdin=None):
+    return cmd(command, stderr=subprocess.PIPE, output_fmt='utf-8', stdin=stdin)
+
+
+def cmd(command, stderr=subprocess.STDOUT, output_fmt='ascii', stdin=None):
+    """Execute the given command and return its output as a tuple (returncode, output)."""
     debug(command)
     try:
-        sp = subprocess.Popen(command, stdout=subprocess.PIPE,
-                              stderr=subprocess.STDOUT)
+        sp = subprocess.Popen(command, stdin=stdin, stdout=subprocess.PIPE, stderr=stderr, close_fds=True, preexec_fn=subprocess_setup)
     except OSError as ex:
         return [127, str(ex)]
 
-    out = sp.communicate()[0].decode('ascii', 'ignore')
+    out, err = sp.communicate()  # TODO input???
 
-    return [sp.returncode, out]
+    if err:
+        out = err
+
+    if output_fmt == 'ascii':
+        decoded = out.decode(output_fmt, 'ignore')
+    else:
+        decoded = out.decode(output_fmt)
+
+    return [sp.returncode, decoded]
 
 
 def cmd_pipe(command1, command2):

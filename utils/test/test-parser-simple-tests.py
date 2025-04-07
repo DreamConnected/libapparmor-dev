@@ -422,9 +422,6 @@ syntax_failure = (
 
     # network port range
     'network/network_ok_17.sd',
-
-    # detached mount
-    'mount/ok_opt_86.sd',
 )
 
 

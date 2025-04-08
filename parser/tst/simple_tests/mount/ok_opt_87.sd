@@ -1,0 +1,14 @@
+#
+#=Description mount rule with multiple options
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+  mount options=(ro) options=(rw) fstype=ext4 -> /destination,
+  mount options=(ro) fstype=ext4 options=(rw) -> /destination,
+
+  mount options in (ro) options in (rw) fstype=ext4 -> /destination,
+  mount options in (ro) fstype=ext4 options in (rw) -> /destination,
+
+  mount options = (ro) options in (rw) fstype=ext4 -> /destination,
+  mount options = (ro) fstype=ext4 options in (rw) -> /destination,
+}

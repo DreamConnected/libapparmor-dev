@@ -95,6 +95,22 @@ class MountTestParseInvalid(AATest):
         ('mount options=(),',        AppArmorException),
         ('mount option=(invalid),',  AppArmorException),
         ('mount option=(ext3ext4),', AppArmorException),
+
+        # mount rules with multiple 'options' are not supported by the tools yet, and when writing them, only the last 'options' would survive. Therefore MountRule intentionally raises an exception when parsing such a rule.
+        ('mount options=(ro) options=(rw) fstype=ext4 -> /destination,',        AppArmorException),
+        ('mount options=(ro) fstype=ext4 options=(rw) -> /destination,',        AppArmorException),
+        ('mount options in (ro) options in (rw) fstype=ext4 -> /destination,',  AppArmorException),
+        ('mount options in (ro) fstype=ext4 options in (rw) -> /destination,',  AppArmorException),
+        ('mount options = (ro) options in (rw) fstype=ext4 -> /destination,',   AppArmorException),
+        ('mount options = (ro) fstype=ext4 options in (rw) -> /destination,',   AppArmorException),
+
+        # mount rules with multiple 'fstype' are not supported by the tools yet, and when writing them, only the last 'fstype' would survive. Therefore MountRule intentionally raises an exception when parsing such a rule.
+        ('mount options=(ro) fstype=ext3 fstype=ext4 -> /destination,',             AppArmorException),
+        ('mount fstype=ext3 options=(ro) fstype=ext4 -> /destination,',             AppArmorException),
+        ('mount options=(ro) fstype in (ext3) fstype in (ext4) -> /destination,',   AppArmorException),
+        ('mount fstype in (ext3) options=(ro) fstype in (ext4) -> /destination,',   AppArmorException),
+        ('mount options=(ro) fstype in (ext3) fstype=(ext4) -> /destination,',      AppArmorException),
+        ('mount fstype in (ext3) options=(ro) fstype=ext4 -> /destination,',        AppArmorException),
     )
 
     def _run_test(self, rawrule, expected):

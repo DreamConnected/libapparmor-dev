@@ -92,6 +92,12 @@ dest_fileglob_pattern = (
 RE_MOUNT_DETAILS = re.compile(r'^\s*' + mount_condition_pattern + rf'(\s+{source_fileglob_pattern})?' + rf'(\s+->\s+{dest_fileglob_pattern})?\s*' + r'$')
 RE_UMOUNT_DETAILS = re.compile(r'^\s*' + mount_condition_pattern + rf'(\s+{dest_fileglob_pattern})?\s*' + r'$')
 
+# check if a rule contains multiple 'options' or 'fstype'
+# (not using option_pattern or fs_type_pattern here because a) it also matches an empty string, and b) using it twice would cause name conflicts)
+multi_param_template = r'\sPARAM\s*(=|\sin).*\sPARAM\s*(=|\sin)'
+RE_MOUNT_MULTIPLE_OPTIONS = re.compile(multi_param_template.replace('PARAM', 'options'))
+RE_MOUNT_MULTIPLE_FS_TYPE = re.compile(multi_param_template.replace('PARAM', 'v?fstype'))
+
 
 class MountRule(BaseRule):
     '''Class to handle and store a single mount rule'''
@@ -176,6 +182,11 @@ class MountRule(BaseRule):
                 raise AppArmorException('Can\'t parse mount rule ' + raw_rule)
 
             if r['fstype'] is not None:
+                # mount rules with multiple 'fstype' are not supported by the tools yet, and when writing them, only the last 'fstype' would survive.
+                # Therefore raise an exception when parsing such a rule to prevent breaking the rule.
+                if RE_MOUNT_MULTIPLE_FS_TYPE.search(raw_rule):
+                    raise AppArmorException("mount rules with multiple 'fstype' are not supported by the tools")
+
                 is_fstype_equal = r['fstype_equals_or_in']
                 fstype = parse_aare_list(strip_parenthesis(r['fstype']), 'fstype')
             else:
@@ -183,6 +194,11 @@ class MountRule(BaseRule):
                 fstype = cls.ALL
 
             if r['options'] is not None:
+                # mount rules with multiple 'options' are not supported by the tools yet, and when writing them, only the last 'options' would survive.
+                # Therefore raise an exception when parsing such a rule to prevent breaking the rule.
+                if RE_MOUNT_MULTIPLE_OPTIONS.search(raw_rule):
+                    raise AppArmorException("mount rules with multiple 'options' are not supported by the tools")
+
                 is_options_equal = r['options_equals_or_in']
                 options = strip_parenthesis(r['options']).replace(',', ' ').split()
             else:

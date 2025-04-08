@@ -41,7 +41,6 @@ packages:
 - python3-ttkthemes
 - swig
 - tinyproxy
-- toybox
 # Update all the packages. This allows us to be on the up-to-date kernel
 # version that we cannot otherwise easily select with cloud init alone.  Note
 # that we do not need to reboot the system as image garden shuts down the image

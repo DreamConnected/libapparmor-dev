@@ -41,7 +41,7 @@ int set_sock_io_timeo(int sock)
 	socklen_t tv_len = sizeof(tv);
 	int rc;
 
-	tv.tv_sec = 1;
+	tv.tv_sec = 2;
 	tv.tv_usec = 0;
 
 	rc = setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &tv, tv_len);

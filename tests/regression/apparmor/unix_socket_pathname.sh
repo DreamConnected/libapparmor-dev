@@ -60,10 +60,10 @@ if ( [ "$(kernel_features network_v8/af_unix)" = "true" ] ||
 	af_unix_okserver="create,setopt"
 	af_unix_okclient="create,getopt,setopt,getattr"
 elif [ "$(kernel_features network_v8)" = "true" ] ; then
-#	af_unix_okserver="create,setopt"
-#	af_unix_okclient="create,getopt,setopt,getattr"
-    af_unix_okserver="create"
-    af_unix_okclient="create"
+	af_unix_okserver="create,setopt"
+	af_unix_okclient="create,getopt,setopt,getattr"
+	# af_unix_okserver="create"
+	# af_unix_okclient="create"
 fi
 
 okclient=rw

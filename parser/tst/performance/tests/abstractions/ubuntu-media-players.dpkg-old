@@ -1,0 +1,65 @@
+#
+# abstraction for allowing access to media players in Ubuntu
+#
+  /usr/bin/amarok PUxr,
+  /usr/bin/audacious2 PUxr,
+  /usr/bin/bangarang PUxr,
+  /usr/bin/banshee PUxr,
+  /usr/bin/banshee-1 PUxr,
+  /usr/bin/decibel PUxr,
+  /usr/bin/dragon PUxr,
+  /usr/bin/esperanza PUxr,
+  /usr/bin/exaile PUxr,
+  /usr/bin/freevo PUxr,
+  /usr/bin/gmerlin PUxr,
+  /usr/bin/gtk-gnash ixr,
+  /usr/bin/gxmms PUxr,
+  /usr/bin/gxmms2 PUxr,
+  /usr/bin/hornsey PUxr,
+  /usr/bin/jlgui PUxr,
+  /usr/bin/juk PUxr,
+  /usr/bin/kaffeine PUxr,
+  /usr/bin/listen PUxr,
+  /usr/share/minirok/minirok.py PUxr,
+
+  # mplayer
+  /etc/mplayerplug-in.conf r,
+  /usr/bin/gmplayer PUxr,
+  /usr/bin/gnome-mplayer PUxr,
+  /usr/bin/kmplayer PUxr,
+  /usr/bin/mplayer PUxr,
+  /usr/bin/smplayer PUxr,
+
+  /usr/bin/muine PUxr,
+  /usr/bin/potamus PUxr,
+  /usr/bin/promoe PUxr,
+  /usr/bin/qmmp PUxr,
+  /usr/bin/quodlibet PUxr,
+  /usr/bin/rhythmbox PUxr,
+  /usr/bin/strange-quark PUxr,
+  /usr/bin/swfdec-player PUxr,
+  /usr/bin/timidity PUxr,
+  /usr/lib/totem/** ixr,
+  /usr/bin/totem-gstreamer PUxr,
+  /usr/bin/totem-xine PUxr,
+  /usr/bin/totem PUxr,
+  /usr/bin/vlc PUxr,
+  /usr/bin/xfmedia PUxr,
+  /usr/bin/xmms PUxr,
+
+  # Added by Jamie. Something in firefox keeps doing this. Put it here so
+  # that the firefox profile will not cause a prompt
+  deny /usr/bin/gconftool-2 rx,
+  # Needed by flash
+  /usr/bin/lpstat Uxr,
+  /usr/bin/lpr Uxr,
+  /usr/bin/amazonmp3 ixr,
+  owner @{HOME}/.amazonmp3/ r,
+  owner @{HOME}/.amazonmp3/** rwk,
+  #include <abstractions/nvidia>
+
+  # noisy due to new crossover
+  deny /home/tish/.cxoffice/** rx,
+
+  # skype?
+  /dev/zero mr,

@@ -1,0 +1,90 @@
+# Last Modified: Fri Aug 19 16:56:43 2011
+#include <tunables/global>
+
+/usr/bin/pasaffe {
+  #include <abstractions/base>
+  #include <abstractions/python>
+  #include <abstractions/gnome>
+  #include <abstractions/ibus>
+  #include <abstractions/ubuntu-unity7-base>
+  #include <abstractions/dbus-session-strict>
+
+  /usr/bin/python* ix,
+  /usr/bin/ r,
+  /usr/bin/apg Cx -> apg,
+  /usr/bin/pasaffe r,
+  /usr/include/python*/pyconfig.h r,
+  /usr/share/glib-2.0/schemas/** r,
+  /var/lib/dbus/machine-id r,
+
+  # in abstraction?
+  deny /usr/local/lib/python3*/dist-packages/ r,
+  deny /usr/lib/python3*/dist-packages/**.pyc.[0-9]* w,
+  deny /usr/lib/python3*/{,**/}__pycache__/ w,
+  deny /usr/lib/python3*/{,**/}__pycache__/**.pyc.[0-9]* w,
+
+  /etc/passwd r,
+  /etc/nsswitch.conf r,
+
+  /usr/share/icons/** r,
+  /usr/share/pasaffe/** r,
+
+  # not sure why these are needed
+  deny /etc/default/apport r,
+  deny /etc/apt/apt.conf.d/ r,
+
+  # let's not allow these either
+  audit deny /tmp/** rwkl,
+  audit deny /var/tmp/** rwkl,
+
+  # helpers
+  #/usr/bin/yelp PUx,
+
+  owner @{HOME}/.local/share/pasaffe/ r,
+  owner @{HOME}/.local/share/pasaffe/* rwk,
+  owner @{HOME}/.{cache,config}/dconf/user rw,
+  owner /{,var/}run/user/*/dconf/ w,
+  owner /{,var/}run/user/*/dconf/user rw,
+
+  # Nextcloud
+  #owner @{HOME}/Nextcloud/Private/ r,
+  owner @{HOME}/Nextcloud/Private/pasaffe.psafe3 rwk,
+
+  # Sorry, no
+  deny @{HOME}/.local/lib/python2.7/site-packages/ r,
+
+  owner @{PROC}/@{pid}/fd/ r,
+  owner @{PROC}/@{pid}/status r,
+  /usr/bin/gnome-open ix,
+  /usr/lib/firefox*/firefox.sh Px,
+
+  owner @{HOME}/.icons/** r,
+
+  profile apg {
+    #include <abstractions/base>
+    /usr/bin/apg r,
+    /bin/bash mixr,
+    /bin/dash mixr,
+    /dev/tty rw,
+    /usr/lib/apg/apg ix,
+  }
+
+  # ubuntu-unity-base
+  dbus (receive, send)
+       bus=session
+       path=/com/canonical/gtk/**,
+  dbus (send)
+       bus=session
+       interface=org.gtk.Menus
+       member="Changed",
+
+  # dconf
+  dbus (receive, send)
+       bus=session
+       interface="ca.desrt.dconf.Writer",
+
+  # gnome
+  dbus (send)
+       bus=session
+       interface=org.gtk.vfs.MountTracker,
+}

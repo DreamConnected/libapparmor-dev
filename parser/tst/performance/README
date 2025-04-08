@@ -1,0 +1,41 @@
+On core:
+$ sudo snap install classic --devmode --beta
+$ sudo classic
+(classic)$ sudo apt-get install quilt linux-tools-common linux-tools-(generic|raspi2|dragon) devscripts fakeroot
+
+(classic)$ mkdir aa/build && cd aa/build
+(classic)$ apt-get build-dep apparmor
+(classic)$ cd ./apparmor-*
+<patch>
+(classic)$ dpkg-buildpackage -us -uc
+(classic)$ sudo dpkg -i ../*deb  # at least, apparmor, libapparmor1, libapparmor-perl and python3-libapparmor
+
+Mount the apparmorfs:
+(classic)$ sudo mount -t securityfs none /sys/kernel/security
+
+Now scp the test files to ~/aa/tests
+(classic)$ ln -s `pwd`/tests /tmp/tests
+(classic)$ reset
+(classic)$ for i in dpkg dpkg-without-evince system snap both ; do echo "# $i" ; sudo perf stat -r 10 -d apparmor_parser -O expr-simplify -I /tmp/tests --jobs 1 --max-jobs=1 --quiet -QTK /tmp/tests/$i ; done
+(classic)$ for i in dpkg dpkg-without-evince system snap both ; do echo "# $i" ; sudo perf stat -r 10 -d apparmor_parser -O no-expr-simplify -I /tmp/tests --jobs 1 --max-jobs=1 --quiet -QTK /tmp/tests/$i ; done
+
+(classic)$
+
+reset ; for i in dpkg dpkg-without-evince system snap both ; do echo "# $i" ; sudo perf stat -r 10 -d apparmor_parser -O expr-simplify -I /tmp/tests --jobs 1 --max-jobs=1 --quiet -QTK /tmp/tests/$i ; done ; for i in dpkg dpkg-without-evince system snap both ; do echo "# $i" ; sudo perf stat -r 10 -d apparmor_parser -O no-expr-simplify -I /tmp/tests --jobs 1 --max-jobs=1 --quiet -QTK /tmp/tests/$i ; done
+
+
+In chroot:
+$ schroot -c xenial-amd64 -u root
+(xenial-amd64)# apt-get update && apt-get dist-upgrade
+(xenial-amd64)# passwd ubuntu
+<create password>
+(xenial-amd64)# apt-get install sudo
+(xenial-amd64)# su - ubuntu
+(xenial-amd64)$ sudo uptime
+ 19:25:47 up 7 days,  4:58,  0 users,  load average: 0.71, 0.62, 0.59
+
+If the schroot is using a kernel from another release of Ubuntu than the host,
+then update sources.list to add the other release and install
+linux-tools-generic.
+
+At this point, it operates the same as the classic snap on core.

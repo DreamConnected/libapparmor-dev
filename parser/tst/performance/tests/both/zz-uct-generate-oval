@@ -1,0 +1,26 @@
+#include <tunables/global>
+
+@{UCT}=/home/jamie/bzr-pulls/ubuntu-cve
+
+profile uct-generate-oval /home/jamie/bzr-pulls/ubuntu-cve/scripts/generate-oval {
+  #include <abstractions/base>
+  #include <abstractions/python>
+  #include <abstractions/user-tmp>
+  deny /usr/lib/python3*/{,**/}__pycache__/**.pyc.[0-9]* w,
+  deny /etc/apt/apt.conf.d/ r,
+
+  @{UCT}/scripts/__pycache__/ w,
+  @{UCT}/scripts/__pycache__/oval_lib.cpython-34.pyc* rw,
+  @{UCT}/scripts/generate-oval r,
+  @{UCT}/scripts/oval_lib.py r,
+  @{UCT}/scripts/cve_lib.py r,
+  @{UCT}/scripts/ r,
+  @{UCT}/active/ r,
+  @{UCT}/active/* r,
+  @{UCT}/retired/ r,
+  @{UCT}/retired/* r,
+  @{UCT}/queue.*.* rw,
+  @{UCT}/com.ubuntu.*.cve.oval.xml rw,
+  /usr/bin/python3.4 ix,
+
+}

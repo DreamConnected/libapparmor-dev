@@ -1,0 +1,124 @@
+#include <tunables/global>
+
+profile minecraft {
+  #include <abstractions/base>
+  #include <abstractions/audio>
+  #include <abstractions/dbus-session-strict>
+  #include <abstractions/fonts>
+  #include <abstractions/gnome>
+  #include <abstractions/kde>
+  #include <abstractions/ibus>
+  #include <abstractions/nameservice>
+  #include <abstractions/ssl_certs>
+  #include <abstractions/user-tmp>
+  #include <abstractions/private-files-strict>
+
+  network inet stream,
+  network inet6 stream,
+
+  /etc/java-*/ r,
+  /etc/java-*/** r,
+  /etc/lsb-release r,
+  /etc/ssl/certs/java/* r,
+  /etc/timezone r,
+  /etc/udev/udev.conf r,
+  /run/udev/data/ r,
+  deny /run/udev/data/** r,
+  /etc/machine-id r,
+
+  /dev/dri/ r,
+  /tmp/jna-[0-9]*/jna*.tmp m,
+  /tmp/libnetty-transport-native-*.so m,
+  /sbin/ldconfig{,.real} ixr,
+
+  @{PROC}/[0-9]*/ r,
+  @{PROC}/[0-9]*/fd/ r,
+  @{PROC}/sys/net/core/somaxconn r,
+  @{PROC}/[0-9]*/net/if_inet6 r,
+  @{PROC}/[0-9]*/net/ipv6_route r,
+  @{PROC}/sys/net/ipv4/ip_local_port_range r,
+  @{PROC}/sys/net/ipv4/tcp_fastopen r,
+  @{PROC}/filesystems r,
+  owner @{PROC}/[0-9]*/cmdline r,
+  owner @{PROC}/[0-9]*/coredump_filter rw,
+
+  /run/udev/data/*pci* r,
+  /sys/devices/pci*/**/uevent r,
+  /sys/devices/pci*/**/{,subsystem_}device r,
+  /sys/devices/pci*/**/{,subsystem_}vendor r,
+  /sys/devices/system/cpu/ r,
+  /sys/devices/system/cpu/** r,
+
+  /usr/share/** r,
+  /var/lib/dbus/machine-id r,
+
+  # noisy, but it doesn't work
+  /anon_hugepage//deleted mr,
+
+  # needed for setting up the screen
+  /usr/bin/xrandr ixr,
+
+  # miscellaneous access
+  owner /run/shm/shmfd-* rwk,
+  / r,
+  /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java ixr,
+  /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java ixr,
+  /bin/ps Uxr,
+  @{PROC}/loadavg r,
+  /usr/bin/id Uxr,
+  /usr/bin/dbus-send ixr,
+  audit deny /usr/bin/xprop xr,
+#  /usr/bin/xprop ixr,
+
+  # Where the jar file is (what is given to java -cp)
+  owner @{HOME}/{,Syncs/}bin/minecraft/ r,
+  owner @{HOME}/{,Syncs/}bin/minecraft/[mM]inecraft*.jar r,
+  owner @{HOME}/{,Syncs/}bin/minecraft/*.jar r,
+
+  # User specific
+  owner @{HOME}/.java/fonts/ rw,
+  owner @{HOME}/.java/fonts/** rw,
+
+  # Don't allow this
+  deny /{,var/}run/user/*/dconf/user rw,
+  deny @{HOME}/.{cache,config}/dconf/ rw,
+  deny @{HOME}/.{cache,config}/dconf/user rw,
+  #owner /{,var/}run/user/*/dconf/user rw,
+  #owner @{HOME}/.{cache,config}/dconf/ rw,
+  #owner @{HOME}/.{cache,config}/dconf/user rw,
+
+  # Minecraft's area
+  owner @{HOME}/.minecraft/ rw,
+  owner @{HOME}/.minecraft/** rwk,
+  owner @{HOME}/.minecraft/bin/natives/lib*.so m,
+  owner @{HOME}/.minecraft/versions/[0-9]*/[0-9]*-natives-[0-9]*/*.so m,
+  # don't allow writes to where we load .so files. This will break when the
+  # lwjgl stuff tries to update
+  audit deny @{HOME}/.minecraft/bin/natives/lib*.so w,
+  # disable the above and enable this when upgrading
+  #audit @{HOME}/.minecraft/bin/natives/lib*.so w,
+
+  dbus (receive, send)
+       bus=session
+       peer=(name=org.freedesktop.DBus),
+
+# These I don't care if minecraft doesn't have them
+#  dbus bus=session interface=org.gtk.vfs.MountTracker (receive, send),
+  # Without this, I get:
+  # Dec 20 21:52:06 localhost dbus[8298]: apparmor="DENIED"
+  # operation="dbus_method_return"  bus="session" dest=":1.226" mask="send"
+  # pid=10280 profile="minecraft" tpid=8311 target="unconfined"
+#  dbus bus=session address=:1.* send,
+# gtk2/gvfs gtk_show_uri()
+dbus (send)
+    bus=session
+    path=/org/gtk/vfs/mounttracker
+    interface=org.gtk.vfs.MountTracker
+    member=ListMountableInfo,
+dbus (send)
+    bus=session
+    path=/org/gtk/vfs/mounttracker
+    interface=org.gtk.vfs.MountTracker
+    member=LookupMount,
+/usr/lib/firefox/firefox.sh Px -> /usr/lib/firefox/firefox{,*[^s][^h]},
+}

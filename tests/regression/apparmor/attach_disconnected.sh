@@ -30,6 +30,8 @@ att_dis_client=$pwd/attach_disconnected
 
 . "$bin/mount.inc"
 
+requires_kernel_features network/af_unix
+
 attach_disconnected_cleanup() {
 	if [ ! -z "$loop_device" ]; then
 		losetup -d $loop_device

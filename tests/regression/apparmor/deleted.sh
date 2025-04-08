@@ -87,6 +87,8 @@ EOM
 # lets just be on the safe side
 rm -f ${socket}
 
+# these tests require af_unix support
+if [ "$(kernel_features network/af_unix)" = "true" -a "$(parser_supports 'unix,')" = "true" ]; then
 # PASS - unconfined client
 
 genprofile $af_unix $file:$okperm $socket:rw $fd_client:ux
@@ -130,3 +132,6 @@ runchecktest "fd passing; confined client w/ w only" fail $file $fd_client $sock
 sleep 1
 rm -f ${socket}
 
+else
+    echo "    Required feature 'network/af_unix' not available. Skipping subset of tests that require network/af_unix ..."
+fi

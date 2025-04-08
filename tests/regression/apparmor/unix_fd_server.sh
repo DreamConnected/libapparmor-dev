@@ -27,10 +27,12 @@ okperm=rw
 badperm=w
 af_unix=""
 
-if [ "$(kernel_features network_v8)" = "true" -a "$(parser_supports 'unix,')" = "true" ]; then
+if [ "$(kernel_features network/af_unix)" = "true" -a "$(parser_supports 'unix,')" = "true" ]; then
 	af_unix="unix:create"
-elif [ "$(kernel_features network/af_unix)" = "true" -a "$(parser_supports 'unix,')" = "true" ]; then
-	af_unix="unix:create"
+elif [ "$(kernel_features network_v8)" = "true" -a "$(parser_supports 'unix,')" = "true" ]; then
+	# actual set needed close to just full
+	# af_unix="unix,"
+	af_unix="unix:(create,bind,listen,accept,connect,rw)"
 fi
 
 # Content generated with:

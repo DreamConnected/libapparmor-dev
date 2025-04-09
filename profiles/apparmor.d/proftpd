@@ -42,7 +42,8 @@ profile proftpd /usr/sbin/proftpd {
   owner /var/log/xferlog w,
 
   # Need to be able to write to where FTP is configured
-  owner @{HOME}/** rw,
+  @{HOME}/** rw,
+  @{HOME} rw,
   /srv/ftp/** rw,
   /srv/www/** rw,
   /var/ftp/** rw,

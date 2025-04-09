@@ -12,7 +12,9 @@ profile proftpd /usr/sbin/proftpd {
 
   capability setgid,
   capability setuid,
+  # Required for logging user login attempts
   capability audit_write,
+  # Required for chrooting ftp users when accessing files (Used by DefaultRoot in proftpd.conf)
   capability sys_chroot,
 
   mqueue getattr type=posix /,

@@ -13,7 +13,7 @@ profile unprivileged_userns {
      allow network,
      allow signal,
      allow dbus,
-     allow file rwlkm /**,
+     allow file rwlkm /{,**},
      allow unix,
      allow mqueue,
      allow ptrace,

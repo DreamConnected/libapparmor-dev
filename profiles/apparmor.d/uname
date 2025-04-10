@@ -8,9 +8,11 @@
 # vim: ft=apparmor
 #
 
+abi <abi/4.0>
 include <tunables/global>
 
 profile uname /usr/bin/uname {
   include <abstractions/base>
-}
 
+  include if exists <local/uname>
+}

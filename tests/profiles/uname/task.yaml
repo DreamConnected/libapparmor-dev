@@ -1,0 +1,6 @@
+summary: smoke test for the uname profile
+execute: |
+    # uname works (this is a very basic test).
+    uname -a
+    # The profile is attached based on the program path.
+    "$SPREAD_PATH"/tests/bin/actual-profile-of uname | MATCH 'uname \(enforce\)'

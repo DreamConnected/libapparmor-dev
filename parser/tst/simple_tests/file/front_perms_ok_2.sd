@@ -1,0 +1,12 @@
+#
+#=DESCRIPTION perms before pathname with unsafe keyword
+#=EXRESULT PASS
+#
+/usr/bin/foo {
+   unsafe px /foo6,
+   unsafe Px /foo7,
+   unsafe ux /foo8,
+   unsafe Ux /foo9,
+   unsafe ix /foo10,
+
+}

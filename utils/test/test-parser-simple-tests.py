@@ -248,11 +248,11 @@ unknown_line = (
     'file/ok_other_3.sd',
 
     # 'unsafe' keyword
-    'file/file/front_perms_ok_1.sd',
-    'file/front_perms_ok_1.sd',
+    'file/file/front_perms_ok_2.sd',
+    'file/front_perms_ok_2.sd',
     'xtrans/simple_ok_cx_1.sd',
 
-    # permissions before path and owner / audit {...} blocks
+    # owner / audit {...} blocks
     'file/file/owner/ok_1.sd',
     'file/owner/ok_1.sd',
     'profile/entry_mods_audit_ok1.sd',

@@ -1,0 +1,10 @@
+#
+#=DESCRIPTION abi testing - abi default special case
+#=EXRESULT PASS
+#
+
+abi <default>,
+
+/does/not/exist {
+
+}

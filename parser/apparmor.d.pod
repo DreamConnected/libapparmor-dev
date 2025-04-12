@@ -80,7 +80,7 @@ B<ALIAS RULE> = 'alias' I<ABS PATH> '-E<gt>' I<REWRITTEN ABS PATH> ','
 
 B<INCLUDE> = ( '#include' | 'include' ) [ 'if exists' ] ( I<ABS PATH> | I<MAGIC PATH> )
 
-B<ABI> = ( 'abi' ) ( I<ABS PATH> | I<MAGIC PATH> ) ','
+B<ABI> = ( 'abi' ) ( I<ABS PATH> | I<MAGIC PATH> | '<kernel>' | '<default>' ) ','
 
 B<ABS PATH> = '"' path '"' (the path is passed to open(2))
 
@@ -2126,6 +2126,8 @@ kernel supports, drop the rule completely, or fail the compile.
 If the policy abi is specified as B<kernel> then the running kernel's
 abi will be used. This should never be used in shipped policy as it
 can cause system breakage when a new kernel is installed.
+
+The special abi B<default> is equivalent to not specifying an ABI.
 
 =head3 ABI compatibility with AppArmor 2.x
 

@@ -1,0 +1,10 @@
+#
+#=DESCRIPTION abi testing - abi kernel special case
+#=EXRESULT PASS
+#
+
+abi <kernel>,
+
+/does/not/exist {
+
+}

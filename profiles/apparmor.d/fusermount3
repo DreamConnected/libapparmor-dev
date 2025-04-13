@@ -21,12 +21,14 @@ profile fusermount3 /usr/bin/fusermount3 {
   mount fstype=@{fuse_types} options=(nosuid,nodev,ro) -> @{run}/user/@{uid}/**/,
   mount fstype=@{fuse_types} options=(nosuid,nodev,ro) -> /media/**/,
   mount fstype=@{fuse_types} options=(nosuid,nodev,ro) -> /tmp/**/,
+  mount fstype=@{fuse_types} options=(nosuid,nodev,ro) -> /cvmfs/**/,
 
   umount @{HOME}/**/,
   umount /mnt/{,**/},
   umount @{run}/user/@{uid}/**/,
   umount /media/**/,
   umount /tmp/**/,
+  umount /cvmfs/**/,
 
   # Flatpak's default cache directory where it mounts a revokefs-fuse
   mount fstype=fuse options=(nosuid,nodev,rw) /dev/fuse -> /var/tmp/flatpak-cache-*/**/,

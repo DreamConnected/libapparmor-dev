@@ -1,11 +1,29 @@
-# This profile allows everything and only exists to give the
-# application a name instead of having the label "unconfined"
-
 abi <abi/4.0>,
+
 include <tunables/global>
 
-profile lc-compliance /usr/bin/lc-compliance flags=(unconfined) {
-  userns,
+profile lc-compliance /usr/bin/lc-compliance flags=(complain) {
+  include <abstractions/base>
+  include <abstractions/video>
+
+  /usr/bin/lc-compliance r,
+  # TODO: see if anything breaks when removing this
+  /sys/devices/system/node/ r,
+
+  network (create,bind,getopt,setopt,getattr) netlink raw,
+  /sys/{bus,class}/ r,
+  /sys/bus/media/devices/ r,
+
+  /sys/devices/pci[0-9]*/**/usb[0-9]/**/{uevent,idProduct,idVendor,removable} r,
+  # /sys/devices/LNXSYSTM:0/LNXSYBUS:00/PNP0A08:00/device:16/device:2c/device:2d/device:2e/path
+  /sys/devices/**/device:*/**/path r,
+  /dev/media[0-9]* rwk,
+  /run/udev/data/c81:[0-9]* r,
+  # The media character device major num is dynamically assigned
+  # Range is either 234-254 or 384-511
+  /run/udev/data/c{23[4-9],24[0-9],25[0-4],38[4-9],39[0-9],4[0-9][0-9],50[0-9],51[0-1]}:[0-9]* r,
+
+  /dev/shm/lttng-ust-wait-* rw,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/lc-compliance>

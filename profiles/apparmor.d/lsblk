@@ -18,6 +18,8 @@ profile lsblk /usr/bin/lsblk {
   include <abstractions/consoles>
   include <abstractions/nameservice-strict>
 
+  /usr/bin/lsblk mr,
+
   @{sys}/block/ r,
   @{sys}/class/block/ r,
   @{sys}/dev/block/ r,
@@ -28,6 +30,9 @@ profile lsblk /usr/bin/lsblk {
 
   # Needed for disks over network e.g. Hyper-V VMs (including Azure), IBM Power, ...
   @{sys}/devices/**/host@{int}/** r,
+
+  # Needed for channel subsystem for IBM Z
+  @{sys}/devices/css[0-9]/** r,
 
   /dev/sr[0-9]* rk,
 

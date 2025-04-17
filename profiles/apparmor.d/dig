@@ -30,8 +30,11 @@ profile dig /usr/bin/dig {
   owner r @{HOME}/.digrc,
 
   # -f, -k, +tls-ca, +tls-certfile, +tls-keyfile 
-  owner r @{HOME}/*,
+  owner r @{HOME}/**,
+  deny r @{HOME}/.**,
+  priority=1 owner rw @{HOME}/.dig/**,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/dig>
 }
+

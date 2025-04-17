@@ -27,7 +27,7 @@ profile dig /usr/bin/dig {
   network (create,bind,getattr,send,receive) netlink raw,
 
   file r /proc/version_signature,
-  owner r @{HOME}/.digrc,
+  priority=1 owner r @{HOME}/.digrc,
 
   # -f, -k, +tls-ca, +tls-certfile, +tls-keyfile 
   owner r @{HOME}/**,

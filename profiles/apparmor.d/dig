@@ -23,6 +23,9 @@ profile dig /usr/bin/dig {
   network inet stream,
   network inet6 stream,
 
+  capability dac_override,
+  capability dac_read_search,
+
   # +trace
   network (create,bind,getattr,send,receive) netlink raw,
 

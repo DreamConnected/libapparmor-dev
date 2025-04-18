@@ -133,7 +133,7 @@ class UnixRule(BaseRule):
         rule_conds = print_dict_values(self.rule_conds, self.ALL)
         local_expr = print_dict_values(self.local_expr, self.ALL)
         peer_expr = print_dict_values(self.peer_expr, self.ALL, 'peer')
-        return f'{space}unix{self.modifiers_str()}{accesses}{rule_conds}{local_expr}{peer_expr},{self.comment}'
+        return f'{space}{self.modifiers_str()}unix{accesses}{rule_conds}{local_expr}{peer_expr},{self.comment}'
 
     def _is_covered_localvars(self, other_rule):
         if not self._is_covered_list(self.accesses, self.all_accesses, other_rule.accesses, other_rule.all_accesses, 'accesses'):

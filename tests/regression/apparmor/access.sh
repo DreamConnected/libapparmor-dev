@@ -56,6 +56,17 @@ runchecktest "ACCESS file r (wx)" xfail $file r
 runchecktest "ACCESS file rx (wx)" xfail $file rx
 runchecktest "ACCESS file rwx (wx)" xfail $file rwx
 
+# access(2) is currently not mediated so these will still pass
+genprofile $file:$rperm
+runchecktest "ACCESS file w (r)" xfail $file r
+runchecktest "ACCESS file rx (r)" xfail $file rx
+
+# blank profile that should block access to the file
+genprofile
+runchecktest "ACCESS file r (none)" xfail $file r
+runchecktest "ACCESS file rx (none)" xfail $file rx
+runchecktest "ACCESS file rwx (none)" xfail $file rwx
+
 # wx are not necessary for directory write or traverse
 # only r is required
 mkdir $dir

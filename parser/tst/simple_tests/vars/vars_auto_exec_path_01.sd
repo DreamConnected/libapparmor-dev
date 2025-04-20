@@ -1,0 +1,9 @@
+#=DESCRIPTION reference auto exec_path variable in rules
+#=EXRESULT PASS
+
+profile /a/test/profile {
+  /a/test/profile rix,
+
+  @{exec_path} rwk,
+
+}

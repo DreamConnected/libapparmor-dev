@@ -1,0 +1,9 @@
+#=DESCRIPTION reference auto attach_path variable in rules
+#=EXRESULT PASS
+
+profile /a/test/profile {
+  /a/test/profile rix,
+
+  @{attach_path} rwk,
+
+}

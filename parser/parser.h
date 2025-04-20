@@ -294,9 +294,10 @@ do {						\
 	version;					\
 })
 
-/* The parser fills this variable in automatically */
+/* The parser fills these variable in automatically */
 #define PROFILE_NAME_VARIABLE "profile_name"
-
+#define PROFILE_ATTACH_VAR "attach_path"
+#define PROFILE_EXEC_VAR "exec_path"
 
 /* from parser_common.c */
 extern uint32_t policy_version;
@@ -395,6 +396,7 @@ extern const char *basedir;
 
 #define glob_default	0
 #define glob_null	1
+const char *local_name(const char *name);
 extern pattern_t convert_aaregex_to_pcre(const char *aare, int anchor, int glob,
 					 std::string& pcre, int *first_re_pos);
 extern bool build_list_val_expr(std::string& buffer, struct value_list *list);

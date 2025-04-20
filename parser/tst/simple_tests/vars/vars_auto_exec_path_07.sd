@@ -1,0 +1,10 @@
+#=DESCRIPTION reference auto exec_path variable in child
+#=EXRESULT PASS
+
+# no attachment in parent
+profile top_profile {
+
+  profile /a/*/c {
+    @{exec_path}/** rw,
+  }
+}

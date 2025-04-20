@@ -1,0 +1,9 @@
+#=DESCRIPTION reference auto attach_path from profile
+#=EXRESULT PASS
+
+/test/profile {
+  /test/profile rix,
+
+  /run/@{attach_path}/tmp rwk,
+
+}

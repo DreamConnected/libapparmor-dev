@@ -295,8 +295,22 @@ static int process_variables_in_name(Profile &prof)
 	 * setup
 	 */
 	int error = expand_entry_variables(&prof.name);
-	if (!error && prof.attachment)
-		error = expand_entry_variables(&prof.attachment);
+	if (!error) {
+		if (prof.attachment)
+			error = expand_entry_variables(&prof.attachment);
+		else if (prof.name[0] == '/') {
+			/* had to wait to do this until after processing the
+			 * variables in the profile name
+			 */
+			prof.attachment = strdup(local_name(prof.name));
+			if (!prof.attachment) {
+				errno = ENOMEM;
+				return -1;
+			}
+			filter_slashes(prof.attachment);
+		}
+	}
+
 	if (!error && prof.flags.disconnected_path)
 		error = process_variable_in_attach_disconnected(&prof.flags.disconnected_path);
 	if (!error && prof.flags.disconnected_ipc)
@@ -331,23 +345,59 @@ int process_profile_variables(Profile *prof)
 	 */
 	error = process_variables_in_name(*prof);
 
-	if (!error) {
-		/* escape profile name elements that could be interpreted
-		 * as regular expressions.
+	if (error)
+		goto out;
+
+	/* escape profile name elements that could be interpreted as
+	 * regular expressions.
+	 */
+	error = new_set_var(PROFILE_NAME_VARIABLE, escape_re(prof->get_name(false)).c_str());
+	if (error)
+		goto out;
+
+	if (prof->attachment) {
+		/* IF we didn't want a path based profile name to generate
+		 * an attachment. The code could be moved here. Add the
+		 * output fed into the vars directly instead of setting
+		 * the attachment.
 		 */
-		error = new_set_var(PROFILE_NAME_VARIABLE, escape_re(prof->get_name(false)).c_str());
+		/* need to take into account alias, but not yet */
+		error = new_set_var(PROFILE_ATTACH_VAR, prof->attachment);
+		if (error)
+			goto cleanup_name;
+		/* update to use kernel vars if available */
+		error = new_set_var(PROFILE_EXEC_VAR, prof->attachment);
+		if (error)
+			goto cleanup_attach;
 	}
 
-	if (!error)
-		error = process_variables_in_entries(prof->entries);
+	error = process_variables_in_entries(prof->entries);
+	if (error)
+		goto cleanup;
+	error = process_variables_in_rules(*prof);
 
-	if (!error)
-		error = process_variables_in_rules(*prof);
-
+cleanup:
+	/* ideally these variables would be local scoped and we would not
+	 * have to clean them up here, but unfortunately variables
+	 * don't support that yet.
+	 */
+	if (prof->attachment) {
+		rc = delete_set_var(PROFILE_EXEC_VAR);
+		if (!error)
+			error = rc;
+	}
+cleanup_attach:
+	if (prof->attachment) {
+		rc = delete_set_var(PROFILE_ATTACH_VAR);
+		if (!error)
+			error = rc;
+	}
+cleanup_name:
 	rc = delete_set_var(PROFILE_NAME_VARIABLE);
 	if (!error)
 		error = rc;
 
+out:
 	return error;
 }
 

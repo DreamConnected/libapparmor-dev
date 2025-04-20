@@ -1,0 +1,9 @@
+#=DESCRIPTION reference auto exec_path from profile
+#=EXRESULT PASS
+
+/test/profile {
+  /test/profile rix,
+
+  /run/@{exec_path}/tmp rwk,
+
+}

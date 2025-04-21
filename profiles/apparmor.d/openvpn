@@ -98,29 +98,28 @@ profile openvpn /usr/sbin/openvpn flags=(attach_disconnected) {
     network (bind,create,getattr,getopt,receive,send,setopt) netlink raw,
     unix (bind) type=stream addr=@[a-f0-9]*/bus/resolvconf/system,
 
-    file mrix /usr/bin/resolvectl,
-    file mrix /usr/bin/sort,
+    file mrix /{,usr/}bin/resolvectl,
+    file mrix /{,usr/}bin/sort,
+    file mrix /{,usr/}bin/bash,
 
-    owner r /etc/openvpn/update-resolv-conf,
-    owner rw /run/dbus/system_bus_socket,
-    owner mr /usr/bin/bash,
-
-    dbus (send) bus=system path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member="Hello",
-    dbus (send) bus="system" path="/org/freedesktop/resolve1" interface="org.freedesktop.resolve1.Manager" member="SetLinkDNSEx",
-    dbus (send) bus="system" path="/org/freedesktop/resolve1" interface="org.freedesktop.resolve1.Manager" member="SetLinkDomains",
-    dbus (send) bus="system" path="/org/freedesktop/resolve1" interface="org.freedesktop.resolve1.Manager" member="RevertLink",
-
-    file r /etc/openvpn/update-resolv-conf.sh,
-
-    file rix /bin/sh,
-    file rix /sbin/resolvconf,
+    file rix /{,usr/}bin/sh,
+    file rix /{,usr/}sbin/resolvconf,
     file rix /{,usr/}bin/cut,
     file rix /{,usr/}bin/ip,
     file rix /{,usr/}bin/which{,.debianutils},
     file rix /{,usr/}bin/xtables-nft-multi,
 
+    file r /etc/openvpn/update-resolv-conf.sh,
     file r /etc/iproute2/rt_tables,
     file r /etc/iproute2/rt_tables.d/,
+
+    owner r /etc/openvpn/update-resolv-conf,
+    owner rw /run/dbus/system_bus_socket,
+
+    dbus (send) bus=system path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member="Hello",
+    dbus (send) bus="system" path="/org/freedesktop/resolve1" interface="org.freedesktop.resolve1.Manager" member="SetLinkDNSEx",
+    dbus (send) bus="system" path="/org/freedesktop/resolve1" interface="org.freedesktop.resolve1.Manager" member="SetLinkDomains",
+    dbus (send) bus="system" path="/org/freedesktop/resolve1" interface="org.freedesktop.resolve1.Manager" member="RevertLink",
   }
 
   # Site-specific additions and overrides. See local/README for details.

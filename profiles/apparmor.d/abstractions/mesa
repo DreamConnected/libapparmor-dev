@@ -5,6 +5,8 @@
 
   # System files
   /dev/dri/ r, # libGLX_mesa.so calls drmGetDevice2()
+  /dev/udmabuf rw,
+  /usr/share/libdrm/amdgpu.ids r,
 
   # Needed to check if the kernel supports the i915 perf interface
   # (src/intel/perf/gen_perf.c, load_oa_metrics())
@@ -15,7 +17,7 @@
   # User files
   owner @{HOME}/.cache/ w, # if user clears all caches
   owner @{HOME}/.cache/mesa_shader_cache/ rw,
-  owner @{HOME}/.cache/mesa_shader_cache/index rw,
+  owner @{HOME}/.cache/mesa_shader_cache/index mrwk,
   owner @{HOME}/.cache/mesa_shader_cache/[a-f0-9][a-f0-9]/ rw,
   owner @{HOME}/.cache/mesa_shader_cache/[a-f0-9][a-f0-9]/[0-9a-f]* rw,
   owner @{HOME}/.cache/mesa_shader_cache/[a-f0-9][a-f0-9]/[0-9a-f]*.tmp rwk,
@@ -23,8 +25,8 @@
   owner @{HOME}/.cache/mesa_shader_cache_db/ rw,
   owner @{HOME}/.cache/mesa_shader_cache_db/index rwk,
   owner @{HOME}/.cache/mesa_shader_cache_db/part*/ rw,
-  owner @{HOME}/.cache/mesa_shader_cache_db/part*/mesa_cache.db rwk,
-  owner @{HOME}/.cache/mesa_shader_cache_db/part*/mesa_cache.idx rwk,
+  owner @{HOME}/.cache/mesa_shader_cache_db/part*/mesa_cache.db rwkl,
+  owner @{HOME}/.cache/mesa_shader_cache_db/part*/mesa_cache.idx rwkl,
 
   # Fallback location when @{HOME}/.cache is not available
   owner /tmp/Temp-[a-f0-9]*/mesa_shader_cache/ rw,
@@ -32,6 +34,8 @@
   owner /tmp/Temp-[a-f0-9]*/mesa_shader_cache/[a-f0-9][a-f0-9]/ rw,
   owner /tmp/Temp-[a-f0-9]*/mesa_shader_cache/[a-f0-9][a-f0-9]/[0-9a-f]* rw,
   owner /tmp/Temp-[a-f0-9]*/mesa_shader_cache/[a-f0-9][a-f0-9]/[0-9a-f]*.tmp rwk,
+
+  owner @{HOME}/.cache/radv_builtin_shaders/index rw,
 
   # Include additions to the abstraction
   include if exists <abstractions/mesa.d>

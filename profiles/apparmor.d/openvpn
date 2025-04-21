@@ -34,7 +34,7 @@ profile openvpn /usr/sbin/openvpn flags=(attach_disconnected) {
   network inet6 stream,
 
   # OpenVPN configuration, key files and unbreak --genkey feature
-  file w @{etc_rw}/openvpn/{,**},
+  file rw @{etc_rw}/openvpn/{,**},
   file mr /usr/sbin/openvpn,
 
   # Allow OpenVPN to read keys from most user places while preventing an
@@ -87,7 +87,7 @@ profile openvpn /usr/sbin/openvpn flags=(attach_disconnected) {
   file rCx /etc/openvpn/update-resolv-conf{,.sh} -> update-resolv,
 
   # Sub-profile for /etc/openvpn/update-resolv-conf
-  profile update-resolv {
+  profile update-resolv flags=(attach_disconnected) {
     include <abstractions/base>
     include <abstractions/consoles>
     include <abstractions/nameservice-strict>
@@ -107,6 +107,8 @@ profile openvpn /usr/sbin/openvpn flags=(attach_disconnected) {
 
     dbus (send) bus=system path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member="Hello",
     dbus (send) bus="system" path="/org/freedesktop/resolve1" interface="org.freedesktop.resolve1.Manager" member="SetLinkDNSEx",
+    dbus (send) bus="system" path="/org/freedesktop/resolve1" interface="org.freedesktop.resolve1.Manager" member="SetLinkDomains",
+    dbus (send) bus="system" path="/org/freedesktop/resolve1" interface="org.freedesktop.resolve1.Manager" member="RevertLink",
 
     file r /etc/openvpn/update-resolv-conf.sh,
 

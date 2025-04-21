@@ -61,6 +61,9 @@
   @{PROC}/@{pid}/net/psched r,
   @{etc_ro}/libnl-*/classid r,
 
+  # user/group resolution through kanidm
+  /etc/kanidm/unixd r,
+
   # nis
   include <abstractions/nis>
 

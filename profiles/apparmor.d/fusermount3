@@ -4,7 +4,7 @@ include <tunables/global>
 @{fuse_types} = {fuse,fuse.*,fuseblk,fusectl}
 profile fusermount3 /usr/bin/fusermount3 {
   include <abstractions/base>
-  include <abstractions/nameservice-strict>
+  include <abstractions/nameservice>
 
   capability sys_admin,
   capability dac_read_search,

@@ -33,11 +33,8 @@ class BooleanRule(BaseRule):
         super().__init__(audit=audit, deny=deny, allow_keyword=allow_keyword,
                          comment=comment, log_event=log_event)
 
-        # boolean variables don't support audit or deny
-        if audit:
-            raise AppArmorBug('Attempt to initialize %s with audit flag' % self.__class__.__name__)
-        if deny:
-            raise AppArmorBug('Attempt to initialize %s with deny flag' % self.__class__.__name__)
+        # boolean variables don't support allow keyword, audit or deny
+        self.ensure_modifiers_not_supported()
 
         if not isinstance(varname, str):
             raise AppArmorBug('Passed unknown type for boolean variable to %s: %s' % (self.__class__.__name__, varname))

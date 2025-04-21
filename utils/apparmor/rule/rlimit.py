@@ -54,8 +54,8 @@ class RlimitRule(BaseRule):
         super().__init__(audit=audit, deny=deny, allow_keyword=allow_keyword,
                          comment=comment, log_event=log_event)
 
-        if audit or deny or allow_keyword:
-            raise AppArmorBug('The audit, allow or deny keywords are not allowed in rlimit rules.')
+        # rlimit rules don't support allow keyword, audit or deny
+        self.ensure_modifiers_not_supported()
 
         if isinstance(rlimit, str):
             if rlimit in rlimit_all:

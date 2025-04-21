@@ -334,6 +334,14 @@ class BaseRule(metaclass=ABCMeta):
 
         return '%s%s' % (auditstr, allowstr)
 
+    def ensure_modifiers_not_supported(self):
+        if self.audit:
+            raise AppArmorBug('Attempt to initialize %s with audit flag' % self.__class__.__name__)
+        if self.deny:
+            raise AppArmorBug('Attempt to initialize %s with deny flag' % self.__class__.__name__)
+        if self.allow_keyword:
+            raise AppArmorBug('Attempt to initialize %s with allow keyword' % self.__class__.__name__)
+
 
 class BaseRuleset:
     """Base class to handle and store a collection of rules"""

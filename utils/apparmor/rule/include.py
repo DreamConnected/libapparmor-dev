@@ -33,11 +33,8 @@ class IncludeRule(BaseRule):
         super().__init__(audit=audit, deny=deny, allow_keyword=allow_keyword,
                          comment=comment, log_event=log_event)
 
-        # include doesn't support audit or deny
-        if audit:
-            raise AppArmorBug('Attempt to initialize %s with audit flag' % self.__class__.__name__)
-        if deny:
-            raise AppArmorBug('Attempt to initialize %s with deny flag' % self.__class__.__name__)
+        # include doesn't support allow keyword, audit or deny
+        self.ensure_modifiers_not_supported()
 
         if not isinstance(ifexists, bool):
             raise AppArmorBug('Passed unknown type for ifexists to %s: %s' % (self.__class__.__name__, ifexists))

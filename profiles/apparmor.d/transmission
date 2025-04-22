@@ -5,7 +5,7 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile transmission-daemon /usr/bin/transmission-daemon flags=(complain,attach_disconnected) {
+profile transmission-daemon /usr/bin/transmission-daemon flags=(attach_disconnected) {
   # Don't use abstractions/transmission-common here, as the
   # access needed is narrower than the user applications
   include <abstractions/base>
@@ -38,7 +38,7 @@ profile transmission-daemon /usr/bin/transmission-daemon flags=(complain,attach_
   include if exists <local/transmission-daemon>
 }
 
-profile transmission-cli /usr/bin/transmission-cli flags=(complain) {
+profile transmission-cli /usr/bin/transmission-cli {
   include <abstractions/transmission-common>
   include <abstractions/consoles>
 
@@ -47,7 +47,7 @@ profile transmission-cli /usr/bin/transmission-cli flags=(complain) {
   include if exists <local/transmission-cli>
 }
 
-profile transmission-gtk /usr/bin/transmission-gtk flags=(complain,attach_disconnected) {
+profile transmission-gtk /usr/bin/transmission-gtk flags=(attach_disconnected) {
   include <abstractions/transmission-common>
   include <abstractions/dbus-session-strict>
   include <abstractions/dconf>
@@ -60,7 +60,7 @@ profile transmission-gtk /usr/bin/transmission-gtk flags=(complain,attach_discon
   include if exists <local/transmission-gtk>
 }
 
-profile transmission-qt /usr/bin/transmission-qt flags=(complain) {
+profile transmission-qt /usr/bin/transmission-qt {
   include <abstractions/transmission-common>
   include <abstractions/dbus-accessibility-strict>
   include <abstractions/dbus-network-manager-strict>

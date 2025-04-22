@@ -20,7 +20,7 @@ include <tunables/global>
 profile chromium_browser /usr/lib/@{chromium}/@{chromium} flags=(attach_disconnected) {
   include <abstractions/audio>
   include <abstractions/cups-client>
-  include <abstractions/dbus-session>
+  include <abstractions/dbus-session-strict>
   include <abstractions/dbus-strict>
   include <abstractions/fonts>
   include <abstractions/gnome>

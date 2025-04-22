@@ -18,5 +18,8 @@
   /usr/bin/dbus-launch ix,
   dbus bus=session,
 
+  # binding a service should always be explicit in a profile
+  priority=-999 deny dbus bind,
+
   # Include additions to the abstraction
   include if exists <abstractions/dbus-session.d>

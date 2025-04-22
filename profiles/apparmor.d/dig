@@ -32,11 +32,9 @@ profile dig /usr/bin/dig {
   file r /proc/version_signature,
 
   # -f, -k, +tls-ca, +tls-certfile, +tls-keyfile 
-  owner r @{HOME}/**,
-  deny r @{HOME}/.**,
-  
-  priority=1 owner rw @{HOME}/.dig/**,
-  priority=1 owner r @{HOME}/.digrc,
+  file r @{HOME}/[^.]**,
+  priority=1 file rw @{HOME}/.dig/**,
+  priority=1 file r @{HOME}/.digrc,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/dig>

@@ -28,10 +28,10 @@ class IncludeRule(BaseRule):
     _match_re = RE_INCLUDE
 
     def __init__(self, path, ifexists, ismagic, audit=False, deny=False, allow_keyword=False,
-                 comment='', log_event=None):
+                 comment='', log_event=None, priority=None):
 
         super().__init__(audit=audit, deny=deny, allow_keyword=allow_keyword,
-                         comment=comment, log_event=log_event)
+                         comment=comment, log_event=log_event, priority=priority)
 
         # include doesn't support audit or deny
         if audit:
@@ -62,7 +62,7 @@ class IncludeRule(BaseRule):
         path, ifexists, ismagic = re_match_include_parse(raw_rule, cls.rule_name)
 
         return cls(path, ifexists, ismagic,
-                   audit=False, deny=False, allow_keyword=False, comment=comment)
+                   audit=False, deny=False, allow_keyword=False, comment=comment, priority=None)
 
     def get_clean(self, depth=0):
         """return rule (in clean/default formatting)"""

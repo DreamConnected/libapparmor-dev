@@ -21,7 +21,7 @@ from apparmor.translations import init_translation
 _ = init_translation()
 
 # Profile parsing Regex
-RE_AUDIT_DENY = r'^\s*(?P<audit>audit\s+)?(?P<allow>allow\s+|deny\s+)?'  # line start, optionally: leading whitespace, <audit> and <allow>/deny
+RE_AUDIT_DENY = r'^\s*(priority\s?=\s?(?P<priority>[+-]?[0-9]*)\s+)?(?P<audit>audit\s+)?(?P<allow>allow\s+|deny\s+)?'  # line start, optionally: leading whitespace, <audit> and <allow>/deny
 RE_EOL = r'\s*(?P<comment>#.*?)?\s*$'  # optional whitespace, optional <comment>, optional whitespace, end of the line
 RE_COMMA_EOL = r'\s*,' + RE_EOL  # optional whitespace, comma + RE_EOL
 

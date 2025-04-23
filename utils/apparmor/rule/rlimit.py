@@ -49,10 +49,10 @@ class RlimitRule(BaseRule):
     _match_re = RE_PROFILE_RLIMIT
 
     def __init__(self, rlimit, value, audit=False, deny=False, allow_keyword=False,
-                 comment='', log_event=None):
+                 comment='', log_event=None, priority=None):
 
         super().__init__(audit=audit, deny=deny, allow_keyword=allow_keyword,
-                         comment=comment, log_event=log_event)
+                         comment=comment, log_event=log_event, priority=priority)
 
         if audit or deny or allow_keyword:
             raise AppArmorBug('The audit, allow or deny keywords are not allowed in rlimit rules.')

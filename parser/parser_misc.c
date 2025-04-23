@@ -136,6 +136,11 @@ static struct keyword_table keyword_table[] = {
 	{NULL, 0}
 };
 
+/* glibc maps bsd ofile to nofile but musl does not. */
+#ifndef RLIMIT_OFILE
+#define RLIMIT_OFILE RLIMIT_NOFILE
+#endif
+
 static struct keyword_table rlimit_table[] = {
 	{"cpu",			RLIMIT_CPU},
 	{"fsize",		RLIMIT_FSIZE},
@@ -144,9 +149,7 @@ static struct keyword_table rlimit_table[] = {
 	{"core",		RLIMIT_CORE},
 	{"rss",			RLIMIT_RSS},
 	{"nofile",		RLIMIT_NOFILE},
-#ifdef RLIMIT_OFILE
 	{"ofile",		RLIMIT_OFILE},
-#endif
 	{"as",			RLIMIT_AS},
 	{"nproc",		RLIMIT_NPROC},
 	{"memlock",		RLIMIT_MEMLOCK},

@@ -15,6 +15,7 @@
   owner @{HOME}/.config/ibus/ r,
   owner @{HOME}/.config/ibus/bus/ rw,
   owner @{HOME}/.config/ibus/bus/* rw,
+  owner @{HOME}/.cache/ibus/dbus-* rw,
 
   # abstract path in ibus >= 1.5.22 uses $XDG_CACHE_HOME (ie, @{HOME}/.cache)
   # This should use this, but due to LP: #1856738 we cannot

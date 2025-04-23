@@ -33,7 +33,7 @@ profile dig /usr/bin/dig {
 
   # -f, -k, +tls-ca, +tls-certfile, +tls-keyfile 
   file r @{HOME}/[^.]**,
-  file rw @{HOME}/.dig/**,
+  owner rw @{HOME}/.dig/**,
   
   ## denied by private-files-strict
   priority=1 owner r @{HOME}/.digrc,

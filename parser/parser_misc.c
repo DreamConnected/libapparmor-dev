@@ -134,6 +134,11 @@ static const unordered_map<string, int> keyword_table = {
 	{"priority",		TOK_PRIORITY},
 };
 
+/* glibc maps bsd ofile to nofile but musl does not. */
+#ifndef RLIMIT_OFILE
+#define RLIMIT_OFILE RLIMIT_NOFILE
+#endif
+
 static const unordered_map<string, int> rlimit_table = {
 	{"cpu",			RLIMIT_CPU},
 	{"fsize",		RLIMIT_FSIZE},
@@ -142,9 +147,7 @@ static const unordered_map<string, int> rlimit_table = {
 	{"core",		RLIMIT_CORE},
 	{"rss",			RLIMIT_RSS},
 	{"nofile",		RLIMIT_NOFILE},
-#ifdef RLIMIT_OFILE
 	{"ofile",		RLIMIT_OFILE},
-#endif
 	{"as",			RLIMIT_AS},
 	{"nproc",		RLIMIT_NPROC},
 	{"memlock",		RLIMIT_MEMLOCK},

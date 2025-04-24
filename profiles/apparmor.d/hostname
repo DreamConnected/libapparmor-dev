@@ -13,12 +13,16 @@ abi <abi/4.0>,
 include <tunables/global>
 
 @{BIN}={/usr,}/bin
+@{EXEC}={hostname,domainname,ypdomainname,nisdomainname,dnsdomainname}
 
-profile hostname @{BIN}/{hostname,domainname,ypdomainname,nisdomainname,dnsdomainname} {
+profile hostname @{BIN}/@{EXEC} {
   include <abstractions/base>
   include <abstractions/nameservice-strict>
 
+  # set hostname, -F
   capability sys_admin,
+  
+  @{BIN}/@{EXEC} r,
 
   network netlink raw,
   network inet dgram,

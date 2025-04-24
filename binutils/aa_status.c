@@ -1038,7 +1038,7 @@ int main(int argc, char **argv)
 	 * have policy associated.
 	 */
 	ret = get_profiles(fp, &profiles, &nprofiles);
-	if (ret != 0) {
+	if (ret != 0 && !opt_json) {
 		eprintf(_("Failed to get profiles: %d....\n"), ret);
 		goto out;
 	}

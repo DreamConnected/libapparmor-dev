@@ -15,7 +15,7 @@ profile openvpn /usr/sbin/openvpn flags=(attach_disconnected) {
   include <abstractions/base>
   include <abstractions/consoles>
   include <abstractions/openssl>
-  include <abstractions/nameservice-strict>
+  include <abstractions/nameservice>
   include <abstractions/private-files-strict>
 
   capability dac_read_search,
@@ -117,9 +117,7 @@ profile openvpn /usr/sbin/openvpn flags=(attach_disconnected) {
     owner rw /run/dbus/system_bus_socket,
 
     dbus (send) bus=system path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member="Hello",
-    dbus (send) bus="system" path="/org/freedesktop/resolve1" interface="org.freedesktop.resolve1.Manager" member="SetLinkDNSEx",
-    dbus (send) bus="system" path="/org/freedesktop/resolve1" interface="org.freedesktop.resolve1.Manager" member="SetLinkDomains",
-    dbus (send) bus="system" path="/org/freedesktop/resolve1" interface="org.freedesktop.resolve1.Manager" member="RevertLink",
+    dbus (send) bus="system" path="/org/freedesktop/resolve1" interface="org.freedesktop.resolve1.Manager" member={SetLinkDNS,SetLinkDNSEx,SetLinkDomains,SetLinkDefaultRoute,RevertLink},
   }
 
   # Site-specific additions and overrides. See local/README for details.

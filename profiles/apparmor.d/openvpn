@@ -34,7 +34,7 @@ profile openvpn /usr/sbin/openvpn flags=(attach_disconnected) {
   network inet6 stream,
 
   # OpenVPN configuration, key files and unbreak --genkey feature
-  file rw @{etc_rw}/openvpn/{,**},
+  file r @{etc_rw}/openvpn/{,**},
   file mr /usr/sbin/openvpn,
 
   # Allow OpenVPN to read keys from most user places while preventing an

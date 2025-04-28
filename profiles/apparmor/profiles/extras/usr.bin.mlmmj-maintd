@@ -19,7 +19,7 @@ include <tunables/global>
 
   capability setuid,
 
-  /usr/bin/mlmmj-maintd mr,
+  @{exec_path} mr,
   /usr/bin/mlmmj-send Px,
   /usr/bin/mlmmj-bounce Px,
   /usr/bin/mlmmj-unsub Px,

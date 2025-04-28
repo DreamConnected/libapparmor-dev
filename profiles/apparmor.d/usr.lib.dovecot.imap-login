@@ -25,7 +25,7 @@ profile dovecot-imap-login /usr/lib*/dovecot/imap-login {
   network inet6 stream,
   network unix stream,
 
-  /usr/lib*/dovecot/imap-login mr,
+  @{exec_path} mr,
   @{run}/dovecot/anvil rw,
   @{run}/dovecot/login-master-notify* rw,
   @{run}/dovecot/login/ r,

@@ -53,6 +53,7 @@ include <tunables/global>
 
   / rw,
   /** mrwlkix,
+  @{exec_path} mr,
 
 
   ^DEFAULT_URI {

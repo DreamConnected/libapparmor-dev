@@ -32,7 +32,7 @@ include <tunables/global>
   /etc/named.d/*	r,
   @{PROC}/net/dev	r,
   @{PROC}/sys/net/ipv4/ip_local_port_range r,
-  /usr/sbin/dhcpd	rmix,
+  @{exec_path} mrix,
   /var/lib/dhcp/{db/,}dhcpd{6,}.leases*	rwl,
   /var/lib/dhcp/etc/dhcpd.conf  r,
   /{,var/}run/dhcpd.pid	wl,

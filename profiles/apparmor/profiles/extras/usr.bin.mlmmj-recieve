@@ -21,7 +21,7 @@ include <tunables/global>
   include <abstractions/base>
 
   /usr/bin/mlmmj-process Px,
-  /usr/bin/mlmmj-recieve mr,
+  @{exec_path} mr,
   /var/spool/mlmmj/*/incoming/* w,
 
   # Site-specific additions and overrides. See local/README for details.

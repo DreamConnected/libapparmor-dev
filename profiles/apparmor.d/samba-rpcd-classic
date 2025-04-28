@@ -19,7 +19,7 @@ profile samba-rpcd-classic /usr/lib*/samba/{,samba/}rpcd_classic {
 
   capability sys_resource,
 
-  /usr/lib*/samba/{,samba/}rpcd_classic mr,
+  @{exec_path} mr,
 
   @{run}/samba/ncalrpc/np/srvsvc wr,
   @{run}/samba/ncalrpc/np/winreg wr,

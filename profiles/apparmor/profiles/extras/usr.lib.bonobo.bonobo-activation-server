@@ -20,7 +20,7 @@ include <tunables/global>
   include <abstractions/user-tmp>
 
   /etc/bonobo-activation/bonobo-activation-config.xml r,
-  /usr/lib/bonobo/bonobo-activation-server rmix,
+  @{exec_path} mrix,
   /usr/lib/bonobo/servers r,
   /usr/lib/bonobo/servers/*.server r,
   /usr/lib/evolution-data-server-*/evolution-data-server-* Px,

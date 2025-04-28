@@ -33,7 +33,7 @@ include <tunables/global>
   /usr/sbin/postalias                      Px,
   /usr/sbin/postdrop                       Px,
   /usr/sbin/postqueue                      Px,
-  /usr/sbin/sendmail.postfix               rmix,
+  @{exec_path} mrix,
   /var/spool/postfix/                      r,
   /var/spool/postfix/active                r,
   /var/spool/postfix/bounce                r,

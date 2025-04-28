@@ -44,7 +44,7 @@ include <tunables/global>
   # should this be in a separate KDE abstraction?
   owner @{HOME}/.kde{,4}/share/config/kioslaverc r,
 
-  /usr/bin/skype mr,
+  @{exec_path} mr,
   /etc/xdg/sni-qt.conf rk,
   /etc/xdg/Trolltech.conf rk,
   /usr/share/skype/** kr,

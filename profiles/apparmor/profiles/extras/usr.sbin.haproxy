@@ -33,7 +33,7 @@ profile haproxy /usr/sbin/haproxy {
 
   /etc/haproxy/* r,
 
-  /usr/sbin/haproxy rmix,
+  @{exec_path} mrix,
 
   /var/lib/haproxy/stats rwl,
   /var/lib/haproxy/stats.*.bak rwl,

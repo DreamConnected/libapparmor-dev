@@ -29,7 +29,7 @@ include <tunables/global>
   @{HOME}/.gconf/** lrw,
   @{HOME}/.gconfd/** lrw,
 
-  /usr/lib/GConf/2/gconfd-2 rmix,
+  @{exec_path} mrix,
   /usr/lib/GConf/2/libgconfbackend-xml.so mr,
   /usr/lib64/GConf/2/libgconfbackend-xml.so mr,
   /usr/share/locale/** r,

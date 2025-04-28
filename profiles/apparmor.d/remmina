@@ -49,7 +49,7 @@ profile remmina /usr/bin/remmina {
   dbus (send) bus=system path="/StatusNotifierWatcher" interface="org.kde.StatusNotifierWatcher" member=RegisterStatusNotifierItem peer=(label=@{StatusNotifierWatcher}),
 
   @{etc_ro}/fstab r,
-  /usr/bin/remmina mr,
+  @{exec_path} mr,
   /usr/share/remmina/{,**} r,
   /var/lib/snapd/desktop/icons/{,**} r,
   /etc/debian_version r,

@@ -38,7 +38,7 @@ profile syslogd /{usr/,}{bin,sbin}/syslogd {
   /etc/syslog.conf              r,
   /etc/syslog.d/                r,
   /etc/syslog.d/*               r,
-  /{usr/,}{bin,sbin}/syslogd    rmix,
+  @{exec_path} mrix,
   /var/log/**                   rw,
   @{run}/syslog.pid           krwl,
   @{run}/syslogd.pid          krwl,

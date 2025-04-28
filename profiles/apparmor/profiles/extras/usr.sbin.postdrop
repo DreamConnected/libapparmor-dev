@@ -27,7 +27,7 @@ include <tunables/global>
   /etc/postfix/main.cf r,
   /etc/postfix/postfix-script mixr,
   @{PROC}/net/if_inet6 r,
-  /usr/sbin/postdrop rmix,
+  @{exec_path} mrix,
   /usr/share/icu/[0-9]*.[0-9]*/*.dat r,
   /var/spool/postfix r,
   /var/spool/postfix/maildrop r,

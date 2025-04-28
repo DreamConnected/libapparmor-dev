@@ -18,7 +18,7 @@ include <tunables/global>
   include <abstractions/base>
   include <abstractions/nameservice>
 
-  /usr/bin/mlmmj-send mr,
+  @{exec_path} mr,
   /var/spool/mlmmj/*/archive/* w,
   /var/spool/mlmmj/*/control/* r,
   /var/spool/mlmmj/*/index rwk,

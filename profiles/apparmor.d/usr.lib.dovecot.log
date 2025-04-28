@@ -17,7 +17,7 @@ profile dovecot-log /usr/lib*/dovecot/log flags=(attach_disconnected) {
   include <abstractions/base>
   include <abstractions/dovecot-common>
 
-  /usr/lib*/dovecot/log mr,
+  @{exec_path} mr,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.lib.dovecot.log>

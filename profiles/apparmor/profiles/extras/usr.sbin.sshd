@@ -67,7 +67,7 @@ include <tunables/global>
   /etc/security/** r,
   /etc/ssh/** r,
   /etc/ssl/openssl.cnf r,
-  /usr/sbin/sshd mrix,
+  @{exec_path} mrix,
   /usr/share/ssh/blacklist.* r,
   /var/log/btmp rw,
   owner @{run}/sshd{,.init}.pid wl,

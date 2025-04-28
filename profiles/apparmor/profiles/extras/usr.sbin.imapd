@@ -20,7 +20,7 @@ include <tunables/global>
 
   /dev/urandom                              r,
   /tmp/*                                    rwl,
-  /usr/sbin/imapd                           r,
+  @{exec_path}                              r,
   /usr/share/ssl/certs/imapd.pem            r,
 
   # Site-specific additions and overrides. See local/README for details.

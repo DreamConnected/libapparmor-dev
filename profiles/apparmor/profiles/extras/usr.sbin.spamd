@@ -34,7 +34,7 @@ include <tunables/global>
   /tmp/spamd-*-init r,
   /tmp/spamd-*-init/** lrw,
   /usr/bin/perl mix,
-  /usr/sbin/spamd r,
+  @{exec_path} r,
   /usr/share/spamassassin r,
   /usr/share/spamassassin/*.cf r,
   /usr/share/spamassassin/*.template r,

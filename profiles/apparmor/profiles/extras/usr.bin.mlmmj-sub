@@ -20,7 +20,7 @@ include <tunables/global>
   capability setuid,
 
   /usr/bin/mlmmj-send Px,
-  /usr/bin/mlmmj-sub mr,
+  @{exec_path} mr,
   /var/spool/mlmmj/*/control/ r,
   /var/spool/mlmmj/*/control/* r,
   /var/spool/mlmmj/*/moderation/subscribe* rw,

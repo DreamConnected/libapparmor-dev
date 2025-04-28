@@ -20,7 +20,7 @@ include <tunables/global>
   /{usr/,}bin/bash             mixr,
   /{usr/,}bin/grep             mixr,
   /etc/manpath.config   r,
-  /usr/bin/apropos      rmix,
+  @{exec_path} mr,
   /usr/bin/man          Px,
   /usr/bin/tr           mixr,
   /var/cache/man/whatis r,

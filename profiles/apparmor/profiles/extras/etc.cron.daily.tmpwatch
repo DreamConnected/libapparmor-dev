@@ -14,7 +14,7 @@ include <tunables/global>
 
 /etc/cron.daily/tmpwatch {
   include <abstractions/base>
-  /etc/cron.daily/tmpwatch  r,
+  @{exec_path} r,
   /tmp                      r,
   /tmp/**                   rwl,
   /usr/sbin/tmpwatch        mixr,

@@ -42,7 +42,7 @@ profile ntpd /usr/{bin,sbin}/{,open}ntpd flags=(attach_disconnected) {
 
   /tmp/ntp* rwl,
   /{usr/,usr/local/,}{s,}bin/ r,
-  /usr/{bin,sbin}/{,open}ntpd rmix,
+  @{exec_path} mrix,
   /var/db/ r,
   /var/db/ntpd.drift rwl,
   /var/lib/ntp/drift rwl,

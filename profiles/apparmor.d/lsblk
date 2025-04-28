@@ -17,7 +17,7 @@ profile lsblk /usr/bin/lsblk {
   include <abstractions/consoles>
   include <abstractions/nameservice-strict>
 
-  /usr/bin/lsblk mr,
+  @{exec_path} mr,
 
   @{sys}/block/ r,
   @{sys}/class/block/ r,

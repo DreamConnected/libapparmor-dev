@@ -17,7 +17,7 @@ include <tunables/global>
 /usr/bin/mlmmj-bounce {
   include <abstractions/base>
 
-  /usr/bin/mlmmj-bounce mr,
+  @{exec_path} mr,
   /usr/bin/mlmmj-send Px,
   /usr/bin/mlmmj-maintd Px,
   /var/spool/mlmmj/*/subscribers.d/ r,

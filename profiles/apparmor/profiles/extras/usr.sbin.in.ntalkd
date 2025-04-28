@@ -17,7 +17,7 @@ include <tunables/global>
   include <abstractions/nameservice>
   include <abstractions/consoles>
 
-  /usr/sbin/in.ntalkd   r,
+  @{exec_path} r,
   /{,var/}run/utmp		r,
 
   # Site-specific additions and overrides. See local/README for details.

@@ -38,7 +38,7 @@ include <tunables/global>
 
   @{PROC}/@{pid}/loginuid r,
 
-  /usr/bin/passwd mr,
+  @{exec_path} mr,
   /usr/lib/pwdutils/lib*.so* mr,
   /usr/lib64/pwdutils/lib*.so* mr,
   /usr/share/cracklib/pw_dict.hwm r,

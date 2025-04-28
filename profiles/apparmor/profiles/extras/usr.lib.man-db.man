@@ -46,7 +46,7 @@ include <tunables/global>
   /usr/bin/iconv rmix,
   /{usr/,}bin/less rmix,
   /usr/bin/locale rmix,
-  /usr/bin/man rmix,
+  @{exec_path} mrix,
   /usr/bin/nroff rmix,
   /usr/bin/preconv rmix,
   /usr/bin/tbl rmix,

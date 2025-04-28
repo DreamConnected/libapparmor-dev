@@ -36,7 +36,7 @@ include <tunables/global>
   /usr/lib/sasl/*             mr,
   /usr/lib/sasl2              r,
   /usr/lib/sasl2/*            mr,
-  /usr/sbin/sendmail.sendmail rmix,
+  @{exec_path} mrix,
   /{,var/}run/sendmail.pid       rwl,
   /{,var/}run/sm-client.pid      rwl,
   /{,var/}run/utmp               rw,

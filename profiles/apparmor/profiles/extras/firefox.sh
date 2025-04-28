@@ -11,7 +11,7 @@ profile firefox.sh /usr/lib/firefox/firefox.sh {
 
   deny capability sys_ptrace,
 
-  /usr/lib/firefox/firefox.sh mr,
+  @{exec_path} r,
 
   /{usr/,}bin/basename rix,
   /{usr/,}bin/bash rix,

@@ -20,7 +20,7 @@ profile clamd /usr/sbin/clamd {
   capability setuid,
 
   /etc/clamd.conf r,
-  /usr/sbin/clamd mr,
+  @{exec_path} mr,
   /var/lib/clamav/ r,
   /var/lib/clamav/** r,
   owner /run/clamav/clamd.pid w,

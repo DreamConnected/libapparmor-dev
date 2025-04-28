@@ -19,7 +19,7 @@ profile postfix-error /usr/lib{,exec}/postfix/{bin/,sbin/,}error {
   include <abstractions/nameservice>
   include <abstractions/postfix-common>
 
-  /usr/lib{,exec}/postfix/{bin/,sbin/,}error mrix,
+  @{exec_path} mrix,
 
   owner /var/spool/postfix/active/* rwk,
   /var/spool/postfix/pid/unix.error rwk,

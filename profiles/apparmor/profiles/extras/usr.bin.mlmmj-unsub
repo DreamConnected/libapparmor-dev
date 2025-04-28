@@ -17,7 +17,7 @@ include <tunables/global>
 /usr/bin/mlmmj-unsub {
   include <abstractions/base>
 
-  /usr/bin/mlmmj-unsub mr,
+  @{exec_path} mr,
   /usr/bin/mlmmj-send Px,
   /var/spool/mlmmj/*/control/ r,
   /var/spool/mlmmj/*/control/* r,

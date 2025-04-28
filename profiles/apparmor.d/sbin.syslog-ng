@@ -47,7 +47,7 @@ profile syslog-ng /{usr/,}{bin,sbin}/syslog-ng {
   /etc/syslog-ng/conf.d/ r,
   /etc/syslog-ng/conf.d/* r,
   @{PROC}/kmsg r,
-  /{usr/,}{bin,sbin}/syslog-ng mr,
+  @{exec_path} mr,
   @{sys}/devices/system/cpu/online r,
   /usr/share/syslog-ng/** r,
   /var/lib/syslog-ng/syslog-ng-?????.qf rw,

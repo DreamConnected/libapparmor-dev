@@ -21,7 +21,7 @@ profile postfix-trivial-rewrite /usr/lib{,exec}/postfix/{bin/,sbin/,}trivial-rew
 
   capability dac_read_search,
 
-  /usr/lib{,exec}/postfix/{bin/,sbin/,}trivial-rewrite mrix,
+  @{exec_path} mrix,
 
   /etc/{m,fs}tab                              r,
   /var/spool/postfix/pid/unix.rewrite         rw,

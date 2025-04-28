@@ -25,7 +25,7 @@ profile dovecot-pop3-login /usr/lib*/dovecot/pop3-login {
   network inet6 stream,
   network unix stream,
 
-  /usr/lib*/dovecot/pop3-login mr,
+  @{exec_path} mr,
   @{run}/dovecot/anvil rw,
   @{run}/dovecot/login-master-notify* rw,
   @{run}/dovecot/login/ r,

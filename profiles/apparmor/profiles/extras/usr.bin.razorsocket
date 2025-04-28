@@ -16,7 +16,7 @@ profile razorsocket /usr/bin/razorsocket {
   include <abstractions/base>
   include <abstractions/perl>
 
-  /usr/bin/razorsocket r,
+  @{exec_path} r,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.bin.razorsocket>

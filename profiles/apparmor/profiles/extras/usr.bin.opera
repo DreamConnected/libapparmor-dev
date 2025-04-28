@@ -69,7 +69,8 @@ include <tunables/global>
   /{,var/}run/.resmgr_socket w,
   /var/spool/cups/tmp/* lrw,
 
-  /usr/bin/opera mr,
+  @{exec_path} mr,
+
   /usr/lib/jvm/java-1.5.0-sun-1.5.0_update12/jre/lib/i386/*.so mr,
   /usr/lib/jvm/java-1.5.0-sun-1.5.0_update12/jre/lib/i386/client/*.so mr,
   /usr/lib/opera/*/opera ix,

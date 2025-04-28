@@ -6,8 +6,9 @@ include <tunables/global>
 
 profile sbuild-shell /usr/bin/sbuild-shell flags=(attach_disconnected mediate_deleted) {
   allow all,
+  @{exec_path} mrix,
 
-  # override default pix
+  # override default pix, assumes allow all ix is at a lower priority
   /usr/bin/unshare ix,
 
   userns,

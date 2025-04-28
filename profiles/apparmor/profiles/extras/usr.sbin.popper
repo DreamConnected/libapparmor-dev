@@ -23,7 +23,7 @@ include <tunables/global>
   capability setgid,
   capability setuid,
 
-  /usr/sbin/popper mr,
+  @{exec_path} mr,
   /var/spool/mail/* rw,
 
   # Site-specific additions and overrides. See local/README for details.

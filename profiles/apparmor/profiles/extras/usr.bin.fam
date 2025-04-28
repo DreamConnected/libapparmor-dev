@@ -17,7 +17,7 @@ include <tunables/global>
   include <abstractions/nameservice>
   /tmp/.fam*		wl,
   /etc/mtab		rw,
-  /usr/bin/fam          rmix,
+  @{exec_path} mrix,
   # it makes some level of sense for FAM to read all files on the
   # filesystem, even if this is a little unfortunate.
   /** 			r,

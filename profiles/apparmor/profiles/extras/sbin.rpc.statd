@@ -37,7 +37,7 @@ profile rpc.statd /{usr/,}sbin/rpc.statd {
   /etc/nfs.conf.d/                 r,
   /etc/nfs.conf.d/*                rk,
   /etc/rpc                         r,
-  /{usr/,}sbin/rpc.statd           mrix,
+  @{exec_path} mrix,
   /{usr/,}sbin/sm-notify           mrix,
   /var/lib/nfs/sm/                 r,
   /var/lib/nfs/sm/*                rw,

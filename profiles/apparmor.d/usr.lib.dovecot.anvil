@@ -24,7 +24,7 @@ profile dovecot-anvil /usr/lib*/dovecot/anvil {
 
   @{run}/dovecot/anvil rw,
   @{run}/dovecot/anvil-auth-penalty rw,
-  /usr/lib*/dovecot/anvil mr,
+  @{exec_path} mr,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.lib.dovecot.anvil>

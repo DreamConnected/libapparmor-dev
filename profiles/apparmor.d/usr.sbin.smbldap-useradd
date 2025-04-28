@@ -16,7 +16,7 @@ profile smbldap-useradd /usr/{bin,sbin}/smbldap-useradd {
   /etc/shadow r,
   /etc/smbldap-tools/smbldap.conf r,
   /etc/smbldap-tools/smbldap_bind.conf r,
-  /usr/{bin,sbin}/smbldap-useradd r,
+  @{exec_path} r,  
   /usr/{bin,sbin}/smbldap_tools.pm r,
   /var/log/samba/log.smbd w,
 

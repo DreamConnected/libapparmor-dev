@@ -23,7 +23,7 @@ profile tshark /usr/bin/tshark {
   signal send peer=tshark//dumpcap,
 
   file Cx /usr/bin/dumpcap -> dumpcap,
-  file mr /usr/bin/tshark,
+  mr @{exec_path},
   file mrix /usr/lib/@{multiarch}/wireshark/extcap/{,*},
   file r /usr/share/wireshark/{,**},
   file r @{PROC}/@{pid}/fd/,

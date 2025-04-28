@@ -20,7 +20,7 @@ profile rpcbind /{usr/,}sbin/rpcbind {
   /etc/default/rpcbind             r,
   /etc/netconfig                   r,
   /etc/rpcbind.conf                r,
-  /{usr/,}sbin/rpcbind             mrix,
+  @{exec_path}                     mrix,
   @{run}/rpcbind.lock              rwk,
   @{run}/rpcbind.sock              rwk,
   @{run}/rpcbind/portmap.xdr       rw,

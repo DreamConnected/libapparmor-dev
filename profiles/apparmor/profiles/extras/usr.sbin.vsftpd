@@ -28,7 +28,7 @@ include <tunables/global>
   /etc/vsftpd.*              r,
   /etc/vsftpd/*              r,
   /@{PROC}/@{pid}/mounts     r,
-  /usr/sbin/vsftpd           rmix,
+  @{exec_path}               mrix,
   /{,var/}run/utmp           rk,
   /var/log/vsftpd.log        w,
   /var/log/xferlog           w,

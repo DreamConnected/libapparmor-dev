@@ -256,7 +256,7 @@ profile chromium_browser /usr/lib/@{chromium}/@{chromium} flags=(attach_disconne
   owner @{HOME}/.config/chromium/WidevineCdm/*/_platform_specific/*/libwidevinecdm.so mr,
 
   # Allow transitions to ourself, our sandbox, and crash handler
-  /usr/lib/@{chromium}/@{chromium} ix,
+  @{exec_path} mrix,
   /usr/lib/@{chromium}/chrome-sandbox cx -> sandbox,
   /usr/lib/@{chromium}/chrome_crashpad_handler Cxr -> crashpad_handler,
 

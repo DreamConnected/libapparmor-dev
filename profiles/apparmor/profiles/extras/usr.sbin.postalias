@@ -27,7 +27,7 @@ include <tunables/global>
   /etc/postfix/aliases.{lm,}db         rwl,
   /etc/postfix/__db.aliases.db         lrw,
   /etc/__db.aliases.db                 rwl,
-  /usr/sbin/postalias                  rmix,
+  @{exec_path}                         mrix,
   @{PROC}/net/if_inet6                 r,
   # On SuSE, mailman is configured to use its own alias db
   /var/lib/mailman/data/aliases        r,

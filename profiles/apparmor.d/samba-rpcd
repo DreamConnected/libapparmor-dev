@@ -18,7 +18,7 @@ profile samba-rpcd /usr/lib*/samba/{,samba/}rpcd_{mdssvc,epmapper,rpcecho,fsrvp,
 
   capability sys_resource,
 
-  /usr/lib*/samba/{,samba/}rpcd_{mdssvc,epmapper,rpcecho,fsrvp,lsad,winreg,witness} mr,
+  @{exec_path} mr,
 
   @{run}/samba/ncalrpc/np/lsarpc wr,
   @{run}/samba/ncalrpc/np/mdssvc wr,

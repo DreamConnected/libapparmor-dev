@@ -33,7 +33,7 @@ include <tunables/global>
   /root/.my.cnf r,
   /sys/devices/system/cpu/online r,
   /usr/lib{,32,64}/**.so mr,
-  /usr/sbin/mysqld mr,
+  @{exec_path} mr,
   /usr/share/mariadb/*/errmsg.sys r,
   /usr/share/mysql-community-server/*/errmsg.sys r,
   /usr/share/mysql/** r,

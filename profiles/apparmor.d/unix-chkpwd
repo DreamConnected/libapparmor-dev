@@ -20,7 +20,7 @@ profile unix-chkpwd /{,usr/}{,s}bin/unix_chkpwd {
 
   network netlink raw,
 
-  /{,usr/}{,s}bin/unix_chkpwd mr,
+  @{exec_path} mr,
 
   /etc/shadow r,
 

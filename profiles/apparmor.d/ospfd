@@ -21,6 +21,8 @@ profile ospfd /usr/lib/frr/ospfd flags=(attach_disconnected) {
   capability net_raw,
   capability sys_admin,
 
+  /usr/lib/frr/ospfd mr,
+
   @{run}/netns/* r,
 
   @{run}/frr/ospfd-gr.json w,

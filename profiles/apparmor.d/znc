@@ -13,6 +13,8 @@ profile znc /usr/bin/znc {
 
   network tcp,
 
+  /usr/bin/znc mr,
+
   @{system_share_dirs}/znc/** r,
 
   owner @{HOME}/.znc/ rw,

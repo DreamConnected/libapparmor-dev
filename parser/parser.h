@@ -410,6 +410,7 @@ extern int process_policydb(Profile *prof);
 
 extern int process_policy_ents(Profile *prof);
 extern void filter_slashes(char *path);
+extern const char *local_name(const char *name);
 
 /* parser_variable.c */
 int expand_entry_variables(char **name);

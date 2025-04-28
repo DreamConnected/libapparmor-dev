@@ -459,7 +459,12 @@ public:
 			printf("Name:\t\t%s\n", name);
 		else
 			printf("Name:\t\t<NULL>\n");
-
+		if (attachment)
+			printf("Attachment:\t%s\n", attachment);
+		else {
+			const char *local = local_name(name);
+			printf("Attachment:\t%s\n", local[0] == '/' ? local : "<NULL>");
+		}
 		if (parent)
 			printf("Local To:\t%s\n", parent->name);
 		else

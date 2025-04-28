@@ -52,6 +52,8 @@ profile wpa_supplicant /usr/sbin/wpa_supplicant {
         interface=org.freedesktop.DBus
         member={AddMatch,GetNameOwner,Hello,ReleaseName,RemoveMatch,RequestName,StartServiceByName},
 
+  /usr/sbin/wpa_supplicant mr,
+
   owner /dev/rfkill r,
   owner /etc/group r,
   owner /etc/nsswitch.conf r,

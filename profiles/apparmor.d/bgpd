@@ -21,6 +21,8 @@ profile bgpd /usr/lib/frr/bgpd flags=(attach_disconnected) {
   capability net_raw,
   capability sys_admin,
 
+  /usr/lib/frr/bgpd mr,
+
   @{run}/netns/* r,
 
   owner @{PROC}/@{pid}/task/@{tid}/comm rw,

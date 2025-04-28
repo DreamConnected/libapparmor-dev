@@ -433,7 +433,7 @@ out:
 	return ptype;
 }
 
-static const char *local_name(const char *name)
+const char *local_name(const char *name)
 {
 	const char *t;
 

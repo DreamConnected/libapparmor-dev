@@ -17,6 +17,8 @@ profile staticd /usr/lib/frr/staticd flags=(attach_disconnected) {
   include <abstractions/base>
   include <abstractions/frr>
  
+  /usr/lib/frr/staticd mr,
+
   /etc/frr/zebra.conf r,
 
   owner @{PROC}/@{pid}/task/@{tid}/comm rw,

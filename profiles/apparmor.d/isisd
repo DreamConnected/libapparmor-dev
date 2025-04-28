@@ -20,7 +20,7 @@ profile isisd /usr/lib/frr/isisd flags=(attach_disconnected) {
 
   capability net_raw,
 
-  /usr/lib/frr/isisd mr,
+  @{exec_path} mr,
 
   /var/lib/frr/ r, 
   /var/lib/frr/isisd.json{,.sav} rw,

@@ -18,7 +18,7 @@ profile ripd /usr/lib/frr/ripd flags=(attach_disconnected) {
   include <abstractions/frr>
   include <abstractions/frr-snmp>
 
-  /usr/lib/frr/ripd mr,
+  @{exec_path} mr,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/ripd>

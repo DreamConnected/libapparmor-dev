@@ -34,7 +34,7 @@ profile zgrep /usr/bin/{x,}zgrep {
   /usr/bin/zgrep Cx -> helper,
   /usr/bin/zstd Cx -> helper,
   owner /tmp/zgrep* rw,
-  /usr/bin/{x,}zgrep r,
+  @{exec_path} r,
 
   deny /etc/nsswitch.conf r,
   deny /etc/passwd r,

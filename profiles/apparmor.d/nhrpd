@@ -20,7 +20,7 @@ profile nhrpd /usr/lib/frr/nhrpd flags=(attach_disconnected) {
   capability net_raw,
   capability net_admin,
 
-  /usr/lib/frr/nhrpd mr,
+  @{exec_path} mr,
   /usr/bin/dash ix,
   @{PROC}/sys/net/ipv4/conf/*/send_redirects w,
 

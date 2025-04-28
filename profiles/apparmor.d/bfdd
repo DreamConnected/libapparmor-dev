@@ -21,7 +21,7 @@ profile bfdd /usr/lib/frr/bfdd flags=(attach_disconnected) {
   capability sys_admin,
 
 
-  /usr/lib/frr/bfdd mr,
+  @{exec_path} mr,
   @{run}/netns/* r,
 
   @{run}/frr/bfdd.sock w,

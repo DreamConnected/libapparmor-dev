@@ -21,7 +21,7 @@ profile ospf6d /usr/lib/frr/ospf6d flags=(attach_disconnected) {
   capability net_raw,
   capability sys_admin,
 
-  /usr/lib/frr/ospf6d mr,
+  @{exec_path} mr,
 
   @{run}/netns/* r,
 

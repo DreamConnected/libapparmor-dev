@@ -17,7 +17,7 @@ profile babeld /usr/lib/frr/babeld flags=(attach_disconnected) {
   include <abstractions/base>
   include <abstractions/frr>
 
-  /usr/lib/frr/babeld mr,
+  @{exec_path} mr,
   @{run}/frr/babel-state w,
 
   # Site-specific additions and overrides. See local/README for details.

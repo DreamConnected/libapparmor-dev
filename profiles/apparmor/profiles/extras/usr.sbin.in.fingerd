@@ -19,7 +19,7 @@ include <tunables/global>
   @{HOME}/.plan          r,
   @{HOME}/.project       r,
 
-  /usr/sbin/in.fingerd mr,
+  @{exec_path} mr,
 
   /usr/bin/finger        mix,
   /var/log/lastlog       r,

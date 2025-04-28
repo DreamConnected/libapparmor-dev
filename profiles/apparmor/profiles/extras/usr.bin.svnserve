@@ -19,7 +19,7 @@ include <tunables/global>
   # network service ;)
   capability net_bind_service,
 
-  /usr/bin/svnserve mr,
+  @{exec_path} mr,
 
   /srv/svn/*/conf/* r,
   /srv/svn/*/format r,

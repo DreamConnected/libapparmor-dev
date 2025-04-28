@@ -1,12 +1,17 @@
-# Last Modified: Thu Apr 10 11:13:45 2025
-include <tunables/global>
+#------------------------------------------------------------------
+#    Copyright (C) 2025 Canonical Ltd.
+#
+#    Author: Chrisa Oikonomou <chrisa.oikonomou@canonical.com>
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+# vim: ft=apparmor
+#
 
-# vim:syntax=apparmor
-# AppArmor policy for yelp
-# ###AUTHOR###
-# ###COPYRIGHT###
-# ###COMMENT###
-# No template variables specified
+abi <abi/4.0>,
+include <tunables/global>
 
 profile /usr/bin/yelp {
 
@@ -20,6 +25,7 @@ profile /usr/bin/yelp {
   include <abstractions/WebKitWebProcess>
   include <abstractions/transmission-common>
   include <abstractions/audio>
+  include <abstractions/private-files-strict>
 
   # the unix socket to use to connect to the display
   /tmp/.X11-unix/* rw,
@@ -29,7 +35,6 @@ profile /usr/bin/yelp {
   unix (connect, receive, send)
        type=stream
        peer=(addr="@/tmp/.ICE-unix/[0-9]*"),
-
 
 
 
@@ -47,6 +52,13 @@ profile /usr/bin/yelp {
       interface=org.freedesktop.DBus.Properties
       member="GetAll"
       peer=(name=:1.10, label=unconfined),
+
+  dbus (send)
+      bus=system
+      path=/org/freedesktop/UPower/PowerProfiles
+      interface=org.freedesktop.DBus.Properties
+      member="GetAll"
+      peer=(label=unconfined),
 
   dbus (send)
       bus=accessibility               
@@ -67,21 +79,21 @@ profile /usr/bin/yelp {
       path=/org/freedesktop/NetworkManager
       interface=org.freedesktop.DBus.Properties
       member="GetAll"
-      peer=(name=:1.17, label=unconfined),
+      peer=(label=unconfined),
 
   dbus (send)
       bus=system
       path=/org/freedesktop/RealtimeKit1
       interface=org.freedesktop.DBus.Properties
       member="Get"
-      peer=(name=:1.39, label=unconfined),
+      peer=(label=unconfined),
 
   dbus (send)
       bus=system
       path=/org/freedesktop/RealtimeKit1
       interface=org.freedesktop.RealtimeKit1
       member="MakeThreadRealtimeWithPID"
-      peer=(name=:1.39, label=unconfined),
+      peer=(label=unconfined),
 
   dbus (receive)
       bus=accessibility
@@ -150,24 +162,29 @@ profile /usr/bin/yelp {
       interface=org.a11y.atspi.Registry
       member="GetRegisteredEvents",
 
-
-
+  dbus (send, receive)
+      bus=accessibility
+      path=/org/a11y/atspi/registry
+      interface=org.a11y.atspi.Registry
+      member="EventListenerDeregistered",
 
   # file accessing 
-   @{sys}/devices/**/uevent r,
-   @{sys}/devices/**/vendor r,
-   @{sys}/devices/**/device r,
-   @{sys}/devices/**/subsystem_vendor r,
-   @{sys}/devices/**/subsystem_device r,
-   @{sys}/devices/**/revision r,
-   @{sys}/devices/**/config r,
-   @{sys}/devices/**/drm/ r,
-   @{sys}/devices/virtual/dmi/id/chassis_type r,
-   @{sys}/firmware/acpi/pm_profile r,
-   @{sys}/fs/cgroup/user.slice/user-*.slice/user@*.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.* r,
+  @{sys}/devices/**/uevent r,
+  @{sys}/devices/**/vendor r,
+  @{sys}/devices/**/device r,
+  @{sys}/devices/**/subsystem_vendor r,
+  @{sys}/devices/**/subsystem_device r,
+  @{sys}/devices/**/revision r,
+  @{sys}/devices/**/config r,
+  @{sys}/devices/**/drm/ r,
+  @{sys}/devices/virtual/dmi/id/chassis_type r,
+  @{sys}/firmware/acpi/pm_profile r,
+  @{sys}/fs/cgroup/user.slice/user-*.slice/user@*.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.* r,
+  @{sys}/fs/cgroup/user.slice/user-*.slice/session-*.scope/memory.* r,
 
   owner @{run}/user/@{uid}/pulse/ r,
   @{run}/user/[0-9]*/dconf/user rw,
+  @{run}/user/[0-9]*/wayland-0 rw,
 
   @{etc_ro}/glvnd/egl_vendor.d/ r,
     
@@ -199,8 +216,13 @@ profile /usr/bin/yelp {
   
   /var/lib/snapd/desktop/icons/ r,
  
+  /dev/udmabuf rw,
 
+  /**.html r,
+  /**/**/*.html r,
 
+  /**.xml r,
+  /**/**/*.xml r,
 }
 
 

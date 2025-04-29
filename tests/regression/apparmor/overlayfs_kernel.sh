@@ -11,4 +11,4 @@
 # Verifies that file rules work in a (kernel) overlayfs
 #=END
 
-source "./overlayfs_common.inc" kernel
+source "./overlayfs_common.inc" kernel "$@"

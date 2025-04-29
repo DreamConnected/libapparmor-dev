@@ -11,4 +11,4 @@
 # Verifies that file rules work in a (fuse) overlayfs
 #=END
 
-source "./overlayfs_common.inc" fuse
+source "./overlayfs_common.inc" fuse "$@"

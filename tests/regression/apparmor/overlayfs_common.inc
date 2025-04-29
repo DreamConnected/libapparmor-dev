@@ -17,6 +17,9 @@ if [ "$1" != "kernel" ] && [ "$1" != "fuse" ]; then
     exit 1
 fi
 
+overlay_mode_sel="$1"
+shift
+
 pwd=$(dirname "$0")
 pwd=$(cd "$pwd" || exit ; /bin/pwd)
 
@@ -67,7 +70,7 @@ touch "${overlayfs_upper}/upper_file_2"
 cp "$(type -P echo)" "${overlayfs_lower}/lower_echo"
 cp "$(type -P echo)" "${overlayfs_upper}/upper_echo"
 
-if [ "$1" == "fuse" ]; then
+if [ "$overlay_mode_sel" == "fuse" ]; then
     fuse-overlayfs -o lowerdir="${overlayfs_lower}",upperdir="${overlayfs_upper}",workdir="${overlayfs_workdir}" "${mount_target}"|| fatalerror 'Unable to set up overlayfs'
 else
     mount -t overlay -o lowerdir="${overlayfs_lower}",upperdir="${overlayfs_upper}",workdir="${overlayfs_workdir}" none "${mount_target}"|| fatalerror 'Unable to set up overlayfs'
@@ -122,7 +125,7 @@ runchecktest "Exec in overlayfs mount (lower)" pass exec "${mount_target}/lower_
 runchecktest "Exec in overlayfs mount (upper)" pass exec "${mount_target}/upper_echo" PASS
 runchecktest "Exec in overlayfs mount (overlay)" pass exec "${mount_target}/overlay_echo" PASS
 
-if [ "$1" == "fuse" ]; then
+if [ "$overlay_mode_sel" == "fuse" ]; then
     fusermount -u "${mount_target}" && rmdir "${mount_target}"
 else
     umount "${mount_target}" && rmdir "${mount_target}"

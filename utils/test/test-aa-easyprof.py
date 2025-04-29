@@ -1080,7 +1080,7 @@ POLICYGROUPS_DIR="{}/templates"
         """Test genpolicy (read-path file)"""
         s = "/opt/test-foo"
         p = self._gen_policy(extra_args=['--read-path=' + s])
-        search = "{} rk,".format(s)
+        search = "{} mrk,".format(s)
         self.assertTrue(search in p, "Could not find '{}' in:\n{}".format(search, p))
         inv_s = '###READPATH###'
         self.assertFalse(inv_s in p, "Found '{}' in :\n{}".format(inv_s, p))
@@ -1089,7 +1089,7 @@ POLICYGROUPS_DIR="{}/templates"
         """Test genpolicy (read-path file in /home)"""
         s = "/home/*/test-foo"
         p = self._gen_policy(extra_args=['--read-path=' + s])
-        search = "owner {} rk,".format(s)
+        search = "owner {} mrk,".format(s)
         self.assertTrue(search in p, "Could not find '{}' in:\n{}".format(search, p))
         inv_s = '###READPATH###'
         self.assertFalse(inv_s in p, "Found '{}' in :\n{}".format(inv_s, p))
@@ -1098,7 +1098,7 @@ POLICYGROUPS_DIR="{}/templates"
         """Test genpolicy (read-path file in @{HOME})"""
         s = "@{HOME}/test-foo"
         p = self._gen_policy(extra_args=['--read-path=' + s])
-        search = "owner {} rk,".format(s)
+        search = "owner {} mrk,".format(s)
         self.assertTrue(search in p, "Could not find '{}' in:\n{}".format(search, p))
         inv_s = '###READPATH###'
         self.assertFalse(inv_s in p, "Found '{}' in :\n{}".format(inv_s, p))
@@ -1107,7 +1107,7 @@ POLICYGROUPS_DIR="{}/templates"
         """Test genpolicy (read-path file in @{HOMEDIRS})"""
         s = "@{HOMEDIRS}/test-foo"
         p = self._gen_policy(extra_args=['--read-path=' + s])
-        search = "owner {} rk,".format(s)
+        search = "owner {} mrk,".format(s)
         self.assertTrue(search in p, "Could not find '{}' in:\n{}".format(search, p))
         inv_s = '###READPATH###'
         self.assertFalse(inv_s in p, "Found '{}' in :\n{}".format(inv_s, p))
@@ -1116,7 +1116,7 @@ POLICYGROUPS_DIR="{}/templates"
         """Test genpolicy (read-path directory/)"""
         s = "/opt/test-foo-dir/"
         p = self._gen_policy(extra_args=['--read-path=' + s])
-        search_terms = ["{} rk,".format(s), "{}** rk,".format(s)]
+        search_terms = ["{} mrk,".format(s), "{}** mrk,".format(s)]
         for search in search_terms:
             self.assertTrue(search in p, "Could not find '{}' in:\n{}".format(search, p))
         inv_s = '###READPATH###'
@@ -1126,7 +1126,7 @@ POLICYGROUPS_DIR="{}/templates"
         """Test genpolicy (read-path directory/*)"""
         s = "/opt/test-foo-dir/*"
         p = self._gen_policy(extra_args=['--read-path=' + s])
-        search_terms = ["{} rk,".format(os.path.dirname(s)), "{} rk,".format(s)]
+        search_terms = ["{} mrk,".format(os.path.dirname(s)), "{} mrk,".format(s)]
         for search in search_terms:
             self.assertTrue(search in p, "Could not find '{}' in:\n{}".format(search, p))
         inv_s = '###READPATH###'
@@ -1136,7 +1136,7 @@ POLICYGROUPS_DIR="{}/templates"
         """Test genpolicy (read-path directory/**)"""
         s = "/opt/test-foo-dir/**"
         p = self._gen_policy(extra_args=['--read-path=' + s])
-        search_terms = ["{} rk,".format(os.path.dirname(s)), "{} rk,".format(s)]
+        search_terms = ["{} mrk,".format(os.path.dirname(s)), "{} mrk,".format(s)]
         for search in search_terms:
             self.assertTrue(search in p, "Could not find '{}' in:\n{}".format(search, p))
         inv_s = '###READPATH###'
@@ -1162,13 +1162,13 @@ POLICYGROUPS_DIR="{}/templates"
             if s.startswith('/home/') or s.startswith("@{HOME"):
                 owner = "owner "
             if s.endswith('/'):
-                search_terms.append("{} rk,".format(s))
-                search_terms.append("{}{}** rk,".format(owner, s))
+                search_terms.append("{} mrk,".format(s))
+                search_terms.append("{}{}** mrk,".format(owner, s))
             elif s.endswith('/**') or s.endswith('/*'):
-                search_terms.append("{} rk,".format(os.path.dirname(s)))
-                search_terms.append("{}{} rk,".format(owner, s))
+                search_terms.append("{} mrk,".format(os.path.dirname(s)))
+                search_terms.append("{}{} mrk,".format(owner, s))
             else:
-                search_terms.append("{}{} rk,".format(owner, s))
+                search_terms.append("{}{} mrk,".format(owner, s))
 
         p = self._gen_policy(extra_args=args)
         for search in search_terms:
@@ -1189,7 +1189,7 @@ POLICYGROUPS_DIR="{}/templates"
         """Test genpolicy (write-path file)"""
         s = "/opt/test-foo"
         p = self._gen_policy(extra_args=['--write-path=' + s])
-        search = "{} rwk,".format(s)
+        search = "{} mrwkl,".format(s)
         self.assertTrue(search in p, "Could not find '{}' in:\n{}".format(search, p))
         inv_s = '###READPATH###'
         self.assertFalse(inv_s in p, "Found '{}' in :\n{}".format(inv_s, p))
@@ -1198,7 +1198,7 @@ POLICYGROUPS_DIR="{}/templates"
         """Test genpolicy (write-path file in /home)"""
         s = "/home/*/test-foo"
         p = self._gen_policy(extra_args=['--write-path=' + s])
-        search = "owner {} rwk,".format(s)
+        search = "owner {} mrwkl,".format(s)
         self.assertTrue(search in p, "Could not find '{}' in:\n{}".format(search, p))
         inv_s = '###READPATH###'
         self.assertFalse(inv_s in p, "Found '{}' in :\n{}".format(inv_s, p))
@@ -1207,7 +1207,7 @@ POLICYGROUPS_DIR="{}/templates"
         """Test genpolicy (write-path file in @{HOME})"""
         s = "@{HOME}/test-foo"
         p = self._gen_policy(extra_args=['--write-path=' + s])
-        search = "owner {} rwk,".format(s)
+        search = "owner {} mrwkl,".format(s)
         self.assertTrue(search in p, "Could not find '{}' in:\n{}".format(search, p))
         inv_s = '###READPATH###'
         self.assertFalse(inv_s in p, "Found '{}' in :\n{}".format(inv_s, p))
@@ -1216,7 +1216,7 @@ POLICYGROUPS_DIR="{}/templates"
         """Test genpolicy (write-path file in @{HOMEDIRS})"""
         s = "@{HOMEDIRS}/test-foo"
         p = self._gen_policy(extra_args=['--write-path=' + s])
-        search = "owner {} rwk,".format(s)
+        search = "owner {} mrwkl,".format(s)
         self.assertTrue(search in p, "Could not find '{}' in:\n{}".format(search, p))
         inv_s = '###READPATH###'
         self.assertFalse(inv_s in p, "Found '{}' in :\n{}".format(inv_s, p))
@@ -1225,7 +1225,7 @@ POLICYGROUPS_DIR="{}/templates"
         """Test genpolicy (write-path directory/)"""
         s = "/opt/test-foo-dir/"
         p = self._gen_policy(extra_args=['--write-path=' + s])
-        search_terms = ["{} rwk,".format(s), "{}** rwk,".format(s)]
+        search_terms = ["{} mrwkl,".format(s), "{}** mrwkl,".format(s)]
         for search in search_terms:
             self.assertTrue(search in p, "Could not find '{}' in:\n{}".format(search, p))
         inv_s = '###READPATH###'
@@ -1235,7 +1235,7 @@ POLICYGROUPS_DIR="{}/templates"
         """Test genpolicy (write-path directory/*)"""
         s = "/opt/test-foo-dir/*"
         p = self._gen_policy(extra_args=['--write-path=' + s])
-        search_terms = ["{} rwk,".format(os.path.dirname(s)), "{} rwk,".format(s)]
+        search_terms = ["{} mrwkl,".format(os.path.dirname(s)), "{} mrwkl,".format(s)]
         for search in search_terms:
             self.assertTrue(search in p, "Could not find '{}' in:\n{}".format(search, p))
         inv_s = '###READPATH###'
@@ -1245,7 +1245,7 @@ POLICYGROUPS_DIR="{}/templates"
         """Test genpolicy (write-path directory/**)"""
         s = "/opt/test-foo-dir/**"
         p = self._gen_policy(extra_args=['--write-path=' + s])
-        search_terms = ["{} rwk,".format(os.path.dirname(s)), "{} rwk,".format(s)]
+        search_terms = ["{} mrwkl,".format(os.path.dirname(s)), "{} mrwkl,".format(s)]
         for search in search_terms:
             self.assertTrue(search in p, "Could not find '{}' in:\n{}".format(search, p))
         inv_s = '###READPATH###'
@@ -1271,13 +1271,13 @@ POLICYGROUPS_DIR="{}/templates"
             if s.startswith('/home/') or s.startswith("@{HOME"):
                 owner = "owner "
             if s.endswith('/'):
-                search_terms.append("{} rwk,".format(s))
-                search_terms.append("{}{}** rwk,".format(owner, s))
+                search_terms.append("{} mrwkl,".format(s))
+                search_terms.append("{}{}** mrwkl,".format(owner, s))
             elif s.endswith('/**') or s.endswith('/*'):
-                search_terms.append("{} rwk,".format(os.path.dirname(s)))
-                search_terms.append("{}{} rwk,".format(owner, s))
+                search_terms.append("{} mrwkl,".format(os.path.dirname(s)))
+                search_terms.append("{}{} mrwkl,".format(owner, s))
             else:
-                search_terms.append("{}{} rwk,".format(owner, s))
+                search_terms.append("{}{} mrwkl,".format(owner, s))
 
         p = self._gen_policy(extra_args=args)
         for search in search_terms:

@@ -83,6 +83,12 @@ ostream &operator<<(ostream &os, State &state)
 	return os;
 }
 
+ostream &operator<<(ostream &os, perms_t &perms)
+{
+	perms.dump(os);
+	return os;
+}
+
 ostream &operator<<(ostream &os,
 		    const std::pair<State * const, Renumber_Map *> &p)
 {
@@ -670,6 +676,39 @@ int DFA::apply_and_clear_deny(void)
 	return c;
 }
 
+ostream &DFA::dump_partition(ostream &os, Partition &p)
+{
+	/* first entry is the representative state */
+	for (Partition::iterator i = p.begin(); i != p.end(); i++) {
+		os << **i;
+		if (i == p.begin())
+			os << " : ";
+		else
+			os << ", ";
+	}
+	os << "\n";
+
+	return os;
+}
+
+
+ostream &DFA::dump_partitions(ostream &os, const char *description,
+			      list<Partition *> &partitions)
+{
+	size_t j = 0;
+
+	os << "Dumping Minimization partition mapping: " << description << "\n";
+	for (list<Partition *>::iterator p = partitions.begin();
+	     p != partitions.end(); p++) {
+		os << "  [" << j++ << "] ";
+		os << (*(*p)->begin())->perms << ": ";
+		(void) dump_partition(os, **p);
+		os << "\n";
+	}
+	os << "\n";
+
+	return os;
+}
 
 /* minimize the number of dfa states */
 void DFA::minimize(optflags const &opts)
@@ -702,6 +741,9 @@ void DFA::minimize(optflags const &opts)
 			     << partitions.size() << "\tinit " << partitions.size()
 			     << " (accept " << accept_count << ")\r";
 	}
+
+	if (opts.dump & DUMP_DFA_MIN_PARTS)
+		(void) dump_partitions(cerr, "Initial", partitions);
 
 	/* perm_map is no longer needed so free the memory it is using.
 	 * Don't remove - doing it manually here helps reduce peak memory usage.
@@ -767,6 +809,9 @@ void DFA::minimize(optflags const &opts)
 
 		goto out;
 	}
+
+	if (opts.dump & DUMP_DFA_MIN_PARTS)
+		(void) dump_partitions(cerr, "Pre-remap", partitions);
 
 	/* Remap the dfa so it uses the representative states
 	 * Use the first state of a partition as the representative state

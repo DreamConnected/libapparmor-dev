@@ -60,11 +60,12 @@ public:
 	{
 		os << "(allow/deny/prompt/audit/quiet)";
 	}
-	void dump(ostream &os)
+	ostream &dump(ostream &os)
 	{
 		os << "(0x " << hex
 		   << allow << "/" << deny << "/" << "/" << prompt << "/" << audit << "/" << quiet
 		   << ')' << dec;
+		return os;
 	}
 
 	void clear(void) {
@@ -391,7 +392,9 @@ public:
 	void dump(ostream &os, Renumber_Map *renum);
 	void dump_dot_graph(ostream &os);
 	void dump_uniq_perms(const char *s);
-
+	ostream &dump_partition(ostream &os, Partition &p);
+	ostream &dump_partitions(ostream &os, const char *description,
+				 list<Partition *> &partitions);
 	map<transchar, transchar> equivalence_classes(optflags const &flags);
 	void apply_equivalence_classes(map<transchar, transchar> &eq);
 

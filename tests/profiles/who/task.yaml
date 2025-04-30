@@ -1,0 +1,7 @@
+summary: smoke test for the who profile
+execute: |
+    # who works when asked to grab everything
+    who -a
+
+    # The profile is attached based on the program path.
+    "$SPREAD_PATH"/tests/bin/actual-profile-of who | MATCH 'who \(enforce\)'

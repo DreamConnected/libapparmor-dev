@@ -1038,8 +1038,10 @@ int main(int argc, char **argv)
 	 * have policy associated.
 	 */
 	ret = get_profiles(fp, &profiles, &nprofiles);
-	if (ret != 0 && !opt_json) {
-		eprintf(_("Failed to get profiles: %d....\n"), ret);
+	if (ret == AA_EXIT_NO_POLICY) {
+		eprintf(_("No policy loaded into the kernel\n"));
+	} else if (ret != 0 && !opt_json) {
+		eprintf(_("Failed to retrieve profiles from kernel: %d....\n"), ret);
 		goto out;
 	}
 
@@ -1068,7 +1070,7 @@ int main(int argc, char **argv)
 
 		ret = get_processes(profiles, nprofiles, &processes, &nprocesses);
 		if (ret != 0) {
-			eprintf(_("Failed to get processes: %d....\n"), ret);
+			eprintf(_("Failed to get confinement information from processes: %d....\n"), ret);
 		} else if (opt_count) {
 			ret = simple_filtered_process_count(outf, &filters, opt_json,
 							processes, nprocesses);

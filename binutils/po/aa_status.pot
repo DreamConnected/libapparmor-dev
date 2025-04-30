@@ -1,14 +1,14 @@
-# Translations for aa_status
-# Copyright (C) 2024 Canonical Ltd
-# This file is distributed under the same license as the AppArmor package.
-# John Johansen <john.johansen@canonical.com>, 2024.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Canonical Ltd
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: apparmor@lists.ubuntu.com\n"
-"POT-Creation-Date: 2024-08-31 17:49-0700\n"
+"POT-Creation-Date: 2025-04-26 11:12-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,12 +42,12 @@ msgstr ""
 msgid "ERROR: Failed to allocate memory\n"
 msgstr ""
 
-#: ../aa_status.c:587 ../aa_status.c:653
+#: ../aa_status.c:587 ../aa_status.c:653 ../aa_status.c:603 ../aa_status.c:669
 #, c-format
 msgid "Error: failed to compile sub filter '%s'\n"
 msgstr ""
 
-#: ../aa_status.c:715
+#: ../aa_status.c:715 ../aa_status.c:731
 #, c-format
 msgid ""
 "Usage: %s [OPTIONS]\n"
@@ -61,7 +61,7 @@ msgid ""
 "  --process-mixed        --count --ps --mode=mixed\n"
 msgstr ""
 
-#: ../aa_status.c:734
+#: ../aa_status.c:734 ../aa_status.c:750
 #, c-format
 msgid ""
 "Usage of filters\n"
@@ -77,7 +77,7 @@ msgid ""
 "  --filter.exe:  regular expression to match executable\n"
 msgstr ""
 
-#: ../aa_status.c:762
+#: ../aa_status.c:762 ../aa_status.c:778
 #, c-format
 msgid ""
 "Usage: %s [OPTIONS]\n"
@@ -103,45 +103,45 @@ msgid ""
 "  --help[=(legacy|filters)] this message, or info on the specified option\n"
 msgstr ""
 
-#: ../aa_status.c:856
+#: ../aa_status.c:856 ../aa_status.c:872
 #, c-format
 msgid "Error: Invalid --help option '%s'.\n"
 msgstr ""
 
-#: ../aa_status.c:924
+#: ../aa_status.c:924 ../aa_status.c:940
 #, c-format
 msgid "Error: Invalid --show option '%s'.\n"
 msgstr ""
 
-#: ../aa_status.c:946
+#: ../aa_status.c:946 ../aa_status.c:962
 msgid "Error: Invalid command.\n"
 msgstr ""
 
-#: ../aa_status.c:971
+#: ../aa_status.c:971 ../aa_status.c:987
 msgid "Error: Unknown options.\n"
 msgstr ""
 
-#: ../aa_status.c:983
+#: ../aa_status.c:983 ../aa_status.c:999
 #, c-format
 msgid "Error: failed to compile mode filter '%s'\n"
 msgstr ""
 
-#: ../aa_status.c:988
+#: ../aa_status.c:988 ../aa_status.c:1004
 #, c-format
 msgid "Error: failed to compile profiles filter '%s'\n"
 msgstr ""
 
-#: ../aa_status.c:994
+#: ../aa_status.c:994 ../aa_status.c:1010
 #, c-format
 msgid "Error: failed to compile ps filter '%s'\n"
 msgstr ""
 
-#: ../aa_status.c:1000
+#: ../aa_status.c:1000 ../aa_status.c:1016
 #, c-format
 msgid "Error: failed to compile exe filter '%s'\n"
 msgstr ""
 
-#: ../aa_status.c:1015
+#: ../aa_status.c:1015 ../aa_status.c:1031
 #, c-format
 msgid "Failed to open memstream: %m\n"
 msgstr ""
@@ -156,10 +156,24 @@ msgstr ""
 msgid "Failed to get processes: %d....\n"
 msgstr ""
 
-#: ../aa_status.c:1076
+#: ../aa_status.c:1076 ../aa_status.c:1099
 msgid "Failed to parse json output"
 msgstr ""
 
-#: ../aa_status.c:1083
+#: ../aa_status.c:1083 ../aa_status.c:1106
 msgid "Failed to print pretty json"
+msgstr ""
+
+#: ../aa_status.c:1044
+#, c-format
+msgid "Failed to retrieve profiles from kernel: %d....\n"
+msgstr ""
+
+#: ../aa_status.c:1073
+#, c-format
+msgid "Failed to get confinement information from processes: %d....\n"
+msgstr ""
+
+#: ../aa_status.c:1042
+msgid "No policy loaded into the kernel\n"
 msgstr ""

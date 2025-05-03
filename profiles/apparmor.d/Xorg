@@ -9,6 +9,23 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
+profile Xorg_wrap /usr/lib/xorg/Xorg.wrap flags=(complain) {
+  include <abstractions/base>
+  # Broad directory rules here cover the Xorg wrapper config file too
+  # Included abstractions/dri-common includes dri device files
+  include <abstractions/X>
+
+  # Privileges dropped if root is not needed due to cards supporting kms
+  capability setuid,
+  capability setgid,
+
+  /usr/lib/xorg/Xorg.wrap mr,
+  /usr/lib/xorg/Xorg px,
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/Xorg_wrap>
+}
+
 # Note: attach_disconnected appears necessary in rootless mode
 profile Xorg /usr/lib/xorg/Xorg flags=(attach_disconnected, complain) {
   include <abstractions/base>

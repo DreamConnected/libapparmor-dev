@@ -388,7 +388,7 @@ extern int yyparse(void);
 extern void yyerror(const char *msg, ...);
 extern int yylex(void);
 
-/* parser_include.c */
+/* parser_include.cc */
 extern const char *basedir;
 
 /* parser_regex.cc */
@@ -459,7 +459,7 @@ bool entry_add_prefix(struct cod_entry *entry, const prefixes &p, const char *&e
 long long convert_time_units(long long value, long long base, const char *units);
 
 
-/* parser_symtab.c */
+/* parser_symtab.cc */
 struct set_value {
 	char *val;
 	struct set_value *next;
@@ -475,12 +475,12 @@ extern void dump_symtab(void);
 extern void dump_expanded_symtab(void);
 void free_symtabs(void);
 
-/* parser_alias.c */
+/* parser_alias.cc */
 extern int new_alias(const char *from, const char *to);
 extern int replace_profile_aliases(Profile *prof);
 extern void free_aliases(void);
 
-/* parser_merge.c */
+/* parser_merge.cc */
 extern int profile_merge_rules(Profile *prof);
 
 /* parser_interface.cc */
@@ -519,7 +519,7 @@ void free_policies(void);
 /* parser_main.cc */
 extern void set_supported_features();
 
-/* default_features.c */
+/* default_features.cc */
 extern const char *match_n_abi;
 extern const char *match_c_abi;
 extern const char *match_cn_abi;

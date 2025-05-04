@@ -99,12 +99,12 @@ endif
 # Internationalization support. Define a package and a LOCALEDIR
 EXTRA_CFLAGS+=-DPACKAGE=\"${NAME}\" -DLOCALEDIR=\"${LOCALEDIR}\"
 
-SRCS = parser_common.cc parser_include.c parser_interface.cc parser_lex.cc \
-       parser_main.cc parser_misc.cc parser_merge.c parser_symtab.c \
+SRCS = parser_common.cc parser_include.cc parser_interface.cc parser_lex.cc \
+       parser_main.cc parser_misc.cc parser_merge.cc parser_symtab.cc \
        parser_yacc.cc parser_regex.cc parser_variable.cc parser_policy.cc \
-       parser_alias.c common_optarg.c lib.cc network.cc \
+       parser_alias.cc common_optarg.cc lib.cc network.cc \
        mount.cc dbus.cc profile.cc rule.cc signal.cc ptrace.cc \
-       af_rule.cc af_unix.cc policy_cache.c default_features.c userns.cc \
+       af_rule.cc af_unix.cc policy_cache.cc default_features.cc userns.cc \
        mqueue.cc io_uring.cc all_rule.cc cond_expr.cc
 STATIC_HDRS = af_rule.h af_unix.h capability.h common_optarg.h dbus.h \
        file_cache.h immunix.h lib.h mount.h network.h parser.h \
@@ -253,16 +253,16 @@ parser_main.o: parser_main.cc $(HDRS)
 parser_interface.o: parser_interface.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-parser_include.o: parser_include.c $(HDRS)
+parser_include.o: parser_include.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-parser_merge.o: parser_merge.c $(HDRS)
+parser_merge.o: parser_merge.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
 parser_regex.o: parser_regex.cc $(HDRS) unit_test.h
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-parser_symtab.o: parser_symtab.c $(HDRS) unit_test.h
+parser_symtab.o: parser_symtab.cc $(HDRS) unit_test.h
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
 parser_variable.o: parser_variable.cc $(HDRS) unit_test.h
@@ -271,7 +271,7 @@ parser_variable.o: parser_variable.cc $(HDRS) unit_test.h
 parser_policy.o: parser_policy.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-parser_alias.o: parser_alias.c $(HDRS)
+parser_alias.o: parser_alias.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
 parser_common.o: parser_common.cc $(HDRS)
@@ -280,10 +280,10 @@ parser_common.o: parser_common.cc $(HDRS)
 mount.o: mount.cc mount.h $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-common_optarg.o: common_optarg.c $(HDRS)
+common_optarg.o: common_optarg.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-policy_cache.o: policy_cache.c $(HDRS)
+policy_cache.o: policy_cache.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
 lib.o: lib.cc $(HDRS) unit_test.h
@@ -301,7 +301,7 @@ ptrace.o: ptrace.cc $(HDRS)
 network.o: network.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-default_features.o: default_features.c $(HDRS)
+default_features.o: default_features.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
 af_rule.o: af_rule.cc $(HDRS)

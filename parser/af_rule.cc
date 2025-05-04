@@ -28,7 +28,7 @@
 #include "network.h"
 #include "parser.h"
 #include "profile.h"
-#include "parser_yacc.h"
+#include "parser_yacc.hh"
 #include "af_rule.h"
 
 

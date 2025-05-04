@@ -45,7 +45,7 @@ policy_compat.o: policy_compat.cc ${HDRS}
 
 parse.o : parse.cc ${HDRS}
 
-parse.cc : parse.y ${HDRS}
+parse.cc : parse.yy ${HDRS}
 	${BISON} -o $@ $<
 
 clean:

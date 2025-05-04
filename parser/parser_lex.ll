@@ -41,7 +41,7 @@
 #include "parser.h"
 #include "profile.h"
 #include "parser_include.h"
-#include "parser_yacc.h"
+#include "parser_yacc.hh"
 #include "lib.h"
 #include "policy_cache.h"
 #include "file_cache.h"

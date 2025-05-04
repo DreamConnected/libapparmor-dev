@@ -103,13 +103,16 @@ include <tunables/global>
   /{usr/,}bin/zsh5     Uxr,
   /{usr/,}sbin/nologin Uxr,
   /{usr/,}bin/false    Uxr,
+  /usr/sbin/** r,
 
   # XXX: this needs to be enabled otherwise we risk locking out a user
   # Call passwd for password change when expired
   /usr/bin/passwd Cx -> passwd,
 
+
   # to set memory protection for passwd
   @{PROC}/@{pid}/task/@{pid}/attr/exec w,
+  @{PROC}/[0-9]*/cmdline r,
   profile passwd {
     include <abstractions/authentication>
     include <abstractions/base>
@@ -143,6 +146,7 @@ include <tunables/global>
   @{run}/motd{,.dynamic}{,.new} rw,
   @{run}/motd.d/ r,
   @{run}/motd.d/* r,
+  @{run}/systemd/users/* r,
   owner @{HOME}/.cache/ w,
   owner @{HOME}/.cache/motd.legal-displayed w,
   /tmp/krb5cc* wk,
@@ -155,6 +159,7 @@ include <tunables/global>
   owner /** rwl,
 
   /usr/lib/openssh/sftp-server PUx,
+  /usr/bin/nsupdate rix,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.sbin.sshd>

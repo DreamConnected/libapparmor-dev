@@ -41,7 +41,7 @@
 #include "lib.h"
 #include "parser.h"
 #include "profile.h"
-#include "parser_yacc.h"
+#include "parser_yacc.hh"
 #include "mount.h"
 #include "dbus.h"
 

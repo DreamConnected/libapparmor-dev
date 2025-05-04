@@ -35,10 +35,10 @@ parser/tst_regex
 parser/tst_symtab
 parser/tst_variable
 parser/tst/simple_tests/generated_*/*
-parser/parser_lex.c
+parser/parser_lex.cc
 parser/parser_version.h
-parser/parser_yacc.c
-parser/parser_yacc.h
+parser/parser_yacc.cc
+parser/parser_yacc.hh
 parser/pod2htm*.tmp
 parser/libapparmor_re/*.o
 parser/libapparmor_re/libapparmor_re.a

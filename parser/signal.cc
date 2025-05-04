@@ -27,7 +27,7 @@
 
 #include "parser.h"
 #include "profile.h"
-#include "parser_yacc.h"
+#include "parser_yacc.hh"
 #include "signal.h"
 
 #define MAXMAPPED_SIG 35

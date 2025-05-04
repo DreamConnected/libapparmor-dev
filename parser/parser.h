@@ -300,7 +300,7 @@ do {						\
 #define PROFILE_NAME_VARIABLE "profile_name"
 
 
-/* from parser_common.c */
+/* from parser_common.cc */
 extern uint32_t policy_version;
 extern uint32_t parser_abi_version;
 extern uint32_t kernel_abi_version;
@@ -381,17 +381,17 @@ extern int abort_on_error;
 extern int skip_bad_cache_rebuild;
 extern int mru_skip_cache;
 
-/* provided by parser_lex.l (cannot be used in tst builds) */
+/* provided by parser_lex.ll (cannot be used in tst builds) */
 extern FILE *yyin;
 extern void yyrestart(FILE *fp);
 extern int yyparse(void);
 extern void yyerror(const char *msg, ...);
 extern int yylex(void);
 
-/* parser_include.c */
+/* parser_include.cc */
 extern const char *basedir;
 
-/* parser_regex.c */
+/* parser_regex.cc */
 #define default_match_pattern "[^\\000]*"
 #define anyone_match_pattern "[^\\000]+"
 
@@ -412,13 +412,13 @@ extern int process_policy_ents(Profile *prof);
 extern void filter_slashes(char *path);
 extern const char *local_name(const char *name);
 
-/* parser_variable.c */
+/* parser_variable.cc */
 int expand_entry_variables(char **name);
 extern int process_variables(Profile *prof);
 extern struct var_string *split_out_var(const char *string);
 extern void free_var_string(struct var_string *var);
 
-/* parser_misc.c */
+/* parser_misc.cc */
 extern void warn_uppercase(void);
 extern int is_blacklisted(const char *name, const char *path);
 extern struct value_list *new_value_list(char *value);
@@ -459,7 +459,7 @@ bool entry_add_prefix(struct cod_entry *entry, const prefixes &p, const char *&e
 long long convert_time_units(long long value, long long base, const char *units);
 
 
-/* parser_symtab.c */
+/* parser_symtab.cc */
 struct set_value {
 	char *val;
 	struct set_value *next;
@@ -475,15 +475,15 @@ extern void dump_symtab(void);
 extern void dump_expanded_symtab(void);
 void free_symtabs(void);
 
-/* parser_alias.c */
+/* parser_alias.cc */
 extern int new_alias(const char *from, const char *to);
 extern int replace_profile_aliases(Profile *prof);
 extern void free_aliases(void);
 
-/* parser_merge.c */
+/* parser_merge.cc */
 extern int profile_merge_rules(Profile *prof);
 
-/* parser_interface.c */
+/* parser_interface.cc */
 extern int load_profile(int option, aa_kernel_interface *kernel_interface,
 			Profile *prof, int cache_fd);
 extern void sd_serialize_profile(std::ostringstream &buf, Profile *prof,
@@ -492,7 +492,7 @@ extern int sd_load_buffer(int option, char *buffer, int size);
 extern int cache_fd;
 
 
-/* parser_policy.c */
+/* parser_policy.cc */
 extern void add_to_list(Profile *profile);
 extern void add_hat_to_policy(Profile *policy, Profile *hat);
 extern int add_entry_to_x_table(Profile *prof, char *name);
@@ -516,10 +516,10 @@ void dump_policy(void);
 
 void free_policies(void);
 
-/* parser_main.c */
+/* parser_main.cc */
 extern void set_supported_features();
 
-/* default_features.c */
+/* default_features.cc */
 extern const char *match_n_abi;
 extern const char *match_c_abi;
 extern const char *match_cn_abi;

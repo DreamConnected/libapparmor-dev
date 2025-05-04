@@ -21,7 +21,7 @@
 #ifdef UNIT_TEST
 /* For the unit-test builds, we must include function stubs for stuff that
  * only exists in the excluded object files; everything else should live
- * in parser_common.c.
+ * in parser_common.cc.
  */
 
 #include <stdarg.h>
@@ -31,7 +31,7 @@
 #undef _
 #define _(s) (s)
 
-/* parser_yacc.y */
+/* parser_yacc.yy */
 void yyerror(const char *msg, ...)
 {
         va_list arg;

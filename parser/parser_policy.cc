@@ -32,7 +32,7 @@
 #include "lib.h"
 #include "parser.h"
 #include "profile.h"
-#include "parser_yacc.h"
+#include "parser_yacc.hh"
 #include "network.h"
 
 /* #define DEBUG */

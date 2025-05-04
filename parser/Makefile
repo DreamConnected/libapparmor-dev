@@ -99,12 +99,12 @@ endif
 # Internationalization support. Define a package and a LOCALEDIR
 EXTRA_CFLAGS+=-DPACKAGE=\"${NAME}\" -DLOCALEDIR=\"${LOCALEDIR}\"
 
-SRCS = parser_common.c parser_include.c parser_interface.c parser_lex.c \
-       parser_main.c parser_misc.c parser_merge.c parser_symtab.c \
-       parser_yacc.c parser_regex.c parser_variable.c parser_policy.c \
-       parser_alias.c common_optarg.c lib.c network.cc \
+SRCS = parser_common.cc parser_include.cc parser_interface.cc parser_lex.cc \
+       parser_main.cc parser_misc.cc parser_merge.cc parser_symtab.cc \
+       parser_yacc.cc parser_regex.cc parser_variable.cc parser_policy.cc \
+       parser_alias.cc common_optarg.cc lib.cc network.cc \
        mount.cc dbus.cc profile.cc rule.cc signal.cc ptrace.cc \
-       af_rule.cc af_unix.cc policy_cache.c default_features.c userns.cc \
+       af_rule.cc af_unix.cc policy_cache.cc default_features.cc userns.cc \
        mqueue.cc io_uring.cc all_rule.cc cond_expr.cc
 STATIC_HDRS = af_rule.h af_unix.h capability.h common_optarg.h dbus.h \
        file_cache.h immunix.h lib.h mount.h network.h parser.h \
@@ -112,7 +112,7 @@ STATIC_HDRS = af_rule.h af_unix.h capability.h common_optarg.h dbus.h \
        profile.h ptrace.h rule.h signal.h userns.h mqueue.h io_uring.h \
        common_flags.h bignum.h all_rule.h cond_expr.h
 
-SPECIAL_HDRS = parser_yacc.h unit_test.h base_cap_names.h
+SPECIAL_HDRS = parser_yacc.hh unit_test.h base_cap_names.h
 GENERATED_HDRS = af_names.h generated_af_names.h \
        cap_names.h generated_cap_names.h parser_version.h errnos.h
 LIBAA_HDRS = libapparmor_re/apparmor_re.h libapparmor_re/aare_rules.h
@@ -148,8 +148,8 @@ else
 endif
 EXTRA_CFLAGS += $(INCLUDE_APPARMOR)
 
-LEX_C_FILES	= parser_lex.c
-YACC_C_FILES	= parser_yacc.c parser_yacc.h
+LEX_CXX_FILES	= parser_lex.cc
+YACC_CXX_FILES	= parser_yacc.cc parser_yacc.hh
 
 TESTS = tst_regex tst_misc tst_symtab tst_variable tst_lib
 TEST_CFLAGS = $(EXTRA_CFLAGS) -DUNIT_TEST -Wno-unused-result
@@ -178,7 +178,7 @@ else
 endif
 export Q VERBOSE BUILD_OUTPUT
 
-HDRS=$(STATIC_HDRS) $(GENERATED_HDRS) parser_yacc.h $(LIBAA_HDRS) $(APPARMOR_H)
+HDRS=$(STATIC_HDRS) $(GENERATED_HDRS) parser_yacc.hh $(LIBAA_HDRS) $(APPARMOR_H)
 
 
 po/${NAME}.pot: ${SRCS} ${STATIC_HDRS}
@@ -232,61 +232,61 @@ apparmor_parser: $(OBJECTS) $(AAREOBJECTS) $(LIBAPPARMOR_A)
 	$(CXX) $(LDFLAGS) $(EXTRA_CFLAGS) -o $@ $(OBJECTS) $(LIBS) \
 	      ${LEXLIB}  $(AAREOBJECTS) $(AARE_LDFLAGS) $(AALIB)
 
-parser_yacc.c parser_yacc.h: parser_yacc.y $(STATIC_HDRS) $(DYNAMIC_HDRS)
-	$(YACC) $(YFLAGS) -o parser_yacc.c parser_yacc.y
+parser_yacc.cc parser_yacc.hh: parser_yacc.yy $(STATIC_HDRS) $(DYNAMIC_HDRS)
+	$(YACC) $(YFLAGS) -o parser_yacc.cc parser_yacc.yy
 
-parser_lex.c: parser_lex.l $(HDRS)
+parser_lex.cc: parser_lex.ll $(HDRS)
 	$(LEX) ${LEXFLAGS} -o$@ $<
 
-parser_lex.o: parser_lex.c $(HDRS)
+parser_lex.o: parser_lex.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-parser_misc.o: parser_misc.c $(HDRS) unit_test.h
+parser_misc.o: parser_misc.cc $(HDRS) unit_test.h
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-parser_yacc.o: parser_yacc.c $(HDRS)
+parser_yacc.o: parser_yacc.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-parser_main.o: parser_main.c $(HDRS)
+parser_main.o: parser_main.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-parser_interface.o: parser_interface.c $(HDRS)
+parser_interface.o: parser_interface.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-parser_include.o: parser_include.c $(HDRS)
+parser_include.o: parser_include.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-parser_merge.o: parser_merge.c $(HDRS)
+parser_merge.o: parser_merge.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-parser_regex.o: parser_regex.c $(HDRS) unit_test.h
+parser_regex.o: parser_regex.cc $(HDRS) unit_test.h
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-parser_symtab.o: parser_symtab.c $(HDRS) unit_test.h
+parser_symtab.o: parser_symtab.cc $(HDRS) unit_test.h
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-parser_variable.o: parser_variable.c $(HDRS) unit_test.h
+parser_variable.o: parser_variable.cc $(HDRS) unit_test.h
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-parser_policy.o: parser_policy.c $(HDRS)
+parser_policy.o: parser_policy.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-parser_alias.o: parser_alias.c $(HDRS)
+parser_alias.o: parser_alias.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-parser_common.o: parser_common.c $(HDRS)
+parser_common.o: parser_common.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
 mount.o: mount.cc mount.h $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-common_optarg.o: common_optarg.c $(HDRS)
+common_optarg.o: common_optarg.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-policy_cache.o: policy_cache.c $(HDRS)
+policy_cache.o: policy_cache.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-lib.o: lib.c $(HDRS) unit_test.h
+lib.o: lib.cc $(HDRS) unit_test.h
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
 dbus.o: dbus.cc $(HDRS)
@@ -301,7 +301,7 @@ ptrace.o: ptrace.cc $(HDRS)
 network.o: network.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
-default_features.o: default_features.c $(HDRS)
+default_features.o: default_features.cc $(HDRS)
 	$(CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
 af_rule.o: af_rule.cc $(HDRS)
@@ -368,7 +368,7 @@ cap_names.h: generated_cap_names.h base_cap_names.h
 .PHONY: tst_binaries
 tst_binaries: $(TESTS)
 
-tst_lib: lib.c parser.h $(filter-out lib.o, ${TEST_OBJECTS})
+tst_lib: lib.cc parser.h $(filter-out lib.o, ${TEST_OBJECTS})
 	$(CXX) $(TEST_CFLAGS) -o $@ $< $(filter-out $(<:.c=.o), ${TEST_OBJECTS}) $(TEST_LDFLAGS) $(TEST_LDLIBS)
 tst_%: parser_%.c parser.h $(filter-out parser_%.o, ${TEST_OBJECTS})
 	$(CXX) $(TEST_CFLAGS) -o $@ $< $(filter-out $(<:.c=.o), ${TEST_OBJECTS}) $(TEST_LDFLAGS) $(TEST_LDLIBS)
@@ -473,8 +473,8 @@ clean: pod_clean
 	rm -f core core.* *.o *.s *.a *~ *.gcda *.gcno
 	rm -f gmon.out
 	rm -f $(TOOLS) $(TESTS)
-	rm -f $(LEX_C_FILES)
-	rm -f $(YACC_C_FILES)
+	rm -f $(LEX_CXX_FILES)
+	rm -f $(YACC_CXX_FILES)
 	rm -f $(NAME)*.tar.gz $(NAME)*.tgz
 	rm -f $(GENERATED_HDRS)
 	rm -rf techdoc.aux techdoc.out techdoc.log techdoc.pdf techdoc.toc techdoc.txt techdoc/

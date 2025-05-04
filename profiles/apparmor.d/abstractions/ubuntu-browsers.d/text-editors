@@ -1,4 +1,4 @@
-# vim:syntax=apparmor
+# vim:ft=apparmor
 # Users of this abstraction need to include the ubuntu-helpers abstraction
 # in the toplevel profile. Eg:
 #   include <abstractions/ubuntu-helpers>

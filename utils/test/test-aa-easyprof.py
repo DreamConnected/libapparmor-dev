@@ -123,7 +123,7 @@ class T(unittest.TestCase):
 
         # Create a test template
         self.test_template = "test-template"
-        contents = '''# vim:syntax=apparmor
+        contents = '''# vim:ft=apparmor
 # %s
 # AppArmor policy for ###NAME###
 # ###AUTHOR###

@@ -1,4 +1,4 @@
-# vim:syntax=apparmor
+# vim:ft=apparmor
 # OpenCL access requirements for POCL implementation
 
   abi <abi/4.0>,

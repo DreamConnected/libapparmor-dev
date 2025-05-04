@@ -1,7 +1,7 @@
 #
 #=DESCRIPTION an exact overlapping deny rule
 #=EXRESULT PASS
-# vim:syntax=apparmor
+# vim:ft=apparmor
 #
 /usr/bin/foo {
   /usr/bin/foo r,

@@ -1,4 +1,4 @@
-# vim:syntax=sh
+# vim:filetype=sh
 #
 # Test infrastructure support.
 #

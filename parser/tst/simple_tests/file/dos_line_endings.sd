@@ -1,4 +1,4 @@
-# vim:syntax=subdomain
+# vim:ft=apparmor
 # Last Modified: Wed Aug 31 11:14:09 2005
 #=DESCRIPTION dos line endings
 #=EXRESULT PASS

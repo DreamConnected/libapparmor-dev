@@ -1,7 +1,7 @@
 #
 #=DESCRIPTION test append
 #=EXRESULT PASS
-# vim:syntax=apparmor
+# vim:ft=apparmor
 #
 /usr/bin/foo {
   allow /{usr/,}bin/cat a,

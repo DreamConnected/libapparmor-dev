@@ -1,7 +1,7 @@
 #
 #=DESCRIPTION collision same profile, same namespace w/ and w/o profile keyword
 #=EXRESULT FAIL
-# vim:syntax=apparmor
+# vim:ft=apparmor
 # Last Modified: Thu Feb 11 00:14:20 2016
 #
 :ns:/t {

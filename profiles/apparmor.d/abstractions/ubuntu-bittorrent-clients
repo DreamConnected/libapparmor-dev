@@ -1,4 +1,4 @@
-# vim:syntax=apparmor
+# vim:ft=apparmor
 #
 # abstraction for allowing graphical bittorrent clients in Ubuntu
 #

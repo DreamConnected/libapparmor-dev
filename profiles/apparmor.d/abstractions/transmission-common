@@ -1,4 +1,4 @@
-# vim:syntax=apparmor
+# vim:ft=apparmor
 # LOGPROF-SUGGEST: no
 # Author: Daniel Richard G. <skunk@iSKUNK.ORG>
 

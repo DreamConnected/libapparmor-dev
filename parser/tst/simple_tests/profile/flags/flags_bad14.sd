@@ -1,7 +1,7 @@
 #
 #=DESCRIPTION fail if flags is not speeled correctly
 #=EXRESULT FAIL
-# vim:syntax=apparmor
+# vim:ft=apparmor
 #
 /does/not/exist flogs=(audit) {
 

@@ -1,7 +1,7 @@
 #
 #=DESCRIPTION validate some uses of the profile flags.
 #=EXRESULT PASS
-# vim:syntax=subdomain
+# vim:ft=apparmor
 #
 /does/not/exist1 flags=(default_allow, attach_disconnected) {
   #include <includes/base>

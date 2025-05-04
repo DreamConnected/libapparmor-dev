@@ -1,4 +1,4 @@
-# vim:syntax=apparmor
+# vim:ft=apparmor
 # video device access
 
   abi <abi/4.0>,

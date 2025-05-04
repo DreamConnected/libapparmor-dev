@@ -1,4 +1,4 @@
-# vim:syntax=apparmor
+# vim:ft=apparmor
 # Allow writing shared settings for Qt-based applications
 
   abi <abi/4.0>,

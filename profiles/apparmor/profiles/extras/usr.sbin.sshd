@@ -1,3 +1,4 @@
+# vim:ft=apparmor
 # ------------------------------------------------------------------
 #
 #    Copyright (C) 2002-2005 Novell/SUSE
@@ -11,8 +12,6 @@
 # ------------------------------------------------------------------
 # will need to revalidate this profile once we finish re-architecting
 # the change_hat patch.
-#
-# vim:syntax=apparmor
 
 abi <abi/4.0>,
 

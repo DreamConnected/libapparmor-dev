@@ -1,3 +1,4 @@
+# vim:ft=apparmor
 # Last Modified: Mon Dec  1 22:15:18 2014
 
 # ------------------------------------------------------------------
@@ -9,7 +10,6 @@
 #    License published by the Free Software Foundation.
 #
 # ------------------------------------------------------------------
-# vim:syntax=apparmor
 #
 
 abi <abi/4.0>,

@@ -1,7 +1,7 @@
 #
 #=DESCRIPTION validate some uses of the profile flags.
 #=EXRESULT PASS
-# vim:syntax=subdomain
+# vim:ft=apparmor
 #
 /does/not/exist1 flags=(default_allow, chroot_no_attach) {
   #include <includes/base>

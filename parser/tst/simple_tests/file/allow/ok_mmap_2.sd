@@ -1,7 +1,7 @@
 #
 #=DESCRIPTION m and [upi]x do not conflict, separate rules
 #=EXRESULT PASS
-# vim:syntax=apparmor
+# vim:ft=apparmor
 #
 /usr/bin/foo {
   allow /{usr/,}bin/cat rm,

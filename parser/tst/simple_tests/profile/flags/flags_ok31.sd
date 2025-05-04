@@ -1,7 +1,7 @@
 #
 #=DESCRIPTION ensure flag does not conflict with other mdes, and flags
 #=EXRESULT PASS
-# vim:syntax=subdomain
+# vim:ft=apparmor
 # Last Modified: Sun Apr 17 19:44:44 2005
 #
 /does/not/exist flags=(enforce, interruptible) {

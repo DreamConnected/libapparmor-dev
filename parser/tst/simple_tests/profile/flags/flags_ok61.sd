@@ -1,7 +1,7 @@
 #
 #=DESCRIPTION verify whitespace is allowed in profile flags.
 #=EXRESULT PASS
-# vim:syntax=subdomain
+# vim:ft=apparmor
 #
 /does/not/exist3 flags=(default_allow, audit) {
   #include <includes/base>

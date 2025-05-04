@@ -32,7 +32,7 @@ Your system may be configured to automatically use syntax highlighting
 for installed AppArmor policies. If not, you can enable syntax highlighting in
 a specific vim session by performing:
 
- :set syntax=apparmor
+ :set filetype=apparmor
 
 =head1 DESCRIPTION
 

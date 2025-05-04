@@ -1,7 +1,7 @@
 #
 #=DESCRIPTION Tests to verify multiple profiles can have the same hatname
 #=EXRESULT PASS
-# vim:syntax=subdomain
+# vim:ft=apparmor
 # Last Modified: Sun Apr 17 19:44:44 2005
 #
 /HAT1 {

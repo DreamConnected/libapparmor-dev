@@ -1,7 +1,7 @@
 #
 #=DESCRIPTION Ensure conflicting mode flags cause an error
 #=EXRESULT FAIL
-# vim:syntax=subdomain
+# vim:ft=apparmor
 #
 /does/not/exist flags=(default_allow, enforce, complain) {
   /usr/X11R6/lib/lib*so* r,

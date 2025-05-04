@@ -1,4 +1,4 @@
-# vim:syntax=apparmor
+# vim:ft=apparmor
 # orbit2 permissions
 
   abi <abi/4.0>,

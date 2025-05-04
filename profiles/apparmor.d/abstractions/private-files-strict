@@ -1,4 +1,4 @@
-# vim:syntax=apparmor
+# vim:ft=apparmor
 # privacy-violations-strict contains additional rules for sensitive
 # files that you want to explicitly deny access
 

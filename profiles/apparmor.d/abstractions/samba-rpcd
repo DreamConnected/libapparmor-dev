@@ -1,3 +1,4 @@
+# vim:ft=apparmor
 # ------------------------------------------------------------------
 #
 #    Copyright (C) 2022 SUSE LLC
@@ -7,7 +8,6 @@
 #    License published by the Free Software Foundation.
 #
 # ------------------------------------------------------------------
-# vim:syntax=apparmor
 
 # This file contains basic permissions for samba rpcd_xyz services
 

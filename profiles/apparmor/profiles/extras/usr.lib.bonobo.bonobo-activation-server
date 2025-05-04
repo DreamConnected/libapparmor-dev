@@ -1,3 +1,4 @@
+# vim:ft=apparmor
 # ------------------------------------------------------------------
 #
 #    Copyright (C) 2002-2005 Novell/SUSE
@@ -7,7 +8,6 @@
 #    License published by the Free Software Foundation.
 #
 # ------------------------------------------------------------------
-# vim:syntax=apparmor
 # Last Modified: Mon Aug 29 10:49:30 2005
 
 abi <abi/4.0>,

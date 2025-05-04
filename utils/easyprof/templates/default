@@ -3,7 +3,6 @@
 # $ aa-easyprof --policy-groups=user-application /usr/bin/foo
 #
 ###ENDUSAGE###
-# vim:syntax=apparmor
 # AppArmor policy for ###NAME###
 # ###AUTHOR###
 # ###COPYRIGHT###
@@ -24,3 +23,4 @@
 
   ###WRITES###
 }
+# vim:ft=apparmor

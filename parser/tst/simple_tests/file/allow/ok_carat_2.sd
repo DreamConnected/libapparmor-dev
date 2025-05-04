@@ -1,7 +1,7 @@
 #
 #=DESCRIPTION trailing carat in pathname
 #=EXRESULT PASS
-# vim:syntax=apparmor
+# vim:ft=apparmor
 #
 /usr/bin/foo {
   allow /foo/bar^ r,

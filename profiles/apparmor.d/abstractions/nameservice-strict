@@ -37,4 +37,4 @@
 
   include if exists <abstractions/nameservice-strict.d>
 
-# vim:syntax=apparmor
+# vim:ft=apparmor

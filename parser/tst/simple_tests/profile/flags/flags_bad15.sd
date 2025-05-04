@@ -1,7 +1,7 @@
 #
 #=DESCRIPTION Ensure namespace_relative and chroot_relative conflict
 #=EXRESULT FAIL
-# vim:syntax=apparmor
+# vim:ft=apparmor
 #
 /does/not/exist flags=(namespace_relative, chroot_relative) {
 

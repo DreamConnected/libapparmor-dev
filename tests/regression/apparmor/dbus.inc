@@ -1,4 +1,4 @@
-# vim:syntax=sh
+# vim:filetype=sh
 #
 #	Copyright (C) 2013 Canonical, Ltd.
 #

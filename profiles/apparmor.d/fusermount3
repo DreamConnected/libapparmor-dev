@@ -45,4 +45,4 @@ profile fusermount3 /usr/bin/fusermount3 {
   include if exists <local/fusermount3>
 }
 
-# vim:syntax=apparmor
+# vim:ft=apparmor

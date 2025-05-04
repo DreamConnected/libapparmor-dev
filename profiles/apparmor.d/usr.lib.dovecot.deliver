@@ -1,3 +1,4 @@
+# vim: ft=apparmor
 # ------------------------------------------------------------------
 #
 #    Copyright (C) 2009 Dulmandakh Sukhbaatar <dulmandakh@gmail.com>
@@ -9,7 +10,6 @@
 #    License published by the Free Software Foundation.
 #
 # ------------------------------------------------------------------
-# vim: ft=apparmor
 
 abi <abi/4.0>,
 

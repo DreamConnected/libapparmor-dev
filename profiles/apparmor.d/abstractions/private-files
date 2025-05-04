@@ -1,4 +1,4 @@
-# vim:syntax=apparmor
+# vim:ft=apparmor
 # privacy-violations contains rules for common files that you want to
 # explicitly deny access
 

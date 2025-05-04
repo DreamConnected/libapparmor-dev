@@ -1,3 +1,4 @@
+# vim:ft=apparmor
 # ------------------------------------------------------------------
 #
 #    Copyright (C) 2002-2005 Novell/SUSE
@@ -14,7 +15,6 @@
 # Note that dhcpcd (at least as distributed by SuSE) offers to rewrite
 # ntp.conf and yp.conf in addition to resolv.conf.
 #
-# vim:syntax=apparmor
 
 abi <abi/4.0>,
 

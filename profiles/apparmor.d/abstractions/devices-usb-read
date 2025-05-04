@@ -32,4 +32,4 @@
 
   include if exists <abstractions/devices-usb-read.d>
 
-# vim:syntax=apparmor
+# vim:ft=apparmor

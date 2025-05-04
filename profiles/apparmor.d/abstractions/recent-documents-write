@@ -1,4 +1,4 @@
-# vim:syntax=apparmor
+# vim:ft=apparmor
 # Allow updating recent documents
 
   abi <abi/4.0>,

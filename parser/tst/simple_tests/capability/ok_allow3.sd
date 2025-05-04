@@ -1,7 +1,7 @@
 #
 #=DESCRIPTION validate allow w/multiple capabilities in a line.
 #=EXRESULT PASS
-# vim:syntax=apparmor
+# vim:ft=apparmor
 # Last Modified: Sun Apr 17 19:44:44 2005
 #
 

@@ -1,4 +1,4 @@
-# vim:syntax=apparmor
+# vim:ft=apparmor
 # Vulkan access requirements
 
   abi <abi/4.0>,

@@ -6,7 +6,6 @@
 #               /opt/foo/bin/foo
 #
 ###ENDUSAGE###
-# vim:syntax=apparmor
 # AppArmor policy for ###NAME###
 
 #include <tunables/global>
@@ -27,3 +26,4 @@
 
   ###WRITES###
 }
+# vim:ft=apparmor

@@ -1,4 +1,4 @@
-# vim:syntax=apparmor
+# vim:ft=apparmor
 # Allow writing cache for Qt6 "platforminputcontexts" plugins
 
   abi <abi/4.0>,

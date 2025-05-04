@@ -1,4 +1,4 @@
-# vim:syntax=apparmor
+# vim:ft=apparmor
 
 # This file contains basic permissions for php-fpm workers
 

@@ -1,7 +1,7 @@
 #
 #=DESCRIPTION validate some uses of the profile flags.
 #=EXRESULT PASS
-# vim:syntax=subdomain
+# vim:ft=apparmor
 #
 /does/not/exist flags=(default_allow) {
   #include <includes/base>

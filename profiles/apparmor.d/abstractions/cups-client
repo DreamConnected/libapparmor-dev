@@ -1,4 +1,4 @@
-# vim:syntax=apparmor
+# vim:ft=apparmor
 # ------------------------------------------------------------------
 #
 #    Copyright (C) 2009-2012 Canonical Ltd.

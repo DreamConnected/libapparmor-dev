@@ -19,4 +19,4 @@
 
   include if exists <abstractions/devices-usb.d>
 
-# vim:syntax=apparmor
+# vim:ft=apparmor

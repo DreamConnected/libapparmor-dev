@@ -1,0 +1,140 @@
+# Last Modified: Mon Feb 24 14:59:31 2025
+abi <abi/4.0>,
+
+include <tunables/global>
+
+#------------------------------------------------------------------
+#    Copyright (C) 2025 Canonical Ltd.
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+
+
+profile debsums /usr/bin/debsums {
+  include <abstractions/base>
+  include <abstractions/consoles>
+  include <abstractions/private-files-strict>
+  include if exists <local/debsums>
+
+  /** r,
+  /usr/bin/bash mrCx -> sh,
+  /usr/bin/dash mrCx -> sh,
+  /usr/bin/dpkg mrCx -> dpkg,
+  /usr/bin/dpkg-deb mrCx -> dpkg-deb,
+  /usr/bin/dpkg-divert Cx -> dpkg-divert,
+  /usr/bin/dpkg-query mrCx -> dpkg-query,
+  /usr/bin/gawk Cx -> awk,
+  /usr/bin/mawk Cx -> awk,
+  owner /tmp/*/ rw,
+  owner /tmp/*/DEBIAN/ rw,
+  owner /tmp/*/DEBIAN/control rw,
+  owner /tmp/*/DEBIAN/md5sums rw,
+  owner /tmp/*/DEBIAN/triggers rw,
+  owner /tmp/*/DEBIAN/postinst rw,
+  owner /tmp/*/DEBIAN/postrm rw,
+
+
+  profile awk {
+    include <abstractions/base>
+
+    /usr/bin/gawk r,
+    /usr/bin/mawk r,
+
+  }
+
+  profile dpkg {
+    include <abstractions/base>
+
+    /etc/dpkg/dpkg.cfg r,
+    /etc/dpkg/dpkg.cfg.d/ r,
+    /usr/bin/dpkg r,
+    /usr/bin/dpkg-deb mrPx -> debsums//dpkg-deb,
+
+  }
+
+  profile dpkg-deb {
+    include <abstractions/base>
+
+    /usr/bin/dpkg-deb r,
+    /usr/bin/rm mrPx -> debsums//rm,
+    /usr/bin/tar mrPx -> debsums//tar,
+    /var/cache/apt/archives/*.deb r,
+    owner /tmp/*/DEBIAN/ w,
+    owner /tmp/dpkg-deb.*/ w,
+    owner /tmp/dpkg-deb.*/control r,
+
+  }
+
+  profile dpkg-divert {
+    include <abstractions/base>
+
+    /usr/bin/dpkg-divert r,
+    /var/lib/dpkg/diversions r,
+    /var/lib/dpkg/status r,
+    /var/lib/dpkg/triggers/File r,
+    /var/lib/dpkg/triggers/Unincorp r,
+    /var/lib/dpkg/updates/ r,
+
+  }
+
+  profile dpkg-query {
+    include <abstractions/base>
+
+    /usr/bin/dpkg-query r,
+    /var/lib/dpkg/diversions r,
+    /var/lib/dpkg/info/*.list r,
+    /var/lib/dpkg/info/format r,
+    /var/lib/dpkg/status r,
+    /var/lib/dpkg/triggers/File r,
+    /var/lib/dpkg/triggers/Unincorp r,
+    /var/lib/dpkg/updates/ r,
+
+  }
+
+  profile rm {
+    include <abstractions/base>
+
+    /usr/bin/rm r,
+    owner /tmp/dpkg-deb.*/ rw,
+    owner /tmp/dpkg-deb.*/control w,
+    owner /tmp/dpkg-deb.*/md5sums w,
+    owner /tmp/dpkg-deb.*/postinst w,
+    owner /tmp/dpkg-deb.*/postrm w,
+    owner /tmp/dpkg-deb.*/triggers w,
+
+  }
+
+  profile sh {
+    include <abstractions/base>
+
+    /usr/bin/bash r,
+    /usr/bin/dash r,
+    /usr/bin/dpkg-divert mrPx -> debsums//dpkg-divert,
+    /usr/bin/dpkg-query mrPx -> debsums//dpkg-query,
+    /usr/bin/gawk mrPx -> debsums//awk,
+    /usr/bin/mawk mrPx -> debsums//awk,
+
+  }
+
+  profile tar {
+    include <abstractions/base>
+    include <abstractions/nameservice-strict>
+
+    /usr/bin/tar r,
+    owner /tmp/*/DEBIAN/ w,
+    owner /tmp/*/DEBIAN/control w,
+    owner /tmp/*/DEBIAN/md5sums w,
+    owner /tmp/*/DEBIAN/postinst w,
+    owner /tmp/*/DEBIAN/postrm w,
+    owner /tmp/*/DEBIAN/triggers w,
+    owner /tmp/dpkg-deb.*/ w,
+    owner /tmp/dpkg-deb.*/control w,
+    owner /tmp/dpkg-deb.*/md5sums w,
+    owner /tmp/dpkg-deb.*/postinst w,
+    owner /tmp/dpkg-deb.*/postrm w,
+    owner /tmp/dpkg-deb.*/triggers w,
+
+  }
+}

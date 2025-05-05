@@ -14,7 +14,7 @@ abi <abi/4.0>,
 
 include <tunables/global>
 
-profile bluetoothd /usr/libexec/bluetooth/bluetoothd,/usr/sbin/bluetoothd flags=(attach_disconnected) {
+profile bluetoothd /usr/{libexec/bluetooth,sbin}/bluetoothd flags=(attach_disconnected) {
   include <abstractions/base>
   include <abstractions/dbus>
   include <abstractions/private-files-strict>
@@ -36,7 +36,7 @@ profile bluetoothd /usr/libexec/bluetooth/bluetoothd,/usr/sbin/bluetoothd flags=
   owner /etc/bluetooth/** r,
 
   # Users can load a config file from anywhere
-  @{HOME}/*.conf r,
+  @{HOME}/**.conf r,
 
   /usr/lib/@{multiarch}/bluetooth/plugins/*.so mr,
 

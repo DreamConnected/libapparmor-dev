@@ -166,15 +166,18 @@ class UnixTestGlob(AATest):
 
 class UnixTestClean(AATest):
     tests = (
-        ('     audit  unix                                                                                                              ,    # foo  ', 'audit unix, # foo'),
-        ('     audit deny unix                                                   label  =  foo                                          ,           ', 'audit deny unix label=foo,'),
-        ('     audit allow unix                                                  peer  =  (addr  =  a)                                  ,    # foo  ', 'audit allow unix peer=(addr=a), # foo'),
-        ('     deny unix                                                   type  =  foo                                                 ,           ', 'deny unix type=foo,'),
-        ('     allow unix                                                              peer  =  (label=bb)                              ,    # foo  ', 'allow unix peer=(label=bb), # foo'),
-        ('     unix                                                                                                                     ,    # foo  ', 'unix, # foo'),
-        ('     unix                                                   addr  =  foo                                                      ,           ', 'unix addr=foo,'),
-        ('     unix    (  accept  , rw)  protocol  =  AA  type =  BB  opt  =  myopt  label  =  bb peer  =  (addr  =  a label  =  bb )   ,           ', 'unix (accept, rw) type=BB protocol=AA label=bb opt=myopt peer=(addr=a label=bb),'),
-
+        ('     audit  unix                                                                                                                   ,    # foo  ', 'audit unix, # foo'),
+        ('     audit deny unix                                                   label  =  foo                                               ,           ', 'audit deny unix label=foo,'),
+        ('     audit allow unix                                                  peer  =  (addr  =  a)                                       ,    # foo  ', 'audit allow unix peer=(addr=a), # foo'),
+        ('     deny unix                                                   type  =  foo                                                      ,           ', 'deny unix type=foo,'),
+        ('     allow unix                                                              peer  =  (label=bb)                                   ,    # foo  ', 'allow unix peer=(label=bb), # foo'),
+        ('     unix                                                                                                                          ,    # foo  ', 'unix, # foo'),
+        ('     unix                                                   addr  =  foo                                                           ,           ', 'unix addr=foo,'),
+        ('     unix    (  accept  , rw)  protocol  =  AA  type =  BB  opt  =  myopt  label  =  bb peer  =  (addr  =  a label  =  bb )        ,           ', 'unix (accept, rw) type=BB protocol=AA label=bb opt=myopt peer=(addr=a label=bb),'),
+        ('priority=-42 unix    (  accept  , rw)  protocol  =  AA  type =  BB  opt  =  myopt  label  =  bb peer  =  (addr  =  a label  =  bb ),           ', 'priority=-42 unix (accept, rw) type=BB protocol=AA label=bb opt=myopt peer=(addr=a label=bb),'),
+        ('priority = 0 unix    (  accept  , rw)  protocol  =  AA  type =  BB  opt  =  myopt  label  =  bb peer  =  (addr  =  a label  =  bb ),           ', 'priority=0 unix (accept, rw) type=BB protocol=AA label=bb opt=myopt peer=(addr=a label=bb),'),
+        ('priority=211 unix    (  accept  , rw)  protocol  =  AA  type =  BB  opt  =  myopt  label  =  bb peer  =  (addr  =  a label  =  bb ),           ', 'priority=211 unix (accept, rw) type=BB protocol=AA label=bb opt=myopt peer=(addr=a label=bb),'),
+        ('priority=+45 unix    (  accept  , rw)  protocol  =  AA  type =  BB  opt  =  myopt  label  =  bb peer  =  (addr  =  a label  =  bb ),           ', 'priority=45 unix (accept, rw) type=BB protocol=AA label=bb opt=myopt peer=(addr=a label=bb),'),
     )
 
     def _run_test(self, rawrule, expected):

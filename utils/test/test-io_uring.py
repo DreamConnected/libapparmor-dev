@@ -64,10 +64,10 @@ class IOUringTestParseInvalid(AATest):
             IOUringRule.create_instance('foo,')
 
     def test_diff_non_iouringrule(self):
-        exp = namedtuple('exp', ('audit', 'deny'))
+        exp = namedtuple('exp', ('audit', 'deny', 'priority'))
         obj = IOUringRule(('sqpoll'), IOUringRule.ALL)
         with self.assertRaises(AppArmorBug):
-            obj.is_equal(exp(False, False), False)
+            obj.is_equal(exp(False, False, None), False)
 
     def test_diff_access(self):
         obj1 = IOUringRule(IOUringRule.ALL, IOUringRule.ALL)
@@ -124,6 +124,10 @@ class WriteIOUringTestAATest(AATest):
         ('io_uring sqpoll label="tst",',                             'io_uring sqpoll label="tst",'),
         ('io_uring (override_creds) label=bar,',                     'io_uring override_creds label=bar,'),
         ('io_uring (sqpoll override_creds) label=/foo,',             'io_uring (override_creds sqpoll) label=/foo,'),
+        (' priority=1   deny io_uring  override_creds  ,# foo bar',  'priority=1 deny io_uring override_creds, # foo bar'),
+        (' priority=0   deny io_uring  override_creds  ,# foo bar',  'priority=0 deny io_uring override_creds, # foo bar'),
+        (' priority=-23 deny io_uring  override_creds  ,# foo bar',  'priority=-23 deny io_uring override_creds, # foo bar'),
+        (' priority=+21 deny io_uring  override_creds  ,# foo bar',  'priority=21 deny io_uring override_creds, # foo bar'),
     )
 
     def _run_test(self, rawrule, expected):

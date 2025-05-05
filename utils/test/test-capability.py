@@ -314,6 +314,18 @@ class WriteCapabilityTest(AATest):
         self.assertEqual(expected, obj.get_clean(2), 'unexpected clean rule')
         self.assertEqual(expected, obj.get_raw(2), 'unexpected raw rule')
 
+    def test_write_priority_1(self):
+        self._check_write_rule('    priority  = 923   audit     capability sys_admin,', 'priority=923 audit capability sys_admin,')
+
+    def test_write_priority_2(self):
+        self._check_write_rule('    priority  = 0     audit     capability sys_admin,', 'priority=0 audit capability sys_admin,')
+
+    def test_write_priority_3(self):
+        self._check_write_rule('    priority=-12      audit     capability sys_admin,', 'priority=-12 audit capability sys_admin,')
+
+    def test_write_priority_4(self):
+        self._check_write_rule('    priority=+99      audit     capability sys_admin,', 'priority=99 audit capability sys_admin,')
+
 
 class CapabilityCoveredTest(AATest):
     def _is_covered(self, obj, rule_to_test):

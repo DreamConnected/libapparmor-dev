@@ -35,9 +35,6 @@ skip_startswith = (
 
     # Pux and Cux (which actually mean PUx and CUx) get rejected by the tools
     'generated_x/exact-',
-
-    # don't handle rule priorities yet
-    'file/priority/',
 )
 
 # testcases that should raise an exception, but don't
@@ -246,11 +243,16 @@ unknown_line = (
     'file/ok_other_1.sd',
     'file/ok_other_2.sd',
     'file/ok_other_3.sd',
+    'file/priority/ok_other_1.sd',
+    'file/priority/ok_other_2.sd',
+    'file/priority/ok_other_3.sd',
 
     # 'unsafe' keyword
     'file/file/front_perms_ok_2.sd',
     'file/front_perms_ok_2.sd',
     'xtrans/simple_ok_cx_1.sd',
+    'file/priority/front_perms_ok_1.sd',
+    'file/priority/front_perms_ok_2.sd',
 
     # owner / audit {...} blocks
     'file/file/owner/ok_1.sd',
@@ -355,6 +357,9 @@ syntax_failure = (
     'file/ok_5.sd',  # Invalid mode UX
     'file/ok_2.sd',  # Invalid mode RWM
     'file/ok_4.sd',  # Invalid mode iX
+    'file/priority/ok_5.sd',  # Invalid mode UX
+    'file/priority/ok_2.sd',  # Invalid mode RWM
+    'file/priority/ok_4.sd',  # Invalid mode iX
     'xtrans/simple_ok_pix_1.sd',  # Invalid mode pIx
     'xtrans/simple_ok_pux_1.sd',  # Invalid mode rPux
 
@@ -424,6 +429,8 @@ syntax_failure = (
     'file/ok_embedded_spaces_4.sd',  # \-escaped space
     'file/file/ok_embedded_spaces_4.sd',  # \-escaped space
     'file/ok_quoted_4.sd',  # quoted string including \"
+    'file/priority/ok_quoted_4.sd',  # quoted string including \"
+    'file/priority/ok_embedded_spaces_4.sd',  # \-escaped space
 
     # mount rules with multiple 'options' or 'fstype' are not supported by the tools yet, and when writing them, only the last 'options'/'fstype' would survive.
     # Therefore MountRule intentionally raises an exception when parsing such a rule.

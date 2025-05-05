@@ -260,6 +260,10 @@ class WritePtraceTestAATest(AATest):
         ('ptrace (read tracedby) peer=/usr/bin/bar,',         'ptrace (read tracedby) peer=/usr/bin/bar,'),
         ('ptrace (trace read) peer=/usr/bin/bar,',            'ptrace (read trace) peer=/usr/bin/bar,'),
         ('ptrace wr peer=/sbin/baz,',                         'ptrace wr peer=/sbin/baz,'),
+        ('priority = 010 deny ptrace      (  read      ),  ', 'priority=10 deny ptrace read,'),
+        ('priority = 0   deny ptrace      (  read      ),  ', 'priority=0 deny ptrace read,'),
+        ('priority = -21 deny ptrace      (  read      ),  ', 'priority=-21 deny ptrace read,'),
+        ('priority = +83 deny ptrace      (  read      ),  ', 'priority=83 deny ptrace read,'),
     )
 
     def test_write_manually(self):

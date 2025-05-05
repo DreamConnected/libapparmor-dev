@@ -37,6 +37,7 @@ class IncludeTest(AATest):
         self.assertEqual(False, obj.allow_keyword)  # not supported in include rules, expected to be always False
         self.assertEqual(False, obj.audit)          # not supported in include rules, expected to be always False
         self.assertEqual(False, obj.deny)           # not supported in include rules, expected to be always False
+        self.assertEqual(None, obj.priority)        # not supported in include rules, expected to be always None
         self.assertEqual(expected.comment, obj.comment)
 
         self.assertEqual(expected.path, obj.path)
@@ -158,6 +159,10 @@ class InvalidIncludeInit(AATest):
     def test_deny_true(self):
         with self.assertRaises(AppArmorBug):
             IncludeRule('foo', False, False, deny=True)
+
+    def test_priority_true(self):
+        with self.assertRaises(AppArmorBug):
+            IncludeRule('foo', False, False, priority=0)
 
 
 class InvalidIncludeTest(AATest):

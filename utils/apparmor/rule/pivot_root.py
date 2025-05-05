@@ -47,12 +47,13 @@ class PivotRootRule(BaseRule):
     _match_re = RE_PROFILE_PIVOT_ROOT
 
 #            PIVOT ROOT RULE = [ QUALIFIERS ] pivot_root [ oldroot=OLD PUT FILEGLOB ] [ NEW ROOT FILEGLOB ] [ ’->’ PROFILE NAME ]
-    def __init__(self, oldroot, newroot, profile_name, audit=False, deny=False, allow_keyword=False, comment='', log_event=None):
+    def __init__(self, oldroot, newroot, profile_name, audit=False, deny=False, allow_keyword=False,
+                 comment='', log_event=None, priority=None):
 
         super().__init__(audit=audit, deny=deny,
                          allow_keyword=allow_keyword,
                          comment=comment,
-                         log_event=log_event)
+                         log_event=log_event, priority=priority)
 
         self.oldroot,      self.all_oldroots        = self._aare_or_all(oldroot,        'oldroot',        True,  log_event)  # noqa: E221
         self.newroot,      self.all_newroots        = self._aare_or_all(newroot,        'newroot',        True,  log_event)  # noqa: E221
@@ -66,7 +67,7 @@ class PivotRootRule(BaseRule):
     def _create_instance(cls, raw_rule, matches):
         '''parse raw_rule and return instance of this class'''
 
-        audit, deny, allow_keyword, comment = parse_modifiers(matches)
+        priority, audit, deny, allow_keyword, comment = parse_modifiers(matches)
 
         rule_details = ''
         if matches.group('details'):
@@ -100,7 +101,7 @@ class PivotRootRule(BaseRule):
             profile_name = cls.ALL
 
         return cls(oldroot=oldroot, newroot=newroot, profile_name=profile_name,
-                   audit=audit, deny=deny, allow_keyword=allow_keyword, comment=comment)
+                   audit=audit, deny=deny, allow_keyword=allow_keyword, comment=comment, priority=priority)
 
     def get_clean(self, depth=0):
         space = '  ' * depth

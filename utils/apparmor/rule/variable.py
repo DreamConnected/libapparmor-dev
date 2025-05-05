@@ -30,16 +30,13 @@ class VariableRule(BaseRule):
     _match_re = RE_PROFILE_VARIABLE
 
     def __init__(self, varname, mode, values, audit=False, deny=False, allow_keyword=False,
-                 comment='', log_event=None):
+                 comment='', log_event=None, priority=None):
 
         super().__init__(audit=audit, deny=deny, allow_keyword=allow_keyword,
-                         comment=comment, log_event=log_event)
+                         comment=comment, log_event=log_event, priority=priority)
 
-        # variables don't support audit or deny
-        if audit:
-            raise AppArmorBug('Attempt to initialize %s with audit flag' % self.__class__.__name__)
-        if deny:
-            raise AppArmorBug('Attempt to initialize %s with deny flag' % self.__class__.__name__)
+        # variables don't support priority, allow keyword, audit or deny
+        self.ensure_modifiers_not_supported()
 
         if not isinstance(varname, str):
             raise AppArmorBug('Passed unknown type for varname to %s: %s' % (self.__class__.__name__, varname))
@@ -73,7 +70,7 @@ class VariableRule(BaseRule):
         values = separate_vars(matches.group('values'))
 
         return cls(varname, mode, values,
-                   audit=False, deny=False, allow_keyword=False, comment=comment)
+                   audit=False, deny=False, allow_keyword=False, comment=comment, priority=None)
 
     def get_clean(self, depth=0):
         """return rule (in clean/default formatting)"""

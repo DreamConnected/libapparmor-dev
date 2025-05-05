@@ -218,11 +218,16 @@ class AARegexCapability(AARegexTest):
         self.regex = RE_PROFILE_CAP
 
     tests = (
-        ('   capability net_raw,', (None, None, 'net_raw', 'net_raw', None)),
-        ('capability     net_raw   ,  ', (None, None, 'net_raw', 'net_raw', None)),
-        ('   capability,', (None, None, None, None, None)),
-        ('   capability   ,  ', (None, None, None, None, None)),
-        ('   capabilitynet_raw,', False)
+        ('   capability net_raw,', (None, None, None, None, 'net_raw', 'net_raw', None)),
+        ('capability     net_raw   ,  ', (None, None, None, None, 'net_raw', 'net_raw', None)),
+        ('   capability,', (None, None, None, None, None, None, None)),
+        ('   capability   ,  ', (None, None, None, None, None, None, None)),
+        ('   capabilitynet_raw,', False),
+        ('   priority=1 capability net_raw,', ('priority=1', '1', None, None, 'net_raw', 'net_raw', None)),
+        ('priority=1 capability     net_raw   ,  ', ('priority=1', '1', None, None, 'net_raw', 'net_raw', None)),
+        ('   priority=1 capability,', ('priority=1', '1', None, None, None, None, None)),
+        ('   priority=1 capability   ,  ', ('priority=1', '1', None, None, None, None, None)),
+        ('   priority=1 capabilitynet_raw,', False),
     )
 
 
@@ -233,13 +238,19 @@ class AARegexDbus(AARegexTest):
         self.regex = RE_PROFILE_DBUS
 
     tests = (
-        ('   dbus,',                                  (None,    None, 'dbus,',                        None,                     None)),
-        ('   audit dbus,',                            ('audit', None, 'dbus,',                        None,                     None)),
-        ('   dbus send member=no_comment,',           (None,    None, 'dbus send member=no_comment,', 'send member=no_comment', None)),
-        ('   dbus send member=no_comment, # comment', (None,    None, 'dbus send member=no_comment,', 'send member=no_comment', '# comment')),
+        ('   dbus,',                                  (None, None, None,    None, 'dbus,',                        None,                     None)),
+        ('   audit dbus,',                            (None, None, 'audit', None, 'dbus,',                        None,                     None)),
+        ('   dbus send member=no_comment,',           (None, None, None,    None, 'dbus send member=no_comment,', 'send member=no_comment', None)),
+        ('   dbus send member=no_comment, # comment', (None, None, None,    None, 'dbus send member=no_comment,', 'send member=no_comment', '# comment')),
+
+        ('   priority=-11 dbus,',                                  ('priority=-11', '-11', None,    None, 'dbus,',                        None,                     None)),
+        ('   priority=-11 audit dbus,',                            ('priority=-11', '-11', 'audit', None, 'dbus,',                        None,                     None)),
+        ('   priority=-11 dbus send member=no_comment,',           ('priority=-11', '-11', None,    None, 'dbus send member=no_comment,', 'send member=no_comment', None)),
+        ('   priority=-11 dbus send member=no_comment, # comment', ('priority=-11', '-11', None,    None, 'dbus send member=no_comment,', 'send member=no_comment', '# comment')),
 
         ('   dbusdriver,', False),
         ('   audit dbusdriver,', False),
+        ('   priority=-11 audit dbusdriver,', False),
     )
 
 
@@ -250,19 +261,30 @@ class AARegexMount(AARegexTest):
         self.regex = RE_PROFILE_MOUNT
 
     tests = (
-        ('   mount,',           (None,    None,   'mount,',   'mount',   None, None)),
-        ('   audit mount,',     ('audit', None,   'mount,',   'mount',   None, None)),
-        ('   umount,',          (None,    None,   'umount,',  'umount',  None, None)),
-        ('   audit umount,',    ('audit', None,   'umount,',  'umount',  None, None)),
-        ('   unmount,',         (None,    None,   'unmount,', 'unmount', None, None)),
-        ('   audit unmount,',   ('audit', None,   'unmount,', 'unmount', None, None)),
-        ('   remount,',         (None,    None,   'remount,', 'remount', None, None)),
-        ('   deny remount,',    (None,    'deny', 'remount,', 'remount', None, None)),
+        ('   mount,',           (None, None, None,    None,   'mount,',   'mount',   None, None)),
+        ('   audit mount,',     (None, None, 'audit', None,   'mount,',   'mount',   None, None)),
+        ('   umount,',          (None, None, None,    None,   'umount,',  'umount',  None, None)),
+        ('   audit umount,',    (None, None, 'audit', None,   'umount,',  'umount',  None, None)),
+        ('   unmount,',         (None, None, None,    None,   'unmount,', 'unmount', None, None)),
+        ('   audit unmount,',   (None, None, 'audit', None,   'unmount,', 'unmount', None, None)),
+        ('   remount,',         (None, None, None,    None,   'remount,', 'remount', None, None)),
+        ('   deny remount,',    (None, None, None,    'deny', 'remount,', 'remount', None, None)),
 
-        ('   mount, # comment', (None,    None,   'mount,',   'mount',   None, '# comment')),
+        ('   priority = 0 mount,',           ('priority = 0', '0', None,    None,   'mount,',   'mount',   None, None)),
+        ('   priority = 0 audit mount,',     ('priority = 0', '0', 'audit', None,   'mount,',   'mount',   None, None)),
+        ('   priority = 0 umount,',          ('priority = 0', '0', None,    None,   'umount,',  'umount',  None, None)),
+        ('   priority = 0 audit umount,',    ('priority = 0', '0', 'audit', None,   'umount,',  'umount',  None, None)),
+        ('   priority = 0 unmount,',         ('priority = 0', '0', None,    None,   'unmount,', 'unmount', None, None)),
+        ('   priority = 0 audit unmount,',   ('priority = 0', '0', 'audit', None,   'unmount,', 'unmount', None, None)),
+        ('   priority = 0 remount,',         ('priority = 0', '0', None,    None,   'remount,', 'remount', None, None)),
+        ('   priority = 0 deny remount,',    ('priority = 0', '0', None,    'deny', 'remount,', 'remount', None, None)),
+
+        ('   mount, # comment', (None, None, None,    None,   'mount,',   'mount',   None, '# comment')),
+        ('   priority = 0 mount, # comment', ('priority = 0', '0', None,    None,   'mount,',   'mount',   None, '# comment')),
 
         ('   mountain,', False),
         ('   audit mountain,', False),
+        ('   priority = 0 audit mountain,', False),
     )
 
 
@@ -273,16 +295,25 @@ class AARegexSignal(AARegexTest):
         self.regex = RE_PROFILE_SIGNAL
 
     tests = (
-        ('   signal,',                                            (None,    None, 'signal,',                                            None,                                         None)),
-        ('   audit signal,',                                      ('audit', None, 'signal,',                                            None,                                         None)),
-        ('   signal receive,',                                    (None,    None, 'signal receive,',                                    'receive',                                    None)),
-        ('   signal (send, receive),',                            (None,    None, 'signal (send, receive),',                            '(send, receive)',                            None)),
-        ('   audit signal (receive),',                            ('audit', None, 'signal (receive),',                                  '(receive)',                                  None)),
-        ('   signal (send, receive) set=(usr1 usr2),',            (None,    None, 'signal (send, receive) set=(usr1 usr2),',            '(send, receive) set=(usr1 usr2)',            None)),
-        ('   signal send set=(hup, quit) peer=/usr/sbin/daemon,', (None,    None, 'signal send set=(hup, quit) peer=/usr/sbin/daemon,', 'send set=(hup, quit) peer=/usr/sbin/daemon', None)),
+        ('   signal,',                                            (None, None, None,    None, 'signal,',                                            None,                                         None)),
+        ('   audit signal,',                                      (None, None, 'audit', None, 'signal,',                                            None,                                         None)),
+        ('   signal receive,',                                    (None, None, None,    None, 'signal receive,',                                    'receive',                                    None)),
+        ('   signal (send, receive),',                            (None, None, None,    None, 'signal (send, receive),',                            '(send, receive)',                            None)),
+        ('   audit signal (receive),',                            (None, None, 'audit', None, 'signal (receive),',                                  '(receive)',                                  None)),
+        ('   signal (send, receive) set=(usr1 usr2),',            (None, None, None,    None, 'signal (send, receive) set=(usr1 usr2),',            '(send, receive) set=(usr1 usr2)',            None)),
+        ('   signal send set=(hup, quit) peer=/usr/sbin/daemon,', (None, None, None,    None, 'signal send set=(hup, quit) peer=/usr/sbin/daemon,', 'send set=(hup, quit) peer=/usr/sbin/daemon', None)),
+
+        ('   priority = -1 signal,',                                            ('priority = -1', '-1', None,    None, 'signal,',                                            None,                                         None)),
+        ('   priority = -1 audit signal,',                                      ('priority = -1', '-1', 'audit', None, 'signal,',                                            None,                                         None)),
+        ('   priority = -1 signal receive,',                                    ('priority = -1', '-1', None,    None, 'signal receive,',                                    'receive',                                    None)),
+        ('   priority = -1 signal (send, receive),',                            ('priority = -1', '-1', None,    None, 'signal (send, receive),',                            '(send, receive)',                            None)),
+        ('   priority = -1 audit signal (receive),',                            ('priority = -1', '-1', 'audit', None, 'signal (receive),',                                  '(receive)',                                  None)),
+        ('   priority = -1 signal (send, receive) set=(usr1 usr2),',            ('priority = -1', '-1', None,    None, 'signal (send, receive) set=(usr1 usr2),',            '(send, receive) set=(usr1 usr2)',            None)),
+        ('   priority = -1 signal send set=(hup, quit) peer=/usr/sbin/daemon,', ('priority = -1', '-1', None,    None, 'signal send set=(hup, quit) peer=/usr/sbin/daemon,', 'send set=(hup, quit) peer=/usr/sbin/daemon', None)),
 
         ('   signalling,', False),
         ('   audit signalling,', False),
+        ('   priority = -1 audit signalling,', False),
         ('   signalling receive,', False),
     )
 
@@ -294,16 +325,24 @@ class AARegexPtrace(AARegexTest):
         self.regex = RE_PROFILE_PTRACE
 
     tests = (
-        #                                            audit    allow  rule                                  rule details                   comment
-        ('   ptrace,',                              (None,    None, 'ptrace,',                             None,                          None)),
-        ('   audit ptrace,',                        ('audit', None, 'ptrace,',                             None,                          None)),
-        ('   ptrace trace,',                        (None,    None, 'ptrace trace,',                       'trace',                       None)),
-        ('   ptrace (tracedby, readby),',           (None,    None, 'ptrace (tracedby, readby),',          '(tracedby, readby)',          None)),
-        ('   audit ptrace (read),',                 ('audit', None, 'ptrace (read),',                      '(read)',                      None)),
-        ('   ptrace trace peer=/usr/sbin/daemon,',  (None,    None, 'ptrace trace peer=/usr/sbin/daemon,', 'trace peer=/usr/sbin/daemon', None)),
+        #                                            priority    audit    allow  rule                                  rule details                   comment
+        ('   ptrace,',                              (None, None, None,    None, 'ptrace,',                             None,                          None)),
+        ('   audit ptrace,',                        (None, None, 'audit', None, 'ptrace,',                             None,                          None)),
+        ('   ptrace trace,',                        (None, None, None,    None, 'ptrace trace,',                       'trace',                       None)),
+        ('   ptrace (tracedby, readby),',           (None, None, None,    None, 'ptrace (tracedby, readby),',          '(tracedby, readby)',          None)),
+        ('   audit ptrace (read),',                 (None, None, 'audit', None, 'ptrace (read),',                      '(read)',                      None)),
+        ('   ptrace trace peer=/usr/sbin/daemon,',  (None, None, None,    None, 'ptrace trace peer=/usr/sbin/daemon,', 'trace peer=/usr/sbin/daemon', None)),
+
+        ('   priority=100 ptrace,',                              ('priority=100', '100', None,    None, 'ptrace,',                             None,                          None)),
+        ('   priority=100 audit ptrace,',                        ('priority=100', '100', 'audit', None, 'ptrace,',                             None,                          None)),
+        ('   priority=100 ptrace trace,',                        ('priority=100', '100', None,    None, 'ptrace trace,',                       'trace',                       None)),
+        ('   priority=100 ptrace (tracedby, readby),',           ('priority=100', '100', None,    None, 'ptrace (tracedby, readby),',          '(tracedby, readby)',          None)),
+        ('   priority=100 audit ptrace (read),',                 ('priority=100', '100', 'audit', None, 'ptrace (read),',                      '(read)',                      None)),
+        ('   priority=100 ptrace trace peer=/usr/sbin/daemon,',  ('priority=100', '100', None,    None, 'ptrace trace peer=/usr/sbin/daemon,', 'trace peer=/usr/sbin/daemon', None)),
 
         ('   ptraceback,', False),
         ('   audit ptraceback,', False),
+        ('   priority=100 audit ptraceback,', False),
         ('   ptraceback trace,', False),
     )
 
@@ -315,12 +354,19 @@ class AARegexPivotRoot(AARegexTest):
         self.regex = RE_PROFILE_PIVOT_ROOT
 
     tests = (
-        ('   pivot_root,',                                      (None,    None, 'pivot_root,',                                None,                                 None)),
-        ('   audit pivot_root,',                                ('audit', None, 'pivot_root,',                                None,                                 None)),
-        ('   pivot_root oldroot=/new/old,',                     (None,    None, 'pivot_root oldroot=/new/old,',               'oldroot=/new/old',                   None)),
-        ('   pivot_root oldroot=/new/old /new,',                (None,    None, 'pivot_root oldroot=/new/old /new,',          'oldroot=/new/old /new',              None)),
-        ('   pivot_root oldroot=/new/old /new -> child,',       (None,    None, 'pivot_root oldroot=/new/old /new -> child,', 'oldroot=/new/old /new -> child',     None)),
-        ('   audit pivot_root oldroot=/new/old /new -> child,', ('audit', None, 'pivot_root oldroot=/new/old /new -> child,', 'oldroot=/new/old /new -> child',     None)),
+        ('   pivot_root,',                                      (None, None, None,    None, 'pivot_root,',                                None,                                 None)),
+        ('   audit pivot_root,',                                (None, None, 'audit', None, 'pivot_root,',                                None,                                 None)),
+        ('   pivot_root oldroot=/new/old,',                     (None, None, None,    None, 'pivot_root oldroot=/new/old,',               'oldroot=/new/old',                   None)),
+        ('   pivot_root oldroot=/new/old /new,',                (None, None, None,    None, 'pivot_root oldroot=/new/old /new,',          'oldroot=/new/old /new',              None)),
+        ('   pivot_root oldroot=/new/old /new -> child,',       (None, None, None,    None, 'pivot_root oldroot=/new/old /new -> child,', 'oldroot=/new/old /new -> child',     None)),
+        ('   audit pivot_root oldroot=/new/old /new -> child,', (None, None, 'audit', None, 'pivot_root oldroot=/new/old /new -> child,', 'oldroot=/new/old /new -> child',     None)),
+
+        ('   priority=-100 pivot_root,',                                      ('priority=-100', '-100', None,    None, 'pivot_root,',                                None,                                 None)),
+        ('   priority=-100 audit pivot_root,',                                ('priority=-100', '-100', 'audit', None, 'pivot_root,',                                None,                                 None)),
+        ('   priority=-100 pivot_root oldroot=/new/old,',                     ('priority=-100', '-100', None,    None, 'pivot_root oldroot=/new/old,',               'oldroot=/new/old',                   None)),
+        ('   priority=-100 pivot_root oldroot=/new/old /new,',                ('priority=-100', '-100', None,    None, 'pivot_root oldroot=/new/old /new,',          'oldroot=/new/old /new',              None)),
+        ('   priority=-100 pivot_root oldroot=/new/old /new -> child,',       ('priority=-100', '-100', None,    None, 'pivot_root oldroot=/new/old /new -> child,', 'oldroot=/new/old /new -> child',     None)),
+        ('   priority=-100 audit pivot_root oldroot=/new/old /new -> child,', ('priority=-100', '-100', 'audit', None, 'pivot_root oldroot=/new/old /new -> child,', 'oldroot=/new/old /new -> child',     None)),
 
         ('pivot_root', False),  # comma missing
 
@@ -329,6 +375,7 @@ class AARegexPivotRoot(AARegexTest):
         ('pivot_rootbeer, # comment', False),
         ('pivot_rootbeer /new,  ', False),
         ('pivot_rootbeer /new, # comment', False),
+        ('priority=-100 pivot_rootbeer /new, # comment', False),
     )
 
 
@@ -339,20 +386,35 @@ class AARegexUnix(AARegexTest):
         self.regex = RE_PROFILE_UNIX
 
     tests = (
-        ('   unix,',                                                                               (None,    None,    'unix,',                                      None,                                   None)),
-        ('   audit unix,',                                                                         ('audit', None,    'unix,',                                      None,                                   None)),
-        ('   unix accept,',                                                                        (None,    None,    'unix accept,',                               'accept',                               None)),
-        ('   allow unix connect,',                                                                 (None,    'allow', 'unix connect,',                              'connect',                              None)),
-        ('   audit allow unix bind,',                                                              ('audit', 'allow', 'unix bind,',                                 'bind',                                 None)),
-        ('   deny unix bind,',                                                                     (None,    'deny',  'unix bind,',                                 'bind',                                 None)),
-        ('unix peer=(label=@{profile_name}),',                                                     (None,    None,    'unix peer=(label=@{profile_name}),',         'peer=(label=@{profile_name})',         None)),
-        ('unix (receive) peer=(label=unconfined),',                                                (None,    None,    'unix (receive) peer=(label=unconfined),',    '(receive) peer=(label=unconfined)',    None)),
-        (' unix (getattr, shutdown) peer=(addr=none),',                                            (None,    None,    'unix (getattr, shutdown) peer=(addr=none),', '(getattr, shutdown) peer=(addr=none)', None)),
-        ('unix (connect, receive, send) type=stream peer=(label=unconfined,addr="@/tmp/dbus-*"),', (None,    None,    'unix (connect, receive, send) type=stream peer=(label=unconfined,addr="@/tmp/dbus-*"),',
+        ('   unix,',                                                                               (None, None, None,    None,    'unix,',                                      None,                                   None)),
+        ('   audit unix,',                                                                         (None, None, 'audit', None,    'unix,',                                      None,                                   None)),
+        ('   unix accept,',                                                                        (None, None, None,    None,    'unix accept,',                               'accept',                               None)),
+        ('   allow unix connect,',                                                                 (None, None, None,    'allow', 'unix connect,',                              'connect',                              None)),
+        ('   audit allow unix bind,',                                                              (None, None, 'audit', 'allow', 'unix bind,',                                 'bind',                                 None)),
+        ('   deny unix bind,',                                                                     (None, None, None,    'deny',  'unix bind,',                                 'bind',                                 None)),
+        ('unix peer=(label=@{profile_name}),',                                                     (None, None, None,    None,    'unix peer=(label=@{profile_name}),',         'peer=(label=@{profile_name})',         None)),
+        ('unix (receive) peer=(label=unconfined),',                                                (None, None, None,    None,    'unix (receive) peer=(label=unconfined),',    '(receive) peer=(label=unconfined)',    None)),
+        (' unix (getattr, shutdown) peer=(addr=none),',                                            (None, None, None,    None,    'unix (getattr, shutdown) peer=(addr=none),', '(getattr, shutdown) peer=(addr=none)', None)),
+        ('unix (connect, receive, send) type=stream peer=(label=unconfined,addr="@/tmp/dbus-*"),', (None, None, None,    None,    'unix (connect, receive, send) type=stream peer=(label=unconfined,addr="@/tmp/dbus-*"),',
                                                                                                                                                                     '(connect, receive, send) type=stream peer=(label=unconfined,addr="@/tmp/dbus-*")',  # noqa: E127
                                                                                                                                                                                                             None)),  # noqa: E127
+
+        ('   priority=1 unix,',                                                                               ('priority=1', '1', None,    None,    'unix,',                                      None,                                   None)),
+        ('   priority=1 audit unix,',                                                                         ('priority=1', '1', 'audit', None,    'unix,',                                      None,                                   None)),
+        ('   priority=1 unix accept,',                                                                        ('priority=1', '1', None,    None,    'unix accept,',                               'accept',                               None)),
+        ('   priority=1 allow unix connect,',                                                                 ('priority=1', '1', None,    'allow', 'unix connect,',                              'connect',                              None)),
+        ('   priority=1 audit allow unix bind,',                                                              ('priority=1', '1', 'audit', 'allow', 'unix bind,',                                 'bind',                                 None)),
+        ('   priority=1 deny unix bind,',                                                                     ('priority=1', '1', None,    'deny',  'unix bind,',                                 'bind',                                 None)),
+        ('priority=1 unix peer=(label=@{profile_name}),',                                                     ('priority=1', '1', None,    None,    'unix peer=(label=@{profile_name}),',         'peer=(label=@{profile_name})',         None)),
+        ('priority=1 unix (receive) peer=(label=unconfined),',                                                ('priority=1', '1', None,    None,    'unix (receive) peer=(label=unconfined),',    '(receive) peer=(label=unconfined)',    None)),
+        (' priority=1 unix (getattr, shutdown) peer=(addr=none),',                                            ('priority=1', '1', None,    None,    'unix (getattr, shutdown) peer=(addr=none),', '(getattr, shutdown) peer=(addr=none)', None)),
+        ('priority=1 unix (connect, receive, send) type=stream peer=(label=unconfined,addr="@/tmp/dbus-*"),', ('priority=1', '1', None,    None,    'unix (connect, receive, send) type=stream peer=(label=unconfined,addr="@/tmp/dbus-*"),',
+                                                                                                                                                                    '(connect, receive, send) type=stream peer=(label=unconfined,addr="@/tmp/dbus-*")',  # noqa: E127
+                                                                                                                                                                                                            None)),  # noqa: E127
+
         ('unixlike', False),
         ('deny unixlike,', False),
+        ('priority=1 deny unixlike,', False),
     )
 
 

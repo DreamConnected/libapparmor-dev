@@ -21,7 +21,7 @@ from apparmor.translations import init_translation
 _ = init_translation()
 
 # Profile parsing Regex
-RE_AUDIT_DENY = r'^\s*(?P<audit>audit\s+)?(?P<allow>allow\s+|deny\s+)?'  # line start, optionally: leading whitespace, <audit> and <allow>/deny
+RE_PRIORITY_AUDIT_DENY = r'^\s*(priority\s*=\s*(?P<priority>[+-]?[0-9]*)\s+)?(?P<audit>audit\s+)?(?P<allow>allow\s+|deny\s+)?'  # line start, optionally: leading whitespace, <priority> = number, <audit> and <allow>/deny
 RE_EOL = r'\s*(?P<comment>#.*?)?\s*$'  # optional whitespace, optional <comment>, optional whitespace, end of the line
 RE_COMMA_EOL = r'\s*,' + RE_EOL  # optional whitespace, comma + RE_EOL
 
@@ -34,8 +34,8 @@ RE_XATTRS = r'(\s+xattrs\s*=\s*\((?P<xattrs>([^)=]+(=[^)=]+)?\s?)+)\)\s*)?'
 RE_FLAGS = r'(\s+(flags\s*=\s*)?\((?P<flags>[^)]+)\))?'
 
 RE_PROFILE_END = re.compile(r'^\s*\}' + RE_EOL)
-RE_PROFILE_ALL = re.compile(RE_AUDIT_DENY + r'all' + RE_COMMA_EOL)
-RE_PROFILE_CAP = re.compile(RE_AUDIT_DENY + r'capability(?P<capability>(\s+\S+)+)?' + RE_COMMA_EOL)
+RE_PROFILE_ALL = re.compile(RE_PRIORITY_AUDIT_DENY + r'all' + RE_COMMA_EOL)
+RE_PROFILE_CAP = re.compile(RE_PRIORITY_AUDIT_DENY + r'capability(?P<capability>(\s+\S+)+)?' + RE_COMMA_EOL)
 RE_PROFILE_ALIAS = re.compile(r'^\s*alias\s+(?P<orig_path>"??.+?"??)\s+->\s*(?P<target>"??.+?"??)' + RE_COMMA_EOL)
 RE_PROFILE_RLIMIT = re.compile(r'^\s*set\s+rlimit\s+(?P<rlimit>[a-z]+)\s*<=\s*(?P<value>[^ ]+(\s+[a-zA-Z]+)?)' + RE_COMMA_EOL)
 RE_PROFILE_BOOLEAN = re.compile(r'^\s*(?P<varname>\$\{?\w*\}?)\s*=\s*(?P<value>true|false)\s*,?' + RE_EOL, flags=re.IGNORECASE)
@@ -43,18 +43,18 @@ RE_PROFILE_VARIABLE = re.compile(r'^\s*(?P<varname>@\{?\w+\}?)\s*(?P<mode>\+?=)\
 RE_PROFILE_CONDITIONAL = re.compile(r'^\s*if\s+(not\s+)?(\$\{?\w*\}?)\s*\{' + RE_EOL)
 RE_PROFILE_CONDITIONAL_VARIABLE = re.compile(r'^\s*if\s+(not\s+)?defined\s+(@\{?\w+\}?)\s*\{\s*(#.*)?$')
 RE_PROFILE_CONDITIONAL_BOOLEAN = re.compile(r'^\s*if\s+(not\s+)?defined\s+(\$\{?\w+\}?)\s*\{\s*(#.*)?$')
-RE_PROFILE_NETWORK = re.compile(RE_AUDIT_DENY + r'network(?P<details>\s+.*)?' + RE_COMMA_EOL)
+RE_PROFILE_NETWORK = re.compile(RE_PRIORITY_AUDIT_DENY + r'network(?P<details>\s+.*)?' + RE_COMMA_EOL)
 RE_PROFILE_CHANGE_HAT = re.compile(r'^\s*\^("??.+?"??)' + RE_COMMA_EOL)
 RE_PROFILE_HAT_DEF = re.compile(r'^(?P<leadingspace>\s*)(?P<hat_keyword>\^|hat\s+)(?P<hat>"??[^)]+?"??)' + RE_FLAGS + r'\s*\{' + RE_EOL)
-RE_PROFILE_DBUS = re.compile(RE_AUDIT_DENY + r'(dbus\s*,|dbus(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
-RE_PROFILE_MOUNT = re.compile(RE_AUDIT_DENY + r'((?P<operation>mount|remount|umount|unmount)(?P<details>\s+[^#]*)?\s*,)' + RE_EOL)
-RE_PROFILE_SIGNAL = re.compile(RE_AUDIT_DENY + r'(signal\s*,|signal(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
-RE_PROFILE_PTRACE = re.compile(RE_AUDIT_DENY + r'(ptrace\s*,|ptrace(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
-RE_PROFILE_PIVOT_ROOT = re.compile(RE_AUDIT_DENY + r'(pivot_root\s*,|pivot_root(?P<details>\s+[^#]*),)' + RE_EOL)
-RE_PROFILE_UNIX = re.compile(RE_AUDIT_DENY + r'(unix\s*,|unix(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
-RE_PROFILE_USERNS = re.compile(RE_AUDIT_DENY + r'(userns\s*,|userns(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
-RE_PROFILE_MQUEUE = re.compile(RE_AUDIT_DENY + r'(mqueue\s*,|mqueue(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
-RE_PROFILE_IO_URING = re.compile(RE_AUDIT_DENY + r'(io_uring\s*,|io_uring(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
+RE_PROFILE_DBUS = re.compile(RE_PRIORITY_AUDIT_DENY + r'(dbus\s*,|dbus(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
+RE_PROFILE_MOUNT = re.compile(RE_PRIORITY_AUDIT_DENY + r'((?P<operation>mount|remount|umount|unmount)(?P<details>\s+[^#]*)?\s*,)' + RE_EOL)
+RE_PROFILE_SIGNAL = re.compile(RE_PRIORITY_AUDIT_DENY + r'(signal\s*,|signal(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
+RE_PROFILE_PTRACE = re.compile(RE_PRIORITY_AUDIT_DENY + r'(ptrace\s*,|ptrace(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
+RE_PROFILE_PIVOT_ROOT = re.compile(RE_PRIORITY_AUDIT_DENY + r'(pivot_root\s*,|pivot_root(?P<details>\s+[^#]*),)' + RE_EOL)
+RE_PROFILE_UNIX = re.compile(RE_PRIORITY_AUDIT_DENY + r'(unix\s*,|unix(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
+RE_PROFILE_USERNS = re.compile(RE_PRIORITY_AUDIT_DENY + r'(userns\s*,|userns(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
+RE_PROFILE_MQUEUE = re.compile(RE_PRIORITY_AUDIT_DENY + r'(mqueue\s*,|mqueue(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
+RE_PROFILE_IO_URING = re.compile(RE_PRIORITY_AUDIT_DENY + r'(io_uring\s*,|io_uring(?P<details>\s+[^#]*)\s*,)' + RE_EOL)
 
 # match anything that's not " or #, or matching quotes with anything except quotes inside
 __re_no_or_quoted_hash = '([^#"]|"[^"]*")*'
@@ -81,7 +81,7 @@ RE_PROFILE_START = re.compile(
 
 
 RE_PROFILE_CHANGE_PROFILE = re.compile(
-    RE_AUDIT_DENY
+    RE_PRIORITY_AUDIT_DENY
     + 'change_profile'
     + r'(\s+' + RE_SAFE_OR_UNSAFE + ')?'  # optionally exec mode
     + r'(\s+' + RE_PROFILE_PATH_OR_VAR % 'execcond' + ')?'  # optionally exec condition
@@ -94,7 +94,7 @@ RE_PROFILE_CHANGE_PROFILE = re.compile(
 RE_PATH_PERMS = '(?P<%s>[mrwalkPUCpucix]+)'
 
 RE_PROFILE_FILE_ENTRY = re.compile(
-    RE_AUDIT_DENY
+    RE_PRIORITY_AUDIT_DENY
     + r'(?P<owner>owner\s+)?'  # optionally: <owner>
     + '('
         + '(?P<bare_file>file)'  # bare 'file,' # noqa: E131

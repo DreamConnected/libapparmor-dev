@@ -30,10 +30,11 @@ exp = namedtuple('exp', ('comment', 'varname', 'value'))
 
 class BooleanTest(AATest):
     def _compare_obj(self, obj, expected):
-        # boolean variables don't support the allow, audit or deny keyword
+        # boolean variables don't support the allow, audit, deny, or priority keyword
         self.assertEqual(False, obj.allow_keyword)
         self.assertEqual(False, obj.audit)
         self.assertEqual(False, obj.deny)
+        self.assertEqual(None, obj.priority)
 
         self.assertEqual(expected.varname, obj.varname)
         self.assertEqual(expected.value, obj.value)
@@ -121,6 +122,14 @@ class InvalidBooleanInit(AATest):
     def test_invalid_deny(self):
         with self.assertRaises(AppArmorBug):
             BooleanRule('$foo', 'true', deny=True)
+
+    def test_invalid_priority_1(self):
+        with self.assertRaises(AppArmorBug):
+            BooleanRule('$foo', 'true', priority=-100)
+
+    def test_invalid_priority_2(self):
+        with self.assertRaises(AppArmorBug):
+            BooleanRule('$foo', 'true', priority=0)
 
 
 class InvalidBooleanTest(AATest):

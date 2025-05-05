@@ -415,6 +415,10 @@ class WriteFileTest(AATest):
         ('                   /foo r,',                   '/foo r,'),
         ('                   /foo  lwr,',                '/foo rwl,'),
         ('                   /foo Pxrm -> bar,',         '/foo mrPx -> bar,'),
+        ('  priority=-1      /foo Pxrm -> bar,',         'priority=-1 /foo mrPx -> bar,'),
+        ('  priority=0       /foo Pxrm -> bar,',         'priority=0 /foo mrPx -> bar,'),
+        ('  priority=343     /foo Pxrm -> bar,',         'priority=343 /foo mrPx -> bar,'),
+        ('  priority=+65     /foo Pxrm -> bar,',         'priority=65 /foo mrPx -> bar,'),
 
         # with leading permissions
         ('    audit     file r      /foo,',              'audit file r /foo,'),
@@ -432,11 +436,19 @@ class WriteFileTest(AATest):
         ('                   r      /foo ,',             'r /foo,'),
         ('                   klwr   /foo  ,',            'rwlk /foo,'),
         ('                   Pxrm   /foo -> bar,',       'mrPx /foo -> bar,'),
+        ('    priority=1     Pxrm   /foo -> bar,',       'priority=1 mrPx /foo -> bar,'),
+        ('    priority=0     Pxrm   /foo -> bar,',       'priority=0 mrPx /foo -> bar,'),
+        ('    priority=-22   Pxrm   /foo -> bar,',       'priority=-22 mrPx /foo -> bar,'),
+        ('    priority=+78   Pxrm   /foo -> bar,',       'priority=78 mrPx /foo -> bar,'),
 
         # link rules
         ('  link    /foo    ->  /bar,',                  'link /foo -> /bar,'),
         ('  audit deny owner link subset /foo -> /bar,', 'audit deny owner link subset /foo -> /bar,'),
-        ('                   link subset /foo -> /bar,', 'link subset /foo -> /bar,')
+        ('                   link subset /foo -> /bar,', 'link subset /foo -> /bar,'),
+        ('  priority=0  link    /foo    ->  /bar,',       'priority=0 link /foo -> /bar,'),
+        ('  priority=12 link    /foo    ->  /bar,',       'priority=12 link /foo -> /bar,'),
+        ('  priority=-1 link    /foo    ->  /bar,',       'priority=-1 link /foo -> /bar,'),
+        ('  priority=+4 link    /foo    ->  /bar,',       'priority=4 link /foo -> /bar,'),
     )
 
     def test_write_manually_1(self):
@@ -844,21 +856,23 @@ class FileSeverityTest(AATest):
 class FileLogprofHeaderTest(AATest):
     tests = (
         # log event                        old perms ALL / owner
-        (('file,',                             set(),    set()),     [                              _('Path'), _('ALL'),                                _('New Mode'), _('ALL')]),  # noqa: E201
-        (('/foo r,',                           set(),    set()),     [                              _('Path'), '/foo',                                  _('New Mode'), 'r']),  # noqa: E201
-        (('file /bar Px -> foo,',              set(),    set()),     [                              _('Path'), '/bar',                                  _('New Mode'), 'Px -> foo']),  # noqa: E201
-        (('deny file,',                        set(),    set()),     [_('Qualifier'), 'deny',       _('Path'), _('ALL'),                                _('New Mode'), _('ALL')]),
-        (('allow file /baz rwk,',              set(),    set()),     [_('Qualifier'), 'allow',      _('Path'), '/baz',                                  _('New Mode'), 'rwk']),
-        (('audit file /foo mr,',               set(),    set()),     [_('Qualifier'), 'audit',      _('Path'), '/foo',                                  _('New Mode'), 'mr']),
-        (('audit deny /foo wk,',               set(),    set()),     [_('Qualifier'), 'audit deny', _('Path'), '/foo',                                  _('New Mode'), 'wk']),
-        (('owner file /foo ix,',               set(),    set()),     [                              _('Path'), '/foo',                                  _('New Mode'), 'owner ix']),  # noqa: E201
-        (('audit deny file /foo rlx -> /baz,', set(),    set()),     [_('Qualifier'), 'audit deny', _('Path'), '/foo',                                  _('New Mode'), 'rlx -> /baz']),
-        (('/foo rw,',                          set('r'), set()),     [                              _('Path'), '/foo', _('Old Mode'), _('r'),           _('New Mode'), 'rw']),  # noqa: E201
-        (('/foo rw,',                          set(),    set('rw')), [                              _('Path'), '/foo', _('Old Mode'), _('owner rw'),    _('New Mode'), 'rw']),  # noqa: E201
-        (('/foo mrw,',                         set('r'), set('k')),  [                              _('Path'), '/foo', _('Old Mode'), _('r + owner k'), _('New Mode'), 'mrw']),  # noqa: E201
-        (('/foo mrw,',                         set('r'), set('rk')), [                              _('Path'), '/foo', _('Old Mode'), _('r + owner k'), _('New Mode'), 'mrw']),  # noqa: E201
-        (('link /foo -> /bar,',                set(),    set()),     [                              _('Path'), '/foo',                                  _('New Mode'), 'link -> /bar']),  # noqa: E201
-        (('link subset /foo -> /bar,',         set(),    set()),     [                              _('Path'), '/foo',                                  _('New Mode'), 'link subset -> /bar']),  # noqa: E201
+        (('file,',                             set(),    set()),     [                                     _('Path'), _('ALL'),                                _('New Mode'), _('ALL')]),  # noqa: E201
+        (('/foo r,',                           set(),    set()),     [                                     _('Path'), '/foo',                                  _('New Mode'), 'r']),  # noqa: E201
+        (('file /bar Px -> foo,',              set(),    set()),     [                                     _('Path'), '/bar',                                  _('New Mode'), 'Px -> foo']),  # noqa: E201
+        (('deny file,',                        set(),    set()),     [_('Qualifier'), 'deny',              _('Path'), _('ALL'),                                _('New Mode'), _('ALL')]),
+        (('allow file /baz rwk,',              set(),    set()),     [_('Qualifier'), 'allow',             _('Path'), '/baz',                                  _('New Mode'), 'rwk']),
+        (('audit file /foo mr,',               set(),    set()),     [_('Qualifier'), 'audit',             _('Path'), '/foo',                                  _('New Mode'), 'mr']),
+        (('audit deny /foo wk,',               set(),    set()),     [_('Qualifier'), 'audit deny',        _('Path'), '/foo',                                  _('New Mode'), 'wk']),
+        (('priority=1 file,',                  set(),    set()),     [_('Qualifier'), 'priority=1',        _('Path'), _('ALL'),                                _('New Mode'), _('ALL')]),
+        (('priority=-1 audit file /foo mr,',   set(),    set()),     [_('Qualifier'), 'priority=-1 audit', _('Path'), '/foo',                                  _('New Mode'), 'mr']),
+        (('owner file /foo ix,',               set(),    set()),     [                                     _('Path'), '/foo',                                  _('New Mode'), 'owner ix']),  # noqa: E201
+        (('audit deny file /foo rlx -> /baz,', set(),    set()),     [_('Qualifier'), 'audit deny',        _('Path'), '/foo',                                  _('New Mode'), 'rlx -> /baz']),
+        (('/foo rw,',                          set('r'), set()),     [                                     _('Path'), '/foo', _('Old Mode'), _('r'),           _('New Mode'), 'rw']),  # noqa: E201
+        (('/foo rw,',                          set(),    set('rw')), [                                     _('Path'), '/foo', _('Old Mode'), _('owner rw'),    _('New Mode'), 'rw']),  # noqa: E201
+        (('/foo mrw,',                         set('r'), set('k')),  [                                     _('Path'), '/foo', _('Old Mode'), _('r + owner k'), _('New Mode'), 'mrw']),  # noqa: E201
+        (('/foo mrw,',                         set('r'), set('rk')), [                                     _('Path'), '/foo', _('Old Mode'), _('r + owner k'), _('New Mode'), 'mrw']),  # noqa: E201
+        (('link /foo -> /bar,',                set(),    set()),     [                                     _('Path'), '/foo',                                  _('New Mode'), 'link -> /bar']),  # noqa: E201
+        (('link subset /foo -> /bar,',         set(),    set()),     [                                     _('Path'), '/foo',                                  _('New Mode'), 'link subset -> /bar']),  # noqa: E201
     )
 
     def _run_test(self, params, expected):

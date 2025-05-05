@@ -123,10 +123,10 @@ class MountTestParseInvalid(AATest):
             MountRule.create_instance('foo,')
 
     def test_diff_non_mountrule(self):
-        exp = namedtuple('exp', ('audit', 'deny'))
+        exp = namedtuple('exp', ('audit', 'deny', 'priority'))
         obj = MountRule('mount', ('=', ['ext4']), MountRule.ALL, MountRule.ALL, MountRule.ALL)
         with self.assertRaises(AppArmorBug):
-            obj.is_equal(exp(False, False), False)
+            obj.is_equal(exp(False, False, None), False)
 
     def test_diff_invalid_fstype_equals_or_in(self):
         with self.assertRaises(AppArmorBug):
@@ -230,6 +230,12 @@ class MountTestClean(AATest):
         ('     umount                                                            /foo           ,           ', 'umount /foo,'),
         ('     remount                                                                          ,           ', 'remount,'),
         ('     remount                                                           /foo           ,           ', 'remount /foo,'),
+        ('priority =1 mount     ""   -> /foo                                                    ,           ', 'priority=1 mount "" -> /foo,'),
+        ('priority=0 audit  mount  "/f /b" -> "/foo bar"                                        ,           ', 'priority=0 audit mount "/f /b" -> "/foo bar",'),
+        (' priority  =  +10   umount                                                            ,           ', 'priority=10 umount,'),
+        (' priority=-2    deny    umount                                         /foo           ,           ', 'priority=-2 deny umount /foo,'),
+        ('priority= 32    audit  deny     remount                                               ,           ', 'priority=32 audit deny remount,'),
+        (' priority = -32    remount                                             /foo           ,           ', 'priority=-32 remount /foo,'),
     )
 
     def _run_test(self, rawrule, expected):

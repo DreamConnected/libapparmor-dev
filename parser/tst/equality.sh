@@ -1223,7 +1223,7 @@ done
 
 set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
-if [ $# -eq 0 -o -z $testtype] ; then
+if [ $# -eq 0 -o -z "$testtype" ] ; then
 	run_tests "$@"
 	exit $?
 fi

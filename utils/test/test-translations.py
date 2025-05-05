@@ -37,6 +37,14 @@ class TestHotkeyConflicts(AATest):
         (('CMD_ALLOW', 'CMD_ABORT'),                                                                                                                        True),  # aa-mergeprof conflict_mode()
         (('CMD_ADDSUBPROFILE', 'CMD_DENY', 'CMD_ABORT', 'CMD_FINISHED'),                                                                                    True),  # aa-mergeprof ask_the_questions() - new subprofile
         (('CMD_ADDHAT', 'CMD_DENY', 'CMD_ABORT', 'CMD_FINISHED'),                                                                                           True),  # aa-mergeprof ask_the_questions() - new hat
+
+        # texts that should have the same hotkey (because only one of them can appear in the same prompt)
+        (('CMD_AUDIT_OFF', 'CMD_AUDIT_NEW'),                            False),
+        (('CMD_USER_ON', 'CMD_USER_OFF'),                               False),
+        (('CMD_px', 'CMD_px_safe', 'CMD_pix', 'CMD_pix_safe'),          False),
+        (('CMD_cx', 'CMD_cx_safe', 'CMD_cix', 'CMD_cix_safe'),          False),
+        (('CMD_nx', 'CMD_nx_safe', 'CMD_nix', 'CMD_nix_safe'),          False),
+        (('CMD_ux', 'CMD_ux_safe'),                                     False),
     )
 
     def _run_test(self, params, expected):
@@ -77,10 +85,19 @@ class TestHotkeyConflicts(AATest):
                     all_keys.append(text)
                     hotkey = get_translated_hotkey(text)
 
-                    if keys.get(hotkey):
-                        found_conflict = "Hotkey conflict for {}: '{}' and '{}'".format(language, keys[hotkey], text)
-                    else:
-                        keys[hotkey] = text
+                    if expected:  # texts/hotkeys that should conflict
+                        if keys.get(hotkey):
+                            found_conflict = "Hotkey conflict for {}: '{}' and '{}'".format(language, keys[hotkey], text)
+                        else:
+                            keys[hotkey] = text
+
+                    else:  # texts that should have the same hotkey
+                        if not keys:  # first text
+                            keys[hotkey] = text
+                            first_hotkey = hotkey
+
+                        if not keys.get(hotkey):
+                            found_conflict = "Hotkey should be the same for {}: '{}' and '{}'".format(language, keys[first_hotkey], text)
 
                 if found_conflict:
                     conflicts.append("{}\n    {}'".format(found_conflict, '  '.join(all_keys)))

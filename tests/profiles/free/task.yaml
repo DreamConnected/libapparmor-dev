@@ -1,0 +1,6 @@
+summary: smoke test for the free profile
+execute: |
+    # free works (this is a very basic test).
+    free
+    # The profile is attached based on the program path.
+    "$SPREAD_PATH"/tests/bin/actual-profile-of free | MATCH 'free \(enforce\)'

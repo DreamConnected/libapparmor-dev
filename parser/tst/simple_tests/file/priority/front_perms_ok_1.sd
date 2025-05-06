@@ -15,10 +15,5 @@
    priority=-1 file ux /foo3,
    priority=-1 file Ux /foo4,
    priority=-1 file ix /foo5,
-   priority=-1 file unsafe px /foo6,
-   priority=-1 file unsafe Px /foo7,
-   priority=-1 file unsafe ux /foo8,
-   priority=-1 file unsafe Ux /foo9,
-   priority=-1 file unsafe ix /foo10,
 
 }

@@ -251,8 +251,8 @@ unknown_line = (
     'file/file/front_perms_ok_2.sd',
     'file/front_perms_ok_2.sd',
     'xtrans/simple_ok_cx_1.sd',
-    'file/priority/front_perms_ok_1.sd',
-    'file/priority/front_perms_ok_2.sd',
+    'file/priority/front_perms_ok_3.sd',
+    'file/priority/front_perms_ok_4.sd',
 
     # owner / audit {...} blocks
     'file/file/owner/ok_1.sd',

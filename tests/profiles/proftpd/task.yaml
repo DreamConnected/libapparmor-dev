@@ -1,0 +1,94 @@
+summary: smoke test for the ProFTPD profile
+execute: |
+    # restart ProFTPD service as it may already be running
+    systemctl restart proftpd
+
+    # wait for it to be running
+    sleep 1
+
+    # check is running
+    systemctl is-active proftpd
+
+    # check proftpd system service is confined
+    cat /proc/$(pidof proftpd)/attr/apparmor/current | MATCH 'proftpd \(enforce\)'
+
+    # Create user ftpuser
+    getent passwd ftpuser || useradd -m -d /home/ftpuser ftpuser
+
+    # Set password to "password"
+    echo "ftpuser:password" | chpasswd
+
+    # Make user directory accessible
+    chmod 755 /home/ftpuser
+
+    # Create test file to retrieve via FTP
+    echo "This is a test file" > /home/ftpuser/test.txt
+
+    # Create file in directory
+    mkdir -p /home/ftpuser/test-dir
+    echo "This is a file in a directory" > /home/ftpuser/test-dir/nested-file.txt
+
+    # Download file from FTP server
+    ftp -n 127.0.0.1 <<EOF
+    quote USER ftpuser 
+    quote PASS password
+
+    get test.txt
+
+    quit
+    EOF
+
+    # Check file was downloaded
+    if [ -e test.txt ]
+    then
+        ls -l
+        echo "File downloaded successfully"
+    else
+        echo "Failed to download file"
+        exit 1
+    fi
+
+    # Test upload to FTP server
+    ftp -n 127.0.0.1 <<EOF
+    quote USER ftpuser 
+    quote PASS password
+
+    put upload.txt
+    ls
+
+    quit
+    EOF
+
+    # Check file was uploaded
+    if [ -e /home/ftpuser/upload.txt ]
+    then
+        ls -l /home/ftpuser/
+        echo "File uploaded successfully"
+    else
+        echo "Failed to upload file"
+        exit 1
+    fi
+   
+    # Download file from directory from FTP server
+    ftp -n 127.0.0.1 <<EOF
+    quote USER ftpuser 
+    quote PASS password
+
+    cd test-dir
+    pwd
+    ls
+    get nested-file.txt
+
+    quit
+    EOF
+
+    # Check file was downloaded
+    if [ -e nested-file.txt ]
+    then
+        ls -l
+        echo "File downloaded successfully"
+    else
+        echo "Failed to download file"
+        exit 1
+    fi
+

@@ -32,6 +32,7 @@ packages:
 - libtool
 - liburing-dev
 - pkg-config
+- proftpd-core
 - python3-all-dev
 - python3-gi
 - python3-notify2

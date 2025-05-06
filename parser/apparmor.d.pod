@@ -1196,17 +1196,17 @@ using inode access times. Matches only:
 
 =item B<< mount options=(ro, atime) options in (nodev, user) /dev/foo -E<gt> /mnt/, >>
 
-allow mounting /dev/foo on /mmt/ read only and using inode access times or
-allow mounting /dev/foo on /mnt/ with some combination of 'nodev' and 'user'.
+allow mounting /dev/foo on /mnt/ read only and using inode access times, in
+addition to allowing some combination of 'nodev' and 'user' to be added on top.
 Matches only:
 
     $ mount -o ro,atime /dev/foo /mnt
 
-    $ mount -o nodev /dev/foo /mnt
+    $ mount -o ro,atime,nodev /dev/foo /mnt
 
-    $ mount -o user /dev/foo /mnt
+    $ mount -o ro,atime,user /dev/foo /mnt
 
-    $ mount -o nodev,user /dev/foo /mnt
+    $ mount -o ro,atime,nodev,user /dev/foo /mnt
 
 =back
 

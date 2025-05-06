@@ -13,7 +13,6 @@
 import os
 import pwd
 import signal
-import subprocess
 import sys
 import time
 import unittest
@@ -21,6 +20,7 @@ from tempfile import NamedTemporaryFile
 from datetime import datetime
 
 import apparmor.aa as aa
+from apparmor.common import cmd_pipe_stderr
 from common_test import AATest, setup_aa, setup_all_loops
 
 # The location of the aa-notify utility can be overridden by setting
@@ -36,34 +36,6 @@ def subprocess_setup():
     # Python installs a SIGPIPE handler by default. This is usually not what
     # non-Python subprocesses expect.
     signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
-
-def cmd(command):
-    """Try to execute given command (array) and return its stdout, or return
-    a textual error if it failed."""
-
-    try:
-        sp = subprocess.Popen(
-            command,
-            stdin=None,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            close_fds=True,
-            preexec_fn=subprocess_setup
-        )
-    except OSError as e:
-        return 127, str(e)
-
-    stdout, stderr = sp.communicate(input)
-
-    # If there was some error output, show that instead of stdout to ensure
-    # test fails and does not mask potentially major warnings and errors.
-    if stderr:
-        out = stderr
-    else:
-        out = stdout
-
-    return sp.returncode, out.decode('utf-8')
 
 
 class AANotifyBase(AATest):
@@ -141,7 +113,7 @@ Feb  4 13:40:38 XPS-13-9370 kernel: [128552.880347] audit: type=1400 audit({epoc
             if 'SUDO_USER' in os.environ:
                 username = os.environ.get('SUDO_USER')
 
-            return_code, output = cmd(['last', username, '--fullnames', '--time-format', 'iso'])
+            return_code, output = cmd_pipe_stderr(['last', username, '--fullnames', '--time-format', 'iso'])
             output = output.split('\n')[0]  # the first line is enough
             # example of output (util-linux last command):
             # ubuntu  tty7         :0               2024-01-05T14:29:11-03:00   gone - no logout
@@ -184,7 +156,7 @@ class AANotifyTest(AANotifyBase):
         expected_return_code = 0
         expected_output_has = 'usage: aa-notify'
 
-        return_code, output = cmd(aanotify_bin)
+        return_code, output = cmd_pipe_stderr(aanotify_bin)
         result = 'Got return code {}, expected {}\n'.format(return_code, expected_return_code)
         self.assertEqual(expected_return_code, return_code, result + output)
         result = 'Got output "{}", expected "{}"\n'.format(output, expected_output_has)
@@ -262,7 +234,7 @@ Filtering options:
             for patch in patches:
                 expected_output_2 = expected_output_2.replace(patch[0], patch[1])
 
-        return_code, output = cmd(aanotify_bin + ['--help'])
+        return_code, output = cmd_pipe_stderr(aanotify_bin + ['--help'])
         result = 'Got return code {}, expected {}\n'.format(return_code, expected_return_code)
         self.assertEqual(expected_return_code, return_code, result + output)
 
@@ -275,7 +247,7 @@ Filtering options:
         expected_return_code = 0
         expected_output_has = 'AppArmor denials: 20 (since'
 
-        return_code, output = cmd(aanotify_bin + ['-f', self.test_logfile_current, '-s', '100'])
+        return_code, output = cmd_pipe_stderr(aanotify_bin + ['-f', self.test_logfile_current, '-s', '100'])
         result = 'Got return code {}, expected {}\n'.format(return_code, expected_return_code)
         self.assertEqual(expected_return_code, return_code, result + output)
         result = 'Got output "{}", expected "{}"\n'.format(output, expected_output_has)
@@ -288,7 +260,7 @@ Filtering options:
         expected_return_code = 0
         expected_output_has = 'AppArmor denials: 10 (since'
 
-        return_code, output = cmd(aanotify_bin + ['-f', self.test_logfile_last_login, '-l'])
+        return_code, output = cmd_pipe_stderr(aanotify_bin + ['-f', self.test_logfile_last_login, '-l'])
         if "ERROR: Could not find last login" in output:
             self.skipTest('Could not find last login')
         result = 'Got return code {}, expected {}\n'.format(return_code, expected_return_code)
@@ -364,7 +336,7 @@ Logfile: {logfile}
 
 AppArmor denials: 10 (since'''.format(logfile=self.test_logfile_last_login)  # noqa: E128
 
-        return_code, output = cmd(aanotify_bin + ['-f', self.test_logfile_last_login, '-l', '-v'])
+        return_code, output = cmd_pipe_stderr(aanotify_bin + ['-f', self.test_logfile_last_login, '-l', '-v'])
         if "ERROR: Could not find last login" in output:
             self.skipTest('Could not find last login')
         result = 'Got return code {}, expected {}\n'.format(return_code, expected_return_code)
@@ -399,7 +371,7 @@ class AANotifyProfileFilterTest(AANotifyBase):
                 expected_return_code = expected[0]
                 expected_output_has = expected[1]
 
-                return_code, output = cmd(aanotify_bin + days_params + params)
+                return_code, output = cmd_pipe_stderr(aanotify_bin + days_params + params)
                 result = 'Got return code {}, expected {}\n'.format(return_code, expected_return_code)
                 self.assertEqual(expected_return_code, return_code, result + output)
                 result = 'Got output "{}", expected "{}"\n'.format(output, expected_output_has)
@@ -430,7 +402,7 @@ class AANotifyProfileFilterTest(AANotifyBase):
                 expected_return_code = expected[0]
                 expected_output_has = expected[1]
 
-                return_code, output = cmd(aanotify_bin + login_params + params)
+                return_code, output = cmd_pipe_stderr(aanotify_bin + login_params + params)
                 if 'ERROR: Could not find last login' in output:
                     self.skipTest('Could not find last login')
                 result = 'Got return code {}, expected {}\n'.format(return_code, expected_return_code)
@@ -463,7 +435,7 @@ class AANotifyOperationFilterTest(AANotifyBase):
                 expected_return_code = expected[0]
                 expected_output_has = expected[1]
 
-                return_code, output = cmd(aanotify_bin + days_params + params)
+                return_code, output = cmd_pipe_stderr(aanotify_bin + days_params + params)
                 result = 'Got return code {}, expected {}\n'.format(return_code, expected_return_code)
                 self.assertEqual(expected_return_code, return_code, result + output)
                 result = 'Got output "{}", expected "{}"\n'.format(output, expected_output_has)
@@ -492,7 +464,7 @@ class AANotifyOperationFilterTest(AANotifyBase):
                 expected_return_code = expected[0]
                 expected_output_has = expected[1]
 
-                return_code, output = cmd(aanotify_bin + login_params + params)
+                return_code, output = cmd_pipe_stderr(aanotify_bin + login_params + params)
                 if 'ERROR: Could not find last login' in output:
                     self.skipTest('Could not find last login')
                 result = 'Got return code {}, expected {}\n'.format(return_code, expected_return_code)
@@ -528,7 +500,7 @@ class AANotifyNameFilterTest(AANotifyBase):
                 expected_return_code = expected[0]
                 expected_output_has = expected[1]
 
-                return_code, output = cmd(aanotify_bin + days_params + params)
+                return_code, output = cmd_pipe_stderr(aanotify_bin + days_params + params)
                 result = 'Got return code {}, expected {}\n'.format(return_code, expected_return_code)
                 self.assertEqual(expected_return_code, return_code, result + output)
                 result = 'Got output "{}", expected "{}"\n'.format(output, expected_output_has)
@@ -560,7 +532,7 @@ class AANotifyNameFilterTest(AANotifyBase):
                 expected_return_code = expected[0]
                 expected_output_has = expected[1]
 
-                return_code, output = cmd(aanotify_bin + login_params + params)
+                return_code, output = cmd_pipe_stderr(aanotify_bin + login_params + params)
                 if 'ERROR: Could not find last login' in output:
                     self.skipTest('Could not find last login')
                 result = 'Got return code {}, expected {}\n'.format(return_code, expected_return_code)
@@ -593,7 +565,7 @@ class AANotifyDeniedFilterTest(AANotifyBase):
                 expected_return_code = expected[0]
                 expected_output_has = expected[1]
 
-                return_code, output = cmd(aanotify_bin + days_params + params)
+                return_code, output = cmd_pipe_stderr(aanotify_bin + days_params + params)
                 result = 'Got return code {}, expected {}\n'.format(return_code, expected_return_code)
                 self.assertEqual(expected_return_code, return_code, result + output)
                 result = 'Got output "{}", expected "{}"\n'.format(output, expected_output_has)
@@ -622,7 +594,7 @@ class AANotifyDeniedFilterTest(AANotifyBase):
                 expected_return_code = expected[0]
                 expected_output_has = expected[1]
 
-                return_code, output = cmd(aanotify_bin + login_params + params)
+                return_code, output = cmd_pipe_stderr(aanotify_bin + login_params + params)
                 if 'ERROR: Could not find last login' in output:
                     self.skipTest('Could not find last login')
                 result = 'Got return code {}, expected {}\n'.format(return_code, expected_return_code)

@@ -17,7 +17,7 @@ from apparmor.regex import (
     RE_PROFILE_CAP, RE_PROFILE_DBUS, RE_PROFILE_MOUNT, RE_PROFILE_PTRACE, RE_PROFILE_SIGNAL,
     RE_PROFILE_START, parse_profile_start_line, re_match_include, RE_PROFILE_UNIX,
     RE_PROFILE_PIVOT_ROOT,
-    re_match_include_parse, strip_parenthesis, strip_quotes)
+    re_match_include_parse, strip_parenthesis, strip_quotes, resolve_variables, expand_braces)
 from common_test import AATest, setup_aa, setup_all_loops
 
 
@@ -722,6 +722,88 @@ class TestStripQuotes(AATest):
 
     def _run_test(self, params, expected):
         self.assertEqual(strip_quotes(params), expected)
+
+
+class TestExpandBraces(AATest):
+    tests = (
+        ('foo',             ['foo']),
+        ('/{,foo}',         ['/', '/foo']),
+        ('/{,foo,bar}',    ['/', '/foo', '/bar']),
+        ('/{bin,sbin}/runc', ['/bin/runc', '/sbin/runc']),
+        ('/{,usr/}{,s}bin/runc', ['/bin/runc', '/sbin/runc', '/usr/bin/runc', '/usr/sbin/runc']),
+        ('/{,usr/{,s}}bin/runc', ['/bin/runc', '/usr/bin/runc', '/usr/sbin/runc']),
+        ('{{a,b},{c,{d,e}},f}', ['a', 'b', 'c', 'd', 'e', 'f']),
+        ('{,b}{d,e}', ['d', 'e', 'bd', 'be']),
+        ('{aa,b}{d,e}', ['aad', 'aae', 'bd', 'be']),
+        ('{{foo,bar},{baz,qux}}', ['foo', 'bar', 'baz', 'qux']),
+    )
+
+    def _run_test(self, params, expected):
+        self.assertEqual(expand_braces(params), expected)
+
+
+class TestInvalidExpandBraces(AATest):
+    tests = (
+        # Malformed expressions
+        ('/{',              AppArmorException),
+        ('/{}}{',           AppArmorException),
+        ('/}',              AppArmorException),
+        ('/{foo,bar}}',     AppArmorException),
+        ('/{a,b},{c,d}}',   AppArmorException),
+        # Braces should always provide at least 2 alternatives
+        ('{foo}',           AppArmorException),
+        ('/{foo}/',         AppArmorException),
+        ('/{,foo}{bar}',    AppArmorException),
+
+    )
+
+    def _run_test(self, params, expected):
+        with self.assertRaises(expected):
+            expand_braces(params)
+
+
+class TestResolveVariables(AATest):
+    var_dict = {
+        # Normal variables
+        '@{a}': ['AAA'],
+        '@{b}': ['BBB'],
+        # Multiple values variables
+        '@{c}': ['CC', 'CCC'],
+        '@{d}': ['DD', 'DDD', 'DDDD'],
+        # Variable relying on other variables
+        '@{e}': ['@{a}'],
+        '@{f}': ['@{e}@{b}', '@{c}'],
+        '@{g}': ['/bin/@{f}/{foo,bar}'],
+        # Invalid variables
+        '@{h}': ['@{h}'],  # Self reference
+        '@{i}': ['@{j}'],  # Circular reference with i and j
+        '@{j}': ['@{i}'],
+    }
+    tests = (
+        ('@{a}',        ['AAA']),
+        ('/@{a}/@{b}/', ['/AAA/BBB/']),
+        ('/@{a}/@{c}/', ['/AAA/CC/', '/AAA/CCC/']),
+        ('/@{a}/@{d}/', ['/AAA/DD/', '/AAA/DDD/', '/AAA/DDDD/']),
+        ('/@{c}/@{d}/', ['/CC/DD/', '/CC/DDD/', '/CC/DDDD/', '/CCC/DD/', '/CCC/DDD/', '/CCC/DDDD/']),
+        ('/@{e}/',      ['/AAA/']),
+        ('/@{f}/',      ['/AAABBB/', '/CC/', '/CCC/']),
+        ('@{g}',        ['/bin/AAABBB/{foo,bar}', '/bin/CC/{foo,bar}', '/bin/CCC/{foo,bar}']),
+    )
+
+    def _run_test(self, params, expected):
+        self.assertEqual(resolve_variables(params, self.var_dict), expected)
+
+
+class TestInvalidResolveVariables(AATest):
+    tests = (
+        ('@{h}', AppArmorException),
+        ('@{i}', AppArmorException),
+        ('@{z}', AppArmorException),  # @{z} doesn't exist
+    )
+
+    def _run_test(self, params, expected):
+        with self.assertRaises(expected):
+            resolve_variables(params, TestResolveVariables.var_dict)
 
 
 setup_aa(aa)

@@ -1,0 +1,72 @@
+# Last Modified: Wed Apr 30 16:07:58 2025
+abi <abi/4.0>,
+
+include <tunables/global>
+
+#------------------------------------------------------------------
+#    Copyright (C) 2025 Canonical Ltd.
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+
+
+profile charon-systemd /usr/sbin/charon-systemd {
+  include <abstractions/base>
+  include if exists <local/charon-systemd>
+
+  capability ipc_lock,
+  capability net_admin,
+  capability net_bind_service,
+  capability net_raw,
+
+  network (bind) alg seqpacket,
+  network (bind) inet dgram port=4500,
+  network (bind) inet dgram port=500,
+  network (bind) inet dgram port=68,
+  network (bind) inet6 dgram port=4500,
+  network (bind) inet6 dgram port=500,
+  network (bind) netlink raw,
+  network (create) alg seqpacket,
+  network (create) inet dgram,
+  network (create) inet raw,
+  network (create) inet6 dgram,
+  network (create) netlink dgram,
+  network (create) netlink raw,
+  network (create) packet dgram,
+  network (getattr) inet dgram port=4500,
+  network (getattr) inet dgram port=500,
+  network (getattr) inet6 dgram port=4500,
+  network (getattr) inet6 dgram port=500,
+  network (getattr) netlink raw,
+  network (getopt) inet dgram port=4500,
+  network (getopt) inet dgram port=500,
+  network (getopt) inet6 dgram port=4500,
+  network (getopt) inet6 dgram port=500,
+  network (receive) inet dgram port=4500,
+  network (receive) inet dgram port=500,
+  network (receive) netlink raw,
+  network (receive) packet dgram,
+  network (send) inet dgram port=4500 peer=(port=4500),
+  network (send) inet dgram port=500 peer=(port=500),
+  network (send) netlink raw,
+  network (setopt) inet dgram,
+  network (setopt) inet raw port=17,
+  network (setopt) inet6 dgram,
+  network (setopt) netlink raw,
+  network (setopt) packet dgram,
+
+  /etc/nsswitch.conf r,
+  /etc/protocols r,
+  /etc/services r,
+  /etc/strongswan.conf r,
+  /etc/strongswan.d/ r,
+  /etc/strongswan.d/** r,
+  /proc/sys/net/core/xfrm_acq_expires w,
+  /run/charon.enfy w,
+  /run/charon.lkp w,
+  /run/charon.vici w,
+  /run/systemd/notify w,
+
+}

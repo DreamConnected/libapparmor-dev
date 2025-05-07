@@ -167,7 +167,7 @@ public:
 		     const char *protocol, struct cond_entry *conds,
 		     struct cond_entry *peer_conds);
 	network_rule(perm32_t perms_p, unsigned int family, unsigned int type);
-	virtual ~network_rule()
+	~network_rule() override
 	{
 		peer.free_conds();
 		local.free_conds();
@@ -197,7 +197,7 @@ public:
 	bool parse_port(ip_conds &entry);
 
 	// update TODO: in equality.sh when priority is a valid prefix
-	virtual bool valid_prefix(const prefixes &p, const char *&error) {
+	bool valid_prefix(const prefixes &p, const char *&error) override {
 		if (p.priority != 0) {
 			error = _("priority prefix not allowed on network rules");
 			return false;
@@ -208,12 +208,12 @@ public:
 		}
 		return true;
 	};
-	virtual ostream &dump(ostream &os);
-	virtual int expand_variables(void);
-	virtual int gen_policy_re(Profile &prof);
+	ostream &dump(ostream &os) override;
+	int expand_variables(void) override;
+	int gen_policy_re(Profile &prof) override;
 
-	virtual bool is_mergeable(void) { return true; }
-	virtual int cmp(rule_t const &rhs) const;
+	bool is_mergeable(void) override { return true; }
+	int cmp(rule_t const &rhs) const override;
 
 	/* array of type masks indexed by AF_FAMILY */
 	/* allow, audit, deny and quiet are used for compatibility with AA_CLASS_NET */
@@ -225,7 +225,7 @@ public:
 	bool alloc_net_table(void);
 
 protected:
-	virtual void warn_once(const char *name) override;
+	void warn_once(const char *name) override;
 };
 
 #endif /* __AA_NETWORK_H */

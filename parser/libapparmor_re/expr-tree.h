@@ -371,13 +371,13 @@ public:
 	{
 		type_flags |= NODE_TYPE_TWOCHILD;
 	};
-	virtual int normalize_eps(int dir);
+	int normalize_eps(int dir) override;
 };
 
 class LeafNode: public Node {
 public:
 	LeafNode(): Node() { type_flags |= NODE_TYPE_LEAF; };
-	virtual void normalize(int dir __attribute__((unused))) { return; }
+	void normalize(int dir __attribute__((unused))) override { return; }
 };
 
 /* Match nothing (//). */
@@ -389,22 +389,22 @@ public:
 		nullable = true;
 		label = 0;
 	}
-	void release(void)
+	void release(void) override
 	{
 		/* don't delete Eps nodes because there is a single static
 		 * instance shared by all trees.  Look for epsnode in the code
 		 */
 	}
 
-	void compute_firstpos() { }
-	void compute_lastpos() { }
-	int eq(Node *other)
+	void compute_firstpos() override { }
+	void compute_lastpos() override { }
+	int eq(Node *other) override
 	{
 		if (other->is_type(NODE_TYPE_EPS))
 			return 1;
 		return 0;
 	}
-	ostream &dump(ostream &os)
+	ostream &dump(ostream &os) override
 	{
 		return os << "[]";
 	}
@@ -418,8 +418,8 @@ public:
 class ImportantNode: public LeafNode {
 public:
 	ImportantNode(): LeafNode() { type_flags |= NODE_TYPE_IMPORTANT; }
-	void compute_firstpos() { firstpos.insert(this); }
-	void compute_lastpos() { lastpos.insert(this); }
+	void compute_firstpos() override { firstpos.insert(this); }
+	void compute_lastpos() override { lastpos.insert(this); }
 	virtual void follow(Cases &cases) = 0;
 	virtual int is_accept(void) = 0;
 	virtual int is_postprocess(void) = 0;
@@ -431,15 +431,15 @@ public:
 class CNode: public ImportantNode {
 public:
 	CNode(): ImportantNode() { type_flags |= NODE_TYPE_C; }
-	int is_accept(void) { return false; }
-	int is_postprocess(void) { return false; }
+	int is_accept(void) override { return false; }
+	int is_postprocess(void) override { return false; }
 };
 
 /* Match one specific character (/c/). */
 class CharNode: public CNode {
 public:
 	CharNode(transchar c): c(c) { type_flags |= NODE_TYPE_CHAR; }
-	void follow(Cases &cases)
+	void follow(Cases &cases) override
 	{
 		NodeSet **x = &cases.cases[c];
 		if (!*x) {
@@ -450,7 +450,7 @@ public:
 		}
 		(*x)->insert(followpos.begin(), followpos.end());
 	}
-	int eq(Node *other)
+	int eq(Node *other) override
 	{
 		if (other->is_type(NODE_TYPE_CHAR)) {
 			CharNode *o = static_cast<CharNode *>(other);
@@ -458,12 +458,12 @@ public:
 		}
 		return 0;
 	}
-	ostream &dump(ostream &os)
+	ostream &dump(ostream &os) override
 	{
 		return os << c;
 	}
 
-	int min_match_len()
+	int min_match_len() override
 	{
 		if (c < 0) {
 			// oob characters indicates end of string.
@@ -475,7 +475,7 @@ public:
 		return 1;
 	}
 
-	bool contains_oob() { return c < 0; }
+	bool contains_oob() override { return c < 0; }
 
 	transchar c;
 };
@@ -487,7 +487,7 @@ public:
 	{
 		type_flags |= NODE_TYPE_CHARSET;
 	}
-	void follow(Cases &cases)
+	void follow(Cases &cases) override
 	{
 		for (Chars::iterator i = chars.begin(); i != chars.end(); i++) {
 			NodeSet **x = &cases.cases[*i];
@@ -500,7 +500,7 @@ public:
 			(*x)->insert(followpos.begin(), followpos.end());
 		}
 	}
-	int eq(Node *other)
+	int eq(Node *other) override
 	{
 		if (!other->is_type(NODE_TYPE_CHARSET))
 			return 0;
@@ -516,7 +516,7 @@ public:
 		}
 		return 1;
 	}
-	ostream &dump(ostream &os)
+	ostream &dump(ostream &os) override
 	{
 		os << '[';
 		for (Chars::iterator i = chars.begin(); i != chars.end(); i++)
@@ -524,7 +524,7 @@ public:
 		return os << ']';
 	}
 
-	int min_match_len()
+	int min_match_len() override
 	{
 		if (contains_oob()) {
 			return 0;
@@ -532,7 +532,7 @@ public:
 		return 1;
 	}
 
-	bool contains_oob()
+	bool contains_oob() override
 	{
 		for (Chars::iterator i = chars.begin(); i != chars.end(); i++) {
 			if (*i < 0) {
@@ -552,7 +552,7 @@ public:
 	{
 		type_flags |= NODE_TYPE_NOTCHARSET;
 	}
-	void follow(Cases &cases)
+	void follow(Cases &cases) override
 	{
 		if (!cases.otherwise)
 			cases.otherwise = new NodeSet;
@@ -573,7 +573,7 @@ public:
 						  followpos.end());
 		}
 	}
-	int eq(Node *other)
+	int eq(Node *other) override
 	{
 		if (!other->is_type(NODE_TYPE_NOTCHARSET))
 			return 0;
@@ -589,7 +589,7 @@ public:
 		}
 		return 1;
 	}
-	ostream &dump(ostream &os)
+	ostream &dump(ostream &os) override
 	{
 		os << "[^";
 		for (Chars::iterator i = chars.begin(); i != chars.end(); i++)
@@ -597,7 +597,7 @@ public:
 		return os << ']';
 	}
 
-	int min_match_len()
+	int min_match_len() override
 	{
 		/* Inverse match does not match any oob char at this time
 		 * so only count characters
@@ -605,7 +605,7 @@ public:
 		return 1;
 	}
 
-	bool contains_oob()
+	bool contains_oob() override
 	{
 		for (Chars::iterator i = chars.begin(); i != chars.end(); i++) {
 			if (*i < 0) {
@@ -622,7 +622,7 @@ public:
 class AnyCharNode: public CNode {
 public:
 	AnyCharNode() { type_flags |= NODE_TYPE_ANYCHAR; }
-	void follow(Cases &cases)
+	void follow(Cases &cases) override
 	{
 		if (!cases.otherwise)
 			cases.otherwise = new NodeSet;
@@ -633,13 +633,13 @@ public:
 			if (i->first.c >= 0)
 				i->second->insert(followpos.begin(), followpos.end());
 	}
-	int eq(Node *other)
+	int eq(Node *other) override
 	{
 		if (other->is_type(NODE_TYPE_ANYCHAR))
 			return 1;
 		return 0;
 	}
-	ostream &dump(ostream &os) { return os << "."; }
+	ostream &dump(ostream &os) override { return os << "."; }
 };
 
 /* Match a node zero or more times. (This is a unary operator.) */
@@ -650,29 +650,29 @@ public:
 		type_flags |= NODE_TYPE_STAR;
 		nullable = true;
 	}
-	void compute_firstpos() { firstpos = child[0]->firstpos; }
-	void compute_lastpos() { lastpos = child[0]->lastpos; }
-	void compute_followpos()
+	void compute_firstpos() override { firstpos = child[0]->firstpos; }
+	void compute_lastpos() override { lastpos = child[0]->lastpos; }
+	void compute_followpos() override
 	{
 		NodeSet from = child[0]->lastpos, to = child[0]->firstpos;
 		for (NodeSet::iterator i = from.begin(); i != from.end(); i++) {
 			(*i)->followpos.insert(to.begin(), to.end());
 		}
 	}
-	int eq(Node *other)
+	int eq(Node *other) override
 	{
 		if (other->is_type(NODE_TYPE_STAR))
 			return child[0]->eq(other->child[0]);
 		return 0;
 	}
-	ostream &dump(ostream &os)
+	ostream &dump(ostream &os) override
 	{
 		os << '(';
 		child[0]->dump(os);
 		return os << ")*";
 	}
 
-	bool contains_oob() { return child[0]->contains_oob(); }
+	bool contains_oob() override { return child[0]->contains_oob(); }
 };
 
 /* Match a node zero or one times. */
@@ -683,15 +683,15 @@ public:
 		type_flags |= NODE_TYPE_OPTIONAL;
 		nullable = true;
 	}
-	void compute_firstpos() { firstpos = child[0]->firstpos; }
-	void compute_lastpos() { lastpos = child[0]->lastpos; }
-	int eq(Node *other)
+	void compute_firstpos() override { firstpos = child[0]->firstpos; }
+	void compute_lastpos() override { lastpos = child[0]->lastpos; }
+	int eq(Node *other) override
 	{
 		if (other->is_type(NODE_TYPE_OPTIONAL))
 			return child[0]->eq(other->child[0]);
 		return 0;
 	}
-	ostream &dump(ostream &os)
+	ostream &dump(ostream &os) override
 	{
 		os << '(';
 		child[0]->dump(os);
@@ -706,28 +706,28 @@ public:
 	{
 		type_flags |= NODE_TYPE_PLUS;
 	}
-	void compute_nullable() { nullable = child[0]->nullable; }
-	void compute_firstpos() { firstpos = child[0]->firstpos; }
-	void compute_lastpos() { lastpos = child[0]->lastpos; }
-	void compute_followpos()
+	void compute_nullable() override { nullable = child[0]->nullable; }
+	void compute_firstpos() override { firstpos = child[0]->firstpos; }
+	void compute_lastpos() override { lastpos = child[0]->lastpos; }
+	void compute_followpos() override
 	{
 		NodeSet from = child[0]->lastpos, to = child[0]->firstpos;
 		for (NodeSet::iterator i = from.begin(); i != from.end(); i++) {
 			(*i)->followpos.insert(to.begin(), to.end());
 		}
 	}
-	int eq(Node *other) {
+	int eq(Node *other) override {
 		if (other->is_type(NODE_TYPE_PLUS))
 			return child[0]->eq(other->child[0]);
 		return 0;
 	}
-	ostream &dump(ostream &os) {
+	ostream &dump(ostream &os) override {
 		os << '(';
 		child[0]->dump(os);
 		return os << ")+";
 	}
-	int min_match_len() { return child[0]->min_match_len(); }
-	bool contains_oob() { return child[0]->contains_oob(); }
+	int min_match_len() override { return child[0]->min_match_len(); }
+	bool contains_oob() override { return child[0]->contains_oob(); }
 };
 
 /* Match a pair of consecutive nodes. */
@@ -737,32 +737,32 @@ public:
 	{
 		type_flags |= NODE_TYPE_CAT;
 	}
-	void compute_nullable()
+	void compute_nullable() override
 	{
 		nullable = child[0]->nullable && child[1]->nullable;
 	}
-	void compute_firstpos()
+	void compute_firstpos() override
 	{
 		if (child[0]->nullable)
 			firstpos = child[0]->firstpos + child[1]->firstpos;
 		else
 			firstpos = child[0]->firstpos;
 	}
-	void compute_lastpos()
+	void compute_lastpos() override
 	{
 		if (child[1]->nullable)
 			lastpos = child[0]->lastpos + child[1]->lastpos;
 		else
 			lastpos = child[1]->lastpos;
 	}
-	void compute_followpos()
+	void compute_followpos() override
 	{
 		NodeSet from = child[0]->lastpos, to = child[1]->firstpos;
 		for (NodeSet::iterator i = from.begin(); i != from.end(); i++) {
 			(*i)->followpos.insert(to.begin(), to.end());
 		}
 	}
-	int eq(Node *other)
+	int eq(Node *other) override
 	{
 		if (other->is_type(NODE_TYPE_CAT)) {
 			if (!child[0]->eq(other->child[0]))
@@ -771,14 +771,14 @@ public:
 		}
 		return 0;
 	}
-	ostream &dump(ostream &os)
+	ostream &dump(ostream &os) override
 	{
 		child[0]->dump(os);
 		child[1]->dump(os);
 		return os;
 	}
-	void normalize(int dir);
-	int min_match_len()
+	void normalize(int dir) override;
+	int min_match_len() override
 	{
 		int len = child[0]->min_match_len();
 		if (child[0]->contains_oob()) {
@@ -790,7 +790,7 @@ public:
 		}
 		return len + child[1]->min_match_len();
 	}
-	bool contains_oob()
+	bool contains_oob() override
 	{
 		return child[0]->contains_oob() || child[1]->contains_oob();
 	}
@@ -803,19 +803,19 @@ public:
 	{
 		type_flags |= NODE_TYPE_ALT;
 	}
-	void compute_nullable()
+	void compute_nullable() override
 	{
 		nullable = child[0]->nullable || child[1]->nullable;
 	}
-	void compute_lastpos()
+	void compute_lastpos() override
 	{
 		lastpos = child[0]->lastpos + child[1]->lastpos;
 	}
-	void compute_firstpos()
+	void compute_firstpos() override
 	{
 		firstpos = child[0]->firstpos + child[1]->firstpos;
 	}
-	int eq(Node *other)
+	int eq(Node *other) override
 	{
 		if (other->is_type(NODE_TYPE_ALT)) {
 			if (!child[0]->eq(other->child[0]))
@@ -824,7 +824,7 @@ public:
 		}
 		return 0;
 	}
-	ostream &dump(ostream &os)
+	ostream &dump(ostream &os) override
 	{
 		os << '(';
 		child[0]->dump(os);
@@ -833,8 +833,8 @@ public:
 		os << ')';
 		return os;
 	}
-	void normalize(int dir);
-	int min_match_len()
+	void normalize(int dir) override;
+	int min_match_len() override
 	{
 		int m1, m2;
 		m1 = child[0]->min_match_len();
@@ -844,7 +844,7 @@ public:
 		}
 		return m2;
 	}
-	bool contains_oob()
+	bool contains_oob() override
 	{
 		return child[0]->contains_oob() || child[1]->contains_oob();
 	}
@@ -856,20 +856,20 @@ public:
 	{
 		type_flags |= NODE_TYPE_SHARED;
 	}
-	void release(void)
+	void release(void) override
 	{
 		/* don't delete SharedNodes via release as they are shared, and
 		 * will be deleted when the table they are stored in is deleted
 		 */
 	}
 
-	void follow(Cases &cases __attribute__ ((unused)))
+	void follow(Cases &cases __attribute__ ((unused))) override
 	{
 		/* Nothing to follow. */
 	}
 
 	/* requires shared nodes to be common by pointer */
-	int eq(Node *other) { return (this == other); }
+	int eq(Node *other) override { return (this == other); }
 };
 
 /**
@@ -879,8 +879,8 @@ public:
 class AcceptNode: public SharedNode {
 public:
 	AcceptNode() { type_flags |= NODE_TYPE_ACCEPT; }
-	int is_accept(void) { return true; }
-	int is_postprocess(void) { return false; }
+	int is_accept(void) override { return true; }
+	int is_postprocess(void) override { return false; }
 };
 
 class MatchFlag: public AcceptNode {
@@ -889,7 +889,8 @@ public:
 	{
 		type_flags |= NODE_TYPE_MATCHFLAG;
 	}
-	ostream &dump(ostream &os) { return os << "< 0x" << std::hex << perms << std::dec << '>'; }
+	
+	ostream &dump(ostream &os) override { return os << "< 0x" << std::hex << perms << std::dec << '>'; }
 
 	int priority;
 	perm32_t perms;
@@ -1031,6 +1032,7 @@ public:
 
 class CacheStats {
 public:
+	virtual ~CacheStats() {}
 	unsigned long dup, sum, max;
 
 	CacheStats(void): dup(0), sum(0), max(0) { };
@@ -1051,9 +1053,9 @@ public:
 	std::set<NodeVec *, deref_less_than> cache;
 
 	NodeVecCache(void): cache() { };
-	~NodeVecCache() { clear(); };
+	~NodeVecCache() override { clear(); };
 
-	virtual unsigned long size(void) const { return cache.size(); }
+	unsigned long size(void) const override { return cache.size(); }
 
 	void clear()
 	{

@@ -41,13 +41,13 @@ public:
 	unix_rule(unsigned int type_p, audit_t audit_p, rule_mode_t rule_mode_p);
 	unix_rule(perm32_t perms, struct cond_entry *conds,
 		  struct cond_entry *peer_conds);
-	virtual ~unix_rule()
+	~unix_rule() override
 	{
 		free(addr);
 		free(peer_addr);
 	};
 
-	virtual bool valid_prefix(const prefixes &p, const char *&error) {
+	bool valid_prefix(const prefixes &p, const char *&error) override {
 		// priority is partially supported for unix rules
 		// rules that get downgraded to just network socket
 		// won't support them but the fine grained do.
@@ -57,17 +57,17 @@ public:
 		}
 		return true;
 	};
-	virtual bool has_peer_conds(void) {
+	bool has_peer_conds(void) override {
 		return af_rule::has_peer_conds() || peer_addr;
 	}
 
-	virtual ostream &dump_local(ostream &os);
-	virtual ostream &dump_peer(ostream &os);
-	virtual int expand_variables(void);
-	virtual int gen_policy_re(Profile &prof);
+	ostream &dump_local(ostream &os) override;
+	ostream &dump_peer(ostream &os) override;
+	int expand_variables(void) override;
+	int gen_policy_re(Profile &prof) override;
 
 	// inherit is_mergable() from af_rule
-	virtual int cmp(rule_t const &rhs) const
+	int cmp(rule_t const &rhs) const override
 	{
 		int res = af_rule::cmp(rhs);
 		if (res)
@@ -80,7 +80,7 @@ public:
 	};
 
 protected:
-	virtual void warn_once(const char *name) override;
+	void warn_once(const char *name) override;
 };
 
 #endif /* __AA_AF_UNIX_H */

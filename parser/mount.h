@@ -159,7 +159,7 @@ public:
 	mnt_rule(struct cond_entry *src_conds, char *device_p,
 		   struct cond_entry *dst_conds unused, char *mnt_point_p,
 		   perm32_t perms_p);
-	virtual ~mnt_rule()
+	~mnt_rule() override
 	{
 		free_value_list(opts);
 		free_value_list(dev_type);
@@ -168,25 +168,25 @@ public:
 		free(trans);
 	}
 
-	virtual bool valid_prefix(const prefixes &p, const char *&error) {
+	bool valid_prefix(const prefixes &p, const char *&error) override {
 		if (p.owner != OWNER_UNSPECIFIED) {
 			error = "owner prefix not allowed on mount rules";
 			return false;
 		}
 		return true;
 	};
-	virtual ostream &dump(ostream &os);
-	virtual int expand_variables(void);
-	virtual int gen_policy_re(Profile &prof);
-	virtual void post_parse_profile(Profile &prof unused);
+	ostream &dump(ostream &os) override;
+	int expand_variables(void) override;
+	int gen_policy_re(Profile &prof) override;
+	void post_parse_profile(Profile &prof unused) override;
 
-	virtual bool is_mergeable(void) { return true; }
-	virtual int cmp(rule_t const &rhs) const;
+	bool is_mergeable(void) override { return true; }
+	int cmp(rule_t const &rhs) const override;
 
 	// for now use default merge/dedup
 
 protected:
-	virtual void warn_once(const char *name) override;
+	void warn_once(const char *name) override;
 };
 
 int is_valid_mnt_cond(const char *name, int src);

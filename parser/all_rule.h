@@ -31,7 +31,7 @@ class all_rule: public prefix_rule_t {
 public:
 	all_rule(void): prefix_rule_t(RULE_TYPE_ALL) { }
 
-	virtual bool valid_prefix(const prefixes &p, const char *&error) {
+	bool valid_prefix(const prefixes &p, const char *&error) override {
 		if (p.priority != 0) {
 			error = _("priority prefix not allowed on all rules");
 			return false;
@@ -43,30 +43,30 @@ public:
 		return true;
 	};
 
-	int expand_variables(void)
+	int expand_variables(void) override
 	{
 		return 0;
 	}
-	virtual ostream &dump(ostream &os) {
+	ostream &dump(ostream &os) override {
 		prefix_rule_t::dump(os);
 
 		os << "all";
 
 		return os;
 	}
-	virtual bool is_mergeable(void) { return true; }
-	virtual int cmp(rule_t const &rhs) const
+	bool is_mergeable(void) override { return true; }
+	int cmp(rule_t const &rhs) const override
 	{
 		return prefix_rule_t::cmp(rhs);
 	};
 
-	virtual void add_implied_rules(Profile &prof);
+	void add_implied_rules(Profile &prof) override;
 
-	virtual int gen_policy_re(Profile &prof unused) { return RULE_OK; };
+	int gen_policy_re(Profile &prof unused) override { return RULE_OK; };
 
 protected:
-  virtual void warn_once(const char *name unused, const char *msg unused) { };
-  virtual void warn_once(const char *name unused)  { };
+  void warn_once(const char *name unused, const char *msg unused) override { };
+  void warn_once(const char *name unused) override  { };
 };
 
 #endif /* __AA_ALL_H */

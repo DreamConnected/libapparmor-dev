@@ -324,9 +324,9 @@ public:
 	std::map<ProtoState, State *> cache;
 
 	NodeMap(void): cache() { };
-	~NodeMap() { clear(); };
+	~NodeMap() override { clear(); };
 
-	virtual unsigned long size(void) const { return cache.size(); }
+	unsigned long size(void) const override { return cache.size(); }
 
 	void clear()
 	{

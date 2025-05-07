@@ -53,7 +53,7 @@ public:
 		sock_type_n(-1), proto(NULL), proto_n(0), label(NULL),
 		peer_label(NULL) { }
 
-	virtual ~af_rule()
+	~af_rule() override
 	{
 		free(sock_type);
 		free(proto);
@@ -73,12 +73,12 @@ public:
 	virtual bool has_peer_conds(void) { return peer_label ? true : false; }
 	virtual ostream &dump_local(ostream &os);
 	virtual ostream &dump_peer(ostream &os);
-	virtual ostream &dump(ostream &os);
-	virtual int expand_variables(void);
-	virtual int gen_policy_re(Profile &prof) = 0;
+	ostream &dump(ostream &os) override;
+	int expand_variables(void) override;
+	int gen_policy_re(Profile &prof) override = 0;
 
-	virtual bool is_mergeable(void) { return true; }
-	virtual int cmp(rule_t const &rhs) const
+	bool is_mergeable(void) override { return true; }
+	int cmp(rule_t const &rhs) const override
 	{
 		int res = perms_rule_t::cmp(rhs);
 		if (res)

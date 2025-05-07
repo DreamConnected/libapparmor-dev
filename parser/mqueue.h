@@ -94,13 +94,13 @@ public:
 	char *label;
 
 	mqueue_rule(perm32_t perms, struct cond_entry *conds, char *qname = NULL);
-	virtual ~mqueue_rule()
+	~mqueue_rule() override
 	{
 		free(qname);
 		free(label);
 	};
 
-	virtual bool valid_prefix(const prefixes &p, const char *&error) {
+	bool valid_prefix(const prefixes &p, const char *&error) override {
 		// not yet, but soon
 		if (p.owner) {
 			error = _("owner prefix not allowed on mqueue rules");
@@ -108,12 +108,12 @@ public:
 		}
 		return true;
 	};
-	virtual ostream &dump(ostream &os);
-	virtual int expand_variables(void);
-	virtual int gen_policy_re(Profile &prof);
+	ostream &dump(ostream &os) override;
+	int expand_variables(void) override;
+	int gen_policy_re(Profile &prof) override;
 
-	virtual bool is_mergeable(void) { return true; }
-	virtual int cmp(rule_t const &rhs) const
+	bool is_mergeable(void) override { return true; }
+	int cmp(rule_t const &rhs) const override
 	{
 		int res = perms_rule_t::cmp(rhs);
 		if (res)
@@ -129,7 +129,7 @@ public:
 	};
 
 protected:
-	virtual void warn_once(const char *name) override;
+	void warn_once(const char *name) override;
 	void validate_qname(void);
 };
 

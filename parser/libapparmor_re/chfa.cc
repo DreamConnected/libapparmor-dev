@@ -37,6 +37,8 @@
 #include "../policydb.h"
 #include "flex-tables.h"
 
+using namespace std;
+
 void CHFA::init_free_list(vector<pair<size_t, size_t> > &free_list,
 				     size_t prev, size_t start)
 {

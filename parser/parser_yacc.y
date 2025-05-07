@@ -45,6 +45,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+using namespace std;
 
 #define CIDR_32 htonl(0xffffffff)
 #define CIDR_24 htonl(0xffffff00)

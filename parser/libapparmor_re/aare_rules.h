@@ -59,7 +59,7 @@ public:
 
 class UniquePermsCache {
 public:
-	typedef map<UniquePerm, Node*> UniquePermMap;
+	typedef std::map<UniquePerm, Node*> UniquePermMap;
 	typedef UniquePermMap::iterator iterator;
 	UniquePermMap nodes;
 
@@ -89,7 +89,7 @@ public:
 				node = new ExactMatchFlag(priority, perms, audit);
 			else
 				node = new MatchFlag(priority, perms, audit);
-			pair<iterator, bool> val = nodes.insert(make_pair(tmp, node));
+			std::pair<iterator, bool> val = nodes.insert(std::make_pair(tmp, node));
 			if (val.second == false) {
 				delete node;
 				return val.first->second;
@@ -121,17 +121,17 @@ class aare_rules {
 			  optflags const &opts, bool oob);
 	bool append_rule(const char *rule, bool oob, bool with_perm, optflags const &opts);
 	CHFA *create_chfa(int *min_match_len,
-			  vector <aa_perms> &perms_table,
+			  std::vector <aa_perms> &perms_table,
 			  optflags const &opts, bool filedfa,
 			  bool extended_perms, bool prompt);
 	void *create_dfablob(size_t *size, int *min_match_len,
-			 vector <aa_perms> &perms_table,
+			 std::vector <aa_perms> &perms_table,
 			 optflags const &opts,
 			 bool filedfa, bool extended_perms, bool prompt);
 	void *create_welded_dfablob(aare_rules *file_rules,
 				    size_t *size, int *min_match_len,
 				    size_t *new_start,
-				    vector <aa_perms> &perms_table,
+				    std::vector <aa_perms> &perms_table,
 				    optflags const &opts,
 				    bool extended_perms, bool prompt);
 };

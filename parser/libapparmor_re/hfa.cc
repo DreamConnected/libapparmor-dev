@@ -38,6 +38,8 @@
 #include "../immunix.h"
 #include "../perms.h"
 
+using namespace std;
+
 ostream &operator<<(ostream &os, const CacheStats &cache)
 {
 	/* dump the state label */

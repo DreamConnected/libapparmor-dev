@@ -30,6 +30,8 @@
 #include "parser_yacc.h"
 #include "signal.h"
 
+using namespace std;
+
 #define MAXMAPPED_SIG 35
 #define MINRT_SIG 128		/* base of RT sigs */
 #define MAXRT_SIG 32		/* Max RT above MINRT_SIG */

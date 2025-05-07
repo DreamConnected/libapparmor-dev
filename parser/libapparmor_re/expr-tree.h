@@ -44,8 +44,6 @@
 #include "../perms.h"
 #include "apparmor_re.h"
 
-using namespace std;
-
 /*
  * transchar - representative input character for state transitions
  *
@@ -146,9 +144,9 @@ public:
 
 class Chars {
 public:
-	set<transchar> chars;
+	std::set<transchar> chars;
 
-	typedef set<transchar>::iterator iterator;
+	typedef std::set<transchar>::iterator iterator;
 	iterator begin() { return chars.begin(); }
 	iterator end() { return chars.end(); }
 
@@ -166,11 +164,11 @@ public:
 	{
 		return chars.find(key);
 	}
-	pair<iterator,bool> insert(transchar c)
+	std::pair<iterator,bool> insert(transchar c)
 	{
 		return chars.insert(c);
 	}
-	pair<iterator,bool> insert(char c)
+	std::pair<iterator,bool> insert(char c)
 	{
 		transchar tmp(c);
 		return chars.insert(tmp);
@@ -181,9 +179,9 @@ public:
 ostream &operator<<(ostream &os, transchar c);
 
 /* Compute the union of two sets. */
-template<class T> set<T> operator+(const set<T> &a, const set<T> &b)
+template<class T> std::set<T> operator+(const std::set<T> &a, const std::set<T> &b)
 {
-	set<T> c(a);
+	std::set<T> c(a);
 	c.insert(b.begin(), b.end());
 	return c;
 }
@@ -196,7 +194,7 @@ template<class T> set<T> operator+(const set<T> &a, const set<T> &b)
  */
 class Node;
 class ImportantNode;
-typedef set<ImportantNode *> NodeSet;
+typedef std::set<ImportantNode *> NodeSet;
 
 /**
  * Text-dump a state (for debugging).
@@ -212,12 +210,12 @@ ostream &operator<<(ostream &os, const NodeSet &state);
  * enumerating all the explicit tranitions for default matches.
  */
 typedef struct Cases {
-	typedef map<transchar, NodeSet *>::iterator iterator;
+	typedef std::map<transchar, NodeSet *>::iterator iterator;
 	iterator begin() { return cases.begin(); }
 	iterator end() { return cases.end(); }
 
 	Cases(): otherwise(0) { }
-	map<transchar, NodeSet *> cases;
+	std::map<transchar, NodeSet *> cases;
 	NodeSet *otherwise;
 } Cases;
 
@@ -891,7 +889,7 @@ public:
 	{
 		type_flags |= NODE_TYPE_MATCHFLAG;
 	}
-	ostream &dump(ostream &os) { return os << "< 0x" << hex << perms << std::dec << '>'; }
+	ostream &dump(ostream &os) { return os << "< 0x" << std::hex << perms << std::dec << '>'; }
 
 	int priority;
 	perm32_t perms;
@@ -925,7 +923,7 @@ public:
 
 /* Traverse the syntax tree depth-first in an iterator-like manner. */
 class depth_first_traversal {
-	stack<Node *>pos;
+	std::stack<Node *>pos;
 	void push_left(Node *node) {
 		pos.push(node);
 
@@ -1050,7 +1048,7 @@ struct deref_less_than {
 
 class NodeVecCache: public CacheStats {
 public:
-	set<NodeVec *, deref_less_than> cache;
+	std::set<NodeVec *, deref_less_than> cache;
 
 	NodeVecCache(void): cache() { };
 	~NodeVecCache() { clear(); };
@@ -1059,7 +1057,7 @@ public:
 
 	void clear()
 	{
-		for (set<NodeVec *>::iterator i = cache.begin();
+		for (std::set<NodeVec *>::iterator i = cache.begin();
 		     i != cache.end(); i++) {
 			delete *i;
 		}
@@ -1071,7 +1069,7 @@ public:
 	{
 		if (!nodes)
 			return NULL;
-		pair<set<NodeVec *>::iterator,bool> uniq;
+		std::pair<std::set<NodeVec *>::iterator,bool> uniq;
 		NodeVec *nv = new NodeVec(nodes);
 		uniq = cache.insert(nv);
 		if (uniq.second == false) {

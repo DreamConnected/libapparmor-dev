@@ -42,16 +42,16 @@ struct deref_profileptr_lt {
 
 class ProfileList {
 public:
-	set<Profile *, deref_profileptr_lt> list;
+	std::set<Profile *, deref_profileptr_lt> list;
 
-	typedef set<Profile *, deref_profileptr_lt>::iterator iterator;
+	typedef std::set<Profile *, deref_profileptr_lt>::iterator iterator;
 	iterator begin() { return list.begin(); }
 	iterator end() { return list.end(); }
 
 	ProfileList() { };
 	virtual ~ProfileList() { clear(); }
 	virtual bool empty(void) { return list.empty(); }
-	virtual pair<ProfileList::iterator,bool> insert(Profile *);
+	virtual std::pair<ProfileList::iterator,bool> insert(Profile *);
 	virtual void erase(ProfileList::iterator pos);
 	void clear(void);
 	void dump(void);
@@ -368,7 +368,7 @@ struct dfa_stuff {
 	void *dfa;
 	size_t size;
 	size_t file_start;		/* special start in welded dfa */
-	vector <aa_perms> perms_table;
+	std::vector <aa_perms> perms_table;
 	dfa_stuff(void): rules(NULL), dfa(NULL), size(0) { }
 };
 
@@ -382,7 +382,7 @@ public:
 	void *xmatch;
 	size_t xmatch_size;
 	int xmatch_len;
-	vector <aa_perms> xmatch_perms_table;
+	std::vector <aa_perms> xmatch_perms_table;
 	struct cond_entry_list xattrs;
 
 	/* char *sub_name; */			/* subdomain name or NULL */
@@ -477,7 +477,7 @@ public:
 			debug_cod_entries(entries);
 
 		for (RuleList::iterator i = rule_ents.begin(); i != rule_ents.end(); i++) {
-			(*i)->dump(cout);
+			(*i)->dump(std::cout);
 		}
 
 		printf("\n");
@@ -511,7 +511,7 @@ public:
 
 	void dump_name(bool fqp)
 	{
-		cout << get_name(fqp);;
+		std::cout << get_name(fqp);;
 	}
 
 	void post_parse_profile(void);

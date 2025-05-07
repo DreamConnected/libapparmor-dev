@@ -66,6 +66,8 @@ void *reallocarray(void *ptr, size_t nmemb, size_t size)
 #define NULL nullptr
 #endif
 
+using namespace std;
+
 int is_blacklisted(const char *name, const char *path)
 {
 	int retval = _aa_is_blacklisted(name);

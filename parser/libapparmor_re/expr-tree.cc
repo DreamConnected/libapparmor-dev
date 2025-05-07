@@ -38,6 +38,8 @@
 #include "expr-tree.h"
 #include "apparmor_re.h"
 
+using namespace std;
+
 /* Use a single static EpsNode as it carries no node specific information */
 EpsNode epsnode;
 

@@ -41,6 +41,7 @@
 #define SD_CODE_SIZE (sizeof(u8))
 #define SD_STR_LEN (sizeof(u16))
 
+using namespace std;
 
 int __sd_serialize_profile(int option, aa_kernel_interface *kernel_interface,
 			   Profile *prof, int cache_fd);

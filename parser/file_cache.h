@@ -21,14 +21,12 @@
 #include <set>
 #include <string>
 
-using namespace std;
-
 /* TODO: have includecache be a frontend for file cache, don't just
  * store name.
  */
 class IncludeCache_t {
 public:
-	set<string> cache;
+	std::set<std::string> cache;
 
 	IncludeCache_t() = default;
 	virtual ~IncludeCache_t() = default;
@@ -39,7 +37,7 @@ public:
 	}
 
 	bool insert(const char *name) {
-		pair<set<string>::iterator,bool> res = cache.insert(name);
+		std::pair<std::set<std::string>::iterator,bool> res = cache.insert(name);
 		if (res.second == false) {
 			return false;
 		}

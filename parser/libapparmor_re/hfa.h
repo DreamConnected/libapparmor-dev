@@ -42,8 +42,8 @@ extern int prompt_compat_mode;
 
 class State;
 
-typedef map<transchar, State *> StateTrans;
-typedef list<State *> Partition;
+typedef std::map<transchar, State *> StateTrans;
+typedef std::list<State *> Partition;
 
 #include "../immunix.h"
 
@@ -62,9 +62,9 @@ public:
 	}
 	ostream &dump(ostream &os)
 	{
-		os << "(0x " << hex
+		os << "(0x " << std::hex
 		   << allow << "/" << deny << "/" << "/" << prompt << "/" << audit << "/" << quiet
-		   << ')' << dec;
+		   << ')' << std::dec;
 		return os;
 	}
 
@@ -317,11 +317,11 @@ public:
 class NodeMap: public CacheStats
 {
 public:
-	typedef map<ProtoState, State *>::iterator iterator;
+	typedef std::map<ProtoState, State *>::iterator iterator;
 	iterator begin() { return cache.begin(); }
 	iterator end() { return cache.end(); }
 
-	map<ProtoState, State *> cache;
+	std::map<ProtoState, State *> cache;
 
 	NodeMap(void): cache() { };
 	~NodeMap() { clear(); };
@@ -334,10 +334,10 @@ public:
 		CacheStats::clear();
 	}
 
-	pair<iterator,bool> insert(ProtoState &proto, State *state)
+	std::pair<iterator,bool> insert(ProtoState &proto, State *state)
 	{
-		pair<iterator,bool> uniq;
-		uniq = cache.insert(make_pair(proto, state));
+		std::pair<iterator,bool> uniq;
+		uniq = cache.insert(std::make_pair(proto, state));
 		if (uniq.second == false) {
 			dup++;
 		} else {
@@ -349,7 +349,7 @@ public:
 	}
 };
 
-typedef map<const State *, size_t> Renumber_Map;
+typedef std::map<const State *, size_t> Renumber_Map;
 
 /* Transitions in the DFA. */
 class DFA {
@@ -360,7 +360,7 @@ class DFA {
 			     NodeSet *nnodes, State *other);
 	void update_state_transitions(optflags const &opts, State *state);
 	void process_work_queue(const char *header, optflags const &);
-	void dump_diff_chain(ostream &os, map<State *, Partition> &relmap,
+	void dump_diff_chain(ostream &os, std::map<State *, Partition> &relmap,
 			     Partition &chain, State *state,
 			     unsigned int &count, unsigned int &total,
 			     unsigned int &max);
@@ -369,7 +369,7 @@ class DFA {
 	NodeVecCache anodes_cache;
 	NodeVecCache nnodes_cache;
 	NodeMap node_map;
-	list<State *> work_queue;
+	std::list<State *> work_queue;
 
 public:
 	DFA(Node *root, optflags const &flags, bool filedfa);
@@ -394,14 +394,14 @@ public:
 	void dump_uniq_perms(const char *s);
 	ostream &dump_partition(ostream &os, Partition &p);
 	ostream &dump_partitions(ostream &os, const char *description,
-				 list<Partition *> &partitions);
-	map<transchar, transchar> equivalence_classes(optflags const &flags);
-	void apply_equivalence_classes(map<transchar, transchar> &eq);
+				 std::list<Partition *> &partitions);
+	std::map<transchar, transchar> equivalence_classes(optflags const &flags);
+	void apply_equivalence_classes(std::map<transchar, transchar> &eq);
 
 	void compute_perms_table_ent(State *state, size_t pos,
-				     vector <aa_perms> &perms_table,
+				     std::vector <aa_perms> &perms_table,
 				     bool prompt);
-	void compute_perms_table(vector <aa_perms> &perms_table,
+	void compute_perms_table(std::vector <aa_perms> &perms_table,
 				 bool prompt);
 
 	unsigned int diffcount;
@@ -415,6 +415,6 @@ public:
 	bool filedfa;
 };
 
-void dump_equivalence_classes(ostream &os, map<transchar, transchar> &eq);
+void dump_equivalence_classes(ostream &os, std::map<transchar, transchar> &eq);
 
 #endif /* __LIBAA_RE_HFA_H */

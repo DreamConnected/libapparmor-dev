@@ -228,6 +228,8 @@
 #include "profile.h"
 #include "mount.h"
 
+using namespace std;
+
 struct mnt_keyword_table {
 	const char *keyword;
 	unsigned int set;

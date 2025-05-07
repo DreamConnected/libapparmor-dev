@@ -46,6 +46,8 @@
 #include "policy_cache.h"
 #include "file_cache.h"
 
+using namespace std;
+
 #ifdef PDEBUG
 #undef PDEBUG
 #endif

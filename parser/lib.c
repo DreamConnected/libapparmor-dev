@@ -28,6 +28,8 @@
 #include "lib.h"
 #include "parser.h"
 
+using namespace std;
+
 int dirat_for_each(int dirfd, const char *name, void *data,
 		   int (* cb)(int, const char *, struct stat *, void *))
 {

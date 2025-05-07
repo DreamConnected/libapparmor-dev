@@ -30,6 +30,8 @@
 #include "profile.h"
 #include "af_unix.h"
 
+using namespace std;
+
 /* See unix(7) for autobind address definition */
 #define autobind_address_pattern "\\x00[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]";
 

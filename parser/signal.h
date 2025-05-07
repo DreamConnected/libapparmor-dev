@@ -29,7 +29,7 @@
 #define AA_VALID_SIGNAL_PERMS		(AA_MAY_SEND | AA_MAY_RECEIVE)
 
 
-typedef set<int> Signals;
+typedef std::set<int> Signals;
 
 int find_signal_mapping(const char *sig);
 int parse_signal_perms(const char *str_perms, perm32_t *perms, int fail);

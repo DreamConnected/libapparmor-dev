@@ -34,6 +34,7 @@
 #include "chfa.h"
 #include "../immunix.h"
 
+using namespace std;
 
 aare_rules::~aare_rules(void)
 {

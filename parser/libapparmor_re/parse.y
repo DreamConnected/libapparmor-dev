@@ -24,6 +24,8 @@
 /* #define DEBUG_TREE */
 #include "expr-tree.h"
 
+using namespace std;
+
 %}
 
 %union {

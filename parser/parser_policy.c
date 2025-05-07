@@ -45,6 +45,7 @@
 #endif
 #define NPDEBUG(fmt, args...)	/* Do nothing */
 
+using namespace std;
 
 ProfileList policy_list;
 

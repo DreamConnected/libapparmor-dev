@@ -25,8 +25,6 @@
 #include "perms.h"
 #include "policydb.h"
 
-using namespace std;
-
 #define PROMPT_COMPAT_UNKNOWN  0
 #define PROMPT_COMPAT_IGNORE  1
 #define PROMPT_COMPAT_PERMSV2 2
@@ -436,9 +434,9 @@ public:
 		class_rule_t::dump(os);
 
 		if (saved)
-			os << "(0x" << hex << perms << "/orig " << saved << ") ";
+			os << "(0x" << std::hex << perms << "/orig " << saved << ") ";
 		else
-			os << "(0x" << hex << perms << ") ";
+			os << "(0x" << std::hex << perms << ") ";
 
 		return os;
 	}
@@ -464,7 +462,7 @@ public:
 	virtual ostream &dump(ostream &os) {
 		class_rule_t::dump(os);
 
-		os << "(0x" << hex << perms << ") ";
+		os << "(0x" << std::hex << perms << ") ";
 		return os;
 	}
 

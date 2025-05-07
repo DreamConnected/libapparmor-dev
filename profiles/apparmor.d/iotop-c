@@ -9,6 +9,9 @@ profile iotop-c /usr/sbin/iotop-c {
 
   capability net_admin,
   capability sys_admin,
+  capability sys_nice,
+
+  network netlink raw,
 
   /proc/*/cmdline r,
   /proc/*/task/ r,
@@ -16,6 +19,7 @@ profile iotop-c /usr/sbin/iotop-c {
   /proc/ r,
   /proc/sys/kernel/task_delayacct rw,
   /proc/vmstat r,
+  owner @{HOME}/.config/iotop/ rw,
   owner @{HOME}/.config/iotop/iotoprc rw,
 
   include if exists <local/iotop-c>

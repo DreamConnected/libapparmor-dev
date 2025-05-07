@@ -116,6 +116,7 @@ class WriteAllTestAATest(AATest):
         ('   deny all             ,# foo bar',          'deny all, # foo bar'),
         ('   allow all        ,# foo bar',              'allow all, # foo bar'),
         ('   allow all   ,',                            'allow all,'),
+        ('   priority =  -2 allow all   ,',             'priority=-2 allow all,'),
     )
 
     def _run_test(self, rawrule, expected):

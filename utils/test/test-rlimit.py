@@ -174,6 +174,10 @@ class InvalidRlimitInit(AATest):
         with self.assertRaises(AppArmorBug):
             RlimitRule('as', '1024MB', audit=True)
 
+    def test_priority_keyword(self):
+        with self.assertRaises(AppArmorBug):
+            RlimitRule('as', '1024MB', priority=0)
+
 
 class InvalidRlimitTest(AATest):
     def _check_invalid_rawrule(self, rawrule):

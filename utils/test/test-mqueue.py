@@ -77,10 +77,10 @@ class MessageQueueTestParseInvalid(AATest):
             MessageQueueRule.create_instance('foo,')
 
     def test_diff_non_mqueuerule(self):
-        exp = namedtuple('exp', ('audit', 'deny'))
+        exp = namedtuple('exp', ('audit', 'deny', 'priority'))
         obj = MessageQueueRule(('open'), 'posix', 'bar', '/foo')
         with self.assertRaises(AppArmorBug):
-            obj.is_equal(exp(False, False), False)
+            obj.is_equal(exp(False, False, None), False)
 
     def test_diff_access(self):
         obj1 = MessageQueueRule(('open'), 'posix', 'bar', '/foo')
@@ -171,6 +171,10 @@ class WriteMessageQueueTestAATest(AATest):
         ('mqueue wr label=tst 1234,',                             'mqueue wr label=tst 1234,'),
         ('mqueue wr  type=sysv   label=tst 1234,',                'mqueue wr type=sysv label=tst 1234,'),
         ('mqueue wr   type=posix label=tst /foo,',                'mqueue wr type=posix label=tst /foo,'),
+        ('  priority = -82 mqueue getattr /foo,',                 'priority=-82 mqueue getattr /foo,'),
+        ('  priority =  12 audit mqueue (setattr getattr) 1234,', 'priority=12 audit mqueue (getattr setattr) 1234,'),
+        ('  priority=0 mqueue getattr /foo,',                     'priority=0 mqueue getattr /foo,'),
+        ('  priority=+82 mqueue getattr /foo,',                   'priority=82 mqueue getattr /foo,'),
     )
 
     def _run_test(self, rawrule, expected):

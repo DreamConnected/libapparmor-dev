@@ -112,12 +112,15 @@ class MountRule(BaseRule):
     rule_name = 'mount'
     _match_re = RE_PROFILE_MOUNT
 
-    def __init__(self, operation, fstype, options, source, dest, audit=False, deny=False, allow_keyword=False, comment='', log_event=None):
+    def __init__(self, operation, fstype, options, source, dest,
+                 audit=False, deny=False, allow_keyword=False,
+                 comment='', log_event=None, priority=None):
 
         super().__init__(audit=audit, deny=deny,
                          allow_keyword=allow_keyword,
                          comment=comment,
-                         log_event=log_event)
+                         log_event=log_event,
+                         priority=priority)
 
         self.operation = operation
 
@@ -164,7 +167,7 @@ class MountRule(BaseRule):
     def _create_instance(cls, raw_rule, matches):
         '''parse raw_rule and return instance of this class'''
 
-        audit, deny, allow_keyword, comment = parse_modifiers(matches)
+        priority, audit, deny, allow_keyword, comment = parse_modifiers(matches)
 
         operation = matches.group('operation')
 
@@ -223,7 +226,9 @@ class MountRule(BaseRule):
             source = cls.ALL
             dest = cls.ALL
 
-        return cls(operation=operation, fstype=(is_fstype_equal, fstype), options=(is_options_equal, options), source=source, dest=dest, audit=audit, deny=deny, allow_keyword=allow_keyword, comment=comment)
+        return cls(operation=operation, fstype=(is_fstype_equal, fstype), options=(is_options_equal, options),
+                   source=source, dest=dest, audit=audit, deny=deny, allow_keyword=allow_keyword, comment=comment,
+                   priority=priority)
 
     def get_clean(self, depth=0):
         space = '  ' * depth

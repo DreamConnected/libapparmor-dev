@@ -261,6 +261,10 @@ class WritePivotRootTestAATest(AATest):
         ('   pivot_root  oldroot="/old"     ,    # foo        ',            'pivot_root oldroot=/old, # foo'),
         ('   pivot_root  oldroot=/old    ->  some_profile ,   ',            'pivot_root oldroot=/old -> some_profile,'),
         ('   pivot_root  oldroot=/old /new   ->  some_profile ,   ',            'pivot_root oldroot=/old /new -> some_profile,'),
+        ('priority=1 pivot_root  oldroot=/old /new   ->  some_profile ,   ',    'priority=1 pivot_root oldroot=/old /new -> some_profile,'),
+        ('priority=0 pivot_root  oldroot=/old /new   ->  some_profile ,   ',    'priority=0 pivot_root oldroot=/old /new -> some_profile,'),
+        ('priority=-1 pivot_root  oldroot=/old /new   ->  some_profile ,  ',    'priority=-1 pivot_root oldroot=/old /new -> some_profile,'),
+        ('priority=+1 pivot_root  oldroot=/old /new   ->  some_profile ,  ',    'priority=1 pivot_root oldroot=/old /new -> some_profile,'),
     )
 
     def test_write_manually(self):

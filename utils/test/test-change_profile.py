@@ -225,6 +225,10 @@ class WriteChangeProfileTestAATest(AATest):
         ('   allow change_profile   ->    /bar     ,# foo bar',             'allow change_profile -> /bar, # foo bar'),
         ('   allow change_profile   unsafe  /** ->    /bar     ,# foo bar', 'allow change_profile unsafe /** -> /bar, # foo bar'),
         ('   allow change_profile   "/fo o" ->    "/b ar",',                'allow change_profile "/fo o" -> "/b ar",'),
+        (' priority=9     audit deny     change_profile /foo -> baz,',      'priority=9 audit deny change_profile /foo -> baz,'),
+        (' priority = 0   audit deny     change_profile /foo -> baz,',      'priority=0 audit deny change_profile /foo -> baz,'),
+        (' priority=-54   audit deny     change_profile /foo -> baz,',      'priority=-54 audit deny change_profile /foo -> baz,'),
+        (' priority=+42   audit deny     change_profile /foo -> baz,',      'priority=42 audit deny change_profile /foo -> baz,'),
     )
 
     def _run_test(self, rawrule, expected):

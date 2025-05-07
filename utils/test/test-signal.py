@@ -277,6 +277,10 @@ class WriteSignalTestAATest(AATest):
         ('signal receive peer=foo,',                            'signal receive peer=foo,'),
         ('signal (send receive) peer=/usr/bin/bar,',            'signal (receive send) peer=/usr/bin/bar,'),
         ('signal wr set=(pipe, usr1) peer=/sbin/baz,',          'signal wr set=(pipe usr1) peer=/sbin/baz,'),
+        ('priority  = 29 signal receive peer=foo,',             'priority=29 signal receive peer=foo,'),
+        ('priority  =  0 signal receive peer=foo,',             'priority=0 signal receive peer=foo,'),
+        ('priority =-123 signal receive peer=foo,',             'priority=-123 signal receive peer=foo,'),
+        ('priority  =+10 signal receive peer=foo,',             'priority=10 signal receive peer=foo,'),
     )
 
     def test_write_manually(self):

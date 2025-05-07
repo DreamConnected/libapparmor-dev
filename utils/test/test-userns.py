@@ -59,10 +59,10 @@ class UserNamespaceTestParseInvalid(AATest):
             UserNamespaceRule.create_instance('foo,')
 
     def test_diff_non_usernsrule(self):
-        exp = namedtuple('exp', ('audit', 'deny'))
+        exp = namedtuple('exp', ('audit', 'deny', 'priority'))
         obj = UserNamespaceRule(('create'))
         with self.assertRaises(AppArmorBug):
-            obj.is_equal(exp(False, False), False)
+            obj.is_equal(exp(False, False, None), False)
 
     def test_diff_access(self):
         obj1 = UserNamespaceRule(UserNamespaceRule.ALL)
@@ -98,6 +98,10 @@ class WriteUserNamespaceTestAATest(AATest):
         ('   allow userns  create   ,# foo bar', 'allow userns create, # foo bar'),
         ('userns,',                              'userns,'),
         ('userns create,',                       'userns create,'),
+        (' priority = -1 allow userns  create,', 'priority=-1 allow userns create,'),
+        (' priority =  0 allow userns  create,', 'priority=0 allow userns create,'),
+        (' priority=+234 allow userns  create,', 'priority=234 allow userns create,'),
+        (' priority = 65 allow userns  create,', 'priority=65 allow userns create,'),
     )
 
     def _run_test(self, rawrule, expected):

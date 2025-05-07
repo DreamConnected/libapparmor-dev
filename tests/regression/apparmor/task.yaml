@@ -87,7 +87,6 @@ environment:
     XFAIL/attach_disconnected: opensuse-cloud-tumbleweed debian-cloud-12 debian-cloud-13 ubuntu-cloud-22.04
     # Error: unix_fd_server failed. Test 'fd passing; unconfined client' was expected to 'pass'. Reason for failure 'FAIL - bind failed: Permission denied'
     # Error: unix_fd_server failed. Test 'fd passing; confined client w/ rw' was expected to 'pass'. Reason for failure 'FAIL - bind failed: Permission denied'
-    XFAIL/disconnected_mount_complain: opensuse-cloud-tumbleweed debian-cloud-12 debian-cloud-13 ubuntu-cloud-22.04 ubuntu-cloud-24.04 ubuntu-cloud-24.10 fedora-cloud-41
     XFAIL/deleted: opensuse-cloud-tumbleweed debian-cloud-12 debian-cloud-13
     # Error: unix_fd_server failed. Test 'fd passing; confined -> unconfined' was expected to 'pass'. Reason for failure 'FAIL - bind failed: Permission denied'
     # Error: unix_fd_server failed. Test 'fd passing; unconfined -> confined' was expected to 'pass'. Reason for failure 'FAIL CLIENT - connect Permission denied'

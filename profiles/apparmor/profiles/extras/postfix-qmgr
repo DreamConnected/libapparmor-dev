@@ -18,7 +18,7 @@ profile postfix-qmgr /usr/lib{,exec}/postfix/{bin/,sbin/,}qmgr {
   include <abstractions/nameservice>
   include <abstractions/postfix-common>
 
-  /usr/lib{,exec}/postfix/{bin/,sbin/,}qmgr                       mrix,
+  @{exec_path} mrix,
 
   /{var/spool/postfix/,}active/                                   r,
   /{var/spool/postfix/,}active/[0-9A-F]/[0-9A-F]/*                rwl,

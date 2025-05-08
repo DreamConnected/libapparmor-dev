@@ -26,7 +26,7 @@ profile dovecot-dict /usr/lib*/dovecot/dict {
   /etc/dovecot/dovecot-database.conf.ext r,
   /etc/dovecot/dovecot-dict-sql.conf.ext r,
   /etc/my.cnf r,
-  /usr/lib*/dovecot/dict mr,
+  @{exec_path} mr,
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/usr.lib.dovecot.dict>

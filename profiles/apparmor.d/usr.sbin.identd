@@ -23,7 +23,7 @@ profile identd /usr/{bin,sbin}/identd {
   /etc/identd.conf         r,
   /etc/identd.key          r,
   /etc/identd.pid          w,
-  /usr/{bin,sbin}/identd   rmix,
+  @{exec_path} mrix,
   @{PROC}/net/tcp          r,
   @{PROC}/net/tcp6         r,
   @{run}/identd.pid   w,

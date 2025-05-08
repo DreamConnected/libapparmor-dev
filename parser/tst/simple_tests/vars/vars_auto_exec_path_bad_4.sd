@@ -1,0 +1,10 @@
+#=DESCRIPTION reference auto exec_path variable collides with user defined
+#=EXRESULT FAIL
+
+@{exec_path}=BAD
+profile /a/test/profile {
+  /a/test/profile rix,
+
+  @{exec_path} rwk,
+
+}

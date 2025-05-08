@@ -13,7 +13,7 @@ profile znc /usr/bin/znc {
 
   network tcp,
 
-  /usr/bin/znc mr,
+  @{exec_path} mr,
 
   @{system_share_dirs}/znc/** r,
 

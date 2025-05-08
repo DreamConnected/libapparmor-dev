@@ -27,7 +27,7 @@ profile dovecot-managesieve-login /usr/lib*/dovecot/managesieve-login {
   network inet6 stream,
   network unix stream,
 
-  /usr/lib*/dovecot/managesieve-login mr,
+  @{exec_path} mr,
   @{run}/dovecot/login-master-notify* rw,
   @{run}/dovecot/login/ r,
   @{run}/dovecot/login/* rw,

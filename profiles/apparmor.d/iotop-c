@@ -15,7 +15,7 @@ profile iotop-c /usr/sbin/iotop-c {
 
   /proc/*/cmdline r,
   /proc/*/task/ r,
-  /usr/sbin/iotop-c mr,
+  @{exec_path} mr,
   /proc/ r,
   /proc/sys/kernel/task_delayacct rw,
   /proc/vmstat r,

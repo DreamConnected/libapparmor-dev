@@ -40,7 +40,7 @@ profile fusermount3 /usr/bin/fusermount3 {
   @{etc_ro}/fuse.conf r,
   @{PROC}/@{pid}/mounts r,
 
-  /usr/bin/fusermount3 mr,
+  @{exec_path} mr,
 
   include if exists <local/fusermount3>
 }

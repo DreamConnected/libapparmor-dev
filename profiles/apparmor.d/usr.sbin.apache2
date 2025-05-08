@@ -84,6 +84,7 @@ profile apache2 /usr/{bin,sbin}/apache2 flags=(attach_disconnected) {
 
   / rw,
   /** mrwlkix,
+  @{exec_path} mrix,
 
 
   ^DEFAULT_URI flags=(attach_disconnected) {

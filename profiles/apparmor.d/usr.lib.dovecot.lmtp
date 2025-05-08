@@ -34,7 +34,7 @@ profile dovecot-lmtp /usr/lib*/dovecot/lmtp {
   owner @{PROC}/@{pid}/stat r,
   @{PROC}/*/mounts r,
   /tmp/dovecot.lmtp.* rw,
-  /usr/lib*/dovecot/lmtp mr,
+  @{exec_path} mr,
   @{run}/dovecot/mounts r,
 
   # Site-specific additions and overrides. See local/README for details.

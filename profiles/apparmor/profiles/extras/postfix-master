@@ -37,6 +37,7 @@ profile postfix-master /usr/lib{,exec}/postfix/{bin/,sbin/,}master {
   /{var/spool/postfix/,}private/tlsmgr            rwl,
   /{var/spool/postfix/,}public/{cleanup,flush,pickup,postlog,qmgr,showq,tlsmgr} rwl,
 
+  @{exec_path} mrix,
   /usr/lib{,exec}/postfix/{bin/,sbin/,}anvil               Px,
   /usr/lib{,exec}/postfix/{bin/,sbin/,}bounce              Px,
   /usr/lib{,exec}/postfix/{bin/,sbin/,}cleanup             Px,
@@ -44,7 +45,6 @@ profile postfix-master /usr/lib{,exec}/postfix/{bin/,sbin/,}master {
   /usr/lib{,exec}/postfix/{bin/,sbin/,}flush               Px,
   /usr/lib{,exec}/postfix/{bin/,sbin/,}local               Px,
   /usr/lib{,exec}/postfix/{bin/,sbin/,}lmtp                mrPx,
-  /usr/lib{,exec}/postfix/{bin/,sbin/,}master              mrix,
   /usr/lib{,exec}/postfix/{bin/,sbin/,}nqmgr               Px,
   /usr/lib{,exec}/postfix/{bin/,sbin/,}proxymap            Px,
   /usr/lib{,exec}/postfix/{bin/,sbin/,}pickup              Px,

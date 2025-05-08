@@ -23,7 +23,7 @@ profile postfix-smtp /usr/lib{,exec}/postfix/{bin/,sbin/,}smtp {
   capability dac_read_search,
   capability net_bind_service,
 
-  /usr/lib{,exec}/postfix/{bin/,sbin/,}smtp             mrix,
+  @{exec_path} mrix,
 
   /{var/spool/postfix/,}active/[0-9A-F]/[0-9A-F]/*      rwl,
   /{var/spool/postfix/,}active/[0-9A-F]/[0-9A-F]/       rwl,

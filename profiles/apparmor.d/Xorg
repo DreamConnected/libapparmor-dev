@@ -58,7 +58,7 @@ profile Xorg /usr/lib/xorg/Xorg flags=(attach_disconnected, complain) {
   /{,usr/}bin/{bash,dash,sh} ix,
   /usr/bin/xkbcomp           ix,
 
-  /usr/lib/xorg/Xorg      mr,
+  @{exec_path}            mr,
 
   @{PROC}/cmdline         r,
   @{PROC}/@{pid}/cmdline  r,

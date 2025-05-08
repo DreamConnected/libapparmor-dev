@@ -16,7 +16,7 @@ include <tunables/global>
 profile postfix-dnsblog /usr/lib{,exec}/postfix/{bin/,sbin/,}dnsblog {
   include <abstractions/base>
 
-  /usr/lib{,exec}/postfix/{bin/,sbin/,}dnsblog mrix,
+  @{exec_path} mrix,
 
   /var/spool/postfix/private/dnsblog rw,
 

@@ -16,8 +16,6 @@ profile nvidia_modprobe {
 
   # Main executable
 
-  /usr/bin/nvidia-modprobe mr,
-
   # Other executables
 
   /usr/bin/kmod Cx -> kmod,

@@ -1,0 +1,16 @@
+#=DESCRIPTION ensure attaach_path expansion after subprofiles works
+#=EXRESULT FAIL
+
+profile top_profile /test/profile {
+
+  /first/path/@{exec_path}/tmp rwk,
+
+  # subprofile doesn't have exec_pathes
+  hat spelunkk {
+    owner /tmp/* r,
+    /run/@{exec_path}/** rw,
+  }
+
+  # Does this expand properly?
+  /second/path/@{exec_path}/tmp rk,
+}

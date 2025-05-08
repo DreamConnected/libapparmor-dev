@@ -35,7 +35,7 @@ profile socat /usr/bin/socat {
   network,
 
   # Allow executable mapping and read for the binary
-  file mr /usr/bin/socat,
+  mr @{exec_path},
 
   # Enable /dev/ptmx access for testsuite
   # file rw /dev/ptmx,

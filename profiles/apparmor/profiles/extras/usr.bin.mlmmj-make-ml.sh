@@ -21,7 +21,7 @@ include <tunables/global>
 
   capability sys_admin,
 
-  /usr/bin/mlmmj-make-ml.sh r,
+  @{exec_path} r,
 
   # some shell tools are needed
   /{usr/,}bin/domainname mix,

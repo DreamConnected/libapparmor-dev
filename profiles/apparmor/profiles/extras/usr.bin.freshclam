@@ -23,7 +23,8 @@ include <tunables/global>
 
   /etc/clamd.conf r,
   /etc/freshclam.conf r,
-  /usr/bin/freshclam mr,
+  @{exec_path} mr,
+
   /var/lib/clamav/** rw,
   owner /run/clamav/freshclam.pid w,
 

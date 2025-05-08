@@ -21,7 +21,7 @@ profile dovecot-script-login /usr/lib*/dovecot/script-login {
 
   capability setuid,
 
-  /usr/lib*/dovecot/script-login mrPx,
+  @{exec_path} mrPx,
 
   # NOTE: You'll need to allow execution of your actual login script.
   # The recommended way is to add a rule for it in local/usr.lib.dovecot.script-login

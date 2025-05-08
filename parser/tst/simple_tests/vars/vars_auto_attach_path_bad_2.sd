@@ -1,0 +1,12 @@
+#=DESCRIPTION reference auto attach_path from profile
+#=EXRESULT FAIL
+
+/test/profile {
+  /test/profile rix,
+
+  # hat does not have an attachment and profile's attachment doesn't apply
+  ^spork {
+    owner /tmp/* r,
+    /spork/@{attach_path}/** rw,
+  }
+}

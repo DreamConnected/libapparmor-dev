@@ -104,7 +104,7 @@ profile wg-quick /usr/bin/wg-quick flags=(attach_disconnected) {
   file rw @{etc_rw}/wireguard/{,**},
 
   # Allow executable mapping and read for the binary
-  file mr /usr/bin/wg-quick,
+  file mr @{exec_path},
 
   # Process-specific access
   file r @{PROC}/@{pid}/net/ip_tables_names,

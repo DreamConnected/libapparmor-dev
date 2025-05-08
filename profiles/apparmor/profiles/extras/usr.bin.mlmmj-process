@@ -17,7 +17,8 @@ include <tunables/global>
 /usr/bin/mlmmj-process {
   include <abstractions/base>
 
-  /usr/bin/mlmmj-process mr,
+
+  @{exec_path} mr,
   /usr/bin/mlmmj-send Px,
   /usr/bin/mlmmj-sub Px,
   /usr/bin/mlmmj-unsub Px,

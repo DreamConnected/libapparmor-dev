@@ -971,6 +971,132 @@ verify_binary_equality "'$p1'x'$p2' dbus slash filtering for paths" \
 #### end of wrapper fn
 }
 
+test_parser_variables()
+{
+	######## @{profile_name} #######
+	verify_binary_equality "@{profile_name} expands correctly" \
+				"/t { @{profile_name} r, }" \
+				"/t { /t r, }"
+
+	verify_binary_equality "@{profile_name} expands correcly - filter /" \
+				"/t { /r/@{profile_name} r, }" \
+				"/t { /r/t r, }"
+
+	verify_binary_equality "@{profile_name} expands correcly - add globbing" \
+				"/t { @{profile_name}/** r, }" \
+				"/t { /t/** r, }"
+
+	#re expression are escaped in profile names so /t/* becomes /t/\*
+	verify_binary_inequality "@{profile_name} w/pat expands correctly" \
+				"/t/* { @{profile_name} r, }" \
+				"/t/* { /t/* r, }"
+
+	verify_binary_inequality "@{profile_name} w/pat expands correcly - filter /" \
+				"/t/* { @{profile_name} r, }" \
+				"/t/* { /t/* r, }"
+
+	verify_binary_inequality "@{profile_name} w/pat expands correcly - add globbing" \
+				"/t/* { @{profile_name}/** r, }" \
+				"/t/* { /t/*/** r, }"
+
+	######## @{attach_path} #######
+	verify_binary_equality "@{attach_path} expands correctly" \
+				"/t { @{attach_path} r, }" \
+				"/t { /t r, }"
+
+	verify_binary_equality "@{attach_path} expands correcly - filter /" \
+				"/t { /r/@{attach_path} r, }" \
+				"/t { /r/t r, }"
+
+	verify_binary_equality "@{attach_path} expands correcly - add globbing" \
+				"/t { @{attach_path}/** r, }" \
+				"/t { /t/** r, }"
+
+	verify_binary_equality "@{attach_path} w/pat expands correctly" \
+				"/t/* { @{attach_path} r, }" \
+				"/t/* { /t/* r, }"
+
+	verify_binary_equality "@{attach_path} w/pat expands correcly - filter /" \
+				"/t/* { @{attach_path} r, }" \
+				"/t/* { /t/* r, }"
+
+	verify_binary_equality "@{attach_path} w/pat expands correcly - add globbing" \
+				"/t/* { @{attach_path}/** r, }" \
+				"/t/* { /t/*/** r, }"
+
+	verify_binary_equality "@{attach_path} w/attachment expands correctly" \
+				"profile a /t { @{attach_path} r, }" \
+				"profile a /t { /t r, }"
+
+	verify_binary_equality "@{attach_path} w/attachment expands correcly - filter /" \
+				"profile a /t { /r/@{attach_path} r, }" \
+				"profile a /t { /r/t r, }"
+
+	verify_binary_equality "@{attach_path} w/attachment expands correcly - add globbing" \
+				"profile a /t { @{attach_path}/** r, }" \
+				"profile a /t { /t/** r, }"
+
+	verify_binary_equality "@{attach_path} w/attachment w/pat expands correctly" \
+				"profile a /t/* { @{attach_path} r, }" \
+				"profile a /t/* { /t/* r, }"
+
+	verify_binary_equality "@{attach_path} w/attachment w/pat expands correcly - filter /" \
+				"profile a /t/* { @{attach_path} r, }" \
+				"profile a /t/* { /t/* r, }"
+
+	verify_binary_equality "@{attach_path} w/attachment w/pat expands correcly - add globbing" \
+				"profile a /t/* { @{attach_path}/** r, }" \
+				"profile a /t/* { /t/*/** r, }"
+
+	######## @{exec_path} #######
+	verify_binary_equality "@{exec_path} expands correctly" \
+				"/t { @{exec_path} r, }" \
+				"/t { /t r, }"
+
+	verify_binary_equality "@{exec_path} expands correcly - filter /" \
+				"/t { /r/@{exec_path} r, }" \
+				"/t { /r/t r, }"
+
+	verify_binary_equality "@{exec_path} expands correcly - add globbing" \
+				"/t { @{exec_path}/** r, }" \
+				"/t { /t/** r, }"
+
+	verify_binary_equality "@{exec_path} w/pat expands correctly" \
+				"/t/* { @{exec_path} r, }" \
+				"/t/* { /t/* r, }"
+
+	verify_binary_equality "@{exec_path} w/pat expands correcly - filter /" \
+				"/t/* { @{exec_path} r, }" \
+				"/t/* { /t/* r, }"
+
+	verify_binary_equality "@{exec_path} w/pat expands correcly - add globbing" \
+				"/t/* { @{exec_path}/** r, }" \
+				"/t/* { /t/*/** r, }"
+
+	verify_binary_equality "@{exec_path} w/attachment expands correctly" \
+				"profile a /t { @{exec_path} r, }" \
+				"profile a /t { /t r, }"
+
+	verify_binary_equality "@{exec_path} w/attachment expands correcly - filter /" \
+				"profile a /t { /r/@{exec_path} r, }" \
+				"profile a /t { /r/t r, }"
+
+	verify_binary_equality "@{exec_path} w/attachment expands correcly - add globbing" \
+				"profile a /t { @{exec_path}/** r, }" \
+				"profile a /t { /t/** r, }"
+
+	verify_binary_equality "@{exec_path} w/attachment w/pat expands correctly" \
+				"profile a /t/* { @{exec_path} r, }" \
+				"profile a /t/* { /t/* r, }"
+
+	verify_binary_equality "@{exec_path} w/attachment w/pat expands correcly - filter /" \
+				"profile a /t/* { @{exec_path} r, }" \
+				"profile a /t/* { /t/* r, }"
+
+	verify_binary_equality "@{exec_path} w/attachment w/pat expands correcly - add globbing" \
+				"profile a /t/* { @{exec_path}/** r, }" \
+				"profile a /t/* { /t/*/** r, }"
+}
 
 run_tests()
 {
@@ -1081,6 +1207,8 @@ run_tests()
 				"/t { /{bin/,#value} r, }" \
 				"@{BAR}=bin/   \#value
 					/t { /@{BAR} r, }"
+
+	test_parser_variables
 
 	# verify combinations of different priority levels
 	# for single rule comparisons, rules should keep same expected result

@@ -26,7 +26,7 @@ profile mdnsd /usr/{bin,sbin}/mdnsd {
 
   network netlink dgram,
 
-  /usr/{bin,sbin}/mdnsd rmix,
+  @{exec_path} mrix,
 
   @{PROC}/net/ r,
   @{PROC}/net/unix r,

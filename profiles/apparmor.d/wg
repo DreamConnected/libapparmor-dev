@@ -27,7 +27,7 @@ profile wg /usr/bin/wg flags=(attach_disconnected){
   # wireguard configuration and key files
   file rw @{etc_rw}/wireguard/{,**},
 
-  file mr /usr/bin/wg,
+  mr @{exec_path},
 
   # Site-specific additions and overrides. See local/README for details.
   include if exists <local/wg>

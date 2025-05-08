@@ -29,7 +29,7 @@ include <tunables/global>
   /sys/class/net/ r,
   /sys/devices/**/net/* r,
 
-  /usr/bin/dumpcap mr,
+  @{exec_path} mr,
 
   /usr/share/GeoIP/ r,
   /usr/share/GeoIP/** r,

@@ -28,7 +28,7 @@ profile tnftp /usr/bin/tnftp {
   network inet stream,
   network inet6 stream,
 
-  /usr/bin/tnftp mr,
+  @{exec_path} mr,
 
   # required for the pager (less, more) to work
   file Cx /usr/bin/dash,

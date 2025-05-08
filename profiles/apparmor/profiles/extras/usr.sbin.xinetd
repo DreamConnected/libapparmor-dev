@@ -24,7 +24,7 @@ include <tunables/global>
   /etc/xinetd.conf                 r,
   /etc/xinetd.d                    r,
   /etc/xinetd.d/*                  r,
-  /usr/sbin/xinetd                 rmix,
+  @{exec_path}               mrix,
   /var/log/xinetd.log              w,
   /{,var/}run/xinetd.pid           rwl,
 

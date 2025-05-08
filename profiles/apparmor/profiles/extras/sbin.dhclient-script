@@ -23,7 +23,7 @@ profile dhclient-script /{usr/,}sbin/dhclient-script {
   /etc/netconfig.d/* mrix,
   /etc/sysconfig/network/** r,
   /etc/dhcp/{**,} r,
-  /{usr/,}sbin/dhclient-script r,
+  @{exec_path} r,
   /{usr/,}sbin/ip rix,
   /{usr/,}sbin/resolvconf rPUx,
 

@@ -12,7 +12,7 @@ profile nmbd /usr/{bin,sbin}/nmbd {
 
   @{PROC}/sys/kernel/core_pattern r,
 
-  /usr/{bin,sbin}/nmbd mr,
+  @{exec_path} mr,
 
   /var/{cache,lib}/samba/browse.dat* rw,
   /var/{cache,lib}/samba/gencache.dat rw,

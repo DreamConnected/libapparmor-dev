@@ -18,7 +18,7 @@ profile ldpd /usr/lib/frr/ldpd flags=(attach_disconnected) {
   include <abstractions/frr>
   include <abstractions/frr-snmp>
 
-  /usr/lib/frr/ldpd ix,
+  @{exec_path} mrix,
   @{run}/frr/ldpd.sock rw,
 
   # Site-specific additions and overrides. See local/README for details.

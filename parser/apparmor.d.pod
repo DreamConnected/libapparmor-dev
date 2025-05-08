@@ -1802,8 +1802,29 @@ site-specific customization of B<@{HOMEDIRS}>,
 F</etc/apparmor.d/tunables/multiarch.d> for B<@{multiarch}> and
 F</etc/apparmor.d/tunables/xdg-user-dirs.d> for B<@{XDG_*}>.
 
-The special B<@{profile_name}> variable is set to the profile name and may be
-used in all policy.
+=head3 Special builtin variables
+
+AppArmor has some builtin variables that are not declared in policy
+but are available to be used in policy.
+
+  @{profile_name} - the profile name
+  @{attach_path}  - the profile exec attachment path - if ones has been defined
+  @{exec_path}    - the executables path
+
+
+The B<@{profile_name}> variable is set to the profile name and may be
+used in all policy. It is only defined when used inside of a profile.
+
+The B<@{attach_path}> variable is only defined if the profile will attach
+to an executable. It will be the path attachment specification or
+if that is not defined it may be the profile's name if the profile name
+is a path.
+
+The B<@{exec_path}> variable like B<@{attach_path}> is only defined if
+the rofile attaches to an executable. If the kernel supports it as a
+kernel variable, it will be set to the specific path that match the
+executable at run time. If the kernel does not support kernel variables
+it will have the same value as B<@{exec_path}>.
 
 =head3 Notes on variable expansion and the / character
 

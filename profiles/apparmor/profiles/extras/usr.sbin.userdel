@@ -43,9 +43,9 @@ include <tunables/global>
   @{PROC}/@{pid}/mounts r,
   /usr/bin/crontab rmix,
   /usr/lib*/pwdutils/*.so.* mr,
-  /usr/sbin/userdel rmix,
-  /usr/sbin/userdel-post.local rmix,
-  /usr/sbin/userdel-pre.local rmix,
+  @{exec_path} mrix,
+  @{exec_path}-post.local mrix,
+  @{exec_path}-pre.local mrix,
   # XXX
   /{,var/}run/nscd.pid r,
   /var/spool/mail/* wl,

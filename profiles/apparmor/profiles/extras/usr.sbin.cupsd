@@ -52,7 +52,7 @@ include <tunables/global>
   /usr/bin/smbspool ixr,
   /usr/lib/cups/backend/* ixr,
   /usr/lib/cups/filter/* ixr,
-  /usr/sbin/cupsd mixr,
+  @{exec_path} mrix,
   /usr/share/cups/** r,
   /var/log/cups/access_log rw,
   /var/log/cups/error_log rw,

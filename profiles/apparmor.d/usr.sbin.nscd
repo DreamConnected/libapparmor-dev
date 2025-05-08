@@ -26,7 +26,7 @@ profile nscd /usr/{bin,sbin}/nscd {
   /etc/machine-id r,
   /etc/netgroup r,
   /etc/nscd.conf r,
-  /usr/{bin,sbin}/nscd rmix,
+  @{exec_path} mrix,
   @{run}/.nscd_socket wl,
   @{run}/nscd/ rw,
   @{run}/nscd/db* rwl,

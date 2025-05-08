@@ -33,7 +33,7 @@ include <tunables/global>
   /{usr/,}bin/date	    rmix,
   /{usr/,}bin/gzip      rmix,
   /usr/bin/formail      rmix,
-  /usr/bin/procmail     rmix,
+  @{exec_path} mrix,
   /usr/bin/spamc        Px,
   /usr/sbin/sendmail    rPx,
 

@@ -1,0 +1,10 @@
+#=DESCRIPTION reference auto attach_path variable in rules w/hats
+#=EXRESULT PASS
+
+profile idf3s2A6GX8vrk /simple/profile {
+  /test/profile rix,
+
+  /run/@{attach_path}/tmp rwk,
+
+}
+

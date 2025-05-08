@@ -23,7 +23,7 @@ include <tunables/global>
 
   /{usr/,}bin/bash     mix,
   /usr/bin/cut         mix,
-  /usr/NX/bin/nxclient rmix,
+  @{exec_path} mrix,
   /usr/NX/bin/nxssh    mix,
   /usr/NX/bin/nxproxy  mix,
   /usr/NX/lib/**       mr,

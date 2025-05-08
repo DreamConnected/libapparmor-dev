@@ -37,7 +37,7 @@ include <tunables/global>
   /etc/lighttpd/auth.d/* r,
   /etc/lighttpd/vhosts.d r,
   /etc/lighttpd/vhosts.d/* r,
-  /usr/sbin/lighttpd mix,
+  @{exec_path} mrix,
 
   /usr/lib/lighttpd/*.so mr,
   /usr/lib64/lighttpd/*.so mr,

@@ -37,7 +37,7 @@ profile dhcpcd /{usr/,}sbin/dhcpcd {
   /etc/ntp.conf{,.sv} rwl,
   /etc/sysconfig/network/scripts/dhcpcd-hook rmix,
   /etc/yp.conf{,.sv} rwl,
-  /{usr/,}sbin/dhcpcd rmix,
+  @{exec_path} mrix,
   /{usr/,}sbin/ifup Ux, # fixme
   /{usr/,}sbin/modify_resolvconf rmix,
   /var/lib/dhcpcd/dhcpcd-*.cache rw,

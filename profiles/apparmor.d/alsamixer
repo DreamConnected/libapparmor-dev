@@ -10,7 +10,7 @@ profile alsamixer /{usr,}/bin/alsamixer {
 
     include <abstractions/dbus-session-strict>
 
-    /{usr,}/bin/alsamixer mr,
+    @{exec_path} mr,
 
     @{sys}/devices/virtual/dmi/id/sys_vendor r,
 

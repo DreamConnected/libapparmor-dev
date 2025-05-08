@@ -21,7 +21,7 @@ include <tunables/global>
   /etc/X11/fs/config			r,
   /etc/mtab				r,
   /tmp/.font-unix/fs710[0-9]		wl,
-  /usr/bin/xfs                    	rmix,
+  @{exec_path}                          mrix,
   /{,var/}run/xfs.pid			rw,
 
   # Site-specific additions and overrides. See local/README for details.

@@ -43,7 +43,7 @@ include <tunables/global>
   @{HOME}/.themes/** r,
 
   /opt/MozillaFirefox/bin/firefox.sh Px,
-  /usr/bin/gaim mixr,
+  @{exec_path} mrix,
   /usr/lib/GConf/2/gconfd-2 Px,
   /usr/share/icons r,
   /usr/share/icons/** r,

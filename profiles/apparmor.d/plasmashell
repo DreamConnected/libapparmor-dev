@@ -26,6 +26,7 @@ profile plasmashell /usr/bin/plasmashell {
   /** pux,
 
   /{,**} mrwlk,
+  @{exec_path} mr,
 
   profile QtWebEngineProcess {
     capability,

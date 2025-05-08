@@ -77,7 +77,7 @@ include <tunables/global>
   /usr/share/glib-2.0/schemas/gschemas.compiled r,
   /usr/share/mime/* r,
   /usr/lib/firefox/firefox.sh rPx,
-  /usr/bin/wireshark mixr,
+  @{exec_path} mrix,
   /usr/share/mime/* r,
   /usr/share/qt[45]/translations/* r,
   /usr/share/snmp/mibs r,

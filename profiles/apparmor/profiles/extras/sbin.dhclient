@@ -35,7 +35,7 @@ profile dhclient /{usr/,}sbin/dhclient {
 
   signal (send,receive) set=(term) peer=NetworkManager,
 
-  /{usr/,}sbin/dhclient       mrix,
+  @{exec_path} mrix,
 
   /{usr/,}bin/bash            mrix,
   /{usr/,}bin/df              mrix,

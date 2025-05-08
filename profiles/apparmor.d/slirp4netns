@@ -6,6 +6,7 @@ include <tunables/global>
 
 profile slirp4netns /usr/bin/slirp4netns flags=(unconfined) {
   userns,
+  @{exec_path} mrix,
 
   # pivot_root is required for running `slirp4netns --enable-sandbox` inside LXD.
   # https://github.com/rootless-containers/slirp4netns/issues/348

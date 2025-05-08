@@ -25,7 +25,7 @@ profile dovecot-dovecot-auth /usr/lib*/dovecot/dovecot-auth {
   capability dac_override,
 
   @{PROC}/@{pid}/mounts r,
-  /usr/lib*/dovecot/dovecot-auth mr,
+  @{exec_path} mr,
   @{run}/dovecot/** rw,
   # required for postfix+dovecot integration
   /var/spool/postfix/private/dovecot-auth w,

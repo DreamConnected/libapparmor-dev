@@ -27,7 +27,7 @@ profile postfix-local /usr/lib{,exec}/postfix/{bin/,sbin/,}local {
   /var/mailman/mail/wrapper                             Px,
   /usr/bin/mlmmj-recieve                                Px,
 
-  /usr/lib{,exec}/postfix/{bin/,sbin/,}local            mrix,
+  @{exec_path} mrix,
   /{usr/,}bin/bash                                      mixr,
   /{usr/,}bin/date                                      mixr,
 

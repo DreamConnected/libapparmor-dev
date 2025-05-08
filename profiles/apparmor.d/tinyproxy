@@ -30,7 +30,7 @@ profile tinyproxy /usr/bin/tinyproxy {
   # allow this as well
   capability net_bind_service,
 
-  file mr /usr/bin/tinyproxy,
+  mr @{exec_path},
 
   file r @{etc_ro}/tinyproxy/tinyproxy.conf,
   # tinyproxy.conf allows to configure the locations of various files that will

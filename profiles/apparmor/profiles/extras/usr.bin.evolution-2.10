@@ -110,7 +110,7 @@ include <tunables/global>
   @{HOME}/.qt/** lrw,
   @{HOME}/.recently-used rw,
 
-  /usr/bin/evolution-2.10 mixr,
+  @{exec_path} mrix,
   /usr/bin/firefox Pxr,
   /usr/lib/** r,
   /usr/lib/GConf/2/gconfd-2 Px,

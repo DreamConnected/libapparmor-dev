@@ -19,7 +19,7 @@ profile postfix-bounce /usr/lib{,exec}/postfix/{bin/,sbin/,}bounce {
   include <abstractions/nameservice>
   include <abstractions/postfix-common>
 
-  /usr/lib{,exec}/postfix/{bin/,sbin/,}bounce                      mrix,
+  @{exec_path} mrix,
 
   /{var/spool/postfix/,}active/[0-9A-F]/[0-9A-F]/*                 rwkl,
   /{var/spool/postfix/,}active/[0-9A-F]/[0-9A-F]/                  rwl,

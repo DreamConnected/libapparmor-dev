@@ -33,7 +33,7 @@ profile dovecot-auth /usr/lib*/dovecot/auth {
   /etc/my.cnf.d/*.cnf r,
 
   /etc/dovecot/* r,
-  /usr/lib*/dovecot/auth mr,
+  @{exec_path} mr,
   /var/lib/dovecot/auth-chroot/* r,
 
   # kerberos replay cache

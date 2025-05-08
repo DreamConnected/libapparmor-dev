@@ -1,0 +1,9 @@
+#=DESCRIPTION reference auto @{attach_path} variable in rules when not created
+#=EXRESULT FAIL
+
+test/profile {
+  /a/test/profile rix,
+
+  mr @{attach_path},
+
+}

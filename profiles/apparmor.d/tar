@@ -25,6 +25,7 @@ profile tar /usr/bin/tar {
   file rwl /**,
 
   # tar can be made to filter archives through an arbitrary program
+  @{exec_path} mr,
   /{usr{/local,},}/{bin,sbin}/* ix,
   /opt/** ix,
 

@@ -110,7 +110,7 @@ profile firefox @{MOZ_LIBDIR}/@{MOZ_APP_NAME}{,*[^s][^h]} {
        member=GetAll
        peer=(label=unconfined),
 
-  @{MOZ_LIBDIR}/@{MOZ_APP_NAME}{,*[^s][^h]} mr,
+  @{exec_path} mr,
 
   # should maybe be in abstractions
   /etc/ r,

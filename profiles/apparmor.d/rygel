@@ -32,7 +32,7 @@ profile rygel /usr/bin/rygel {
 
   file r @{etc_ro}/rygel.conf,
 
-  file mr /usr/bin/rygel,
+  file mr @{exec_path},
 
   file Cx /usr/libexec/rygel/mx-extract -> mx-extract,
 

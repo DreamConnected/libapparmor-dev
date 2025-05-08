@@ -113,7 +113,7 @@ profile wpa_supplicant /usr/sbin/wpa_supplicant {
         member={ReleaseName,RequestName}
         peer=(name=org.freedesktop.DBus),
 
-  /usr/sbin/wpa_supplicant mr,
+  @{exec_path} mr,
 
   owner /dev/rfkill r,
   owner /etc/group r,

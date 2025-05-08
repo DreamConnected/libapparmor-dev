@@ -23,7 +23,7 @@ include <tunables/global>
   capability setuid,
 
   /usr/lib/squid/* rmix,
-  /usr/sbin/squid rmix,
+  @{exec_path} mrix,
   /usr/sbin/unlinkd mixr,
 
   /var/cache/squid/** lrw,

@@ -29,7 +29,7 @@ include <tunables/global>
   @{HOMEDIRS}                       r,
   @{HOME}/**                        rwl,
 
-  /usr/sbin/in.ftpd                 r,
+  @{exec_path}                      r,
   /usr/share/ssl/certs/ca-bundle.crt        r,
   /usr/share/ssl/certs/ftpd-rsa.pem         r,
   /usr/share/ssl/private/ftpd-rsa-key.pem   r,

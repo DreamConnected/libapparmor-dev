@@ -1,0 +1,52 @@
+# Last Modified: Mon Jan 20 20:17:22 2025
+abi <abi/4.0>,
+
+include <tunables/global>
+
+#------------------------------------------------------------------
+# Copyright (C) 2025 Canonical Ltd.
+#
+# Author: Nicolas Campuzano Jimenez <nicolas.campuzano@canonical.com>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of version 2 of the GNU General Public
+# License published by the Free Software Foundation.
+#------------------------------------------------------------------
+# vim: ft=apparmor
+#
+
+profile lsof /usr/bin/lsof flags=(attach_disconnected.path=/aa_disconnected/) {
+  include <abstractions/base>
+  include <abstractions/nameservice>
+
+  /usr/bin/lsof mr,
+
+  capability sys_ptrace,
+  capability dac_read_search,
+  capability dac_override,
+  ptrace read,
+
+  mqueue getattr type=posix,
+
+  / r,
+
+  /**/ r,
+
+  @{PROC} r,
+  @{PROC}/locks r,
+  @{PROC}/@{pids}/fd/ r,
+  @{PROC}/@{pids}/fdinfo/* r,
+  @{PROC}/@{pids}/lock r,
+  @{PROC}/@{pids}/mounts r,
+  @{PROC}/@{pids}/stat r,
+  @{PROC}/@{pids}/task/ r,
+  @{PROC}/@{pids}/task/@{tid}/fd/ r,
+  @{PROC}/@{pids}/task/@{tid}/fdinfo/* r,
+  @{PROC}/@{pids}/task/@{tid}/maps r,
+  @{PROC}/@{pids}/task/@{tid}/stat r,
+
+  @{PROC}/@{pid}/net/* r,
+
+  include if exists <local/lsof>
+}
+

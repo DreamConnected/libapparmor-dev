@@ -139,6 +139,7 @@ static const char *config_file = "/etc/apparmor/parser.conf";
 #define ARG_ESTIMATED_COMPILE_SIZE	144
 #define ARG_PROMPT_COMPAT		145
 #define ARG_PRINT_PROMPT_COMPAT		146
+#define ARG_ALLOW_MNT_CONFLICT		147
 
 /* Make sure to update BOTH the short and long_options */
 static const char *short_options = "ad::f:h::rRVvI:b:BCD:NSm:M:qQn:XKTWkL:O:po:j:";
@@ -197,6 +198,7 @@ struct option long_options[] = {
 	{"prompt-compat",	1, 0, ARG_PROMPT_COMPAT},	/* no short option */
 	{"print-prompt-compat",	1, 0, ARG_PRINT_PROMPT_COMPAT},	/* no short option */
 
+	{"allow-mount-conflict", 0, 0, ARG_ALLOW_MNT_CONFLICT}, /* no short option */
 	{NULL, 0, 0, 0},
 };
 
@@ -816,6 +818,9 @@ static int process_arg(int c, char *optarg)
 		fprintf(stderr, "Prompt compat mode: ");
 		print_prompt_compat_mode(stderr);
 		fprintf(stderr, "\n");
+		break;
+	case ARG_ALLOW_MNT_CONFLICT:
+		opt_allow_mnt_conflict = true;
 		break;
 	default:
 		/* 'unrecognized option' error message gets printed by getopt_long() */

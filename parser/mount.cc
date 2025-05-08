@@ -345,6 +345,19 @@ static int find_mnt_keyword(struct mnt_keyword_table *table, const char *name)
 	return -1;
 }
 
+static const char *mnt_flag_name(unsigned int flag, bool inv)
+{
+	int i;
+	for (i = 0; mnt_opts_table[i].keyword; i++) {
+		if (inv ? mnt_opts_table[i].clear :
+		          mnt_opts_table[i].set
+		    == flag)
+			return mnt_opts_table[i].keyword;
+	}
+
+	return NULL;
+}
+
 int is_valid_mnt_cond(const char *name, int src)
 {
 	int i;
@@ -383,19 +396,31 @@ static unsigned int extract_flags(struct value_list **list, unsigned int *inv)
 	return flags;
 }
 
-static bool conflicting_flags(unsigned int flags, unsigned int inv)
+/* will report all conflicting flags before returning */
+static bool conflicting_flags(unsigned int &flags, unsigned int &inv)
 {
+	bool conflict = false;
+
 	if (flags & inv) {
 		for (int i = 0; i < 31; i++) {
 			unsigned int mask = 1 << i;
 			if ((flags & inv) & mask) {
-				cerr << "conflicting flag values = "
-				     << flags << ", " << inv << "\n";
+				if (opt_allow_mnt_conflict) {
+					pwarnf(false, "conflicting mount flag values '%s' and '%s' allowinging both\n", mnt_flag_name(flags & mask, false), mnt_flag_name(inv & mask, true));
+					// clear both conflict in flags and inv
+					// acts like neither was specified
+					// for exact match
+					flags = flags & ~mask;
+					inv = inv & ~mask;
+				} else {
+					PERROR("conflicting flag values '%s' and '%s' in rule\n", mnt_flag_name(flags & mask, false), mnt_flag_name(inv & mask, true));
+					conflict = true;
+				}
 			}
 		}
-		return true;
 	}
-	return false;
+
+	return conflict;
 }
 
 static struct value_list *extract_fstype(struct cond_entry **conds)
@@ -527,7 +552,6 @@ mnt_rule::mnt_rule(struct cond_entry *src_conds, char *device_p,
 					tmpflags |= MS_REMOUNT;
 
 				if (conflicting_flags(tmpflags, tmpinv_flags)) {
-					PERROR("conflicting flags in the rule\n");
 					exit(1);
 				}
 

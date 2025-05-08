@@ -1,0 +1,28 @@
+# apparmor.d - Full set of apparmor profiles
+# Copyright (C) 2024 Alexandre Pujol <alexandre@pujol.io>
+# SPDX-License-Identifier: GPL-2.0-only
+
+abi <abi/4.0>,
+
+include <tunables/global>
+
+profile needrestart-vmlinuz-get-version /{usr/,}lib/needrestart/vmlinuz-get-version {
+  include <abstractions/base>
+  include <abstractions/consoles>
+  include <abstractions/user-tmp>
+
+  /{usr/,}lib/needrestart/vmlinuz-get-version mr,
+
+  /{usr/,}bin/{dash,sh} rix,
+  /{usr/,}bin/{bzip2,gunzip,gzip,lzop,xz} rix,
+  /{usr/,}bin/{grep,mktemp,rm,tail,tr} rix,
+  /{usr/,}bin/which{,.debianutils}  rix,
+
+  # was included in the apparmor.d project's version but doesn't seem to be referenced anywhere in the script
+  # /boot/intel-ucode.img r,
+  /boot/vmlinuz* r,
+
+  include if exists <local/needrestart-vmlinuz-get-version>
+}
+
+# vim:syntax=apparmor

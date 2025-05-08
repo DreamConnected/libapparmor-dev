@@ -1,0 +1,25 @@
+# apparmor.d - Full set of apparmor profiles
+# Copyright (C) 2021-2024 Alexandre Pujol <alexandre@pujol.io>
+# SPDX-License-Identifier: GPL-2.0-only
+
+abi <abi/4.0>,
+
+include <tunables/global>
+
+profile needrestart-dpkg-status /{usr/,}lib/needrestart/dpkg-status {
+  include <abstractions/base>
+  include <abstractions/consoles>
+
+  capability  dac_read_search,
+
+  /{usr/,}lib/needrestart/dpkg-status mr,
+
+  /{usr/,}bin/{dash,sh}     rix,
+  /{usr/,}bin/{mkdir,touch} rix,
+
+  @{run}/needrestart/{,**} rw,
+
+  include if exists <local/needrestart-dpkg-status>
+}
+
+# vim:syntax=apparmor

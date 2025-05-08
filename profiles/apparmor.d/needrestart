@@ -1,0 +1,216 @@
+abi <abi/4.0>,
+
+include <tunables/global>
+
+profile needrestart /{usr/,}sbin/needrestart flags=(attach_disconnected) {
+  include <abstractions/base>
+  include <abstractions/consoles>
+  include <abstractions/perl>
+  include <abstractions/user-tmp>
+  
+  include <abstractions/private-files-strict>
+
+  # Needed to examine processes and files
+  capability sys_ptrace dac_read_search checkpoint_restore,
+  ptrace (read),
+  
+  signal receive peer=needrestart//debconf_frontend,
+
+  # Needrestart needs to be able to read arbitrary packaged files
+  # Let deny rules from abstractions give specific overrides though
+  priority=-1 /** r,
+  priority=-1 audit deny @{HOME}/** rwxlk,
+  priority=-1 audit deny /{media,mnt}/** rwxlk,
+  
+  # Notification scripts
+  @{etc_ro}/needrestart/notify.d/* rCx -> notify_scripts,
+  # These scripts have not been run at all in my testing so audit execution for now
+  audit @{etc_ro}/needrestart/hook.d/* rPix,
+  # Custom scripts for restarting services that need more than systemctl restart
+  # Unfortunately I don't see an alternative to PUx here, but at least this
+  # location can only be written to by root
+  @{etc_ro}/needrestart/restart.d/* rPUx,
+
+  # Native binaries
+  /usr/bin/systemd-detect-virt Px,
+  /usr/bin/who mPx,
+  # systemctl restart
+  /usr/bin/systemctl Cx,
+  # machinectl reboot
+  /usr/bin/machinectl Cx,
+  # Is lxc only a snap or is it available conventionally as well?
+  # lxc restart
+  /snap/bin/lxc Pix,
+
+  # Perl scripts
+  /usr/share/debconf/frontend Cx,
+
+  # Needrestart shells out to Python for some simple Python installation information
+  /usr/bin/python{2.[4-7],3,3.[0-9],3.[1-9][0-9]} Cx -> needrestart_python,
+
+  # Needrestart scans /dev to enumerate terminals that may be running outdated binaries
+  # The scan of /dev/mqueue is mediated like a mqueue access, which we can safely deny
+  deny mqueue type=posix /,
+
+  # Deny accesses to /dev/** while allowing abstractions/consoles to carve out exceptions
+  priority=-1 deny /dev/ rwxlk,
+  priority=-1 deny /dev/** rwxlk,
+  
+  profile debconf_frontend /usr/share/debconf/frontend {
+    include <abstractions/authentication>
+    include <abstractions/base>
+    # needed only for the readline debconf frontend
+    include <abstractions/consoles>
+    include <abstractions/nameservice-strict>
+    include <abstractions/perl>
+    
+    signal send peer=needrestart,
+    
+    /{usr/,}bin/locale Pix,
+    
+    /usr/share/debconf/frontend r,
+    owner /var/cache/debconf/{*.dat,*.dat-old,*.dat-new} rwk,
+    
+    @{etc_ro}/debconf.conf r,
+    /usr/share/needrestart/needrestart.templates r,
+    
+    # The debconf frontend calls needrestart coroutine-style, somewhere
+    /{usr/,}sbin/needrestart Px -> needrestart,
+
+    # Shells out for unknown purposes
+    /{usr/,}bin/{dash,sh} mrPx -> needrestart//debconf_frontend_shell,
+    # Whiptail is a console TUI toolkit that is needed both here and in the shell
+    /{usr/,}bin/{dialog,whiptail} Px -> needrestart//whiptail,
+  }
+  
+  profile debconf_frontend_shell {
+    include <abstractions/base>
+    include <abstractions/consoles>
+    
+    capability dac_read_search,
+
+    /{usr/,}bin/{dash,sh} r,
+    /{usr/,}bin/stty mrix,
+    # Whiptail is a console TUI toolkit that is needed both here and in the shell
+    /{usr/,}bin/{dialog,whiptail} Px -> needrestart//whiptail,
+    # Needed for the readline debconf frontend
+    /{usr/,}bin/infocmp Px -> needrestart//infocmp,
+  }
+  # needed solely for readline debconf frontend
+  profile infocmp /{usr/,}bin/infocmp {
+    # TODO: split out into top level profile? If we do that we may want to add a
+    # stack to restrict this particular invocation to the default terminfo locations
+    include <abstractions/base>
+    include <abstractions/terminfo>
+    
+    /dev/tty rw, # delegated
+    /{usr/,}bin/infocmp mr,
+  }
+  
+  profile whiptail /{usr/,}bin/{dialog,whiptail} {
+    # TODO: split this into a separate top-level profile
+    include <abstractions/base>
+    include <abstractions/consoles>
+    include <abstractions/terminfo>
+    
+    /{usr/,}bin/{dialog,whiptail} mr,
+    /etc/newt/palette{,.*} r,
+  }
+  
+  profile needrestart_python {
+    include <abstractions/base>
+    include <abstractions/consoles>
+    include <abstractions/nameservice-strict>
+    include <abstractions/python>
+    
+    /usr/bin/python{2.[4-7],3,3.[0-9],3.[1-9][0-9]} m,
+  }
+
+  profile systemctl_restart /usr/bin/systemctl {
+    include <abstractions/base>
+    include <abstractions/consoles>
+    
+    /usr/bin/systemctl mr,
+
+    capability net_admin,
+    ptrace read,
+    
+    # Tries to open this for some reason but works fine without
+    deny /proc/sys/fs/nr_open rwxlk,
+
+    # systemctl seems to always spawn systemd-tty-ask-password-agent
+    # (found by https://github.com/systemd/systemd/issues/9507)
+    # but in this case immediately sends it a SIGTERM and then SIGCONT
+    /usr/bin/systemd-tty-ask-password-agent Px -> needrestart//systemd_tty_ask_password_agent,
+    signal (send) set=(term,cont) peer=needrestart//systemd_tty_ask_password_agent,
+    
+    @{run}/systemd/private rw,
+    # It's weird that this connects to the DBus socket without sending any DBus messages that get mediated
+    @{run}/dbus/system_bus_socket rw,
+    unix bind type=stream addr=@@{hex}/bus/systemctl/,
+    unix bind type=stream addr=@@{hex}/bus/systemctl/system,
+  }
+  profile systemd_tty_ask_password_agent /usr/bin/systemd-tty-ask-password-agent {
+    # Because this process is immediately SIGTERM'ed this child profile cannot be split out into its own
+    # top-level profile without additional work
+    include <abstractions/base>
+    include <abstractions/consoles>
+    
+    /usr/bin/systemd-tty-ask-password-agent mr,
+    
+    signal (receive) set=(term,cont) peer=needrestart//systemctl_restart,
+    
+    /proc/@{pid}/stat r,
+    @{run}/systemd/ask-password/{,*} r,
+    @{run}/systemd/ask-password-block/{,*} rw,
+  }
+  
+  profile machinectl_reboot /usr/bin/machinectl {
+    include <abstractions/base>
+    include <abstractions/dbus-strict>
+    
+    /usr/bin/machinectl mr,
+    
+    capability net_admin,
+
+    unix bind type=stream addr=@@{hex}/bus/machinectl/system,
+    
+    dbus send
+      bus=system
+      path=/org/freedesktop/machine1
+      interface=org.freedesktop.machine1.Manager
+      member=KillMachine,
+  }
+  
+  profile notify_scripts {
+    # Theoretically anything could be placed into /etc/needrestart/notify.d,
+    # but we should be opinionated on what we allow these scripts to do
+    # For now this is tested against the scripts shipped in Ubuntu
+    include <abstractions/base>
+    include <abstractions/consoles>
+    
+    capability dac_read_search,
+    
+    @{etc_ro}/needrestart/notify.d/* r,
+    @{etc_ro}/needrestart/notify.conf r,
+    
+    # Used as sed input in 400-notify-send
+    /proc/@{pids}/environ r,
+    # Needed by sed to access the /proc/@{pids}/environ files
+    ptrace read,
+    capability sys_ptrace,
+    
+    /usr/bin/{sh,dash} mrix,
+    /usr/bin/sed ix,
+    /usr/bin/gettext.sh rix,
+    
+    # Used by 400-notify-send
+    /usr/bin/notify-send Px,
+    # Used by 600-mail but we really don't know what else is supposed to happen here
+    /usr/bin/fold ix,
+    /usr/bin/mail Px,
+    
+    include if exists <local/needrestart_notify_scripts>
+  }
+  include if exists <local/needrestart>
+}

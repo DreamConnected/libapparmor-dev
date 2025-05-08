@@ -141,6 +141,7 @@ SRC=access.c \
     fd_inheritance.c \
     fd_inheritor.c \
     fork.c \
+    getcon_verify.c \
     link.c \
     link_subset.c \
     mmap.c \
@@ -283,6 +284,7 @@ EXEC=$(SRC:%.c=%)
 
 TESTS=aa_exec \
       access \
+      allow_all \
       attach_disconnected \
       at_secure \
       introspect \

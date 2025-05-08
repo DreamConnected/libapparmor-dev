@@ -250,6 +250,7 @@ tests/regression/apparmor/fchown
 tests/regression/apparmor/fd_inheritance
 tests/regression/apparmor/fd_inheritor
 tests/regression/apparmor/fork
+tests/regression/apparmor/getcon_verify
 tests/regression/apparmor/introspect
 tests/regression/apparmor/io_uring
 tests/regression/apparmor/link

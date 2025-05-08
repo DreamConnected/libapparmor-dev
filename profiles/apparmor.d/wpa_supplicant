@@ -20,37 +20,98 @@ profile wpa_supplicant /usr/sbin/wpa_supplicant {
   capability net_admin,
   capability net_raw,
 
+  # Most of these are extracted from wpa-2.10/wpa_supplicant/dbus/dbus_new.c
   dbus (bind) bus=system name=fi.w1.wpa_supplicant1,
+  # fi.w1.wpasupplicant1 methods
   dbus (receive) 
        bus=system
        path=/fi/w1/wpa_supplicant1
        interface=fi.w1.wpa_supplicant1
-       member={CreateInterface,ExpectDisconnect,GetInterface,InterfaceRemoved,RemoveInterface},
-    
+       member={CreateInterface,RemoveInterface,GetInterface,ExpectDisconnect},
+  # fi.w1.wpasupplicant1 signals
+  dbus (send)
+       bus=system
+       path=/fi/w1/wpa_supplicant1
+       interface=fi.w1.wpa_supplicant1
+       member={InterfaceAdded,InterfaceRemoved},
 
-  dbus (receive) 
-        bus=system
-        path=/fi/w1/wpa_supplicant1/**
-        interface=org.freedesktop.DBus.Properties
-        member={GetAll,Set},
-  
+  # fi.w1.wpasupplicant1.Interface methods
   dbus (receive)
         bus=system
         path=/fi/w1/wpa_supplicant1/Interfaces/**
         interface=fi.w1.wpa_supplicant1.Interface
-        member={AbortScan,AddBlob,AddCred,AddNetwork,AddPersistentGroup,AddService,AutoScan,Cancel,Connect,DeleteService,Disconnect,EAPLogoff,EAPLogon,ExtendedListen,Find,Flush,FlushBSS,FlushService,GetBlob,GroupAdd,InterworkingSelect,Invite,Listen,NetworkReply,PresenceRequest,ProvisionDiscoveryRequest,Reassociate,Reattach,Reconnect,RejectPeer,RemoveAllCreds,RemoveAllNetworks,RemoveAllPersistentGroups,RemoveBlob,RemoveClient,RemoveCred,RemoveNetwork,RemovePersistentGroup,Roam,SaveConfig,Scan,SelectNetwork,ServiceDiscoveryCancelRequest,ServiceDiscoveryExternal,ServiceDiscoveryRequest,ServiceDiscoveryResponse,ServiceUpdate,SetPKCS11EngineAndModulePath,SignalPoll,Start,StopFind,SubscribeProbeReq,TDLSCancelChannelSwitch,TDLSChannelSwitch,TDLSDiscover,TDLSSetup,TDLSStatus,TDLSTeardown,UnsubscribeProbeReq,VendorElemAdd,VendorElemGet,VendorElemRem},
-
+        member={Scan,SignalPoll,Disconnect,AddNetwork,Reassociate,Reattach,Reconnect,RemoveNetwork,RemoveAllNetworks,SelectNetwork,NetworkReply,Roam,AddBlob,GetBlob,RemoveBlob,SetPKCS11EngineAndModulePath,FlushBSS,SubscribeProbeReq,UnsubscribeProbeReq,EAPLogoff,EAPLogon,Autoscan,TDLSDiscover,TDLSSetup,TDLSStatus,TDLSTeardown,TDLSChannelSwitch,TDLSCancelChannelSwitch,VendorElemAdd,VenderElemGet,VenderElemRem,SaveConfig,AbortScan,AddCred,RemoveCred,RemoveAllCreds,InterworkingSelect},
+  # fi.w1.wpasupplicant.Interface signals
   dbus (send)
         bus=system
         path=/fi/w1/wpa_supplicant1/Interfaces/**
         interface=fi.w1.wpa_supplicant1.Interface
-        member={BSSAdded,BSSRemoved,BlobAdded,BlobRemoved,Certification,Credentials,DeviceFound,DeviceFoundProperties,DeviceLost,EAP,Event,FindStopped,GONegotiationFailure,GONegotiationRequest,GONegotiationSuccess,GroupFinished,GroupFormationFailure,GroupStarted,InterworkingAPAdded,InterworkingSelectDone,(receiveInvitationResult,MeshGroupRemoved,MeshGroupStarted,MeshPeerConnected,MeshPeerDisconnected,NetworkAdded,NetworkRemoved,NetworkRequest,NetworkSelected,PersistentGroupAdded,PersistentGroupRemoved,ProbeRequest,PropertiesChanged,ProvisionDiscoveryFailure,ProvisionDiscoveryPBCRequest,ProvisionDiscoveryPBCResponse,ProvisionDiscoveryRequestDisplayPin,ProvisionDiscoveryRequestEnterPin,ProvisionDiscoveryResponseDisplayPin,ProvisionDiscoveryResponseEnterPin,ScanDone,ServiceDiscoveryRequest,ServiceDiscoveryResponse,StaAuthorized,StaDeauthorized,StationAdded,StationRemoved,WpsFailed,PropertiesChanged},
-  
+        member={ScanDone,BSSAdded,BSSRemoved,BlobAdded,BlobRemoved,NetworkAdded,NetworkRemoved,NetworkSelected,ProbeRequest,Certification,EAP,StaAuthorized,StaDeauthorized,StationAdded,StationRemoved,NetworkRequest,InterworkingAPAdded,InterworkingSelectDone,},
+
+  # fi.w1.wpasupplicant.Interface.WPS methods
+  dbus (receive)
+        bus=system
+        path=/fi/w1/wpa_supplicant1/Interfaces/**
+        interface=fi.w1.wpa_supplicant1.Interface.WPS
+        member={Start,Cancel},
+  # fi.w1.wpasupplicant.WPS signals
+  dbus (send)
+        bus=system
+        path=/fi/w1/wpa_supplicant1/Interfaces/**
+        interface=fi.w1.wpa_supplicant1.Interface.WPS
+        member={Event,Credentials},
+
+  # fi.w1.wpasupplicant.Interface.P2PDevice methods
+  dbus (receive)
+        bus=system
+        path=/fi/w1/wpa_supplicant1/Interfaces/**
+        interface=fi.w1.wpa_supplicant1.Interface.P2PDevice
+        member={Find,StopFind,Listen,ExtendedListen,PresenceRequest,ProvisionDiscoveryRequest,Connect,GroupAdd,Cancel,Invite,Disconnect,RejectPeer,RemoveClient,Flush,AddService,DeleteService,FlushService,ServiceDiscoveryRequest,ServiceDiscoveryResponse,ServiceDiscoveryCancelRequest,ServiceUpdate,ServiceDiscoveryExternal,AddPersistentGroup,RemovePersistentGroup,RemoveAllPersistentGroups},
+  # fi.w1.wpasupplicant.Interface.P2PDevice signals
+  dbus (send)
+        bus=system
+        path=/fi/w1/wpa_supplicant1/Interfaces/**
+        interface=fi.w1.wpa_supplicant1.Interface.P2PDevice
+        member={DeviceFound,DeviceFoundProperties,DeviceLost,FindStopped,ProvisionDiscoveryRequestDisplayPin,ProvisionDiscoveryRepsonseDisplayPin,ProvisionDiscoveryRequestEnterPin,ProvisionDiscoveryResponseEnterPin,ProvisionDiscoveryPBCResponse,ProvisionDiscoveryFailure,GroupStarted,GroupFormationFailure,GONegotiaionSuccess,GONegotiationFailure,GONegotiationRequest,InvitationResult,GroupFinished,ServiceDiscoveryRequest,ServiceDiscoveryResponse,PersistentGroupAdded,PersistentGroupRemoved,WpsFailed,InvitationReceived},
+
+  # fi.w1.wpasupplicant.Interface.Mesh signals
+  dbus (send)
+        bus=system
+        path=/fi/w1/wpa_supplicant1/Interfaces/**
+        interface=fi.w1.wpa_supplicant1.Interface.Mesh
+        member={MeshGroupStarted,MeshGroupRemovevd,MeshPeerConnected,MeshPeerDisconnected},
+
+  # fi.w1.wpasupplicant.Group signals (unknown path)
+  audit dbus (send)
+        bus=system
+        path=/fi/w1/wpa_supplicant1/**
+        interface=fi.w1.wpa_supplicant1.Group
+        member={PeerJoined,PeerDisconnected},
+
+  # Covers all DBus Properties
+  dbus (receive)
+        bus=system
+        path=/fi/w1/wpa_supplicant1{,/**}
+        interface=org.freedesktop.DBus.Properties
+        member={Get,GetAll,Set},
+  dbus (receive)
+        bus=system
+        path=/fi/w1/wpa_supplicant1/Interfaces/**
+        interface=org.freedesktop.DBus.Introspectable
+        member=Introspect,
+  dbus (send)
+        bus=system
+        path=/fi/w1/wpa_supplicant1/Interfaces/**
+        interface={fi.w1.wpa_supplicant1.Interface,org.freedesktop.DBus.Properties}
+        member=PropertiesChanged,
+
+  # Enable wpa_supplicant to request additional names for its bus
   dbus (send)
         bus=system
         path=/org/freedesktop/DBus
         interface=org.freedesktop.DBus
-        member={AddMatch,GetNameOwner,Hello,ReleaseName,RemoveMatch,RequestName,StartServiceByName},
+        member={ReleaseName,RequestName}
+        peer=(name=org.freedesktop.DBus),
 
   /usr/sbin/wpa_supplicant mr,
 
@@ -68,6 +129,7 @@ profile wpa_supplicant /usr/sbin/wpa_supplicant {
   network inet dgram,
   network inet6 dgram,
   network netlink raw,
+  network packet dgram,
 
   @{sys}/devices/pci[0-9]*:[0-9]*/**/ieee80211/phy[0-9]*/name r,
   # Might also need @{sys}/class/ieee80211/ r,

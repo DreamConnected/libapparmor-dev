@@ -1,12 +1,432 @@
-# This profile allows everything and only exists to give the
-# application a name instead of having the label "unconfined"
+#------------------------------------------------------------------
+#    Copyright (C) 2024 Canonical Ltd.
+#
+#    Author: Federico Quattrin <federico.quattrin@canonical.com>
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+# vim: ft=apparmor
+#
 
 abi <abi/4.0>,
+
 include <tunables/global>
 
-profile foliate /usr/bin/foliate flags=(unconfined) {
-  userns,
+# list of unlabeled dbus peers:
+@{at_spi2_registryd}=unconfined
+@{at_spi_bus_launcher}=unconfined
+@{xdg_desktop_portal}=unconfined
+@{gvfs}=unconfined
+@{gvfsd}=unconfined
+@{dconf_service}=unconfined
+@{rtkit_daemon}=unconfined
+@{cpdb}=unconfined
+@{power_profiles_daemon}=unconfined
+@{NetworkManager}=unconfined
 
-  # Site-specific additions and overrides. See local/README for details.
+profile foliate /usr/bin/foliate {
+  include <abstractions/base>
+  include <abstractions/dbus-session-strict>
+  include <abstractions/dconf>
+  include <abstractions/mesa>
+  include <abstractions/private-files-strict>
+  include <abstractions/ubuntu-browsers.d/plugins-common>
+  include <abstractions/ubuntu-browsers.d/ubuntu-integration>
+  include <abstractions/vulkan>
+
+  signal send set=kill peer=foliate//bwrap,
+
+  network netlink,
+
+  unix rw type=seqpacket addr=none peer=(label=foliate//bwrap),
+  unix rw type=seqpacket addr=none peer=(label=foliate//WebKitWebProcess),
+  unix rw addr=none peer=(label=foliate//WebKitNetworkProcess),
+
+  dbus (send) bus="accessibility" path="/org/a11y/atspi/accessible/root" interface="org.a11y.atspi.Socket" member=Embed peer=(label=@{at_spi2_registryd}),
+  dbus (send) bus="accessibility" path=/org/a11y/webkit/accessible/* interface="org.a11y.atspi.Socket" member=Embedded peer=(label=foliate//bwrap//&foliate//xdg-dbus-proxy),
+  dbus (receive) bus="accessibility" path="/org/a11y/atspi/accessible/root" interface="org.freedesktop.DBus.Properties" member=Set peer=(label=@{at_spi2_registryd}),
+  dbus (send) bus="session" path="/org/a11y/bus" interface="org.a11y.Bus" member="GetAddress" peer=(label=@{at_spi_bus_launcher}),
+  dbus (send) bus="accessibility" path="/org/a11y/atspi/registry" interface="org.a11y.atspi.Registry" member="GetRegisteredEvents" peer=(label=@{at_spi2_registryd}),
+  dbus (receive) bus="accessibility" path="/org/a11y/atspi/registry" interface="org.a11y.atspi.Registry" member="EventListenerDeregistered" peer=(label=@{at_spi2_registryd}),
+
+  dbus (send) bus="session" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus.Properties" member="GetAll" peer=(label=unconfined),
+  dbus (send) bus="session" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member={ListNames,ListActivatableNames} peer=(label=unconfined),
+
+  dbus (send) bus="session" path="/org/freedesktop/portal/desktop" interface="org.freedesktop.DBus.Properties" member="GetAll" peer=(label=@{xdg_desktop_portal}),
+  dbus (send) bus="session" path="/org/freedesktop/portal/desktop" interface="org.freedesktop.portal.FileChooser" member={OpenFile,SaveFile} peer=(label=@{xdg_desktop_portal}),
+  dbus (send) bus="session" path="/org/freedesktop/portal/desktop" interface="org.freedesktop.portal.OpenURI" member={OpenFile,OpenURI} peer=(label=@{xdg_desktop_portal}),
+  dbus (send) bus="session" path="/org/freedesktop/portal/desktop" interface="org.freedesktop.portal.Settings" member="Read" peer=(label=@{xdg_desktop_portal}),
+  dbus (receive) bus="session" path="/org/freedesktop/portal/desktop/request/*/gtk*" interface="org.freedesktop.portal.Request" member="Response" peer=(label=@{xdg_desktop_portal}),
+
+  dbus (send) bus="session" path="/org/gtk/Private/RemoteVolumeMonitor" interface="org.gtk.Private.RemoteVolumeMonitor" member={IsSupported,List} peer=(label=@{gvfs}),
+  dbus (send) bus="session" path="/org/gtk/vfs/Daemon" interface="org.gtk.vfs.Daemon" member={GetConnection,ListMonitorImplementations} peer=(label=@{gvfsd}),
+  dbus (send) bus="session" path="/org/gtk/vfs/mount/*" interface="org.gtk.vfs.Mount" member={CreateFileMonitor,Enumerate,QueryInfo,CreateDirectoryMonitor} peer=(label=@{gvfsd}),
+  dbus (send) bus="session" path="/org/gtk/vfs/daemon/dirmonitor/*" interface="org.gtk.vfs.Monitor" member={Subscribe,Unsubscribe} peer=(label=@{gvfsd}),
+  dbus (receive) bus="session" path="/org/gtk/vfs/client/enumerator/*" interface="org.gtk.vfs.Enumerator" member="Done" peer=(label=@{gvfsd}),
+  dbus (send) bus="session" path="/org/gtk/vfs/metadata" interface="org.gtk.vfs.Metadata" member="Remove" peer=(label=@{gvfsd}),
+
+  dbus (send) bus="session" path="/org/gtk/vfs/mounttracker" interface="org.gtk.vfs.MountTracker" member={ListMounts2,LookupMount,ListMountableInfo} peer=(label=@{gvfsd}),
+  dbus (receive) bus="session" path="/org/gtk/vfs/mounttracker" interface="org.gtk.vfs.MountTracker" member="Mounted" peer=(label=@{gvfsd}),
+
+  dbus (send) bus="accessibility" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member={Hello,AddMatch,GetNameOwner} peer=(label=@{at_spi_bus_launcher}),
+  dbus (send) bus="session" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member={ReleaseName,RequestName} peer=(label=unconfined),
+  dbus (send) bus="system" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member={StartServiceByName,AddMatch,GetNameOwner,Hello,RemoveMatch} peer=(label=unconfined),
+  dbus (send) bus="system" path="/org/freedesktop/hostname1" interface="org.freedesktop.DBus.Properties" member="GetAll" peer=(label=unconfined),
+  dbus (send) bus="accessibility" path="/" interface="org.freedesktop.DBus" member={AddMatch,GetNameOwner} peer=(label=@{at_spi_bus_launcher}),
+
+  dbus (send) bus="session" path="/ca/desrt/dconf/Writer/user" interface="ca.desrt.dconf.Writer" member="Change" peer=(label=@{dconf_service}),
+  dbus (receive) bus="session" path="/ca/desrt/dconf/Writer/user" interface="ca.desrt.dconf.Writer" member="Notify" peer=(label=@{dconf_service}),
+
+  dbus (bind) bus="session" name="com.github.johnfactotum.Foliate",
+  dbus (send) bus="session" path="/com/github/johnfactotum/Foliate/window/*" interface="org.gtk.Actions" member="Changed" peer=(label=unconfined),
+  dbus (receive) bus="session" path="/com/github/johnfactotum/Foliate/window/*" interface="org.gtk.Actions" member="DescribeAll" peer=(label=unconfined),
+  dbus (receive) bus="session" path="/com/github/johnfactotum/Foliate" interface="org.freedesktop.DBus.Properties" member="GetAll" peer=(label=unconfined),
+  dbus (receive) bus="session" path="/com/github/johnfactotum/Foliate" interface="org.gtk.Actions" member="DescribeAll" peer=(label=unconfined),
+  dbus (send receive) bus="session" path="/com/github/johnfactotum/Foliate" interface="org.gtk.Actions" member={DescribeAll,Open} peer=(label=foliate),
+  dbus (send receive) bus="session" path="/com/github/johnfactotum/Foliate" interface="org.gtk.Application" member=Open peer=(label=foliate),
+
+  dbus (send) bus="system" path="/org/freedesktop/RealtimeKit1" interface="org.freedesktop.DBus.Properties" member=Get peer=(label=@{rtkit_daemon}),
+  dbus (send) bus="system" path="/org/freedesktop/RealtimeKit1" interface="org.freedesktop.RealtimeKit1" member=MakeThreadRealtimeWithPID peer=(label=@{rtkit_daemon}),
+
+  dbus (bind) bus="session" name="org.openprinting.PrintFrontendGtk_*",
+  dbus (send) bus="session" path="/" interface="org.freedesktop.DBus.Properties" member="GetAll" peer=(label=unconfined),
+  dbus (send) bus="session" path="/" interface="org.openprinting.PrintBackend" member="GetPrinterList" peer=(label=@{cpdb}),
+  dbus (send) bus="session" path="/" interface="org.openprinting.PrintFrontend" member="StopListing" peer=(label=@{cpdb}),
+
+  # Access to ebooks
+  owner @{HOME}/[^.]**.[eE][pP][uU][bB] r,
+  owner @{HOME}/[^.]**.[mM][oO][bB][iI] r,
+  owner @{HOME}/[^.]**.[aA][zZ][wW] r,
+  owner @{HOME}/[^.]**.[kK][fF][xX] r,
+  owner @{HOME}/[^.]**.[aA][zZ][wW]3 r,
+  owner @{HOME}/[^.]**.[fF][bB][23] r,
+  owner @{HOME}/[^.]**.[cC][bB][rR] r,
+  owner @{HOME}/[^.]**.[cC][bB][zZ] r,
+  owner @{HOME}/[^.]**.[pP][nN][gG] rw,
+  owner @{HOME}/[^.]**.[jJ][pP][eE][gG] rw,
+  owner @{HOME}/[^.]**.[jJ][pP][gG] rw,
+  owner @{HOME}/.local/share/gvfs-metadata/home* r,
+  owner @{HOME}/.local/share/com.github.johnfactotum.Foliate/{**,} rw,
+  owner @{HOME}/.goutputstream-* rw,
+  # w to allow printing to file
+  owner @{HOME}/[^.]**.[pP][dD][fF] rw,
+  # import and export annotations, only json is importable
+  owner @{HOME}/[^.]**.[jJ][sS][oO][nN] rw,
+  owner @{HOME}/[^.]**.[hH][tT][mM][lL] w,
+  owner @{HOME}/[^.]**.[mM][dD] w,
+  owner @{HOME}/[^.]**.[oO][rR][gG] w,
+
+  deny @{sys}/devices/pci**/{uevent,vendor,device,subsystem_vendor,subsystem_device} r,
+  deny @{sys}/devices/virtual/dmi/id/chassis_type r,
+  deny @{run}/user/@{uid}/gvfsd/socket-* rw,
+
+  @{PROC}/zoneinfo r,
+  @{run}/dbus/system_bus_socket rw,
+  @{sys}/firmware/acpi/pm_profile r,
+  @{etc_ro}/nsswitch.conf r,
+  @{etc_ro}/passwd r, # needed by getpwuid_r
+
+  /usr/bin/foliate rm,
+  /var/lib/snapd/desktop/icons/ r,
+  /usr/share/com.github.johnfactotum.Foliate/com.github.johnfactotum.Foliate.gresource r,
+  /usr/share/publicsuffix/* r,
+  /usr/share/xml/iso-codes/*.xml r,
+
+  /usr/bin/bwrap Cx -> bwrap,
+  /usr/bin/speech-dispatcher Cx -> speech-dispatcher, # TODO: Px
+  /usr/lib/@{multiarch}/webkitgtk-*/WebKitNetworkProcess Cx -> WebKitNetworkProcess,
+  /usr/lib/@{multiarch}/webkitgtk-*/WebKitWebProcess Cx -> WebKitWebProcess,
+
+  owner @{HOME}/.cache/com.github.johnfactotum.Foliate/** rwkl,
+  owner @{HOME}/.config/cpdb/ rw,
+  owner @{PROC}/@{pid}/cgroup r,
+  owner @{PROC}/@{pid}/cmdline r,
+  owner @{PROC}/@{pid}/mounts r,
+  owner @{PROC}/@{pid}/stat r,
+  owner @{PROC}/@{pid}/statm r,
+  owner @{PROC}/@{pid}/task/@{pid}/stat r,
+  owner @{run}/user/@{uid}/.mutter-Xwaylandauth.* r,
+  owner @{run}/user/@{uid}/speech-dispatcher/speechd.sock rw,
+  owner @{run}/user/@{uid}/wayland-0 rw,
+  owner @{run}/user/@{uid}/webkitgtk/{**,} rw,
+  owner @{HOME}/.cache/webkitgtk-*/ rw,
+  owner @{sys}/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.current r,
+  owner @{sys}/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.high r,
+  owner @{sys}/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.max r,
+  owner @{run}/user/@{uid}/.flatpak/ rw,
+  owner @{run}/user/@{uid}/.flatpak/webkit*/{,**} rw,
+
+  profile bwrap flags=(attach_disconnected.path=/container/, attach_disconnected) {
+    include <abstractions/base>
+    include <abstractions/consoles>
+    include <abstractions/dbus-session>
+    include <abstractions/mesa>
+    include <abstractions/nameservice-strict>
+    include <abstractions/ubuntu-konsole>
+    include <abstractions/WebKitWebProcess>
+
+    userns create,
+
+    signal receive set=kill peer=foliate,
+    network netlink,
+
+    unix rw type=seqpacket addr=none peer=(label=foliate),
+    unix rw type=seqpacket addr=none peer=(label=foliate//WebKitNetworkProcess),
+
+    dbus (send) bus="accessibility" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member=Hello peer=(label=@{at_spi_bus_launcher}),
+    dbus (send) bus="accessibility" path="/{,org/freedesktop/DBus}" interface="org.freedesktop.DBus" member={AddMatch,GetNameOwner,StartServiceByName,RemoveMatch,RequestName} peer=(label=@{at_spi_bus_launcher}),
+    dbus (send receive) bus="accessibility" path="/org/a11y/webkit/accessible/*" interface="org.a11y.atspi.Socket" member="Embedded" peer=(label=foliate),
+
+    dbus (receive) bus="accessibility" path="/org/a11y/atspi/registry" interface="org.a11y.atspi.Registry" member="EventListenerDeregistered" peer=(label=@{at_spi2_registryd}),
+    dbus (send) bus="accessibility" path="/org/a11y/atspi/registry" interface="org.a11y.atspi.Registry" member="GetRegisteredEvents" peer=(label=@{at_spi2_registryd}),
+
+    dbus (send receive) bus="session" path="/com/github/johnfactotum/Foliate" interface="org.gtk.Actions" member={DescribeAll,Open} peer=(label=foliate),
+
+    capability setpcap,
+    capability sys_admin,
+    capability net_admin,
+
+    # quiet logs
+    deny capability dac_override,
+
+    # possibly not needed?
+    # capability net_bind_service,
+    # capability dac_read_search,
+
+    mount fstype=tmpfs options=(rw, nosuid, nodev) tmpfs -> /tmp/,
+    mount fstype=tmpfs options=(rw, nosuid, nodev) tmpfs -> /newroot/{tmp,dev}/,
+    mount fstype=devpts options=(rw, nosuid, noexec) -> /newroot/dev/pts/,
+    mount fstype=proc options=(rw, nosuid, nodev, noexec) -> /newroot/proc/,
+
+    mount options=(rw, silent, rslave) -> /,
+    mount options=(rw, rbind) /tmp/newroot/,
+    mount options=(rw, rbind) /oldroot/** -> /newroot/**,
+    mount options=(rw, rbind) /bindfile* -> /newroot/.flatpak-info,
+    mount options=(ro, nosuid, nodev, remount, bind, silent, relatime) -> /newroot/etc/,
+    mount options=(ro, nosuid, nodev, noexec, remount, bind, silent, relatime) -> /newroot/sys/*/,
+    mount options=(ro, nosuid, nodev, noexec, remount, bind, silent, relatime) -> /newroot/run/**,
+    mount options=(ro, nosuid, nodev, remount, bind, silent, relatime) -> /newroot/**,
+    mount options=(rw, nosuid, nodev, remount, bind, silent, relatime) -> /newroot/home/**,
+    mount options=(rw, silent, rprivate) -> /oldroot/,
+
+    umount /{,oldroot/},
+
+    pivot_root /tmp/,
+    pivot_root /newroot/,
+
+    /newroot/** rw,
+    /container/** rw,
+    /bindfile** rw,
+    owner / r,
+
+    # quiet logs
+    deny @{sys}/devices/pci**/{uevent,vendor,device,subsystem_vendor,subsystem_device} r,
+    deny @{sys}/devices/virtual/dmi/id/chassis_type r,
+
+    /apparmor/.null rw,
+    @{PROC}/sys/kernel/overflowgid r,
+    @{PROC}/sys/kernel/overflowuid r,
+    @{PROC}/zoneinfo r,
+    @{PROC}/@{pid}/mountinfo r,
+    @{run}/user/@{uid}/webkitgtk/bus-proxy-* rw,
+    @{run}/user/@{uid}/webkitgtk/a11y-proxy-** rw,
+    /usr/bin/bwrap mr,
+    /usr/bin/xdg-dbus-proxy Px -> foliate//bwrap//&foliate//xdg-dbus-proxy,
+    /usr/lib/@{multiarch}/webkitgtk-*/WebKitWebProcess Px -> foliate//bwrap//&foliate//WebKitWebProcess,
+
+    owner @{PROC}/@{pid}/fd/ r,
+    owner @{run}/user/@{uid}/.flatpak/** rw,
+    owner @{sys}/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.current r,
+    owner @{sys}/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.high r,
+    owner @{sys}/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.max r,
+    owner @{PROC}/@{pid}/uid_map rw,
+    owner @{PROC}/@{pid}/cgroup r,
+    owner @{PROC}/@{pid}/cmdline r,
+    owner @{PROC}/@{pid}/mounts r,
+    owner @{PROC}/@{pid}/stat r,
+    owner @{PROC}/@{pid}/setgroups rw,
+    owner @{PROC}/@{pid}/gid_map rw,
+    owner @{HOME}/.local/share/gvfs-metadata/home* r,
+
+    include if exists <local/foliate_bwrap>
+  }
+
+  profile WebKitWebProcess flags=(attach_disconnected.path=/container/, attach_disconnected){
+    include <abstractions/base>
+    include <abstractions/dconf>
+    include <abstractions/fonts>
+    include <abstractions/mesa>
+    include <abstractions/WebKitWebProcess>
+    include <abstractions/X>
+
+    unix rw type=seqpacket addr=none peer=(label=foliate),
+    unix rw type=seqpacket addr=none peer=(label=foliate//WebKitNetworkProcess),
+
+    deny @{sys}/devices/pci**/{uevent,vendor,device,subsystem_vendor,subsystem_device} r,
+    deny @{sys}/devices/virtual/dmi/id/chassis_type r,
+
+    /container/apparmor/.null rw,
+    /container/dev/null r,
+    /container/dev/urandom r,
+    /container/@{HOME}/.cache/com.github.johnfactotum.Foliate/** rw,
+    /container/@{HOME}/.local/share/gvfs-metadata/home/{**,} r,
+    /container/proc/meminfo r,
+    /container/proc/zoneinfo r,
+    /container/proc/@{pid}/cgroup r,
+    /container/sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.current r,
+    /container/sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.max r,
+    /container/sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.high r,
+    /container/@{run}/user/@{uid}/wayland-* rw,
+    /container/@{run}/user/@{uid}/webkitgtk/a11y-proxy-* rw,
+    owner /container/@{HOME}/.cache/mesa_shader_cache_db/part*/mesa_cache.db rwk,
+    owner /container/@{HOME}/.cache/mesa_shader_cache_db/part*/mesa_cache.idx rwk,
+    owner /container/@{HOME}/.local/share/gvfs-metadata/home* r,
+
+    /dev/dri/ r,
+
+    @{etc_ro}/nsswitch.conf r,
+    @{etc_ro}/passwd r,
+
+    /usr/bin/xdg-dbus-proxy mr,
+    /usr/share/drirc.d/ r,
+    /usr/share/drirc.d/*.conf r,
+    /usr/share/icons/{**,} r,
+    /usr/share/glib-*/schemas/gschemas.compiled r,
+    /usr/share/mime/mime.cache r,
+    /usr/share/pixmaps/ r,
+    /usr/share/poppler/cMap/** r,
+
+    @{PROC}/zoneinfo r,
+
+    owner @{sys}/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.current r,
+    owner @{sys}/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.high r,
+    owner @{sys}/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.max r,
+    owner @{PROC}/@{pid}/cgroup r,
+    owner @{run}/user/@{uid}/webkitgtk/bus-proxy-* rw,
+    owner @{run}/user/@{uid}/webkitgtk/** rw,
+    owner @{run}/user/@{uid}/wayland-0 rw,
+
+    include if exists <local/foliate_WebKitWebProcess>
+}
+
+  profile xdg-dbus-proxy flags=(attach_disconnected.path=/container/, attach_disconnected){
+    include <abstractions/base>
+    include <abstractions/mesa>
+
+    dbus (send) bus="accessibility" path="/" interface="org.freedesktop.DBus" member={AddMatch,GetNameOwner} peer=(label=unconfined),
+    dbus (receive) bus="accessibility" path="/org/a11y/atspi/registry" interface="org.a11y.atspi.Registry" member="EventListenerDeregistered" peer=(label=@{at_spi2_registryd}),
+    dbus (send) bus="accessibility" path="/org/a11y/atspi/registry" interface="org.a11y.atspi.Registry" member="GetRegisteredEvents" peer=(label=@{at_spi2_registryd}),
+    dbus (receive) bus="accessibility" path="/org/a11y/webkit/accessible/*" interface="org.a11y.atspi.Socket" member="Embedded" peer=(label=foliate),
+
+    dbus (send) bus="accessibility" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member=Hello peer=(label=@{at_spi_bus_launcher}),
+    dbus (send) bus="accessibility" path="/{,org/freedesktop/DBus}" interface="org.freedesktop.DBus" member={AddMatch,GetNameOwner,StartServiceByName,RemoveMatch,RequestName} peer=(label=@{at_spi_bus_launcher}),
+
+    /container/apparmor/.null rw,
+    /container/dev/null r,
+    /container/dev/urandom r,
+    /container/proc/zoneinfo r,
+    /container/proc/meminfo r,
+    /container/proc/@{pid}/cgroup r,
+    /container/sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.current r,
+    /container/sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.max r,
+    /container/sys/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.high r,
+    /container/@{run}/user/@{uid}/.flatpak/webkit-*/bwrapinfo.json rw,
+    /container/@{run}/user/@{uid}/at-spi/bus rw,
+    owner /container/@{HOME}/.cache/mesa_shader_cache_db/part*/mesa_cache.db rwk,
+    owner /container/@{HOME}/.cache/mesa_shader_cache_db/part*/mesa_cache.idx rwk,
+    owner /container/@{HOME}/.local/share/gvfs-metadata/home* r,
+
+    @{run}/user/@{uid}/webkitgtk/bus-proxy-* rw,
+    @{run}/user/@{uid}/webkitgtk/** rw,
+
+    /usr/bin/xdg-dbus-proxy mr,
+
+    include if exists <local/foliate_xdg-dbus-proxy>
+  }
+
+  # TODO: create standalone profile (not child)
+  profile speech-dispatcher {
+    include <abstractions/audio>
+    include <abstractions/base>
+    include <abstractions/consoles>
+    include <abstractions/dbus-session-strict>
+
+    @{etc_ro}/speech-dispatcher/** rm,
+    @{PROC}/sys/vm/overcommit_memory r,
+    /usr/bin/speech-dispatcher mr,
+    /{,usr/}bin/{bash,dash,sh} ix,
+    /usr/lib/speech-dispatcher-modules/{sd_dummy,sd_espeak-ng,sd_generic,sd_openjtalk} ix,
+    owner @{HOME}/.config/pulse/cookie rk,
+    owner @{run}/user/@{uid}/ r,
+    owner @{run}/user/@{uid}/pulse/ r,
+    owner @{run}/user/@{uid}/pulse/native rw,
+    owner @{run}/user/@{uid}/speech-dispatcher/** rwk,
+    owner /tmp/speechd-openjtalk-* rw,
+    owner /dev/shm/sem.* rwl,
+
+    # quiet logs
+    deny network (create,connect) inet stream,
+
+    include if exists <local/foliate_speech-dispatcher>
+  }
+
+  profile WebKitNetworkProcess {
+    include <abstractions/base>
+    include <abstractions/dbus-session>
+    include <abstractions/dconf>
+    include <abstractions/mesa>
+    include <abstractions/nameservice>
+    include <abstractions/ubuntu-browsers.d/ubuntu-integration>
+
+    unix rw type=seqpacket addr=none peer=(label=foliate),
+    unix rw type=seqpacket addr=none peer=(label=foliate//bwrap),
+    unix rw type=seqpacket addr=none peer=(label=foliate//WebKitWebProcess),
+
+    dbus (send receive) bus="session" path="/com/github/johnfactotum/Foliate" interface="org.gtk.Actions" member={DescribeAll,Open} peer=(label=foliate),
+
+    dbus (send) bus="system" path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member={Hello,AddMatch,GetNameOwner,GetAll,StartServiceByName,RemoveMatch} peer=(label=unconfined),
+
+    dbus (send) bus="system" path="/net/hadess/PowerProfiles" interface="org.freedesktop.DBus.Properties" member="GetAll" peer=(label=@{power_profiles_daemon}),
+
+    dbus (send) bus="system" path="/org/freedesktop/NetworkManager" interface="org.freedesktop.DBus.Properties" member="GetAll" peer=(label=@{NetworkManager}),
+
+    /apparmor/.null rw,
+    # Access to ebooks
+    owner @{HOME}/[^.]**.[eE][pP][uU][bB]{.wkdownload,} rw,
+    owner @{HOME}/[^.]**.[mM][oO][bB][iI]{.wkdownload,} rw,
+    owner @{HOME}/[^.]**.[aA][zZ][wW]{.wkdownload,} rw,
+    owner @{HOME}/[^.]**.[kK][fF][xX]{.wkdownload,} rw,
+    owner @{HOME}/[^.]**.[aA][zZ][wW]3{.wkdownload,} rw,
+    owner @{HOME}/[^.]**.[fF][bB][23]{.wkdownload,} rw,
+    owner @{HOME}/[^.]**.[cC][bB][rR]{.wkdownload,} rw,
+    owner @{HOME}/[^.]**.[cC][bB][zZ]{.wkdownload,} rw,
+    owner @{HOME}/[^.]**.[pP][nN][gG]{.wkdownload,} rw,
+    owner @{HOME}/[^.]**.[jJ][pP][eE][gG]{.wkdownload,} rw,
+    owner @{HOME}/[^.]**.[jJ][pP][gG]{.wkdownload,} rw,
+
+    owner @{HOME}/.goutputstream-* rw,
+
+    @{PROC}/@{pid}/cgroup r,
+    @{PROC}/zoneinfo r,
+    @{run}/dbus/system_bus_socket rw,
+    /usr/lib/@{multiarch}/webkitgtk-*/WebKitNetworkProcess mr,
+    /usr/share/publicsuffix/public_suffix_list.dafsa r,
+
+    owner @{PROC}/@{pid}/maps r,
+    owner @{run}/user/@{uid}/bus rw,
+    owner @{HOME}/.cache/com.github.johnfactotum.Foliate/{,**} rwlk,
+    owner @{HOME}/.local/share/com.github.johnfactotum.Foliate/** rw,
+    owner @{HOME}/.cache/webkitgtk-*/{,**} rwk,
+    owner @{HOME}/.local/share/webkitgtk-*/{,**} rwk,
+    owner @{HOME}/.local/share/gvfs-metadata/home* r,
+    owner @{sys}/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.current r,
+    owner @{sys}/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.high r,
+    owner @{sys}/fs/cgroup/user.slice/user-@{uid}.slice/user@@{uid}.service/app.slice/app-org.gnome.Terminal.slice/vte-spawn-*.scope/memory.max r,
+
+    include if exists <local/foliate_WebKitNetworkProcess>
+  }
+
   include if exists <local/foliate>
 }

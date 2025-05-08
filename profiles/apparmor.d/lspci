@@ -1,0 +1,41 @@
+#------------------------------------------------------------------
+#    Copyright (C) 2024 Canonical Ltd.
+#
+#    Author: Ian Constantin <ian.constantin@canonical.com>
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+# vim: ft=apparmor
+
+abi <abi/4.0>,
+
+include <tunables/global>
+
+/usr/bin/lspci flags=(enforce) {
+  include <abstractions/base>
+  include <abstractions/nameservice>
+
+  capability sys_rawio,
+
+  /dev/mem r,
+  /usr/share/misc/pci.ids r,
+
+  @{etc_ro}/modprobe.d/ r,
+  @{etc_ro}/modprobe.d/*.conf r,
+  @{etc_ro}/udev/hwdb.bin r,
+
+  @{PROC}/cmdline r,
+  @{PROC}/bus/pci/** r,
+
+  @{sys}/bus/pci/devices/ r,
+  @{sys}/bus/pci/slots/ r,
+  @{sys}/bus/pci/slots/[0-9]*/address r,
+  @{sys}/devices/pci[0-9]*:[0-9]*/** r,
+  @{sys}/module/compression r,
+
+  owner @{HOME}/.cache/pci-ids* rw,
+
+  include if exists <local/lspci>
+}

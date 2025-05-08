@@ -160,15 +160,55 @@ test_nonfs_options() {
 	fi
 
 	genprofile cap:sys_admin "mount:options=($1)"
-	runchecktest "MOUNT (confined cap mount $1)" pass mount ${loop_device} ${mount_point} -o $1
+	runchecktest "MOUNT (confined cap mount options=$1)" pass mount ${loop_device} ${mount_point} -o $1
 	remove_mnt
 
 	genprofile cap:sys_admin "mount:ALL" "qual=deny:mount:options=($1)"
-	runchecktest "MOUNT (confined cap mount deny $1)" fail mount ${loop_device} ${mount_point} -o $1
+	runchecktest "MOUNT (confined cap mount deny options=$1)" fail mount ${loop_device} ${mount_point} -o $1
 	remove_mnt
 
 	genprofile cap:sys_admin "mount:options=($1)"
 	runchecktest "MOUNT (confined cap mount bad option $2)" fail mount ${loop_device} ${mount_point} -o $2
+	remove_mnt
+}
+
+test_nonfs_options_in() {
+	if [ "$(parser_supports "mount options in ($1),")" != "true" ] ; then
+	        echo "    not supported by parser - skipping mount options in ($1),"
+		return
+	fi
+
+	genprofile cap:sys_admin "mount:options in ($1)"
+	runchecktest "MOUNT (confined cap mount option in $1)" pass mount ${loop_device} ${mount_point} -o $1
+	remove_mnt
+
+	genprofile cap:sys_admin "mount:ALL" "qual=deny:mount:options in ($1)"
+	runchecktest "MOUNT (confined cap mount deny option in $1)" fail mount ${loop_device} ${mount_point} -o $1
+	remove_mnt
+
+	# Conflicting mount flags don't get blocked with options in (list)
+	# TODO: is this the behavior we want?
+	genprofile cap:sys_admin "mount:options in ($1)"
+	runchecktest "MOUNT (confined cap mount conflicting option in $2)" pass mount ${loop_device} ${mount_point} -o $2
+	remove_mnt
+}
+
+test_nonfs_options_equals_in() {
+	if [ "$(parser_supports "mount options=($1) options in ($2),")" != "true" ] ; then
+	        echo "    not supported by parser - skipping mount options=($1) options in ($2),"
+		return
+	fi
+
+	genprofile cap:sys_admin "mount:options=($1) options in ($2)"
+	runchecktest "MOUNT (confined cap mount option=$1 option in $2 ($1,$2))" pass mount ${loop_device} ${mount_point} -o $1,$2
+	remove_mnt
+
+	genprofile cap:sys_admin "mount:options=($1) options in ($2)"
+	runchecktest "MOUNT (confined cap mount option=$1 option in $2 ($1))" pass mount ${loop_device} ${mount_point} -o $1
+	remove_mnt
+
+	genprofile cap:sys_admin "mount:options=($1) options in ($2)"
+	runchecktest "MOUNT (confined cap mount option=$1 option in $2 ($2))" fail mount ${loop_device} ${mount_point} -o $2
 	remove_mnt
 }
 
@@ -240,7 +280,13 @@ test_options() {
 
 		test_nonfs_options $default $nondefault
 		test_nonfs_options $nondefault $default
+
+		test_nonfs_options_in $default $nondefault
+		test_nonfs_options_in $nondefault $default
 	done
+
+	# TODO: expand this to cover more mount flag combinations
+	test_nonfs_options_equals_in 'nosuid,nodev' 'noatime,noexec'
 
 	for i in "bind" "rbind" "move"; do
 		test_dir_options $i

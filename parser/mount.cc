@@ -290,7 +290,7 @@ static struct mnt_keyword_table mnt_opts_table[] = {
 	{"make-rshared",	MS_RSHARED, 0},
 
 	{"relatime",		MS_RELATIME, 0},
-	{"norelatime",		0, MS_NORELATIME},
+	{"norelatime",		0, MS_RELATIME},
 	{"iversion",		MS_IVERSION, 0},
 	{"noiversion",		0, MS_IVERSION},
 	{"strictatime",		MS_STRICTATIME, 0},

@@ -123,12 +123,14 @@ check-parser: test-dependencies
 	$(Q)for profile in $$(find ${PROFILES_SOURCE} -maxdepth 1 -type f) ; do \
 		[ -n "${VERBOSE}" ] && echo "Testing $${profile}" ; \
 		${PARSER} --config-file=../parser/tst/parser.conf -S -b ${PROFILES_SOURCE} $${profile} > /dev/null || exit 1; \
+		../parser/tst/test_profile.py $${profile} --config-file=../parser/tst/parser.conf -S -b ${PROFILES_SOURCE}  || exit 1; \
 	done
 
 	@echo "*** Checking profiles from ${EXTRAS_SOURCE} against apparmor_parser"
 	$(Q)for profile in $$(find ${EXTRAS_SOURCE} -maxdepth 1 -type f -not -name README) ; do \
 		[ -n "${VERBOSE}" ] && echo "Testing $${profile}" ; \
 		${PARSER} --config-file=../parser/tst/parser.conf -S -b ${EXTRAS_SOURCE} -I ${PROFILES_SOURCE} $${profile} > /dev/null || exit 1; \
+		../parser/tst/test_profile.py $${profile} --config-file=../parser/tst/parser.conf -S -b ${PROFILES_SOURCE}  || exit 1; \
 	done
 
 	@echo "*** Checking abstractions from ${ABSTRACTIONS_SOURCE} against apparmor_parser"

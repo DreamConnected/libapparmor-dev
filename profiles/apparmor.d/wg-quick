@@ -35,6 +35,7 @@ profile wg-quick /usr/bin/wg-quick flags=(attach_disconnected) {
   file mrix /usr/sbin/xtables-nft-multi,
   file mrix /usr/bin/resolvectl,
   file mrix /usr/sbin/resolvconf,
+  file PUx /usr/bin/systemd-creds,
 
   # dbus access
   file rw @{run}/dbus/system_bus_socket,

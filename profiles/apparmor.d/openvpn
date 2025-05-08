@@ -1,0 +1,125 @@
+#------------------------------------------------------------------
+#    Copyright (C) 2024 Canonical Ltd.
+#
+#    This program is free software; you can redistribute it and/or
+#    modify it under the terms of version 2 of the GNU General Public
+#    License published by the Free Software Foundation.
+#------------------------------------------------------------------
+# vim: ft=apparmor
+
+abi <abi/4.0>,
+
+include <tunables/global>
+
+profile openvpn /usr/sbin/openvpn flags=(attach_disconnected) {
+  include <abstractions/base>
+  include <abstractions/consoles>
+  include <abstractions/openssl>
+  include <abstractions/nameservice>
+  include <abstractions/private-files-strict>
+
+  capability dac_read_search,
+  capability dac_override,
+  capability net_admin,
+
+  # These are needed when user/group are set in a OpenVPN config file
+  capability setuid,
+  capability setgid,
+
+  # Network access rules
+  network inet dgram,
+  network inet6 dgram,
+  network raw,
+  network inet stream,
+  network inet6 stream,
+
+  # OpenVPN configuration, key files and unbreak --genkey feature
+  file r @{etc_rw}/openvpn/{,**},
+  file mr /usr/sbin/openvpn,
+
+  # Allow OpenVPN to read keys from most user places while preventing an
+  # OpenVPN daemon running as root from covertly modifying user-generated
+  # keys. If this gets removed later make sure to preserve the .cert
+  # carveout above and add carveouts for .config/** and .sesame/*
+  file r @{HOME}/**,
+  owner file w @{HOME}/**,
+
+  # Allow OpenVPN access to the systemd notify socket (LP: #2101796)
+  file w @{run}/systemd/notify,
+  file w @{run}/user/@{uid}/systemd/notify,
+
+  # To prompt password to users,
+  file mrix /usr/bin/systemd-ask-password,
+
+  # TUN/TAP device
+  file rw /dev/net/tun,
+
+  # Process-specific network route access
+  file r @{PROC}/@{pid}/net/route,
+
+  # OpenVPN log and status files
+  file rw /var/log/openvpn/*.log,
+  file rw /var/log/openvpn/ipp.txt,
+  file rw @{run}/openvpn/*.{pid,status},
+
+  # Integration with NetworkManager
+  file r @{HOME}/.cert/nm-openvpn/*,
+  file rw @{run}/NetworkManager/nm-openvpn-*,
+  file PUx /{usr/,}lib{exec,/NetworkManager}/nm-openvpn-service-openvpn-helper,
+
+  # IP tool capability for network configuration
+  file rCx /{,usr/}bin/ip,
+
+  # Sub-profile for IP tool restrictions
+  profile ip /{,usr/}bin/ip {
+    include <abstractions/base>
+
+    capability net_admin,
+
+    # Allow read access to IP tool binary
+    file r /{,usr/}bin/ip,
+
+    # Allow write access to OpenVPN log
+    file w /var/log/openvpn/openvpn.log,
+  }
+
+  # update-resolv.conf file for openvpn env set
+  file rCx /etc/openvpn/update-resolv-conf{,.sh} -> update-resolv,
+
+  # Sub-profile for /etc/openvpn/update-resolv-conf
+  profile update-resolv flags=(attach_disconnected) {
+    include <abstractions/base>
+    include <abstractions/consoles>
+    include <abstractions/nameservice-strict>
+
+    # To be able to manage firewall rules.
+    capability net_admin,
+
+    network (bind,create,getattr,getopt,receive,send,setopt) netlink raw,
+    unix (bind) type=stream addr=@[a-f0-9]*/bus/resolvconf/system,
+
+    file mrix /{,usr/}bin/resolvectl,
+    file mrix /{,usr/}bin/sort,
+    file mrix /{,usr/}bin/bash,
+
+    file rix /{,usr/}bin/sh,
+    file rix /{,usr/}sbin/resolvconf,
+    file rix /{,usr/}bin/cut,
+    file rix /{,usr/}bin/ip,
+    file rix /{,usr/}bin/which{,.debianutils},
+    file rix /{,usr/}bin/xtables-nft-multi,
+
+    file r /etc/openvpn/update-resolv-conf.sh,
+    file r /etc/iproute2/rt_tables,
+    file r /etc/iproute2/rt_tables.d/,
+
+    owner r /etc/openvpn/update-resolv-conf,
+    owner rw /run/dbus/system_bus_socket,
+
+    dbus (send) bus=system path="/org/freedesktop/DBus" interface="org.freedesktop.DBus" member="Hello",
+    dbus (send) bus="system" path="/org/freedesktop/resolve1" interface="org.freedesktop.resolve1.Manager" member={SetLinkDNS,SetLinkDNSEx,SetLinkDomains,SetLinkDefaultRoute,RevertLink},
+  }
+
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/openvpn>
+}

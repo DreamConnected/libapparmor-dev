@@ -4,6 +4,7 @@ environment:
     TEST/aa_exec: 1
     TEST/aa_policy_cache: 1
     TEST/access: 1
+    TEST/allow_all: 1
     TEST/at_secure: 1
     TEST/attach_disconnected: 1
     TEST/capabilities: 1

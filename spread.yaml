@@ -276,17 +276,20 @@ suites:
             echo '$(foreach t,$(TESTS),$(info TEST/$t))' | \
               make -n -f "$SPREAD_PATH"/tests/regression/apparmor/Makefile -f /dev/stdin | \
               grep -F TEST/ | \
-              cut -d / -f 2 | \
-              tee apparmor-regression-tests.txt
+              cut -d / -f 2 > apparmor-regression-tests.txt
             fail=0
+            missing_tests=()
             while read -r V; do
-              if ! grep -xF '    TEST/'"$V"': 1' "$SPREAD_PATH"/tests/regression/apparmor/task.yaml; then
-                echo "tests/regression/task.yaml: missing test variant: TEST/$V" >&2
+              if ! grep -xqF '    TEST/'"$V"': 1' "$SPREAD_PATH"/tests/regression/apparmor/task.yaml; then
+                missing_tests+=("tests/regression/task.yaml: missing test variant: TEST/$V")
                 fail=1
               fi
             done <apparmor-regression-tests.txt
             if [ "$fail" -ne 0 ]; then
-              echo "exiting due to missing variants listed above" >&2
+              echo "exiting due to missing variants:" >&2
+              for msg in "${missing_tests[@]}"; do
+                echo "$msg" >&2
+              done
               exit 1
             fi
 

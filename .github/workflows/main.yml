@@ -28,7 +28,9 @@ jobs:
         ndk-version: ${{ github.event.inputs.ndk_version || 'r27c' }}
 
     - name: Install dependencies
-      run: sudo apt-get install -y build-essential unzip autoconf libtool autoconf-archive bison make
+      run: |
+        sudo apt-get install -y build-essential unzip autoconf=2.69-11 \
+        libtool automake=1:1.16.1-4ubuntu6 bison make
         
     - name: Set build parameters
       id: vars
@@ -60,7 +62,6 @@ jobs:
 
         cd libraries/libapparmor
         ./autogen.sh
-        autoupdate
         ./configure --host $TARGET --prefix=/data/sysroot
         make LDFLAGS=" -Wl,--undefined-version" -j $(nproc)
         sudo make install PREFIX=/data/sysroot

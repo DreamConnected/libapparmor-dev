@@ -29,8 +29,8 @@ jobs:
 
     - name: Install dependencies
       run: |
-        sudo apt-get install -y build-essential unzip autoconf=2.69-11 \
-        libtool automake=1:1.16.1-4ubuntu6 bison make
+        sudo apt-get install -y build-essential unzip autoconf2.64 autotools-dev \
+        libtool automake bison make
         
     - name: Set build parameters
       id: vars

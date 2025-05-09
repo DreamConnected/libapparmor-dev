@@ -1,0 +1,85 @@
+name: Android Build libseccomp-dev
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_arch:
+        description: 'Target architecture (aarch64/arm/x86_64/i686)'
+        required: false
+        default: 'aarch64'
+      ndk_version:
+        description: 'Android NDK version'
+        required: false
+        default: 'r27c'
+      android_api:
+        description: 'Android API level'
+        required: false
+        default: '30'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Android NDK
+      uses: nttld/setup-ndk@v1
+      with:
+        ndk-version: ${{ github.event.inputs.ndk_version || 'r27c' }}
+
+    - name: Install dependencies
+      run: sudo apt-get install -y build-essential unzip zlib1g-dev libtool bison flex autoconf make
+        
+    - name: Set build parameters
+      id: vars
+      run: |
+        # Set target triple based on architecture
+        case "${{ github.event.inputs.target_arch || 'aarch64' }}" in
+          aarch64) target="aarch64-linux-android" ;;
+          arm) target="armv7a-linux-androideabi" ;;
+          x86_64) target="x86_64-linux-android" ;;
+          i686) target="i686-linux-android" ;;
+          *) echo "Unsupported architecture"; exit 1 ;;
+        esac
+        
+        echo "target=$target" >> $GITHUB_OUTPUT
+        echo "api=${{ github.event.inputs.android_api || '30' }}" >> $GITHUB_OUTPUT
+
+    - name: Build libseccomp-dev
+      run: |
+        export NDK_TOOLCHAIN=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin
+        export TARGET=${{ steps.vars.outputs.target }}
+        export API=${{ steps.vars.outputs.api }}
+        export AR=$NDK_TOOLCHAIN/llvm-ar
+        export CC="$NDK_TOOLCHAIN/clang --target=$TARGET$API"
+        export AS=$CC
+        export CXX="$NDK_TOOLCHAIN/clang++ --target=$TARGET$API"
+        export LD=$NDK_TOOLCHAIN/ld
+        export RANLIB=$NDK_TOOLCHAIN/llvm-ranlib
+        export STRIP=$NDK_TOOLCHAIN/llvm-strip
+
+        ./autogen.sh
+        ./configure --host $TARGET --prefix=/data/sysroot
+        make LDFLAGS=" -Wl,--undefined-version" -j $(nproc)
+        sudo make install PREFIX=/data/sysroot
+        echo "RELEASE_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4.3.1
+      with:
+        name: android-${{ github.event.inputs.target_arch || 'aarch64' }}-libseccomp-dev-dev
+        path: /data/sysroot/*
+
+    - name: Create a ZIP file for artifact
+      run: zip -r android-${{ github.event.inputs.target_arch || 'aarch64' }}-libseccomp-dev.zip /data/sysroot/*
+    
+    - name: Create Release and Upload Release Asset
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ env.RELEASE_DATE }}
+        name: Release ${{ env.RELEASE_DATE }}
+        body: TODO New Release.
+        draft: false
+        prerelease: false
+        files: |
+            android-${{ github.event.inputs.target_arch || 'aarch64' }}-libseccomp-dev.zip
